@@ -1,0 +1,136 @@
+stages:
+  - analysis
+  - test
+  - build
+  - test-build
+  - deploy
+
+variables:
+  GIT_DEPTH: 1
+
+.tags_win10_conda:
+  tags: ["eo", "win10", "conda"]
+
+.tags_win10:
+  tags: ["eo", "win10", "arepytools-win"]
+
+.tags_manylinux2014:
+  tags: ["manylinux2014"]
+
+.tags_manylinux_2_28:
+  tags: ["manylinux_2_28"]
+
+.tags_rocky8_conda:
+  tags: ["eo", "rocky8", "conda"]
+
+.tags_deploy:
+  tags: ["eo", "deploy"]
+
+
+# === analysis ===============================================================
+# ============================================================================
+pylint:
+  stage: analysis
+  extends:
+    - .tags_manylinux2014
+  script:
+    - python3.9 -m pip install nox
+    - python3.9 -m nox -s pylint
+
+format:
+  stage: analysis
+  extends:
+    - .tags_manylinux2014
+  script:
+    - python3.9 -m pip install nox
+    - python3.9 -m nox -s format
+
+
+# === unittest ===============================================================
+# ============================================================================
+.unittest_linux:
+  stage: test
+  extends:
+    - .tags_manylinux2014
+  script:
+    - python${PYTHON} -m pip install nox
+    - python${PYTHON} -m nox -s unittest -p ${PYTHON}
+  artifacts:
+    reports:
+      junit:
+        - _build/unittest-report-*.xml
+
+unittest_linux_py39:
+  extends:
+    - .unittest_linux
+  variables:
+    PYTHON: "3.9"
+
+unittest_linux_py310:
+  extends:
+    - .unittest_linux
+  variables:
+    PYTHON: "3.10"
+
+unittest_linux_py311:
+  extends:
+    - .unittest_linux
+  variables:
+    PYTHON: "3.11"
+
+.unittest_win10:
+  stage: test
+  extends:
+    - .tags_win10
+  script:
+    - python -m pip install nox
+    - python -m nox -s unittest -p ${PYTHON}
+  artifacts:
+    reports:
+      junit:
+        - _build/unittest-report-*.xml
+
+unittest_win10_py39:
+  extends:
+    - .unittest_win10
+  variables:
+    PYTHON: "3.9"
+
+unittest_win10_py310:
+  extends:
+    - .unittest_win10
+  variables:
+    PYTHON: "3.10"
+
+unittest_win10_py311:
+  extends:
+    - .unittest_win10
+  variables:
+    PYTHON: "3.11"
+
+
+# === build ==================================================================
+# ============================================================================
+sdist:
+  stage: build
+  extends:
+    - .tags_manylinux2014
+  script:
+    - python3.9 -m pip install nox
+    - python3.9 -m nox -s build_sdist
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+      - dist/*.tar.gz
+
+wheel:
+  stage: build
+  extends:
+    - .tags_manylinux2014
+  script:
+    - python3.9 -m pip install nox
+    - python3.9 -m nox -s build_wheel
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+      - dist/*.whl
