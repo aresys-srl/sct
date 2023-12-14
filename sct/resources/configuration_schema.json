@@ -1,0 +1,429 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "general": {
+            "type": "object",
+            "description": "Section of configuration file dedicated to general configuration properties"
+        },
+        "point_target_analysis": {
+            "type": "object",
+            "description": "Section of configuration file dedicated to Point Target Analysis",
+            "properties": {
+                "perform_irf": {
+                    "type": "boolean",
+                    "description": "Enabling flag to perform IRF analysis"
+                },
+                "perform_rcs": {
+                    "type": "boolean",
+                    "description": "Enabling flag to perform RCS analysis"
+                },
+                "evaluate_pslr": {
+                    "type": "boolean",
+                    "description": "Enabling flag to perform PSLR calculation as part of IRF analysis"
+                },
+                "evaluate_islr": {
+                    "type": "boolean",
+                    "description": "Enabling flag to perform SSLR calculation as part of IRF analysis"
+                },
+                "evaluate_sslr": {
+                    "type": "boolean",
+                    "description": "Enabling flag to perform SSLR calculation as part of IRF analysis"
+                },
+                "evaluate_localization": {
+                    "type": "boolean",
+                    "description": "Enabling flag to perform localization errors calculation"
+                },
+                "corrections": {
+                    "type": "object",
+                    "properties": {
+                        "enable_etad_corrections": {
+                            "type": "boolean",
+                            "description": "Enabling flag to perform full range and azimuth corrections using ETAD products"
+                        },
+                        "enable_solid_tides_correction": {
+                            "type": "boolean",
+                            "description": "Enabling flag to perform solid tides corrections on calibration target coordinates"
+                        },
+                        "enable_plate_tectonics_correction": {
+                            "type": "boolean",
+                            "description": "Enabling flag to perform plate tectonics corrections on calibration target coordinates"
+                        },
+                        "enable_sensor_specific_processing_corrections": {
+                            "type": "boolean",
+                            "description": "Enabling flag to perform sensor specific corrections on SAR measurements"
+                        },
+                        "enable_ionospheric_correction": {
+                            "type": "boolean",
+                            "description": "Enabling flag to perform ionospheric corrections on SAR measurements"
+                        },
+                        "enable_tropospheric_correction": {
+                            "type": "boolean",
+                            "description": "Enabling flag to perform tropospheric corrections on SAR measurements"
+                        },
+                        "etad_product_path": {
+                            "type": "string",
+                            "description": "Path to the ETAD product to be used for corrections"
+                        },
+                        "ionosphere": {
+                            "type": "object",
+                            "properties": {
+                                "ionospheric_maps_directory": {
+                                    "type": "string",
+                                    "description": "Path to the ionospheric maps to be used for corrections"
+                                },
+                                "ionospheric_analysis_center": {
+                                    "type": "string",
+                                    "description": "Ionospheric data maps analysis center",
+                                    "enum": [
+                                        "cod",
+                                        "cor",
+                                        "esa",
+                                        "esr"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "ionospheric_maps_directory",
+                                "ionospheric_analysis_center"
+                            ]
+                        },
+                        "troposphere": {
+                            "type": "object",
+                            "properties": {
+                                "tropospheric_maps_directory": {
+                                    "type": "string",
+                                    "description": "Path to the tropospheric maps to be used for corrections"
+                                },
+                                "tropospheric_map_grid_resolution": {
+                                    "type": "string",
+                                    "description": "Tropospheric map data grid resolution",
+                                    "enum": [
+                                        "fine",
+                                        "coarse"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "tropospheric_maps_directory"
+                            ]
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "anyOf": [
+                                {
+                                    "not": {
+                                        "properties": {
+                                            "enable_etad_corrections": {
+                                                "const": "false"
+                                            }
+                                        },
+                                        "required": [
+                                            "enable_etad_corrections"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "required": [
+                                        "etad_product_path"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "not": {
+                                        "properties": {
+                                            "enable_ionospheric_correction": {
+                                                "const": "false"
+                                            }
+                                        },
+                                        "required": [
+                                            "enable_ionospheric_correction"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "required": [
+                                        "ionosphere"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "not": {
+                                        "properties": {
+                                            "enable_tropospheric_correction": {
+                                                "const": "false"
+                                            }
+                                        },
+                                        "required": [
+                                            "enable_tropospheric_correction"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "required": [
+                                        "troposphere"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "advanced_configuration": {
+                    "type": "object",
+                    "properties": {
+                        "irf_parameters": {
+                            "type": "object",
+                            "description": "Parameters to customize IRF analysis",
+                            "properties": {
+                                "peak_finding_roi_size": {
+                                    "type": "array",
+                                    "description": "Target area size along range and azimuth, first crop to identify peak",
+                                    "items": [
+                                        {
+                                            "type": "integer",
+                                            "description": "number of samples"
+                                        },
+                                        {
+                                            "type": "integer",
+                                            "description": "number of lines"
+                                        }
+                                    ]
+                                },
+                                "analysis_roi_size": {
+                                    "type": "array",
+                                    "description": "Target area size along range and azimuth, second crop to compute values",
+                                    "items": [
+                                        {
+                                            "type": "integer",
+                                            "description": "number of samples"
+                                        },
+                                        {
+                                            "type": "integer",
+                                            "description": "number of lines"
+                                        }
+                                    ]
+                                },
+                                "masking_method": {
+                                    "type": "string",
+                                    "description": "Masking method for IRF output values computation",
+                                    "enum": [
+                                        "peak",
+                                        "resolution"
+                                    ]
+                                },
+                                "oversampling_factor": {
+                                    "type": "integer",
+                                    "description": "Oversampling factor"
+                                },
+                                "zero_doppler_abs_squint_threshold_deg": {
+                                    "type": "number",
+                                    "description": "squint threshold value (absolute, deg) below which data is assumed to be zero doppler"
+                                }
+                            }
+                        },
+                        "rcs_parameters": {
+                            "type": "object",
+                            "description": "Parameters to customize RCS analysis",
+                            "properties": {
+                                "calibration_factor": {
+                                    "type": "number",
+                                    "description": "RCS 'k_lin' calibration factor, 1 means absolutely calibrated"
+                                },
+                                "interpolation_factor": {
+                                    "type": "integer",
+                                    "description": "RCS interpolation factor"
+                                },
+                                "resampling_factor": {
+                                    "type": "number",
+                                    "description": "RCS 's_f' resampling factor, 1 mean not resampled"
+                                },
+                                "roi_dimension": {
+                                    "type": "integer",
+                                    "description": "Target area for RCS analysis, it will be a square of this side"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "radiometric_analysis": {
+            "type": "object",
+            "properties": {
+                "input_type": {
+                    "type": "string",
+                    "description": "Radiometric type of input data",
+                    "enum": [
+                        "beta_nought",
+                        "sigma_nought",
+                        "gamma_nought"
+                    ]
+                },
+                "output_type": {
+                    "type": "string",
+                    "description": "Radiometric type of output data",
+                    "enum": [
+                        "beta_nought",
+                        "sigma_nought",
+                        "gamma_nought"
+                    ]
+                },
+                "value": {
+                    "type": "string",
+                    "description": "Radiometric output value",
+                    "enum": [
+                        "amplitude",
+                        "phase"
+                    ]
+                },
+                "direction": {
+                    "type": "string",
+                    "description": "Direction along which to perform Radiometric Analysis",
+                    "enum": [
+                        "range",
+                        "azimuth",
+                        "all"
+                    ]
+                },
+                "axis": {
+                    "type": "string",
+                    "description": "Radiometric Analysis output axis, for range analysis",
+                    "enum": [
+                        "natural",
+                        "incidence_angle",
+                        "look_angle"
+                    ]
+                },
+                "outlier_removal": {
+                    "type": "boolean",
+                    "description": "Enabling flag to remove the outlier"
+                },
+                "smoothening_filter": {
+                    "type": "boolean",
+                    "description": "Enabling flag to smoothen out profiles"
+                },
+                "advanced_configuration": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "object",
+                            "description": "Parameters to customize Radiometric Analysis",
+                            "properties": {
+                                "az_average_band": {
+                                    "type": "integer",
+                                    "description": "Number of lines of the averaging interval along azimuth, (+-half)"
+                                },
+                                "rng_average_band": {
+                                    "type": "integer",
+                                    "description": "Number of samples of the averaging interval along range, (+-half)"
+                                },
+                                "outliers_filter_kernel_size": {
+                                    "type": "array",
+                                    "description": "Size of the outlier removal kernel",
+                                    "items": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ]
+                                },
+                                "outliers_kernel_size": {
+                                    "type": "array",
+                                    "description": "Size of the kernel of first step of outlier filtering",
+                                    "items": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ]
+                                },
+                                "outliers_percentile_boundaries": {
+                                    "type": "array",
+                                    "description": "Boundaries of removal of outliers, values are kept within this interval",
+                                    "items": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ]
+                                },
+                                "radiometric_correction_exponent": {
+                                    "type": "number",
+                                    "description": "Radiometric correction exponent to be applied"
+                                },
+                                "smoothening_order": {
+                                    "type": "integer",
+                                    "description": "Order of smoothening filter"
+                                },
+                                "smoothening_window_length": {
+                                    "type": "integer",
+                                    "description": "Length of the smoothening movable window"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "nesz_analysis": {
+            "type": "object",
+            "properties": {
+                "incidence_compensation": {
+                    "type": "boolean",
+                    "description": "Enabling flag to perform incidence compensation"
+                },
+                "advanced_configuration": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "rng_multilook_length": {
+                                    "type": "integer",
+                                    "description": "A sort of moving average window parameter for range"
+                                },
+                                "az_multilook_length": {
+                                    "type": "integer",
+                                    "description": "A sort of moving average window parameter for azimuth"
+                                },
+                                "az_block_size": {
+                                    "type": "integer",
+                                    "description": "Azimuth block size for partitioning the whole scene"
+                                },
+                                "look_angle_step": {
+                                    "type": "number",
+                                    "description": "Look angle axis step [deg] for graph purposes"
+                                },
+                                "look_angle_margin": {
+                                    "type": "number",
+                                    "description": "Look angle margin [deg] to remove near and far range values"
+                                },
+                                "pixel_margin": {
+                                    "type": "integer",
+                                    "description": "Pixel margin to remove near and far range values"
+                                },
+                                "burst_center_block_size": {
+                                    "type": "integer",
+                                    "description": "Block size at the center of the burst for Topsar/Scansar modes"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

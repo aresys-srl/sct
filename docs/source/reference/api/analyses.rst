@@ -1,0 +1,6 @@
+Analyses Module
+===============
+
+.. automodule:: sct.analyses.point_target_analysis
+
+.. automodule:: sct.analyses.nesz_analysis

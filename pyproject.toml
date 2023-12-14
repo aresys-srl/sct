@@ -10,7 +10,6 @@ license = { text = "MIT" }
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -18,11 +17,14 @@ classifiers = [
     "Topic :: Utilities",
     "License :: OSI Approved :: MIT License",
 ]
-requires-python = ">= 3.9"
+requires-python = ">= 3.10"
 dependencies = [
-    "arepytools > 1.5",
-    "arepyextras-quality > 1.1",
-    "arepyextras-perturbations",
+    "jsonschema",
+    "toml",
+    "arepytools >= 1.6.1",
+    "arepyextras-quality >= 1.1",
+    "arepyextras-perturbations >= 1.1",
+    "arepyextras-eo_products",
 ]
 dynamic = ["version"]
 
@@ -34,8 +36,9 @@ test = ["unittest-xml-reporting", "coverage"]
 doc = [
     "ipython",
     "nbsphinx",
-    "sphinx<6.0.0",
-    "sphinx-book-theme<1",
+    "sphinx",
+    "sphinx-design",
+    "pydata-sphinx-theme",
     "scss-compile",
 ]
 
@@ -55,7 +58,7 @@ namespaces = true
 version = { attr = "sct.__version__" }
 
 [tool.pylint.MASTER]
-fail-under = 8.0
+fail-under = 8.5
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = ["import-error", "logging-fstring-interpolation", "logging-not-lazy"]
@@ -65,7 +68,7 @@ max-line-length = 120
 
 [tool.black]
 line-length = 120
-target-version = ["py39", "py310", "py311", "py312"]
+target-version = ["py310", "py311"]
 
 [tool.isort]
 profile = "black"
