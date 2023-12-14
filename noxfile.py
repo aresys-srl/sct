@@ -31,7 +31,7 @@ def fixformat(session: nox.Session):
 
 
 @nox.session()
-def format(session: nox.Session):
+def formatting(session: nox.Session):
     """Check formatting of python files"""
     session.install("isort", "black")
     session.run("python", "-m", "isort", "--check", ".")
@@ -78,6 +78,38 @@ def _get_only_file_matching_in_dir(directory: Path, pattern: str):
     return matching_dir_content[0]
 
 
+@nox.session(venv_backend="conda")
+def build_conda_recipe(session: nox.Session):
+    """Build a conda recipe from sdist"""
+    build_sdist(session)
+
+    sdist_file = _get_only_file_matching_in_dir(Path("dist"), "*.tar.gz").absolute()
+
+    session.conda_install(
+        "conda-build",
+        "conda-verify",
+        "grayskull",
+        channel="conda-forge",
+    )
+
+    recipe_maintainer = "Aresys srl"
+    session.run("grayskull", "pypi", str(sdist_file), "-m", recipe_maintainer)
+    yaml_file = Path("sct", "meta.yaml")
+    assert yaml_file.exists()
+
+
+@nox.session(venv_backend="conda", python="3.11")
+def build_conda_pkg(session: nox.Session):
+    """Build a conda package from conda recipe"""
+    build_conda_recipe(session)
+
+    conda_build_dir = Path("conda_build_dir")
+    session.run("conda-build", "sct", "--output-folder", str(conda_build_dir))
+
+    package = _get_only_file_matching_in_dir(conda_build_dir.joinpath("noarch"), "*.tar.bz2").absolute()
+    shutil.copy(str(package), "dist")
+
+
 @nox.session(python=PYVERSIONS)
 def unittest(session: nox.Session):
     """Module testing with unittest"""
@@ -120,17 +152,8 @@ def build_doc(session: nox.Session):
 
     session.install("-e", ".[doc]")
 
-    source_static_dir = Path("docs/source/_static")
-    source_static_dir.mkdir(exist_ok=False)
-
-    autodoc_scss = Path("docs/source/resource/autodoc.scss")
-    session.run("scss-compile", "--no-git", str(autodoc_scss), success_codes=[0, 2])
-    Path("docs/source/resource/autodoc.css").rename("docs/source/_static/custom.css")
-
     session.run("python", "-m", "sphinx", "-M", "clean", "docs/source", build_dir)
     session.run("python", "-m", "sphinx", "-b", "html", "docs/source", build_dir)
-
-    shutil.rmtree(str(source_static_dir))
 
     if os.getenv("CI") == "true":
         session.log(f"compressing '{build_dir}'")
