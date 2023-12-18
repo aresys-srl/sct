@@ -1,0 +1,72 @@
+[general]
+
+
+[point_target_analysis]
+perform_irf = true
+perform_rcs = true
+evaluate_pslr = true
+evaluate_islr = true
+evaluate_sslr = true
+evaluate_localization = true
+ale_validity_limits = [99, 99]
+
+[point_target_analysis.corrections]
+enable_etad_corrections = true
+enable_solid_tides_correction = true
+enable_plate_tectonics_correction = true
+enable_sensor_specific_processing_corrections = true
+enable_ionospheric_correction = false
+enable_tropospheric_correction = false
+etad_product_path = ""
+
+[point_target_analysis.corrections.ionosphere]
+ionospheric_maps_directory = ""
+ionospheric_analysis_center = "cor"
+
+[point_target_analysis.corrections.troposphere]
+tropospheric_maps_directory = ""
+tropospheric_map_grid_resolution = "fine"
+
+[point_target_analysis.advanced_configuration.irf_parameters]
+peak_finding_roi_size = [33, 33]
+analysis_roi_size = [128, 128]
+oversampling_factor = 16
+zero_doppler_abs_squint_threshold_deg = 1.0
+masking_method = "peak"
+
+[point_target_analysis.advanced_configuration.rcs_parameters]
+interpolation_factor = 8
+roi_dimension = 128
+calibration_factor = 1.0
+resampling_factor = 1.0
+
+[radiometric_analysis]
+input_type = "beta_nought"
+output_type = "beta_nought"
+value = "amplitude"
+direction = "range"
+axis = "natural"
+outlier_removal = false
+smoothening_filter = true
+
+[radiometric_analysis.advanced_configuration.parameters]
+smoothening_order = 3
+smoothening_window_length = 71
+radiometric_correction_exponent = 0.5
+outliers_kernel_size = [5, 5]
+outliers_filter_kernel_size = [10, 10]
+outliers_percentile_boundaries = [20, 90]
+az_average_band = 1000
+rng_average_band = 1000
+
+[nesz_analysis]
+incidence_compensation = false
+
+[nesz_analysis.advanced_configuration.parameters]
+rng_multilook_length = 7
+az_multilook_length = 7
+az_block_size = 2000
+look_angle_step = 0.01
+look_angle_margin = 0.5
+pixel_margin = 150
+burst_center_block_size = 100

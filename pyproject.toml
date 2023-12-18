@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sct"
+description = "SCT is the Aresys Python module for SAR products quality analysis."
+authors = [{ name = "Aresys S.R.L.", email = "info@aresys.it" }]
+license = { text = "MIT" }
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    "License :: OSI Approved :: MIT License",
+]
+requires-python = ">= 3.10"
+dependencies = [
+    "jsonschema",
+    "toml",
+    "arepytools >= 1.6.1",
+    "arepyextras-quality >= 1.1",
+    "arepyextras-perturbations >= 1.1",
+    "arepyextras-eo_products",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+cli = ["click"]
+graphs = ["matplotlib >= 3.5", "plotly >= 5.10"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[tool.setuptools]
+license-files = ["LICENSE.txt"]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "tests*"]
+namespaces = true
+
+[tool.setuptools.dynamic]
+version = { attr = "sct.__version__" }
