@@ -24,7 +24,7 @@ log = logging.getLogger("quality_analysis")
 share_config = click.make_pass_decorator(SCTConfiguration)
 
 
-@click.command(name="target_analysis")
+@click.command(name="target-analysis")
 @click.option(
     "--product",
     "-p",

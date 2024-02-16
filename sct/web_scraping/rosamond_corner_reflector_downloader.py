@@ -53,13 +53,15 @@ def _datetime_formatting(acq_date: PreciseDateTime) -> str:
     return datetime.strftime(date, "%Y-%m-%d %H:%M")
 
 
-def _format_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+def _format_dataframe(df: pd.DataFrame, measurement_date: PreciseDateTime) -> pd.DataFrame:
     """Formatting downloaded database to be compliant with the SCT format.
 
     Parameters
     ----------
     df : pd.DataFrame
         downloaded Rosamond dataframe
+    measurement_date : PreciseDateTime
+        measurement date of the current dataset
 
     Returns
     -------
@@ -104,6 +106,9 @@ def _format_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df["drift_velocity_y_my"] = np.nan
     df["drift_velocity_z_my"] = np.nan
     df["delay_s"] = 0
+    df["measurement_date"] = measurement_date
+    df["validity_start_date"] = measurement_date - 24 * 3600  # a day before
+    df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after
 
     return df
 
@@ -198,9 +203,15 @@ def get_rosamond_data(
         )
         data_df = pd.read_csv(file)
 
-    return _format_dataframe(df=data_df.copy())
+    return _format_dataframe(df=data_df.copy(), measurement_date=acq_date)
 
 
 if __name__ == "__main__":
-    df_ = get_rosamond_data(acq_date=PreciseDateTime.from_utc_string("01-JAN-2017 06:03:05.415896855135"))
+    df_path = Path(
+        r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\iceye\SC_2178486_110090\2023-05-24_2210_Rosamond-corner-reflectors_with_plate_motion.csv"
+    )
+    df = pd.read_csv(df_path)
+    acq_date = PreciseDateTime.from_numeric_datetime(2023, 2, 13, 9, 30)
+    df_new = _format_dataframe(df, acq_date)
+    df_new.to_csv(df_path.parent.joinpath("calibration_target_rosamond.csv"), index=False)
     pass

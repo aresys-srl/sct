@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: MIT
 
 """
-Global corrections: Geodynamics and Atmospheric
------------------------------------------------
+Global corrections: Geodynamics, Atmospheric and ETAD
+-----------------------------------------------------
 """
 
 from __future__ import annotations
 
 import logging
+import warnings
 from pathlib import Path
 from typing import Union
 
@@ -19,11 +20,18 @@ from arepyextras.perturbations.geodynamics import plate_tectonics, solid_tides
 from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.geometry.inverse_geocoding_core import inverse_geocoding_monostatic_core
 from arepytools.timing.precisedatetime import PreciseDateTime
+from s1etad import ECorrectionType, Sentinel1Etad, Sentinel1EtadBurst
+from scipy.interpolate import interp2d
+from shapely.errors import ShapelyDeprecationWarning
+from shapely.geometry import Point
 
 SECONDS_IN_A_YEAR = 3.154e7
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
+
+# due to s1etad use of deprecated shapely function
+warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 
 def compute_geodynamics_corrections(
@@ -60,9 +68,6 @@ def compute_geodynamics_corrections(
         overall coordinates displacement array, None if both flags where False
     """
 
-    if isinstance(plate_ref, str):
-        plate_ref = plate_tectonics.ITRF2014PlatesRotationPoles[plate_ref.upper()]
-
     coords_displacements = []
     if tides_flag:
         # computing solid tides corrections
@@ -88,6 +93,9 @@ def compute_geodynamics_corrections(
                 log.info("Drift velocities not provided for the selected calibration site")
                 log.info("Computing Plate Tectonics displacement correction using average plate drift velocities")
                 drift_velocities = None
+
+        if isinstance(plate_ref, str):
+            plate_ref = plate_tectonics.ITRF2014PlatesRotationPoles[plate_ref.upper()]
 
         coords_displacements.append(
             plate_tectonics.compute_displacement(
@@ -119,6 +127,7 @@ def compute_atmospheric_delays(
     troposphere_map_dir: Path,
 ) -> list[Union[np.ndarray, None]]:
     """Atmospheric corrections management: computing ionospheric and tropospheric delays displacements from maps.
+    These corrections are to be applied only in range direction.
 
     Parameters
     ----------
@@ -208,12 +217,87 @@ def convert_atmospheric_delays_to_df(
         dataframe of atmospheric delays for each point target
     """
     df = target_names.to_frame()
-    df["ionospheric_delay_[m]"] = delays[0]
-    if delays[1] is not None:
-        df["tropospheric_delay_hydrostatic_[m]"] = -delays[1][0]
-        df["tropospheric_delay_wet_[m]"] = -delays[1][1]
+    if delays[0] is not None:
+        df["ionospheric_delay_range_correction_[m]"] = delays[0]
     else:
-        df["tropospheric_delay_hydrostatic_[m]"] = None
-        df["tropospheric_delay_wet_[m]"] = None
+        df["ionospheric_delay_range_correction_[m]"] = np.nan
+    if delays[1] is not None:
+        df["tropospheric_delay_hydrostatic_range_correction_[m]"] = -delays[1][0]
+        df["tropospheric_delay_wet_range_correction_[m]"] = -delays[1][1]
+    else:
+        df["tropospheric_delay_hydrostatic_range_correction_[m]"] = np.nan
+        df["tropospheric_delay_wet_range_correction_[m]"] = np.nan
 
     return df
+
+
+def get_etad_corrections(etad_product_path: Union[str, Path], target_df: pd.DataFrame) -> pd.DataFrame:
+    """Retrieving range ALE correction from ETAD product for all point targets.
+
+    Parameters
+    ----------
+    etad_product_path : Union[str, Path]
+        path to the ETAD product
+    target_df : pd.DataFrame
+        point target dataframe
+
+    Returns
+    -------
+    pd.DataFrame
+        corrections dataframe
+    """
+
+    # opening ETAD product
+    etad = Sentinel1Etad(etad_product_path)
+
+    corrections = []
+    for _, row in target_df.iterrows():
+        # creating a Point instance for the current cor
+        cr_point = Point(row["longitude_deg"], row["latitude_deg"], row["altitude_m"])
+        cr_burst_location = etad.query_burst(geometry=cr_point)
+        if cr_burst_location.empty:
+            continue
+
+        total_rng_correction, total_az_correction = _extract_etad_correction(
+            burst=next(etad.iter_bursts(cr_burst_location)), location=cr_point
+        )
+
+        corrections.append(
+            {
+                "target_name": row["target_name"],
+                "etad_range_correction_[m]": total_rng_correction,
+                "etad_azimuth_correction_[m]": total_az_correction,
+            }
+        )
+
+    return pd.DataFrame(corrections)
+
+
+def _extract_etad_correction(burst: Sentinel1EtadBurst, location: Point) -> tuple[float, float]:
+    """Extracting ALE range correction from ETAD product for a given point target location.
+
+    Parameters
+    ----------
+    burst : Sentinel1EtadBurst
+        burst where the target lies
+    location : Point
+        location of the target
+
+    Returns
+    -------
+    float
+        range ALE correction in meters
+    """
+    # get SAR times at which it is seen in the scene
+    tau0, t0 = burst.geodetic_to_radar(location.y, location.x, location.z)
+    # retrieving sum of all corrections along range direction
+    correction = burst.get_correction(ECorrectionType.SUM, meter=True)
+    rng_corrections = correction["x"]
+    az_corrections = correction["y"]
+
+    # interpolating values at given target time coordinates
+    azimuth_time, range_time = burst.get_burst_grid()
+    interpolator_rng = interp2d(range_time, azimuth_time, rng_corrections)
+    interpolator_az = interp2d(range_time, azimuth_time, az_corrections)
+
+    return interpolator_rng(tau0, t0)[0], interpolator_az(tau0, t0)[0]

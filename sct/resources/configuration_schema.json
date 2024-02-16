@@ -256,8 +256,9 @@
         },
         "radiometric_analysis": {
             "type": "object",
+            "description": "Section of configuration file dedicated to Gamma Profiles and Scalloping",
             "properties": {
-                "input_type": {
+                "input_quantity": {
                     "type": "string",
                     "description": "Radiometric type of input data",
                     "enum": [
@@ -266,67 +267,54 @@
                         "gamma_nought"
                     ]
                 },
-                "output_type": {
-                    "type": "string",
-                    "description": "Radiometric type of output data",
-                    "enum": [
-                        "beta_nought",
-                        "sigma_nought",
-                        "gamma_nought"
-                    ]
+                "azimuth_block_size": {
+                    "type": "integer",
+                    "description": "Azimuth block size for partitioning the whole scene"
                 },
-                "value": {
-                    "type": "string",
-                    "description": "Radiometric output value",
-                    "enum": [
-                        "amplitude",
-                        "phase"
-                    ]
+                "range_pixel_margin": {
+                    "type": "integer",
+                    "description": "Pixel margin to remove near and far range values"
                 },
-                "direction": {
-                    "type": "string",
-                    "description": "Direction along which to perform Radiometric Analysis",
-                    "enum": [
-                        "range",
-                        "azimuth",
-                        "all"
-                    ]
-                },
-                "axis": {
-                    "type": "string",
-                    "description": "Radiometric Analysis output axis, for range analysis",
-                    "enum": [
-                        "natural",
-                        "incidence_angle",
-                        "look_angle"
-                    ]
-                },
-                "outlier_removal": {
-                    "type": "boolean",
-                    "description": "Enabling flag to remove the outlier"
-                },
-                "smoothening_filter": {
-                    "type": "boolean",
-                    "description": "Enabling flag to smoothen out profiles"
+                "radiometric_correction_exponent": {
+                    "type": "number",
+                    "description": "Radiometric correction exponent to be applied"
                 },
                 "advanced_configuration": {
                     "type": "object",
                     "properties": {
-                        "parameters": {
+                        "histogram_parameters": {
                             "type": "object",
-                            "description": "Parameters to customize Radiometric Analysis",
+                            "description": "Parameters to customize 2D histogram",
                             "properties": {
-                                "az_average_band": {
+                                "x_bins_step": {
                                     "type": "integer",
-                                    "description": "Number of lines of the averaging interval along azimuth, (+-half)"
+                                    "description": "Bins step along x axis"
                                 },
-                                "rng_average_band": {
+                                "y_bins_num": {
                                     "type": "integer",
-                                    "description": "Number of samples of the averaging interval along range, (+-half)"
+                                    "description": "Number of bins along y axis"
                                 },
-                                "outliers_filter_kernel_size": {
+                                "y_bins_center_margin": {
+                                    "type": "number",
+                                    "description": "Margin (symmetric) defining the extension of the y binning axis around y center value, (+-margin)"
+                                }
+                            }
+                        },
+                        "profile_parameters": {
+                            "type": "object",
+                            "description": "Parameters to customize profile extraction",
+                            "properties": {
+                                "outlier_removal": {
+                                    "type": "boolean",
+                                    "description": "Boolean flag to enable/disable outlier removal"
+                                },
+                                "smoothening_filter": {
+                                    "type": "boolean",
+                                    "description": "Boolean flag to enable/disable smoothening filter"
+                                },
+                                "filtering_kernel_size": {
                                     "type": "array",
-                                    "description": "Size of the outlier removal kernel",
+                                    "description": "Size of the smoothening kernel",
                                     "items": [
                                         {
                                             "type": "integer"
@@ -338,7 +326,7 @@
                                 },
                                 "outliers_kernel_size": {
                                     "type": "array",
-                                    "description": "Size of the kernel of first step of outlier filtering",
+                                    "description": "Size of outlier removal kernel",
                                     "items": [
                                         {
                                             "type": "integer"
@@ -359,65 +347,6 @@
                                             "type": "integer"
                                         }
                                     ]
-                                },
-                                "radiometric_correction_exponent": {
-                                    "type": "number",
-                                    "description": "Radiometric correction exponent to be applied"
-                                },
-                                "smoothening_order": {
-                                    "type": "integer",
-                                    "description": "Order of smoothening filter"
-                                },
-                                "smoothening_window_length": {
-                                    "type": "integer",
-                                    "description": "Length of the smoothening movable window"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "nesz_analysis": {
-            "type": "object",
-            "properties": {
-                "incidence_compensation": {
-                    "type": "boolean",
-                    "description": "Enabling flag to perform incidence compensation"
-                },
-                "advanced_configuration": {
-                    "type": "object",
-                    "properties": {
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "rng_multilook_length": {
-                                    "type": "integer",
-                                    "description": "A sort of moving average window parameter for range"
-                                },
-                                "az_multilook_length": {
-                                    "type": "integer",
-                                    "description": "A sort of moving average window parameter for azimuth"
-                                },
-                                "az_block_size": {
-                                    "type": "integer",
-                                    "description": "Azimuth block size for partitioning the whole scene"
-                                },
-                                "look_angle_step": {
-                                    "type": "number",
-                                    "description": "Look angle axis step [deg] for graph purposes"
-                                },
-                                "look_angle_margin": {
-                                    "type": "number",
-                                    "description": "Look angle margin [deg] to remove near and far range values"
-                                },
-                                "pixel_margin": {
-                                    "type": "integer",
-                                    "description": "Pixel margin to remove near and far range values"
-                                },
-                                "burst_center_block_size": {
-                                    "type": "integer",
-                                    "description": "Block size at the center of the burst for Topsar/Scansar modes"
                                 }
                             }
                         }

@@ -23,7 +23,7 @@ PLATFORM = "win" if WIN32 else "linux"
 
 
 @nox.session()
-def fixformat(session: nox.Session):
+def fix_format(session: nox.Session):
     """Force formatting on python files"""
     session.install("isort", "black")
     session.run("python", "-m", "isort", ".")
@@ -31,7 +31,7 @@ def fixformat(session: nox.Session):
 
 
 @nox.session()
-def formatting(session: nox.Session):
+def format_check(session: nox.Session):
     """Check formatting of python files"""
     session.install("isort", "black")
     session.run("python", "-m", "isort", "--check", ".")
@@ -78,7 +78,7 @@ def _get_only_file_matching_in_dir(directory: Path, pattern: str):
     return matching_dir_content[0]
 
 
-@nox.session(venv_backend="conda")
+@nox.session(venv_backend="conda", python="3.11")
 def build_conda_recipe(session: nox.Session):
     """Build a conda recipe from sdist"""
     build_sdist(session)

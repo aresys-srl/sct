@@ -11,7 +11,6 @@ Supported products:
 Supported analyses:
 
 - Point Target Analysis
-- Noise Equivalent Sigma-Zero (NESZ) Analysis
 
 SCT package and its dependencies can be installed using ``pip`` tool:
 

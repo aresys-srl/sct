@@ -14,7 +14,17 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Union
 
-from arepyextras.eo_products.safe.l1_products.reader import open_product
+from arepyextras.eo_products.iceye.l1_products.reader import (
+    open_product as open_iceye_product,
+)
+from arepyextras.eo_products.iceye.l1_products.utilities import is_iceye_product
+from arepyextras.eo_products.novasar.l1_products.reader import (
+    open_product as open_novasar1_product,
+)
+from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_product
+from arepyextras.eo_products.safe.l1_products.reader import (
+    open_product as open_s1_product,
+)
 from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
 from arepyextras.quality.io.quality_input_from_product_folder import (
     ProductFolderManager,
@@ -27,7 +37,9 @@ from arepytools.io import open_product_folder
 from arepytools.io.productfolder2 import is_product_folder as is_aresys_product
 from arepytools.timing.precisedatetime import PreciseDateTime
 
-from sct.io.quality_input_from_safe_product import SafeProductManager
+from sct.io.quality_input_from_iceye_product import ICEYEProductManager
+from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
+from sct.io.quality_input_from_sentinel1_product import Sentinel1ProductManager
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
@@ -38,6 +50,8 @@ class SupportedInputProductType(Enum):
 
     ARESYS = auto()
     S1_SAFE = auto()
+    NOVASAR1 = auto()
+    ICEYE = auto()
     UNKNOWN = auto()
 
 
@@ -89,6 +103,12 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
     if is_s1_safe_product(product):
         return SupportedInputProductType.S1_SAFE
 
+    if is_novasar_1_product(product):
+        return SupportedInputProductType.NOVASAR1
+
+    if is_iceye_product(product):
+        return SupportedInputProductType.ICEYE
+
     return SupportedInputProductType.UNKNOWN
 
 
@@ -118,7 +138,13 @@ def product_loader(
         product = ProductFolderManager(product_path)
     elif input_type == SupportedInputProductType.S1_SAFE:
         log.info("Product type: Sentinel-1 SAFE")
-        product = SafeProductManager(product_path, external_orbit_path=external_orbit)
+        product = Sentinel1ProductManager(product_path, external_orbit_path=external_orbit)
+    elif input_type == SupportedInputProductType.NOVASAR1:
+        log.info("Product type: NovaSAR-1")
+        product = NovaSAR1ProductManager(product_path)
+    elif input_type == SupportedInputProductType.ICEYE:
+        log.info("Product type: ICEYE")
+        product = ICEYEProductManager(product_path)
     else:
         raise RuntimeError("Unknown product type")
 
@@ -157,5 +183,13 @@ def get_acquisition_time(product: Union[str, Path], product_type: SupportedInput
         return PreciseDateTime.from_utc_string(acq_time)
 
     if product_type == SupportedInputProductType.S1_SAFE:
-        pf = open_product(pf_path=product)
+        pf = open_s1_product(pf_path=product)
+        return pf.acquisition_time
+
+    if product_type == SupportedInputProductType.NOVASAR1:
+        pf = open_novasar1_product(pf_path=product)
+        return pf.acquisition_time
+
+    if product_type == SupportedInputProductType.ICEYE:
+        pf = open_iceye_product(pf_path=product)
         return pf.acquisition_time

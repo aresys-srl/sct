@@ -52,13 +52,6 @@ The available sections of this configuration file are:
 
     - **parameters**: sub-sub-section dedicated to radiometric profiles parameters.
 
-- **nesz_analysis**: section that can be used to access *NESZ Analysis* options and parameters.
-
-  * **advanced_configuration**: sub-section that can be used to tweak and tune lower level parameters that change the
-    computation of the NESZ profiles.
-
-    - **parameters**: sub-sub-section dedicated to NESZ profiles parameters.
-
 .. seealso::
 
    To better understand the implications of changing specific parameters, refer to the :ref:`documentation of the implemented
@@ -270,38 +263,5 @@ Changing these parameters can heavily affect the analysis.
     outliers_percentile_boundaries = [20, 90]   # inliers percentiles limits
     az_average_band = 1000                      # azimuth averaging band in pixels
     rng_average_band = 1000                     # range averaging band in pixels
-
-:ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.
-
-
-Noise Equivalent Sigma Zero (NESZ) Analysis
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The following parameters can be configured directly under the `nesz_analysis` section.
-
-.. code-block:: toml
-    :linenos:
-
-    [nesz_analysis]
-    incidence_compensation = false     # on/off incidence angle compensation
-
-Advanced Configuration
-~~~~~~~~~~~~~~~~~~~~~~
-
-This sub-section cannot be expressed by itself but only through its sub-section `parameters`.
-`nesz_analysis` **is not required to be defined in the configuration file** for this sub-section to work.
-Changing these parameters can heavily affect the analysis.
-
-.. code-block:: toml
-    :linenos:
-
-    [nesz_analysis.advanced_configuration.parameters]
-    rng_multilook_length = 7              # multilook length along range
-    az_multilook_length = 7               # multilook length along azimuth
-    az_block_size = 2000                  # azimuth block size for partitioning scene
-    look_angle_step = 0.01                # look angle axis step in degrees
-    look_angle_margin = 0.5               # look angle margin in degrees
-    pixel_margin = 150                    # pixel margin from scene borders
-    burst_center_block_size = 100         # central block size for topsar/scansar modes
 
 :ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.

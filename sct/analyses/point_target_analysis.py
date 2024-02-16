@@ -26,6 +26,7 @@ from sct.core.global_corrections import (
     compute_atmospheric_delays,
     compute_geodynamics_corrections,
     convert_atmospheric_delays_to_df,
+    get_etad_corrections,
 )
 from sct.io.io_manager import input_detector, product_loader
 from sct.io.point_target_manager import (
@@ -72,6 +73,8 @@ def main(
 
     product_path = Path(product_path)
     external_orbit_path = Path(external_orbit_path) if external_orbit_path is not None else None
+    if external_orbit_path is not None:
+        log.info(f"Using external orbit {external_orbit_path}")
 
     # DETECTING INPUT PRODUCT TYPE
     input_type = input_detector(product=product_path)
@@ -133,6 +136,19 @@ def main(
                 + "add validity dates to point targets data"
             ) from err
 
+    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
+    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
+
+    # ETAD CORRECTIONS WORKFLOW
+    if config.enable_etad_corrections:
+        config.enable_solid_tides_correction = False
+        config.enable_ionospheric_correction = False
+        config.enable_tropospheric_correction = False
+        config.enable_sensor_specific_processing_corrections = False
+        if config.etad_product_path is None:
+            log.critical("ETAD corrections requested but the ETAD product path is not valid")
+            raise RuntimeError("Invalid ETAD Product path")
+
     # COMPUTING GEODYNAMICS CORRECTIONS
     target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
     drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
@@ -158,8 +174,13 @@ def main(
     point_targets_data = convert_df_to_nominal_point_target(data_df=point_targets_df)
 
     # COMPUTING ATMOSPHERIC CORRECTIONS
-    iono_flag = config.enable_ionospheric_correction and config.ionospheric_maps_directory is not None
-    tropo_flag = config.enable_tropospheric_correction and config.tropospheric_maps_directory is not None
+    if config.enable_ionospheric_correction and config.ionospheric_maps_directory is None:
+        log.critical("Ionospheric perturbation computation requested but the maps directory is not valid")
+        raise RuntimeError("Invalid ionospheric maps directory")
+    if config.enable_tropospheric_correction and config.tropospheric_maps_directory is None:
+        log.critical("Tropospheric perturbation computation requested but the maps directory is not valid")
+        raise RuntimeError("Invalid tropospheric maps directory")
+
     # atmospheric delays for each point target
     atmospheric_delays = compute_atmospheric_delays(
         target_coords=target_coords,
@@ -169,17 +190,14 @@ def main(
         analysis_center=config.ionospheric_analysis_center,
         ionosphere_incidence_angle_method=config.ionospheric_tec_inc_angle_method,
         troposphere_map_resolution=config.tropospheric_map_grid_resolution,
-        ionosphere_flag=iono_flag,
+        ionosphere_flag=config.enable_ionospheric_correction,
         ionosphere_map_dir=config.ionospheric_maps_directory,
-        troposphere_flag=tropo_flag,
+        troposphere_flag=config.enable_tropospheric_correction,
         troposphere_map_dir=config.tropospheric_maps_directory,
     )
     atmospheric_delays_df = convert_atmospheric_delays_to_df(
         target_names=point_targets_df["target_name"].copy(), delays=tuple(atmospheric_delays)
     )
-
-    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
-    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
 
     # COMPUTING POINT TARGET ANALYSIS
     data_df, graph_data = sct_point_target_analysis(
@@ -190,7 +208,34 @@ def main(
         range_corrections_func=rng_corr_func,
     )
 
-    return data_df.merge(atmospheric_delays_df, on=["target_name"]), graph_data
+    # GET ETAD CORRECTIONS
+    if config.enable_etad_corrections:
+        log.info("Extracting ALE range corrections from ETAD product...")
+        etad_corrections = get_etad_corrections(etad_product_path=config.etad_product_path, target_df=point_targets_df)
+        data_df = data_df.merge(etad_corrections, on=["target_name"])
+
+    if config.enable_ionospheric_correction or config.enable_tropospheric_correction:
+        data_df = data_df.merge(atmospheric_delays_df, on=["target_name"])
+
+    # sum all corrections along a specific direction
+    data_df["total_ale_range_correction_[m]"] = data_df[
+        [c for c in data_df.columns if "_range_correction_[m]" in c]
+    ].sum(axis=1)
+    data_df["total_ale_azimuth_correction_[m]"] = data_df[
+        [c for c in data_df.columns if "_azimuth_correction_[m]" in c]
+    ].sum(axis=1)
+
+    # compute corrected ALE measurement
+    data_df["revised_ale_range_[m]"] = (
+        data_df["slant_range_localization_error_[m]"] + data_df["total_ale_range_correction_[m]"]
+    )
+    data_df["revised_ale_azimuth_[m]"] = (
+        data_df["azimuth_localization_error_[m]"] + data_df["total_ale_azimuth_correction_[m]"]
+    )
+
+    log.info("Analysis completed.")
+
+    return data_df, graph_data
 
 
 def sct_point_target_analysis(
@@ -243,24 +288,18 @@ def sct_point_target_analysis(
         if range_corrections_func is not None:
             log.info("Computing sensor specific range corrections...")
             range_corrections_df = range_corrections_func(product, data.copy())
-            range_corrections_df["total_range_ale_correction_[m]"] = range_corrections_df[
-                [c for c in range_corrections_df.columns if "id" not in c]
-            ].sum(axis=1)
         else:
             log.info("Sensor specific range corrections function has not been selected")
         if azimuth_corrections_func is not None:
             log.info("Computing sensor specific azimuth corrections...")
             azimuth_corrections_df = azimuth_corrections_func(product, data.copy())
-            azimuth_corrections_df["total_azimuth_ale_correction_[m]"] = azimuth_corrections_df[
-                [c for c in azimuth_corrections_df.columns if "id" not in c]
-            ].sum(axis=1)
         else:
             log.info("Sensor specific azimuth corrections function has not been selected")
 
     # ADDING CORRECTIONS TO RESULTS
+    data["solid_tides_correction"] = config.enable_solid_tides_correction
+    data["plate_tectonics_correction"] = config.enable_plate_tectonics_correction
     data_out = data.merge(range_corrections_df, on="id").merge(azimuth_corrections_df, on="id")
     data_out.drop(columns="id", axis=1, inplace=True)
-
-    log.info("Analysis completed.")
 
     return data_out, graph_data

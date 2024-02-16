@@ -22,6 +22,7 @@ from sct import calibration_sites_db, csv_template
 
 SELECT_JOIN_QUERY = """
 SELECT target_name, target_type.type, plate.plate, reference_frame.reference,
+latitude_deg, longitude_deg, altitude_m,
 x_coord_m, y_coord_m, z_coord_m, drift_velocity_x_my, drift_velocity_y_my, drift_velocity_z_my,
 delay_s, measurement_date, validity_start_date, validity_end_date
 FROM XXXX
@@ -70,18 +71,24 @@ def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFr
 
     if str(source).endswith(".xml"):
         # internal format, point target xml file
-        point_targets = read_point_targets_file(xml_file=source)
-        raise NotImplementedError
+        point_targets_df = convert_point_target_file_xml_to_df(source=source)
     elif source.is_dir():
         # internal format, point target binary
         point_targets_df = convert_point_target_binary_to_df(source=source)
 
     elif str(source).endswith(".csv"):
+        # TODO validate with an internal schema? see pydantic
         # external format, .csv template compliant
         point_targets_df = pd.read_csv(source)
-        point_targets_df["measurement_date"] = pd.to_datetime(point_targets_df["measurement_date"])
-        point_targets_df["validity_start_date"] = pd.to_datetime(point_targets_df["validity_start_date"])
-        point_targets_df["validity_stop_date"] = pd.to_datetime(point_targets_df["validity_stop_date"])
+        point_targets_df["measurement_date"] = point_targets_df["measurement_date"].apply(
+            PreciseDateTime.from_utc_string
+        )
+        point_targets_df["validity_start_date"] = point_targets_df["validity_start_date"].apply(
+            PreciseDateTime.from_utc_string
+        )
+        point_targets_df["validity_stop_date"] = point_targets_df["validity_stop_date"].apply(
+            PreciseDateTime.from_utc_string
+        )
     else:
         raise UnsupportedPointTargetSource(source)
 
@@ -156,6 +163,40 @@ def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
     return point_targets_df
 
 
+def convert_point_target_file_xml_to_df(source: Union[str, Path]) -> pd.DataFrame:
+    """Convert Aresys Point Target File XML product to SCT internal point target dataframe format.
+
+    Parameters
+    ----------
+    source : Union[str, Path]
+        Path to Point Target File XML product
+
+    Returns
+    -------
+    pd.DataFrame
+        SCT compliant internal point target dataframe
+    """
+    point_targets = read_point_targets_file(xml_file=source)
+    coords = np.stack([c.xyz_coordinates for c in point_targets.values()])
+    delays = [c.delay for c in point_targets.values()]
+    df = pd.DataFrame(["cr_" + k for k in list(point_targets.keys())], columns=["target_name"])
+    df = df.assign(
+        target_type="CR",
+        plate="NONE",
+        x_coord_m=coords[:, 0],
+        y_coord_m=coords[:, 1],
+        z_coord_m=coords[:, 2],
+        drift_velocity_x_my=np.nan,
+        drift_velocity_y_my=np.nan,
+        drift_velocity_z_my=np.nan,
+        delay_s=delays,
+        measurement_date=PreciseDateTime(),
+        validity_start_date=PreciseDateTime(),
+        validity_stop_date=PreciseDateTime.from_numeric_datetime(3000),
+    )
+    return df
+
+
 def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, NominalPointTarget]:
     """Convert dataframe read from database to dictionary of NominalPointTarget values.
 
@@ -171,9 +212,10 @@ def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, Nomin
     """
     data_dict = dict.fromkeys(data_df.target_name)
     for _, row in data_df.iterrows():
+        delay = row["delay_s"] if not np.isnan(row["delay_s"]) else None
         data_dict[row["target_name"]] = NominalPointTarget(
             xyz_coordinates=row[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy(dtype=float),
-            delay=row["delay_s"],
+            delay=delay,
             rcs_hh=1,
             rcs_hv=1,
             rcs_vh=1,

@@ -1,0 +1,267 @@
+"""
+Command line interface
+----------------------
+"""
+
+from pathlib import Path
+
+import click
+from _create_local_dataset import PushRequest, create_dataset
+
+sct_requests_dataset = [
+    PushRequest(
+        src_rel_path="sct_config_template.toml",
+        dst_rel_path="input/config",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=False,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/NovaSAR_01_38993_slc_11_221103_004941_HH",
+        dst_rel_path="input/novasar1/SLC",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/NovaSAR_01_38993_grd_13_221103_004941_HH",
+        dst_rel_path="input/novasar1/GRD",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/NovaSAR_01_41461_scd_23_230126_005204_VV_HH",
+        dst_rel_path="input/novasar1/SCD",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/PointTargets_File__NOVASAR__surat_basin.xml",
+        dst_rel_path="input/novasar1/PointTargetsXML",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/config.toml",
+        dst_rel_path="input/novasar1/config",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=False,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/reports/NovaSAR_01_38993_slc_11_221103_004941_HH_sct.csv",
+        dst_rel_path="output/novasar1/SLC",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/reports/NovaSAR_01_38993_grd_13_221103_004941_HH_sct.csv",
+        dst_rel_path="output/novasar1/GRD",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/reports/NovaSAR_01_41461_scd_23_230126_005204_VV_HH_sct.csv",
+        dst_rel_path="output/novasar1/SCD",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="iceye/SM_1899652_93266",
+        dst_rel_path="input/iceye/SM",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="iceye/SLH_1835029_91260",
+        dst_rel_path="input/iceye/SLH",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="iceye/SC_2391740_117355",
+        dst_rel_path="input/iceye/SC",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="iceye/config.toml",
+        dst_rel_path="input/iceye/config",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=False,
+    ),
+    PushRequest(
+        src_rel_path="iceye/PointTargetsBinaryRosamond",
+        dst_rel_path="input/iceye/PointTargetsBinaryRosamond",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="iceye/reports/SM_1899652_93266/SCT/report_no_perturbations.csv",
+        dst_rel_path="output/iceye/SM",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="iceye/reports/SLH_1835029_91260/SCT/report_no_perturbations.csv",
+        dst_rel_path="output/iceye/SLH",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="iceye/reports/SC_2391740_117355/SCT/report_no_perturbations.csv",
+        dst_rel_path="output/iceye/SC",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/SLC_19.SAFE",
+        dst_rel_path="input/sentinel1/SLC_19",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/SLC_23.SAFE",
+        dst_rel_path="input/sentinel1/SLC_23",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/GRD_19.SAFE",
+        dst_rel_path="input/sentinel1/GRD_19",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/ETAD_23.SAFE",
+        dst_rel_path="input/sentinel1/ETAD",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/RESORB_19.EOF",
+        dst_rel_path="input/sentinel1/ext_orbit",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=False,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/PointTargetsBinarySurat",
+        dst_rel_path="input/sentinel1/PointTargetsBinarySurat",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/maps/ionosphere_maps",
+        dst_rel_path="input/sentinel1/ionosphere_maps",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/maps/troposphere_maps",
+        dst_rel_path="input/sentinel1/troposphere_maps",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/config_etad.toml",
+        dst_rel_path="input/sentinel1/config_etad",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=False,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/config_perturbations.toml",
+        dst_rel_path="input/sentinel1/config_perturbations",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=False,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/reports/sentinel1_slc_19_perturbations.csv",
+        dst_rel_path="output/sentinel1/SLC_19_PERT",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/reports/sentinel1_slc_19_perturbations_ext_orbit.csv",
+        dst_rel_path="output/sentinel1/SLC_19_PERT_EXT_ORBIT",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/reports/sentinel1_grd_19_perturbations.csv",
+        dst_rel_path="output/sentinel1/GRD_19_PERT",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="sentinel1/reports/sentinel1_slc_23_etad_calibration_site.csv",
+        dst_rel_path="output/sentinel1/SLC_23_ETAD",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+]
+
+
+@click.command()
+@click.option(
+    "-s",
+    "--source",
+    required=True,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        path_type=Path,
+    ),
+    help="source folder with files",
+)
+@click.option(
+    "-d",
+    "--destination",
+    required=True,
+    type=click.Path(
+        file_okay=False,
+        path_type=Path,
+    ),
+    help="destination folder where to generate dataset",
+)
+def generate_local_dataset(source: Path, destination: Path):
+    """Command line tool to generate a local dataset for Arepyextras Quality integration testing."""
+
+    click.echo("Generating local dataset...")
+    create_dataset(source.absolute(), destination.absolute(), push_requests=sct_requests_dataset)
+    click.echo("Done.")
+
+
+if __name__ == "__main__":
+    generate_local_dataset()
+
+    """How to use it
+    python generate_dataset_cli.py -s (source_dir) -d (output_dir)
+    """

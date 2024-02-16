@@ -13,3 +13,7 @@ __pycache__
 *.py[co]
 docs/make.bat
 docs/Makefile
+
+# Other
+.coverage
+tests/integration_tests/config/local.toml

@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 """
-SAFE format Arepyextras-Quality protocol-compliant wrapper
-----------------------------------------------------------
+ICEYE format Arepyextras-Quality protocol-compliant wrapper
+-----------------------------------------------------------
 """
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,9 +12,8 @@ from typing import Union
 
 import numpy as np
 import numpy.typing as npt
-from arepyextras.eo_products.safe.l1_products.reader import (
+from arepyextras.eo_products.iceye.l1_products.reader import (
     open_product,
-    read_channel_calibration,
     read_channel_data,
     read_channel_metadata,
 )
@@ -34,6 +32,7 @@ from arepyextras.quality.core.generic_dataclasses import (
     SARSamplingFrequencies,
     SARSideLooking,
 )
+from arepyextras.quality.core.signal_processing import radiometric_correction
 from arepytools.constants import LIGHT_SPEED
 from arepytools.geometry.generalsarorbit import (
     GSO3DCurveWrapper,
@@ -48,8 +47,8 @@ from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 
-class S1DopplerPolynomial:
-    """Arepyextras-quality Doppler Polynomial protocol compliant SAFE doppler polynomial wrapper"""
+class ICEYEDopplerPolynomial:
+    """ICEYE doppler polynomial wrapper compliant with Arepyextras-quality Coordinate Conversion Function protocol"""
 
     def __init__(self, sorted_poly: SortedPolyList) -> None:
         self._sorted_poly = sorted_poly
@@ -72,14 +71,13 @@ class S1DopplerPolynomial:
         return self._sorted_poly.evaluate((azimuth_time, range_time))
 
 
-class SafeProductManager:
-    """Arepyextras-quality QualityInputProduct protocol compliant SAFE wrapper"""
+class ICEYEProductManager:
+    """Arepyextras-quality QualityInputProduct protocol compliant ICEYE wrapper"""
 
-    def __init__(self, path: Union[str, Path], external_orbit_path: Union[str, Path] = None) -> None:
+    def __init__(self, path: Union[str, Path]) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
-        self._external_orbit_path = Path(external_orbit_path) if external_orbit_path is not None else None
 
     @property
     def path(self) -> Path:
@@ -96,7 +94,7 @@ class SafeProductManager:
         """Get list of available channels for this product"""
         return self._product.channels_list
 
-    def get_channel_data(self, channel_id: str) -> SafeChannelManager:
+    def get_channel_data(self, channel_id: str) -> ICEYEChannelManager:
         """Gathering all the information that are channel dependent and storing them in a protocol compliant object.
 
         Parameters
@@ -106,76 +104,68 @@ class SafeProductManager:
 
         Returns
         -------
-        SafeChannelManager
+        ICEYEChannelManager
             ChannelData-compliant object containing data corresponding to the selected channel
         """
-        metadata, raster, calibration = self._product.get_files_from_channel_name(channel_name=channel_id)
-        return SafeChannelManager(
-            channel_metadata_path=metadata,
-            channel_raster_path=raster,
-            channel_calibration_path=calibration,
-            external_orbit_path=self._external_orbit_path,
+        return ICEYEChannelManager(
+            channel_files=self._product.get_files_from_channel_name(channel_name=channel_id),
             channel_name=channel_id,
         )
 
 
-class SafeChannelManager:
-    """Arepyextras-quality ChannelData protocol compliant SAFE channel wrapper"""
+class ICEYEChannelManager:
+    """Arepyextras-quality ChannelData protocol compliant ICEYE channel wrapper"""
 
     def __init__(
         self,
-        channel_metadata_path: Path,
-        channel_raster_path: Path,
-        channel_calibration_path: Path,
+        channel_files: list[Path],
         channel_name: str,
-        external_orbit_path: Union[str, Path] = None,
-        radiometric_quantity: SARRadiometricQuantity = SARRadiometricQuantity.BETA_NOUGHT,
     ) -> None:
         """Creating a ChannelManager object compliant with the ChannelData protocol.
 
         Parameters
         ----------
-        channel_metadata_path : Path
-            Path to the channel metadata xml file
-        channel_raster_path : int
-            Path to the channel raster file
-        channel_calibration_path : int
-            Path to the channel calibration file
-        channel_name : int
-            name of current channel
-        external_orbit_path : Union[str, Path], optional
-            path to the corresponding external orbit file, if needed, by default None
-        radiometric_quantity : SARRadiometricQuantity, optional
-            data radiometric quantity, by default SARRadiometricQuantity.BETA_NOUGHT
+        channel_files : list[Path]
+            files corresponding to the selected channel
+        channel_name : str
+            name of the current channel
         """
+
         self._channel_id = channel_name
-        self._metadata_file = channel_metadata_path
-        self._raster_file = channel_raster_path
-        self._channel = read_channel_metadata(xml_path=channel_metadata_path, external_orbit_path=external_orbit_path)
+        if len(channel_files) > 1:
+            # GRD case
+            self._channel = read_channel_metadata(file_path=channel_files[1], channel_id=channel_name)
+            self._raster_file = channel_files[0]
+        else:
+            # SLC case
+            self._channel = read_channel_metadata(file_path=channel_files[0], channel_id=channel_name)
+            self._raster_file = channel_files[0]
 
         # translating arepyextras.eo_products enum to arepyextras.quality ones
+        self._radiometric_quantity = SARRadiometricQuantity[self._channel.image_radiometric_quantity.name]
         self._polarization = SARPolarization(self._channel.general_info.polarization.value)
         self._projection = SARProjection(self._channel.general_info.projection.value)
         self._orbit_direction = SAROrbitDirection[self._channel.general_info.orbit_direction.name]
 
         self._range_step_m = self._compute_range_step_m()
-        self._image_type = self._convert_to_image_type()
+        self._image_type = self._channel.general_info.product_level
         self._looking_side = SARSideLooking(self._channel.dataset_info.side_looking.value.upper())
-        self._az_time_half_swath = (
-            self._channel.raster_info.lines_start
-            + (self._channel.raster_info.lines - 1) * self._channel.raster_info.lines_step / 2
+
+        # compute axes
+        self._azimuth_axis = self._compute_azimuth_axis()
+        self._az_time_half_swath = self._azimuth_axis[self._azimuth_axis.size // 2]
+        self._range_axis = (
+            np.arange(0, self._channel.raster_info.samples, 1) * self._channel.raster_info.samples_step
+            + self._channel.raster_info.samples_start
         )
+        self._slant_range_axis = self._compute_slant_range_axis()
         rng_time_half_swath = (
             self._channel.raster_info.samples_start
             + (self._channel.raster_info.samples - 1) * self._channel.raster_info.samples_step / 2
         )
         if self._projection == SARProjection.GROUND_RANGE:
-            rng_time_half_swath = (
-                self._channel.coordinate_conversions.evaluate_ground_to_slant(
-                    azimuth_time=self._az_time_half_swath, ground_range=np.floor(rng_time_half_swath)
-                )
-                / LIGHT_SPEED
-                * 2
+            rng_time_half_swath = self._channel.coordinate_conversions.evaluate_ground_to_slant(
+                azimuth_time=self._az_time_half_swath, ground_range=np.floor(rng_time_half_swath)
             )
         self._rng_time_half_swath = rng_time_half_swath
 
@@ -188,31 +178,28 @@ class SafeChannelManager:
             # should be a 1D array
             self._lines_per_burst_array = np.repeat(self._channel.raster_info.lines, 1)
 
+        # lines per burst array
+        if self._channel.burst_info.num > 0:
+            self._lines_per_burst_array = np.repeat(
+                self._channel.burst_info.lines_per_burst, self._channel.burst_info.num
+            )
+        else:
+            # should be a 1D array
+            self._lines_per_burst_array = np.repeat(self._channel.raster_info.lines, 1)
+
         # pulse rate
-        self._signal_pulse_rate = self._channel.pulse.bandwidth / self._channel.pulse.length
+        self._signal_pulse_rate = self._channel.pulse.bandwidth / self._channel.pulse.pulse_length
 
         # steering rate
         self._steering_rate_poly_coeff = self._channel.swath_info.azimuth_steering_rate_poly
 
         # generating trajectory from orbit
-        self._trajectory = GSO3DCurveWrapper(orbit=self._channel.general_sar_orbit)
+        self._trajectory_rx = GSO3DCurveWrapper(orbit=self._channel.general_sar_orbit)
+        self._trajectory_tx = None
 
-        # generating doppler centroid and rate polynomial wrappers
-        self._doppler_centroid_poly = S1DopplerPolynomial(sorted_poly=self._channel.doppler_centroid_poly)
-        self._doppler_rate_poly = S1DopplerPolynomial(sorted_poly=self._channel.doppler_rate_vector)
-
-        # compute axes
-        self._range_axis = (
-            np.arange(0, self._channel.raster_info.samples, 1) * self._channel.raster_info.samples_step
-            + self._channel.raster_info.samples_start
-        )
-        self._slant_range_axis = self._compute_slant_range_axis()
-        self._azimuth_axis = self._compute_azimuth_axis()
-
-        # compute image scaling factor
-        self._scaling_factor = read_channel_calibration(
-            xml_path=channel_calibration_path, radiometric_quantity=radiometric_quantity
-        )
+        # generating doppler centroid wrappers
+        self._doppler_centroid_poly = ICEYEDopplerPolynomial(sorted_poly=self._channel.doppler_centroid_poly)
+        self._doppler_rate_poly = ICEYEDopplerPolynomial(sorted_poly=self._channel.doppler_rate_poly)
 
         # re-organizing SWST changes
         self._swst_changes = list(
@@ -229,19 +216,6 @@ class SafeChannelManager:
 
         return self._channel.raster_info.samples_step * LIGHT_SPEED / 2
 
-    def _convert_to_image_type(self) -> SARImageType:
-        """Convert S1L1ProductType to SARImageType.
-
-        Returns
-        -------
-        SARImageType
-            image product type
-        """
-        if self._channel.general_info.product_type.value == "SLC":
-            return SARImageType.SLC
-        if self._channel.general_info.product_type.value == "GRD":
-            return SARImageType.GRD
-
     def _compute_slant_range_axis(self) -> np.ndarray:
         """Computing slant range full axis.
 
@@ -252,12 +226,8 @@ class SafeChannelManager:
         """
         slant_rng_axis = self._range_axis
         if self._projection == SARProjection.GROUND_RANGE:
-            slant_rng_axis = (
-                self._channel.coordinate_conversions.evaluate_ground_to_slant(
-                    azimuth_time=self._az_time_half_swath, ground_range=self._range_axis
-                )
-                / LIGHT_SPEED
-                * 2
+            slant_rng_axis = self._channel.coordinate_conversions.evaluate_ground_to_slant(
+                azimuth_time=self._az_time_half_swath, ground_range=self._range_axis
             )
 
         return slant_rng_axis
@@ -392,8 +362,8 @@ class SafeChannelManager:
 
     @property
     def trajectory(self) -> GSO3DCurveWrapper:
-        """Channel trajectory 3D curve"""
-        return self._trajectory
+        """Channel trajectory rx 3D curve"""
+        return self._trajectory_rx
 
     @property
     def boresight_normal_curve(self) -> None:
@@ -401,12 +371,12 @@ class SafeChannelManager:
         return None
 
     @property
-    def doppler_centroid_polynomial(self) -> S1DopplerPolynomial:
+    def doppler_centroid(self) -> ICEYEDopplerPolynomial:
         """Channel doppler centroid polynomial wrapper"""
         return self._doppler_centroid_poly
 
     @property
-    def doppler_rate_polynomial(self) -> S1DopplerPolynomial:
+    def doppler_rate(self) -> ICEYEDopplerPolynomial:
         """Channel doppler rate polynomial wrapper"""
         return self._doppler_rate_poly
 
@@ -436,16 +406,16 @@ class SafeChannelManager:
         return self._lines_per_burst_array
 
     @property
-    def pulse_latch_time(self) -> float:
+    def pulse_latch_time(self) -> None:
         """Signal pulse latch time"""
-        return self._channel.pulse.tx_pulse_latch_time
+        return None
 
     @property
     def swst_changes(self) -> list[tuple[PreciseDateTime, float]]:
         """SWST changes list as tuple of time of change and new SWST value"""
         return self._swst_changes
 
-    def get_mid_burst_times(self, burst: int) -> tuple(PreciseDateTime, float):
+    def get_mid_burst_times(self, burst: int) -> tuple[PreciseDateTime, float]:
         """Compute mid azimuth and range times for a given burst.
 
         Returns
@@ -492,8 +462,8 @@ class SafeChannelManager:
         )
 
     def get_location_data(self, azimuth_time: PreciseDateTime, range_time: float) -> LocationData:
-        """Generating a LocationData object containing data and info derived from the current SafeChannelManager and
-        declined to the specific azimuth and range times selected.
+        """Generating a LocationData object containing data and info derived from the current ICEYEChannelManager
+        and declined to the specific azimuth and range times selected.
 
         Parameters
         ----------
@@ -576,12 +546,8 @@ class SafeChannelManager:
         rng_time = range_index * self._channel.raster_info.samples_step + start_time_rng
 
         if self.projection == SARProjection.GROUND_RANGE:
-            rng_time = (
-                self._channel.coordinate_conversions.evaluate_ground_to_slant(
-                    azimuth_time=self.mid_azimuth_time, ground_range=rng_time
-                )
-                / LIGHT_SPEED
-                * 2
+            rng_time = self._channel.coordinate_conversions.evaluate_ground_to_slant(
+                azimuth_time=self.mid_azimuth_time, ground_range=rng_time
             )
 
         return az_time, rng_time
@@ -611,11 +577,13 @@ class SafeChannelManager:
         if self.projection == SARProjection.GROUND_RANGE:
             # if projection is GROUND RANGE, range info are expressed in meters, so it must be converted
             rng_value = self._channel.coordinate_conversions.evaluate_slant_to_ground(
-                azimuth_time=azimuth_time, slant_range=range_time * LIGHT_SPEED / 2
+                azimuth_time=azimuth_time, slant_range=range_time
             )
 
         rng_idx = (rng_value - self._channel.raster_info.samples_start) / self._channel.raster_info.samples_step
-        if self._channel.burst_info.num > 0 and burst is not None:
+        if self._channel.burst_info.num > 0:
+            if burst is None:
+                burst = self.times_to_burst_association([azimuth_time])[0]
             azmth_idx = (
                 azimuth_time - self._channel.burst_info.azimuth_start_times[burst]
             ) / self._channel.raster_info.lines_step + self._channel.burst_info.lines_per_burst * burst
@@ -641,15 +609,36 @@ class SafeChannelManager:
 
         coordinates = np.atleast_2d(coordinates)
 
-        t_azmth, t_rng = inverse_geocoding_monostatic(
-            orbit=self._channel.general_sar_orbit,
-            ground_points=coordinates,
-            wavelength=1,
-            frequencies_doppler_centroid=0,
-        )
+        t_azmth, t_rng = [], []
+        for coord in coordinates:
+            try:
+                t_azmth_i, t_rng_i = inverse_geocoding_monostatic(
+                    orbit=self._channel.general_sar_orbit,
+                    ground_points=coord,
+                    wavelength=1,
+                    frequencies_doppler_centroid=0,
+                )
+                t_azmth.append(t_azmth_i)
+                t_rng.append(t_rng_i)
+            except Exception:
+                t_azmth.append(np.nan)
+                t_rng.append(np.nan)
 
-        az_check = [[(t < az[1] and t > az[0]) for az in self._burst_az_boundaries] for t in t_azmth]
-        rng_check = [[(t < rng[1] and t > rng[0]) for rng in self._burst_rng_boundaries] for t in t_rng]
+        t_azmth = np.asarray(t_azmth)
+        t_rng = np.asarray(t_rng)
+
+        az_check = [
+            (
+                [(t < az[1] and t > az[0]) for az in self._burst_az_boundaries]
+                if isinstance(t, PreciseDateTime)
+                else [False]
+            )
+            for t in t_azmth
+        ]
+        rng_check = [
+            [(t < rng[1] and t > rng[0]) for rng in self._burst_rng_boundaries] if ~np.isnan(t) else [False]
+            for t in t_rng
+        ]
         check = [np.logical_and(az_check[c], rng_check[c]) for c in range(len(az_check))]
 
         bursts = [list(np.where(c)[0]) if c.any() else None for c in check]
@@ -744,7 +733,6 @@ class SafeChannelManager:
     ) -> np.ndarray:
         """Extracting the swath portion centered to the provided target position and of size cropping_size by
         cropping_size. Target position is provided via its azimuth and range indexes in the swath array.
-        Output can be transposed, if requested.
 
         Parameters
         ----------
@@ -758,7 +746,7 @@ class SafeChannelManager:
         Returns
         -------
         np.ndarray
-            cropped swath array centered to the input target coordinates
+            cropped swath array centered to the input target coordinates, output array is (samples, lines)
 
         Raises
         ------
@@ -796,6 +784,24 @@ class SafeChannelManager:
                 f"Last ROI sample {target_block[1] + target_block[3]} exceeds range swath boundaries"
             )
 
-        return read_channel_data(
-            raster_file=self._raster_file, block_to_read=target_block, scaling_conversion=self._scaling_factor
+        # reading data portion and switching to convention (samples, lines) with transpose
+        data = read_channel_data(
+            raster_file=self._raster_file,
+            block_to_read=target_block,
+            scaling_conversion=self._channel.image_calibration_factor,
         ).T
+
+        # converting to beta nought if radiometric quantity is different
+        if self._radiometric_quantity != SARRadiometricQuantity.BETA_NOUGHT:
+            azimuth_time, _ = self.pixel_to_times_conversion(azimuth_index=azimuth_index, range_index=range_index)
+            incidence_angles_deg_from_poly = self._channel.incidence_angles_poly.evaluate_incidence_angle(
+                azimuth_time=azimuth_time, range_pixels=np.arange(target_block[1], target_block[1] + target_block[3], 1)
+            )
+            data = radiometric_correction(
+                data=data,
+                incidence_angle=np.deg2rad(incidence_angles_deg_from_poly),
+                input_quantity=self._radiometric_quantity,
+                output_quantity=SARRadiometricQuantity.BETA_NOUGHT,
+            )
+
+        return data

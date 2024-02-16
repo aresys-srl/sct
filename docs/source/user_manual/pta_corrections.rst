@@ -62,6 +62,7 @@ passes through the ionosphere and troposphere, causing delays in transmission an
 Atmospheric delays are applied to out-of-the-box **Absolute Localization Errors** measurements both along range and azimuth
 directions.
 
+All the following atmospheric delays corrections affects ALE along **range** direction.
 
 Ionospheric Delay
 ~~~~~~~~~~~~~~~~~
@@ -104,7 +105,7 @@ ETAD Products Corrections
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If an ETAD product is provided for the SAR acquisition to be analyzed, the range and azimuth corrections contained in this
-product are applied.
+product are extracted and added to the output.
 
 
 Sensor-specific Processing Corrections

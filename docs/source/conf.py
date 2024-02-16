@@ -74,7 +74,7 @@ html_theme_options = {
     #       "image_light": "numpylogo.svg",
     #       "image_dark": "numpylogo_dark.svg",
     #   },
-    "github_url": "TO BE INSERTED",
+    "github_url": "https://github.com/aresys-srl/sct",
     # "collapse_navigation": True,
     # "external_links": [
     #     {"name": "Learn", "url": "https://numpy.org/numpy-tutorials/"},

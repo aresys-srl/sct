@@ -38,13 +38,3 @@ command line tool using the option ``-pt``.
 
    An external source of point targets data can be provided as a .csv file that must be compliant with the template that
    can be downloaded from the resources folder on GitHub.
-
-OM2: Radiometric Analysis
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-TBD
-
-OM3: NESZ Analysis
-^^^^^^^^^^^^^^^^^^
-
-TBD

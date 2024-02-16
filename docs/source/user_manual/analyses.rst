@@ -27,7 +27,7 @@ An in-depth description of the core algorithm used for point target analysis com
    implications of changing specific parameters, refer to the :ref:`documentation about tool configuration <sct_config>`.
 
 
-Radiometric Analysis
+Radiometric Profiles
 --------------------
 
 This features let the user compute radiometric profiles along range and/or azimuth directions starting from any supported
@@ -39,15 +39,3 @@ An in-depth description of the core algorithm used for radiometric analysis prof
 
    This analysis can be configured through the configuration file and deeply customized. To better understand the
    implications of changing specific parameters, refer to the :ref:`documentation about tool configuration <sct_config>`.
-
-
-Gamma Profiles Analysis
------------------------
-
-TBD
-
-
-Noise Equivalent Sigma Zero (NESZ) Analysis
--------------------------------------------
-
-TBD

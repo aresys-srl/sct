@@ -11,6 +11,12 @@ variables:
 .tags_win10:
   tags: ["eo", "win10", "arepytools-win"]
 
+.tags_win10_conda:
+  tags: ["eo", "win10", "conda"]
+
+.tags_manylinux2014:
+  tags: ["manylinux2014"]
+
 .tags_manylinux_2_28:
   tags: ["manylinux_2_28"]
 
@@ -37,10 +43,10 @@ format:
     - .tags_conda
   script:
     - pip install nox
-    - python -m nox -s formatting
+    - python -m nox -s format_check
 
 
-# === unittest ===============================================================
+# === test - unittest ========================================================
 # ============================================================================
 .unittest_linux:
   stage: test
@@ -102,6 +108,54 @@ unittest_win10_py312:
   variables:
     PYTHON: "3.12"
 
+# === test - integration =====================================================
+# ============================================================================
+.integration_test_linux:
+  stage: test
+  extends:
+    - .tags_manylinux_2_28
+  script:
+    - python${PYTHON} -m pip install -e .[test]
+    - python${PYTHON} -m pip install arepyextras-test
+    - python${PYTHON} -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
+
+integration_test_linux_py310:
+  extends:
+    - .integration_test_linux
+  variables:
+    PYTHON: "3.10"
+
+integration_test_linux_py311:
+  extends:
+    - .integration_test_linux
+  variables:
+    PYTHON: "3.11"
+
+.integration_test_windows10:
+  stage: test
+  extends:
+    - .tags_win10_conda
+  script:
+    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+    - conda create -y -n test python=${PYTHON}
+    - conda activate test
+    - python -m pip install -e .[test]
+    - python -m pip install arepyextras-test
+    - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run .tests/integration_tests/suite
+
+integration_test_windows10_py310:
+  extends:
+    - .integration_test_windows10
+  variables:
+    PYTHON: "3.10"
+
+integration_test_windows10_py311:
+  extends:
+    - .integration_test_windows10
+  variables:
+    PYTHON: "3.11"
+
+
 # === build ==================================================================
 # ============================================================================
 sdist:
@@ -134,6 +188,7 @@ conda_pkg:
     - .tags_conda
   script:
     - pip install nox
+    - conda config --add channels avalentino
     - python -m nox -s build_conda_pkg
   artifacts:
     expire_in: 2 weeks

@@ -99,7 +99,7 @@ def compute_range_corrections(
             )
         )
 
-    return pd.DataFrame(rng_corr, columns=["id", "doppler_shift_correction_[m]"])
+    return pd.DataFrame(rng_corr, columns=["id", "doppler_shift_range_correction_[m]"])
 
 
 def compute_azimuth_corrections(
@@ -139,9 +139,9 @@ def compute_azimuth_corrections(
         if channel_data.swath_name not in subswath_mid_first_burst_times:
             subswath_mid_first_burst_times[channel_data.swath_name] = {}
         if channel_data.polarization.value not in subswath_mid_first_burst_times[channel_data.swath_name]:
-            subswath_mid_first_burst_times[channel_data.swath_name][
-                channel_data.polarization.value
-            ] = channel_data.get_mid_burst_times(0)
+            subswath_mid_first_burst_times[channel_data.swath_name][channel_data.polarization.value] = (
+                channel_data.get_mid_burst_times(0)
+            )
 
     subswath_mid_first_burst_times = _get_rid_of_pol_dependency(subswath_mid_first_burst_times)
     mid_swath_channel_id = _detect_mid_swath_channel(times=subswath_mid_first_burst_times)
@@ -201,9 +201,9 @@ def compute_azimuth_corrections(
             bistatic_delay.append((row["id"], np.nan))
 
     # converting output to dataframe
-    fm_rate_shift = pd.DataFrame(fm_rate_shift, columns=["id", "fm_rate_shift_correction_[m]"])
-    instrument_timing = pd.DataFrame(instrument_timing, columns=["id", "instrument_timing_correction_[m]"])
-    bistatic_delay = pd.DataFrame(bistatic_delay, columns=["id", "bistatic_delay_correction_[m]"])
+    fm_rate_shift = pd.DataFrame(fm_rate_shift, columns=["id", "fm_rate_shift_azimuth_correction_[m]"])
+    instrument_timing = pd.DataFrame(instrument_timing, columns=["id", "instrument_timing_azimuth_correction_[m]"])
+    bistatic_delay = pd.DataFrame(bistatic_delay, columns=["id", "bistatic_delay_azimuth_correction_[m]"])
     az_corrections = fm_rate_shift.merge(instrument_timing, on="id").merge(bistatic_delay, on="id")
 
     return az_corrections

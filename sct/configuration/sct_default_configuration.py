@@ -22,12 +22,11 @@ from arepyextras.perturbations.atmospheric.ionosphere import (
     TECMappingFunctionIncidenceAngleMethod,
 )
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
-from arepyextras.quality.nesz_analysis.custom_dataclasses import NESZConfig
 from arepyextras.quality.point_targets_analysis.custom_dataclasses import (
     PointTargetAnalysisConfig,
 )
 from arepyextras.quality.radiometric_analysis.custom_dataclasses import (
-    RadiometricAnalysisConfig,
+    RadiometricProfilesConfig,
 )
 from jsonschema import validate
 
@@ -71,21 +70,21 @@ class SCTPointTargetAnalysisConfig:
     """SCT Point Target Analysis configuration"""
 
     base_config: PointTargetAnalysisConfig = field(default_factory=PointTargetAnalysisConfig)
-    ale_validity_limits: tuple[float, float] = None  # in meters
-    enable_etad_corrections: bool = True
+    ale_validity_limits: tuple[float, float] | None = None  # in meters
+    enable_etad_corrections: bool = False
     enable_solid_tides_correction: bool = True
     enable_plate_tectonics_correction: bool = True
     enable_sensor_specific_processing_corrections: bool = True
     enable_ionospheric_correction: bool = False
     enable_tropospheric_correction: bool = False
-    ionospheric_maps_directory: Path = None
-    ionospheric_analysis_center: IonosphericAnalysisCenters = None
+    ionospheric_maps_directory: Path | None = None
+    ionospheric_analysis_center: IonosphericAnalysisCenters | None = None
     ionospheric_tec_inc_angle_method: TECMappingFunctionIncidenceAngleMethod = (
         TECMappingFunctionIncidenceAngleMethod.GROUND_CONVERTED
     )
-    tropospheric_maps_directory: Path = None
+    tropospheric_maps_directory: Path | None = None
     tropospheric_map_grid_resolution: TroposphericGRIDResolution = TroposphericGRIDResolution.FINE
-    etad_product_path: Path = None
+    etad_product_path: Path | None = None
 
     @staticmethod
     def from_dict(arg: dict) -> SCTPointTargetAnalysisConfig:
@@ -134,7 +133,7 @@ class SCTPointTargetAnalysisConfig:
 class SCTRadiometricAnalysisConfig:
     """SCT Radiometric Analysis configuration"""
 
-    base_config: RadiometricAnalysisConfig = field(default_factory=RadiometricAnalysisConfig)
+    base_config: RadiometricProfilesConfig = field(default_factory=RadiometricProfilesConfig)
 
     @staticmethod
     def from_dict(arg: dict) -> SCTRadiometricAnalysisConfig:
@@ -164,46 +163,12 @@ class SCTRadiometricAnalysisConfig:
 
 
 @dataclass
-class SCTNoiseEquivalentSigmaZeroConfig:
-    """SCT Noise Equivalent Sigma Zero (NESZ) Analysis configuration"""
-
-    base_config: NESZConfig = field(default_factory=NESZConfig)
-
-    @staticmethod
-    def from_dict(arg: dict) -> SCTNoiseEquivalentSigmaZeroConfig:
-        """Creating an SCTNoiseEquivalentSigmaZeroConfig form a dict representing this dataclass.
-        All fields except base_config are set.
-
-        Parameters
-        ----------
-        arg : dict
-            dict representing this dataclass
-
-        Returns
-        -------
-        SCTNoiseEquivalentSigmaZeroConfig
-            SCTNoiseEquivalentSigmaZeroConfig dataclass initialized from input dictionary
-        """
-        out = SCTNoiseEquivalentSigmaZeroConfig()
-        valid_fields = [f.name for f in fields(out)]
-
-        for key, value in arg.items():
-            if key not in valid_fields:
-                raise InvalidConfigurationFile(f"SCTNoiseEquivalentSigmaZeroConfig: {key} not supported")
-
-            setattr(out, key, value)
-
-        return out
-
-
-@dataclass
 class SCTConfiguration:
     """SCT Tool full Configuration"""
 
     general: DefaultConfiguration = field(default_factory=DefaultConfiguration)
     point_target_analysis: SCTPointTargetAnalysisConfig = field(default_factory=SCTPointTargetAnalysisConfig)
     radiometric_analysis: SCTRadiometricAnalysisConfig = field(default_factory=SCTRadiometricAnalysisConfig)
-    nesz_analysis: SCTNoiseEquivalentSigmaZeroConfig = field(default_factory=SCTNoiseEquivalentSigmaZeroConfig)
 
     @staticmethod
     def from_toml(file: Union[str, Path]) -> SCTConfiguration:
@@ -256,23 +221,13 @@ class SCTConfiguration:
             if "advanced_configuration" in config["radiometric_analysis"]:
                 ra_advanced_config = config["radiometric_analysis"].pop("advanced_configuration")
                 config["radiometric_analysis"].update(ra_advanced_config)
-            ra_base_config = RadiometricAnalysisConfig.from_dict(arg=config["radiometric_analysis"])
+            ra_base_config = RadiometricProfilesConfig.from_dict(arg=config["radiometric_analysis"])
             ra_config.base_config = ra_base_config
-
-        # nesz analysis configuration
-        nesz_config = SCTNoiseEquivalentSigmaZeroConfig()
-        if "nesz_analysis" in config:
-            if "advanced_configuration" in config["nesz_analysis"]:
-                nesz_advanced_config = config["nesz_analysis"].pop("advanced_configuration").pop("parameters")
-                config["nesz_analysis"].update(nesz_advanced_config)
-            nesz_base_config = NESZConfig.from_dict(arg=config["nesz_analysis"])
-            nesz_config.base_config = nesz_base_config
 
         # assembling final configuration
         config = SCTConfiguration()
         config.point_target_analysis = pta_config
         config.radiometric_analysis = ra_config
-        config.nesz_analysis = nesz_config
 
         return config
 
@@ -289,6 +244,7 @@ class SCTConfiguration:
 
         # point target analysis re-ordering
         pta_dict = dtc_dict["point_target_analysis"]
+        pta_ale = pta_dict["ale_validity_limits"]
         pta_base = pta_dict.pop("base_config")
         pta_corr = dict(
             (k, pta_dict[k])
@@ -302,18 +258,19 @@ class SCTConfiguration:
                 "etad_product_path",
             )
         )
+        if pta_corr["etad_product_path"] is not None:
+            pta_corr["etad_product_path"] = str(pta_corr["etad_product_path"])
         pta_iono = dict(
             (k, pta_dict[k])
             for k in (
                 "ionospheric_maps_directory",
                 "ionospheric_analysis_center",
-                "ionospheric_tec_inc_angle_method",
             )
         )
         if pta_iono["ionospheric_analysis_center"] is not None:
             pta_iono["ionospheric_analysis_center"] = pta_iono["ionospheric_analysis_center"].name.lower()
-        if pta_iono["ionospheric_tec_inc_angle_method"] is not None:
-            pta_iono["ionospheric_tec_inc_angle_method"] = pta_iono["ionospheric_tec_inc_angle_method"].name.lower()
+        if pta_iono["ionospheric_maps_directory"] is not None:
+            pta_iono["ionospheric_maps_directory"] = str(pta_iono["ionospheric_maps_directory"])
         pta_tropo = dict(
             (k, pta_dict[k])
             for k in (
@@ -323,6 +280,8 @@ class SCTConfiguration:
         )
         if pta_tropo["tropospheric_map_grid_resolution"] is not None:
             pta_tropo["tropospheric_map_grid_resolution"] = pta_tropo["tropospheric_map_grid_resolution"].name.lower()
+        if pta_tropo["tropospheric_maps_directory"] is not None:
+            pta_tropo["tropospheric_maps_directory"] = str(pta_tropo["tropospheric_maps_directory"])
         pta_irf = pta_base.pop("irf_parameters")
         if pta_irf["masking_method"] is not None:
             pta_irf["masking_method"] = pta_irf["masking_method"].name.lower()
@@ -338,6 +297,7 @@ class SCTConfiguration:
                 "evaluate_localization",
             )
         )
+        pta_base["ale_validity_limits"] = pta_ale
         pta_base["corrections"] = pta_corr
         pta_base["corrections"]["ionosphere"] = pta_iono
         pta_base["corrections"]["troposphere"] = pta_tropo
@@ -347,67 +307,19 @@ class SCTConfiguration:
 
         # radiometric analysis re-ordering
         ra_dict = dtc_dict["radiometric_analysis"]["base_config"]
-        ra_params = ra_dict.pop("parameters")
-        ra_dict["input_type"] = ra_dict["input_type"].name.lower()
-        ra_dict["output_type"] = ra_dict["output_type"].name.lower()
-        ra_dict["value"] = ra_dict["value"].name.lower()
-        ra_dict["direction"] = ra_dict["direction"].name.lower()
-        ra_dict["axis"] = ra_dict["axis"].name.lower()
+        ra_hist_params = ra_dict.pop("hist_parameters")
+        ra_prof_params = ra_dict.pop("profile_extraction_parameters")
+        ra_dict["input_quantity"] = ra_dict["input_quantity"].name.lower()
         ra_dict["advanced_configuration"] = {}
-        ra_dict["advanced_configuration"]["parameters"] = ra_params
-
-        # nesz analysis re-ordering
-        nesz_params = dtc_dict["nesz_analysis"]["base_config"]
-        nesz_dict["incidence_compensation"] = nesz_params.pop("incidence_compensation")
-        nesz_dict["advanced_configuration"] = {}
-        nesz_dict["advanced_configuration"]["parameters"] = nesz_params
+        ra_dict["advanced_configuration"]["histogram_parameters"] = ra_hist_params
+        ra_dict["advanced_configuration"]["profile_parameters"] = ra_prof_params
 
         # assembling final dict
         conf_dict = {
             "general": dtc_dict["general"],
             "point_target_analysis": pta_base,
             "radiometric_analysis": ra_dict,
-            "nesz_analysis": nesz_dict,
         }
 
         with open(out_file, "w", encoding="UTF-8") as f_out:
             toml.dump(conf_dict, f_out)
-
-
-def default_settings_filename(create_if_missing: bool = False) -> Path:
-    """Getting the location of SCT CLI tool configuration file.
-
-    Parameters
-    ----------
-    create_if_missing : bool, optional
-        create the file if it is missing, by default False
-
-    Returns
-    -------
-    Path
-        path to the configuration toml file
-    """
-
-    filename = Path(
-        os.getenv(
-            key=ENVIRONMENT_VARIABLE,
-            default=str(USER_AREPYEXTRAS_QUALITY_CONFIG_FILE),
-        )
-    )
-
-    # creating the file if none is found
-    if create_if_missing and not filename.exists():
-        log.info("Default configuration file is missing. Creating a new one.")
-        # creating all the folder structure up to the file to be generated
-        filename.parent.mkdir(exist_ok=True, parents=True)
-        # dumping the SCTConfiguration with default attributes values
-        default_conf = SCTConfiguration()
-        default_conf.dump_to_toml(filename)
-        log.info(f"Default configuration file created at: {filename}")
-
-    return filename
-
-
-if __name__ == "__main__":
-    c = SCTConfiguration()
-    c.dump_to_toml(r"C:\Users\giorgio.parma\Desktop\temporary_outputs\prova.toml")
