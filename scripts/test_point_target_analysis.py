@@ -51,7 +51,7 @@ if __name__ == "__main__":
     out_graph_fldr.mkdir(exist_ok=True)
     for item in out_graph:
         try:
-            data_val = out.query(f"target_name == @item.target & channel == @item.channel").to_dict("records")[0]
+            data_val = out.query("target_name == @item.target & channel == @item.channel").to_dict("records")[0]
             label = (
                 f"target_{data_val['target_name']}_{data_val['swath']}_"
                 + f"polarization_{data_val['polarization'].replace('/','')}_{data_val['product_type']}"

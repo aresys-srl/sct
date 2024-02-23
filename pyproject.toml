@@ -21,7 +21,6 @@ requires-python = ">= 3.10"
 dependencies = [
     "numpy",
     "pandas",
-    "pyarrow",
     "jsonschema",
     "toml",
     "pyproj",

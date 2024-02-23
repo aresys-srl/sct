@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
         "general": {
@@ -111,67 +111,58 @@
                     },
                     "allOf": [
                         {
-                            "anyOf": [
-                                {
-                                    "not": {
-                                        "properties": {
-                                            "enable_etad_corrections": {
-                                                "const": "false"
-                                            }
-                                        },
-                                        "required": [
-                                            "enable_etad_corrections"
+                            "if": {
+                                "properties": {
+                                    "enable_etad_corrections": {
+                                        "type": "boolean",
+                                        "enum": [
+                                            true
                                         ]
                                     }
                                 },
-                                {
-                                    "required": [
-                                        "etad_product_path"
-                                    ]
-                                }
-                            ]
+                                "required": ["enable_etad_corrections"]
+                            },
+                            "then": {
+                                "required": [
+                                    "etad_product_path"
+                                ]
+                            }
                         },
                         {
-                            "anyOf": [
-                                {
-                                    "not": {
-                                        "properties": {
-                                            "enable_ionospheric_correction": {
-                                                "const": "false"
-                                            }
-                                        },
-                                        "required": [
-                                            "enable_ionospheric_correction"
+                            "if": {
+                                "properties": {
+                                    "enable_ionospheric_correction": {
+                                        "type": "boolean",
+                                        "enum": [
+                                            true
                                         ]
                                     }
                                 },
-                                {
-                                    "required": [
-                                        "ionosphere"
-                                    ]
-                                }
-                            ]
+                                "required": ["enable_ionospheric_correction"]
+                            },
+                            "then": {
+                                "required": [
+                                    "ionosphere"
+                                ]
+                            }
                         },
                         {
-                            "anyOf": [
-                                {
-                                    "not": {
-                                        "properties": {
-                                            "enable_tropospheric_correction": {
-                                                "const": "false"
-                                            }
-                                        },
-                                        "required": [
-                                            "enable_tropospheric_correction"
+                            "if": {
+                                "properties": {
+                                    "enable_tropospheric_correction": {
+                                        "type": "boolean",
+                                        "enum": [
+                                            true
                                         ]
                                     }
                                 },
-                                {
-                                    "required": [
-                                        "troposphere"
-                                    ]
-                                }
-                            ]
+                                "required": ["enable_tropospheric_correction"]
+                            },
+                            "then": {
+                                "required": [
+                                    "troposphere"
+                                ]
+                            }
                         }
                     ]
                 },
