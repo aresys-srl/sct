@@ -12,6 +12,7 @@ from pathlib import Path
 
 import art
 import click
+from arepyextras.quality.configuration.custom_logger import CustomFormatterFileHandler
 from arepyextras.quality.radiometric_analysis.support import (
     radiometric_profiles_to_netcdf,
 )
@@ -64,6 +65,12 @@ def radiometric_analysis(config):
 @share_config
 def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_directory: Path, graphs: bool):
     """Noise Equivalent Sigma-Zero radiometric analysis"""
+
+    # saving log file to output folder
+    logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_ra_analysis.log"))
+    logging_file_handler.setFormatter(CustomFormatterFileHandler())
+    log.addHandler(logging_file_handler)
+
     config_ra = config.radiometric_analysis
 
     if graphs:

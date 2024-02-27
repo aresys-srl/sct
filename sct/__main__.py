@@ -12,7 +12,7 @@ def main():
     """Main function to launch the python SQT CLI program"""
     # setup custom logger
     log = logging.getLogger("quality_analysis")
-    log.setLevel("DEBUG")
+    log.setLevel("INFO")
     log.addHandler(clg.MyHandler())
 
     try:

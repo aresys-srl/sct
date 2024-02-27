@@ -13,6 +13,7 @@ from pathlib import Path
 
 import art
 import click
+from arepyextras.quality.configuration.custom_logger import CustomFormatterFileHandler
 
 import sct.analyses.point_target_analysis as pta
 from sct.configuration.sct_default_configuration import SCTConfiguration
@@ -83,6 +84,11 @@ def target_analysis(
     graphs: bool,
 ):
     """Point Target Analysis (IRF, Localization and RCS)"""
+
+    # saving log file to output folder
+    logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_pta_analysis.log"))
+    logging_file_handler.setFormatter(CustomFormatterFileHandler())
+    log.addHandler(logging_file_handler)
 
     # inheriting configuration settings from group command in CLI main
     config_pta = config.point_target_analysis

@@ -17,6 +17,10 @@ log = logging.getLogger("quality_analysis")
 log.setLevel("INFO")
 log.addHandler(clg.MyHandler())
 
+out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs")
+logging_file_handler = logging.FileHandler(out_fldr.joinpath("sct_pta_analysis.log"))
+logging_file_handler.setFormatter(clg.CustomFormatterFileHandler())
+log.addHandler(logging_file_handler)
 
 if __name__ == "__main__":
     # products
@@ -41,8 +45,6 @@ if __name__ == "__main__":
         # calibration_site="surat_basin",
         config=test_config.point_target_analysis,
     )
-
-    out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs")
 
     # saving results
     out.to_csv(Path(out_fldr).joinpath("point_target_analysis_results.csv"), index=False)
