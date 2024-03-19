@@ -107,6 +107,8 @@ ETAD Products Corrections
 If an ETAD product is provided for the SAR acquisition to be analyzed, the range and azimuth corrections contained in this
 product are extracted and added to the output.
 
+The corrections applied correspond to the merged ones both for azimuth and range directions.
+
 
 Sensor-specific Processing Corrections
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

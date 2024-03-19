@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: MIT
 
 """
-ICEYE format Arepyextras-Quality protocol-compliant wrapper
------------------------------------------------------------
+SAOCOM format Arepyextras-Quality protocol-compliant wrapper
+------------------------------------------------------------
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,7 +13,7 @@ from typing import Union
 
 import numpy as np
 import numpy.typing as npt
-from arepyextras.eo_products.iceye.l1_products.reader import open_product, read_channel_data, read_channel_metadata
+from arepyextras.eo_products.saocom.l1_products.reader import open_product, read_channel_data, read_channel_metadata
 from arepyextras.quality.core.custom_errors import (
     AzimuthExceedsBoundariesError,
     CoordinatesOutOfBounds,
@@ -28,7 +29,6 @@ from arepyextras.quality.core.generic_dataclasses import (
     SARSamplingFrequencies,
     SARSideLooking,
 )
-from arepyextras.quality.core.signal_processing import radiometric_correction
 from arepytools.constants import LIGHT_SPEED
 from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper, compute_ground_velocity
 from arepytools.geometry.geometric_functions import (
@@ -40,8 +40,8 @@ from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 
-class ICEYEDopplerPolynomial:
-    """ICEYE doppler polynomial wrapper compliant with Arepyextras-quality Coordinate Conversion Function protocol"""
+class SAOCOMDopplerPolynomial:
+    """SAOCOM doppler polynomial wrapper compliant with Arepyextras-quality Coordinate Conversion Function protocol"""
 
     def __init__(self, sorted_poly: SortedPolyList) -> None:
         self._sorted_poly = sorted_poly
@@ -64,8 +64,8 @@ class ICEYEDopplerPolynomial:
         return self._sorted_poly.evaluate((azimuth_time, range_time))
 
 
-class ICEYEProductManager:
-    """Arepyextras-quality QualityInputProduct protocol compliant ICEYE wrapper"""
+class SAOCOMProductManager:
+    """Arepyextras-quality QualityInputProduct protocol compliant SAOCOM wrapper"""
 
     def __init__(self, path: Union[str, Path]) -> None:
         self._path = Path(path)
@@ -87,7 +87,7 @@ class ICEYEProductManager:
         """Get list of available channels for this product"""
         return self._product.channels_list
 
-    def get_channel_data(self, channel_id: str) -> ICEYEChannelManager:
+    def get_channel_data(self, channel_id: str) -> SAOCOMChannelManager:
         """Gathering all the information that are channel dependent and storing them in a protocol compliant object.
 
         Parameters
@@ -97,21 +97,22 @@ class ICEYEProductManager:
 
         Returns
         -------
-        ICEYEChannelManager
+        SAOCOMChannelManager
             ChannelData-compliant object containing data corresponding to the selected channel
         """
-        return ICEYEChannelManager(
-            channel_files=self._product.get_files_from_channel_name(channel_name=channel_id),
-            channel_name=channel_id,
+        channel_files = self._product.get_files_from_channel_name(channel_name=channel_id)
+        return SAOCOMChannelManager(
+            channel_metadata_file=channel_files[0], channel_raster_file=channel_files[1], channel_name=channel_id
         )
 
 
-class ICEYEChannelManager:
-    """Arepyextras-quality ChannelData protocol compliant ICEYE channel wrapper"""
+class SAOCOMChannelManager:
+    """Arepyextras-quality ChannelData protocol compliant SAOCOM channel wrapper"""
 
     def __init__(
         self,
-        channel_files: list[Path],
+        channel_metadata_file: Path,
+        channel_raster_file: Path,
         channel_name: str,
     ) -> None:
         """Creating a ChannelManager object compliant with the ChannelData protocol.
@@ -125,14 +126,8 @@ class ICEYEChannelManager:
         """
 
         self._channel_id = channel_name
-        if len(channel_files) > 1:
-            # GRD case
-            self._channel = read_channel_metadata(file_path=channel_files[1], channel_id=channel_name)
-            self._raster_file = channel_files[0]
-        else:
-            # SLC case
-            self._channel = read_channel_metadata(file_path=channel_files[0], channel_id=channel_name)
-            self._raster_file = channel_files[0]
+        self._channel = read_channel_metadata(file_path=channel_metadata_file, channel_id=channel_name)
+        self._channel_raster_file = channel_raster_file
 
         # translating arepyextras.eo_products enum to arepyextras.quality ones
         self._radiometric_quantity = SARRadiometricQuantity[self._channel.image_radiometric_quantity.name]
@@ -141,7 +136,7 @@ class ICEYEChannelManager:
         self._orbit_direction = SAROrbitDirection[self._channel.general_info.orbit_direction.name]
 
         self._range_step_m = self._compute_range_step_m()
-        self._image_type = self._channel.general_info.product_level
+        self._image_type = self._channel.general_info.product_type
         self._looking_side = SARSideLooking(self._channel.dataset_info.side_looking.value.upper())
 
         # compute axes
@@ -162,6 +157,10 @@ class ICEYEChannelManager:
             )
         self._rng_time_half_swath = rng_time_half_swath
 
+        # computing range_step_m
+        self._az_step_s = self._channel.raster_info.lines_step
+        self._range_step_m = self._compute_range_step_m()
+
         # lines per burst array
         if self._channel.burst_info.num > 0:
             self._lines_per_burst_array = np.repeat(
@@ -181,23 +180,32 @@ class ICEYEChannelManager:
             self._lines_per_burst_array = np.repeat(self._channel.raster_info.lines, 1)
 
         # pulse rate
-        self._signal_pulse_rate = self._channel.pulse.bandwidth / self._channel.pulse.pulse_length
+        if self._channel.pulse is not None:
+            self._signal_pulse_rate = self._channel.pulse.bandwidth / self._channel.pulse.pulse_length
+        else:
+            self._signal_pulse_rate = 1
 
         # steering rate
-        self._steering_rate_poly_coeff = self._channel.swath_info.azimuth_steering_rate_poly
+        self._steering_rate_poly_coeff = self._channel.swath_info.azimuth_steering_rate_pol
 
         # generating trajectory from orbit
         self._trajectory_rx = GSO3DCurveWrapper(orbit=self._channel.general_sar_orbit)
         self._trajectory_tx = None
 
         # generating doppler centroid wrappers
-        self._doppler_centroid_poly = ICEYEDopplerPolynomial(sorted_poly=self._channel.doppler_centroid_poly)
-        self._doppler_rate_poly = ICEYEDopplerPolynomial(sorted_poly=self._channel.doppler_rate_poly)
+        self._doppler_centroid_poly = SAOCOMDopplerPolynomial(sorted_poly=self._channel.doppler_centroid_poly)
+        self._doppler_rate_poly = SAOCOMDopplerPolynomial(sorted_poly=self._channel.doppler_rate_poly)
 
         # re-organizing SWST changes
-        self._swst_changes = list(
-            zip(self._channel.acquisition_timeline.swst_changes[1], self._channel.acquisition_timeline.swst_changes[2])
-        )
+        if self._channel.acquisition_timeline is not None:
+            self._swst_changes = list(
+                zip(
+                    self._channel.acquisition_timeline.swst_changes[1],
+                    self._channel.acquisition_timeline.swst_changes[2],
+                )
+            )
+        else:
+            self._swst_changes = None
 
         # get burst boundaries
         self._burst_az_boundaries, self._burst_rng_boundaries = self._get_raster_layout()
@@ -364,12 +372,12 @@ class ICEYEChannelManager:
         return None
 
     @property
-    def doppler_centroid(self) -> ICEYEDopplerPolynomial:
+    def doppler_centroid(self) -> SAOCOMDopplerPolynomial:
         """Channel doppler centroid polynomial wrapper"""
         return self._doppler_centroid_poly
 
     @property
-    def doppler_rate(self) -> ICEYEDopplerPolynomial:
+    def doppler_rate(self) -> SAOCOMDopplerPolynomial:
         """Channel doppler rate polynomial wrapper"""
         return self._doppler_rate_poly
 
@@ -404,7 +412,7 @@ class ICEYEChannelManager:
         return None
 
     @property
-    def swst_changes(self) -> list[tuple[PreciseDateTime, float]]:
+    def swst_changes(self) -> list[tuple[PreciseDateTime, float]] | None:
         """SWST changes list as tuple of time of change and new SWST value"""
         return self._swst_changes
 
@@ -779,22 +787,9 @@ class ICEYEChannelManager:
 
         # reading data portion and switching to convention (samples, lines) with transpose
         data = read_channel_data(
-            raster_file=self._raster_file,
+            raster_file=self._channel_raster_file,
+            raster_info=self._channel.raster_info,
             block_to_read=target_block,
-            scaling_conversion=self._channel.image_calibration_factor,
         ).T
-
-        # converting to beta nought if radiometric quantity is different
-        if self._radiometric_quantity != SARRadiometricQuantity.BETA_NOUGHT:
-            azimuth_time, _ = self.pixel_to_times_conversion(azimuth_index=azimuth_index, range_index=range_index)
-            incidence_angles_deg_from_poly = self._channel.incidence_angles_poly.evaluate_incidence_angle(
-                azimuth_time=azimuth_time, range_pixels=np.arange(target_block[1], target_block[1] + target_block[3], 1)
-            )
-            data = radiometric_correction(
-                data=data,
-                incidence_angle=np.deg2rad(incidence_angles_deg_from_poly),
-                input_quantity=self._radiometric_quantity,
-                output_quantity=SARRadiometricQuantity.BETA_NOUGHT,
-            )
 
         return data

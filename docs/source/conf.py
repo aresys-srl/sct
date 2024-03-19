@@ -31,6 +31,7 @@ needs_sphinx = "1.2"
 # ones.
 extensions = [
     "sphinx_design",
+    "sphinx_copybutton",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.ifconfig",

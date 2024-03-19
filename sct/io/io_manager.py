@@ -14,35 +14,31 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Union
 
-from arepyextras.eo_products.iceye.l1_products.reader import (
-    open_product as open_iceye_product,
-)
+from arepyextras.eo_products.iceye.l1_products.reader import open_product as open_iceye_product
 from arepyextras.eo_products.iceye.l1_products.utilities import is_iceye_product
-from arepyextras.eo_products.novasar.l1_products.reader import (
-    open_product as open_novasar1_product,
-)
+from arepyextras.eo_products.novasar.l1_products.reader import open_product as open_novasar1_product
 from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_product
-from arepyextras.eo_products.safe.l1_products.reader import (
-    open_product as open_s1_product,
-)
+from arepyextras.eo_products.safe.l1_products.reader import open_product as open_s1_product
 from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
-from arepyextras.quality.io.quality_input_from_product_folder import (
-    ProductFolderManager,
-)
-from arepyextras.quality.io.quality_input_protocol import (
-    ChannelData,
-    QualityInputProduct,
-)
+from arepyextras.eo_products.saocom.l1_products.reader import open_product as open_saocom_product
+from arepyextras.eo_products.saocom.l1_products.utilities import is_saocom_product
+from arepyextras.quality.io.quality_input_from_product_folder import ProductFolderManager
+from arepyextras.quality.io.quality_input_protocol import ChannelData, QualityInputProduct
 from arepytools.io import open_product_folder
 from arepytools.io.productfolder2 import is_product_folder as is_aresys_product
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.io.quality_input_from_iceye_product import ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
+from sct.io.quality_input_from_saocom_product import SAOCOMProductManager
 from sct.io.quality_input_from_sentinel1_product import Sentinel1ProductManager
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
+
+
+class InvalidProductType(RuntimeError):
+    """Invalid input product type"""
 
 
 class SupportedInputProductType(Enum):
@@ -52,6 +48,7 @@ class SupportedInputProductType(Enum):
     S1_SAFE = auto()
     NOVASAR1 = auto()
     ICEYE = auto()
+    SAOCOM = auto()
     UNKNOWN = auto()
 
 
@@ -109,6 +106,9 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
     if is_iceye_product(product):
         return SupportedInputProductType.ICEYE
 
+    if is_saocom_product(product):
+        return SupportedInputProductType.SAOCOM
+
     return SupportedInputProductType.UNKNOWN
 
 
@@ -133,20 +133,24 @@ def product_loader(
         QualityInputProduct compliant object,
         first channel ChannelData compliant object
     """
-    if input_type == SupportedInputProductType.ARESYS:
-        log.info("Product type: Product Folder Aresys")
-        product = ProductFolderManager(product_path)
-    elif input_type == SupportedInputProductType.S1_SAFE:
-        log.info("Product type: Sentinel-1 SAFE")
-        product = Sentinel1ProductManager(product_path, external_orbit_path=external_orbit)
-    elif input_type == SupportedInputProductType.NOVASAR1:
-        log.info("Product type: NovaSAR-1")
-        product = NovaSAR1ProductManager(product_path)
-    elif input_type == SupportedInputProductType.ICEYE:
-        log.info("Product type: ICEYE")
-        product = ICEYEProductManager(product_path)
-    else:
-        raise RuntimeError("Unknown product type")
+    match input_type:
+        case SupportedInputProductType.ARESYS:
+            log.info("Product type: Product Folder Aresys")
+            product = ProductFolderManager(product_path)
+        case SupportedInputProductType.S1_SAFE:
+            log.info("Product type: Sentinel-1 SAFE")
+            product = Sentinel1ProductManager(product_path, external_orbit_path=external_orbit)
+        case SupportedInputProductType.NOVASAR1:
+            log.info("Product type: NovaSAR-1")
+            product = NovaSAR1ProductManager(product_path)
+        case SupportedInputProductType.ICEYE:
+            log.info("Product type: ICEYE")
+            product = ICEYEProductManager(product_path)
+        case SupportedInputProductType.SAOCOM:
+            log.info("Product type: SAOCOM")
+            product = SAOCOMProductManager(product_path)
+        case _:
+            raise InvalidProductType("Unknown product type")
 
     # extracting also first channel
     first_channel = product.get_channel_data(channel_id=product.channels_list[0])
@@ -171,25 +175,27 @@ def get_acquisition_time(product: Union[str, Path], product_type: SupportedInput
     """
     product = Path(product)
 
-    if product_type == SupportedInputProductType.ARESYS:
-        # reading a channel's raster info to assess the acquisition time
-        pf = open_product_folder(pf_path=product)
-        # taking the first channel metadata
-        metadata = pf.get_channel_metadata(channel=pf.get_channels_list()[0])
-        acq_time = re.search(
-            pattern=r"<AcquisitionStartTime>(.*?)</AcquisitionStartTime>", string=metadata.read_text(encoding="utf-8")
-        ).group(1)
-
-        return PreciseDateTime.from_utc_string(acq_time)
-
-    if product_type == SupportedInputProductType.S1_SAFE:
-        pf = open_s1_product(pf_path=product)
-        return pf.acquisition_time
-
-    if product_type == SupportedInputProductType.NOVASAR1:
-        pf = open_novasar1_product(pf_path=product)
-        return pf.acquisition_time
-
-    if product_type == SupportedInputProductType.ICEYE:
-        pf = open_iceye_product(pf_path=product)
-        return pf.acquisition_time
+    match product_type:
+        case SupportedInputProductType.ARESYS:
+            pf = open_product_folder(pf_path=product)
+            # taking the first channel metadata
+            metadata = pf.get_channel_metadata(channel=pf.get_channels_list()[0])
+            acq_time = re.search(
+                pattern=r"<AcquisitionStartTime>(.*?)</AcquisitionStartTime>",
+                string=metadata.read_text(encoding="utf-8"),
+            ).group(1)
+            return PreciseDateTime.from_utc_string(acq_time)
+        case SupportedInputProductType.S1_SAFE:
+            pf = open_s1_product(pf_path=product)
+            return pf.acquisition_time
+        case SupportedInputProductType.NOVASAR1:
+            pf = open_novasar1_product(pf_path=product)
+            return pf.acquisition_time
+        case SupportedInputProductType.ICEYE:
+            pf = open_iceye_product(pf_path=product)
+            return pf.acquisition_time
+        case SupportedInputProductType.SAOCOM:
+            pf = open_saocom_product(pf_path=product)
+            return pf.acquisition_time
+        case _:
+            raise InvalidProductType("Unknown product type")

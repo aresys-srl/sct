@@ -6,7 +6,7 @@
 import logging
 from pathlib import Path
 
-import arepyextras.quality.configuration.custom_logger as clg
+import arepyextras.quality.core.custom_logger as clg
 import arepyextras.quality.point_targets_analysis.graphical_output as ptgpo
 
 from sct.analyses import point_target_analysis as pta
@@ -24,17 +24,17 @@ log.addHandler(logging_file_handler)
 
 if __name__ == "__main__":
     # products
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\iceye\SC_2178486_110090"
+    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\saocom\outputDir_335616\L1A_SLC"
 
     # external orbits
     ext_orbit = None
     # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
-    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\iceye\PointTargets_File__ICEYE"
+    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\saocom\PointTargets_File__SAOCOM.xml"
 
     # test config
-    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\iceye\config.toml"
+    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\saocom\config.toml"
     test_config = SCTConfiguration.from_toml(test_config)
 
     # executing point target analysis

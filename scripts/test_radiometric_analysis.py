@@ -6,10 +6,8 @@
 import logging
 from pathlib import Path
 
-import arepyextras.quality.configuration.custom_logger as clg
-from arepyextras.quality.radiometric_analysis.graphical_output import (
-    radiometric_2D_hist_plot,
-)
+import arepyextras.quality.core.custom_logger as clg
+from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
 
 from sct.analyses import radiometric_analysis as ra
 from sct.configuration.sct_default_configuration import SCTConfiguration

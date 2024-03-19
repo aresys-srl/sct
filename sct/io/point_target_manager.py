@@ -179,7 +179,7 @@ def convert_point_target_file_xml_to_df(source: Union[str, Path]) -> pd.DataFram
     point_targets = read_point_targets_file(xml_file=source)
     coords = np.stack([c.xyz_coordinates for c in point_targets.values()])
     delays = [c.delay for c in point_targets.values()]
-    df = pd.DataFrame(["cr_" + k for k in list(point_targets.keys())], columns=["target_name"])
+    df = pd.DataFrame(["cr_" + f"{int(k):02}" for k in list(point_targets.keys())], columns=["target_name"])
     df = df.assign(
         target_type="CR",
         plate="NONE",

@@ -8,4 +8,6 @@ features is the herein reported:
 
 * **Aresys**: proprietary Product Folder.
 * **Sentinel-1**: SAFE products.
-* **TBD**: official product.
+* **ICEYE**: official stripmap and topsar products.
+* **NovaSAR**: official stripmap and topsar products.
+* **SAOCOM**: official stripmap and topsar products.

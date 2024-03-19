@@ -13,7 +13,7 @@ from pathlib import Path
 
 import art
 import click
-from arepyextras.quality.configuration.custom_logger import CustomFormatterFileHandler
+from arepyextras.quality.core.custom_logger import CustomFormatterFileHandler
 
 import sct.analyses.point_target_analysis as pta
 from sct.configuration.sct_default_configuration import SCTConfiguration
@@ -86,9 +86,10 @@ def target_analysis(
     """Point Target Analysis (IRF, Localization and RCS)"""
 
     # saving log file to output folder
-    logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_pta_analysis.log"))
-    logging_file_handler.setFormatter(CustomFormatterFileHandler())
-    log.addHandler(logging_file_handler)
+    if config.general.save_log:
+        logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_pta_analysis.log"))
+        logging_file_handler.setFormatter(CustomFormatterFileHandler())
+        log.addHandler(logging_file_handler)
 
     # inheriting configuration settings from group command in CLI main
     config_pta = config.point_target_analysis
@@ -130,6 +131,10 @@ def target_analysis(
     # saving results to csv file
     results_df.to_csv(output_directory.joinpath("point_target_analysis_results.csv"), index=False)
 
+    # saving configuration used to output folder as .toml file
+    if config.general.save_config_copy:
+        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="point_target")
+
     # graphical output management
     if graphs:
         log.info("Plotting graphs...")
@@ -154,9 +159,7 @@ def target_analysis(
                     out_dir=output_directory,
                 )
             except Exception:
-                log.error(
-                    f"Could not create graph for {item.channel}, target {item.target}, pol {item.polarization}..."
-                )
+                log.error(f"Could not create graph for {item.channel}, target {item.target} ...")
                 continue
 
     elapsed = (time.perf_counter_ns() - start) / 1e9

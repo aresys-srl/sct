@@ -9,16 +9,10 @@ from tempfile import TemporaryDirectory
 
 from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
-from arepyextras.quality.core.generic_dataclasses import (
-    MaskingMethod,
-    SARRadiometricQuantity,
-)
-from arepyextras.quality.point_targets_analysis.custom_dataclasses import (
-    IRFParameters,
-    PointTargetAnalysisConfig,
-    RCSParameters,
-)
-from arepyextras.quality.radiometric_analysis.custom_dataclasses import (
+from arepyextras.quality.core.generic_dataclasses import MaskingMethod, SARRadiometricQuantity
+from arepyextras.quality.interferometric_analysis.config import InterferometricConfig
+from arepyextras.quality.point_targets_analysis.config import IRFParameters, PointTargetAnalysisConfig, RCSParameters
+from arepyextras.quality.radiometric_analysis.config import (
     ProfileExtractionParameters,
     Radiometric2DHistogramParameters,
     RadiometricProfilesConfig,
@@ -27,6 +21,7 @@ from jsonschema.exceptions import ValidationError
 
 from sct.configuration.sct_default_configuration import (
     SCTConfiguration,
+    SCTInterferometricAnalysisConfig,
     SCTPointTargetAnalysisConfig,
     SCTRadiometricAnalysisConfig,
 )
@@ -83,7 +78,7 @@ azimuth_block_size = 23
 range_pixel_margin = 800
 radiometric_correction_exponent = 250.3
 
-[radiometric_analysis.advanced_configuration.profile_parameters]
+[radiometric_analysis.advanced_configuration.profile_extraction_parameters]
 outlier_removal = false
 smoothening_filter = true
 filtering_kernel_size = [ 18, 18,]
@@ -94,6 +89,17 @@ outliers_kernel_size = [ 1, 1,]
 x_bins_step = 10
 y_bins_num = 101
 y_bins_center_margin = 3
+
+"""
+
+interferometric_analysis_toml = """
+
+[interferometric_analysis]
+azimuth_blocks_number = 1000
+range_blocks_number = 100
+enable_coherence_computation = true
+coherence_kernel = [28, 15]
+coherence_bins_number = 800
 
 """
 
@@ -108,7 +114,6 @@ def _validate_pta_config(config: SCTPointTargetAnalysisConfig) -> None:
     """
 
     assert isinstance(config, SCTPointTargetAnalysisConfig)
-    assert config.ale_validity_limits == (99, 99)
     assert config.enable_etad_corrections is False
     assert config.enable_solid_tides_correction is True
     assert config.enable_plate_tectonics_correction is False
@@ -131,6 +136,7 @@ def _validate_pta_config(config: SCTPointTargetAnalysisConfig) -> None:
     assert pta_config.evaluate_islr is True
     assert pta_config.evaluate_sslr is False
     assert pta_config.evaluate_localization is True
+    assert pta_config.ale_limits == (99, 99)
 
     irf_config = pta_config.irf_parameters
     assert isinstance(irf_config, IRFParameters)
@@ -169,7 +175,7 @@ def _validate_ra_config(config: SCTRadiometricAnalysisConfig) -> None:
     assert ra_config.range_pixel_margin == 800
     assert ra_config.radiometric_correction_exponent == 250.3
 
-    hist_config = ra_config.hist_parameters
+    hist_config = ra_config.histogram_parameters
     assert isinstance(hist_config, Radiometric2DHistogramParameters)
     assert hist_config.x_bins_step == 10
     assert hist_config.y_bins_num == 101
@@ -184,11 +190,31 @@ def _validate_ra_config(config: SCTRadiometricAnalysisConfig) -> None:
     assert profile_config.outliers_kernel_size == (1, 1)
 
 
+def _validate_inter_config(config: SCTInterferometricAnalysisConfig) -> None:
+    """Validating correct reading of interferometric configuration from file.
+
+    Parameters
+    ----------
+    config : SCTInterferometricAnalysisConfig
+        sct interferometric configuration
+    """
+
+    assert isinstance(config, SCTInterferometricAnalysisConfig)
+
+    inter_config = config.base_config
+    assert isinstance(inter_config, InterferometricConfig)
+    assert inter_config.azimuth_blocks_number == 1000
+    assert inter_config.range_blocks_number == 100
+    assert inter_config.enable_coherence_computation is True
+    assert inter_config.coherence_kernel == (28, 15)
+    assert inter_config.coherence_bins_number == 800
+
+
 class SCTConfigurationTest(unittest.TestCase):
     """Testing sct_default_configuration.py functionalities"""
 
     def setUp(self) -> None:
-        self.full_toml = point_target_analysis_toml + radiometric_analysis_toml
+        self.full_toml = point_target_analysis_toml + radiometric_analysis_toml + interferometric_analysis_toml
 
     def test_full_point_target_analysis_reading(self) -> None:
         """Test point_target full configuration reading"""
@@ -198,8 +224,8 @@ class SCTConfigurationTest(unittest.TestCase):
 
             config = SCTConfiguration.from_toml(path_to_file)
 
-            self.assertIsInstance(config, SCTConfiguration)
-            _validate_pta_config(config.point_target_analysis)
+        self.assertIsInstance(config, SCTConfiguration)
+        _validate_pta_config(config.point_target_analysis)
 
     def test_full_radiometric_analysis_reading(self) -> None:
         """Test radiometric_analysis full configuration reading"""
@@ -209,8 +235,19 @@ class SCTConfigurationTest(unittest.TestCase):
 
             config = SCTConfiguration.from_toml(path_to_file)
 
-            self.assertIsInstance(config, SCTConfiguration)
-            _validate_ra_config(config.radiometric_analysis)
+        self.assertIsInstance(config, SCTConfiguration)
+        _validate_ra_config(config.radiometric_analysis)
+
+    def test_full_interferometric_analysis_reading(self) -> None:
+        """Test interferometric_analysis full configuration reading"""
+        with TemporaryDirectory() as temp_dir:
+            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+            path_to_file.write_text(interferometric_analysis_toml)
+
+            config = SCTConfiguration.from_toml(path_to_file)
+
+        self.assertIsInstance(config, SCTConfiguration)
+        _validate_inter_config(config.interferometric_analysis)
 
     def test_full_config_reading(self) -> None:
         """Test full configuration reading"""
@@ -220,9 +257,10 @@ class SCTConfigurationTest(unittest.TestCase):
 
             config = SCTConfiguration.from_toml(path_to_file)
 
-            self.assertIsInstance(config, SCTConfiguration)
-            _validate_pta_config(config.point_target_analysis)
-            _validate_ra_config(config.radiometric_analysis)
+        self.assertIsInstance(config, SCTConfiguration)
+        _validate_pta_config(config.point_target_analysis)
+        _validate_ra_config(config.radiometric_analysis)
+        _validate_inter_config(config.interferometric_analysis)
 
     def test_partial_config_reading(self) -> None:
         """Test full configuration reading"""
@@ -235,9 +273,13 @@ class SCTConfigurationTest(unittest.TestCase):
         [point_target_analysis.advanced_configuration.irf_parameters]
         analysis_roi_size = [2, 2]
 
-        [radiometric_analysis.advanced_configuration.profile_parameters]
+        [radiometric_analysis.advanced_configuration.profile_extraction_parameters]
         filtering_kernel_size = [ 18, 18,]
         outliers_percentile_boundaries = [ 5, 95,]
+
+        [interferometric_analysis]
+        range_blocks_number = 100
+        coherence_kernel = [35, 2]
 
         """
         with TemporaryDirectory() as temp_dir:
@@ -248,18 +290,22 @@ class SCTConfigurationTest(unittest.TestCase):
 
             self.assertIsInstance(config, SCTConfiguration)
 
-            self.assertIsInstance(config.point_target_analysis, SCTPointTargetAnalysisConfig)
-            self.assertFalse(config.point_target_analysis.base_config.perform_irf)
-            self.assertTrue(config.point_target_analysis.base_config.evaluate_islr)
-            self.assertEqual(config.point_target_analysis.base_config.irf_parameters.analysis_roi_size, (2, 2))
-            self.assertIsInstance(config.radiometric_analysis, SCTRadiometricAnalysisConfig)
-            self.assertEqual(
-                config.radiometric_analysis.base_config.profile_extraction_parameters.filtering_kernel_size, (18, 18)
-            )
-            self.assertEqual(
-                config.radiometric_analysis.base_config.profile_extraction_parameters.outliers_percentile_boundaries,
-                (5, 95),
-            )
+        self.assertIsInstance(config.point_target_analysis, SCTPointTargetAnalysisConfig)
+        self.assertFalse(config.point_target_analysis.base_config.perform_irf)
+        self.assertTrue(config.point_target_analysis.base_config.evaluate_islr)
+        self.assertEqual(config.point_target_analysis.base_config.irf_parameters.analysis_roi_size, (2, 2))
+        self.assertIsInstance(config.radiometric_analysis, SCTRadiometricAnalysisConfig)
+        self.assertEqual(
+            config.radiometric_analysis.base_config.profile_extraction_parameters.filtering_kernel_size, (18, 18)
+        )
+        self.assertEqual(
+            config.radiometric_analysis.base_config.profile_extraction_parameters.outliers_percentile_boundaries,
+            (5, 95),
+        )
+        self.assertIsInstance(config.interferometric_analysis, SCTInterferometricAnalysisConfig)
+        self.assertEqual(config.interferometric_analysis.base_config.coherence_kernel, (35, 2))
+        self.assertEqual(config.interferometric_analysis.base_config.range_blocks_number, 100)
+        self.assertIsNone(config.interferometric_analysis.base_config.azimuth_blocks_number, None)
 
     def test_dump_read(self) -> None:
         """Test full configuration dump to toml and reading"""
@@ -276,9 +322,10 @@ class SCTConfigurationTest(unittest.TestCase):
             # compare config
             new_config = SCTConfiguration.from_toml(path_to_new_file)
 
-            assert new_config.general == config.general
-            assert new_config.point_target_analysis == config.point_target_analysis
-            assert new_config.radiometric_analysis == config.radiometric_analysis
+        assert new_config.general == config.general
+        assert new_config.point_target_analysis == config.point_target_analysis
+        assert new_config.radiometric_analysis == config.radiometric_analysis
+        assert new_config.interferometric_analysis == config.interferometric_analysis
 
     def test_reading_errors_0(self) -> None:
         """Test reading with errors"""

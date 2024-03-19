@@ -28,9 +28,9 @@ dependencies = [
     "s1etad",
     "art",
     "arepytools >= 1.6.1",
-    "arepyextras-quality >= 1.2.0.dev2",
+    "arepyextras-quality >= 1.2.1",
     "arepyextras-perturbations >= 1.1",
-    "arepyextras-eo_products >= 1.0.0.dev2"
+    "arepyextras-eo_products >= 1.0.0"
 ]
 dynamic = ["version"]
 
@@ -44,8 +44,8 @@ doc = [
     "nbsphinx",
     "sphinx",
     "sphinx-design",
+    "sphinx-copybutton",
     "pydata-sphinx-theme",
-    "scss-compile",
 ]
 
 [project.readme]
@@ -74,7 +74,8 @@ max-line-length = 120
 
 [tool.black]
 line-length = 120
-target-version = ["py310", "py311"]
+target-version = ["py310", "py311", "py312"]
 
 [tool.isort]
 profile = "black"
+line_length = 120

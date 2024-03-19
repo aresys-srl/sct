@@ -35,10 +35,7 @@ from arepyextras.quality.core.generic_dataclasses import (
     SARSideLooking,
 )
 from arepytools.constants import LIGHT_SPEED
-from arepytools.geometry.generalsarorbit import (
-    GSO3DCurveWrapper,
-    compute_ground_velocity,
-)
+from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper, compute_ground_velocity
 from arepytools.geometry.geometric_functions import (
     compute_incidence_angles_from_trajectory,
     compute_look_angles_from_trajectory,

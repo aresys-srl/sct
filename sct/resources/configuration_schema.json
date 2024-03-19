@@ -4,7 +4,17 @@
     "properties": {
         "general": {
             "type": "object",
-            "description": "Section of configuration file dedicated to general configuration properties"
+            "description": "Section of configuration file dedicated to general configuration properties",
+            "properties": {
+                "save_log": {
+                    "type": "boolean",
+                    "description": "Enabling log saving to output folder"
+                },
+                "save_config_copy": {
+                    "type": "boolean",
+                    "description": "Enabling input configuration saving as file to output folder"
+                }
+            }
         },
         "point_target_analysis": {
             "type": "object",
@@ -33,6 +43,24 @@
                 "evaluate_localization": {
                     "type": "boolean",
                     "description": "Enabling flag to perform localization errors calculation"
+                },
+                "check_targets_in_scene": {
+                    "type": "boolean",
+                    "description": "Enabling flag to check if and which point targets appears in the recorded scene"
+                },
+                "ale_validity_limits": {
+                    "type": "array",
+                    "description": "Absolute localization error limits that can be set as boundaries for the point target analysis",
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "minItems": 2,
+                    "additionalItems": false
                 },
                 "corrections": {
                     "type": "object",
@@ -120,7 +148,9 @@
                                         ]
                                     }
                                 },
-                                "required": ["enable_etad_corrections"]
+                                "required": [
+                                    "enable_etad_corrections"
+                                ]
                             },
                             "then": {
                                 "required": [
@@ -138,7 +168,9 @@
                                         ]
                                     }
                                 },
-                                "required": ["enable_ionospheric_correction"]
+                                "required": [
+                                    "enable_ionospheric_correction"
+                                ]
                             },
                             "then": {
                                 "required": [
@@ -156,7 +188,9 @@
                                         ]
                                     }
                                 },
-                                "required": ["enable_tropospheric_correction"]
+                                "required": [
+                                    "enable_tropospheric_correction"
+                                ]
                             },
                             "then": {
                                 "required": [
@@ -185,7 +219,9 @@
                                             "type": "integer",
                                             "description": "number of lines"
                                         }
-                                    ]
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
                                 },
                                 "analysis_roi_size": {
                                     "type": "array",
@@ -199,7 +235,9 @@
                                             "type": "integer",
                                             "description": "number of lines"
                                         }
-                                    ]
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
                                 },
                                 "masking_method": {
                                     "type": "string",
@@ -247,7 +285,7 @@
         },
         "radiometric_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to Gamma Profiles and Scalloping",
+            "description": "Section of configuration file dedicated to NESZ, Gamma Profiles and Scalloping",
             "properties": {
                 "input_quantity": {
                     "type": "string",
@@ -291,7 +329,7 @@
                                 }
                             }
                         },
-                        "profile_parameters": {
+                        "profile_extraction_parameters": {
                             "type": "object",
                             "description": "Parameters to customize profile extraction",
                             "properties": {
@@ -313,7 +351,9 @@
                                         {
                                             "type": "integer"
                                         }
-                                    ]
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
                                 },
                                 "outliers_kernel_size": {
                                     "type": "array",
@@ -325,7 +365,9 @@
                                         {
                                             "type": "integer"
                                         }
-                                    ]
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
                                 },
                                 "outliers_percentile_boundaries": {
                                     "type": "array",
@@ -337,11 +379,49 @@
                                         {
                                             "type": "integer"
                                         }
-                                    ]
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
                                 }
                             }
                         }
                     }
+                }
+            }
+        },
+        "interferometric_analysis": {
+            "type": "object",
+            "description": "Section of configuration file dedicated to interferometric analysis",
+            "properties": {
+                "enable_coherence_computation": {
+                    "type": "boolean",
+                    "description": "Enabling computation of coherence for interferogram products"
+                },
+                "azimuth_blocks_number": {
+                    "type": "integer",
+                    "description": "Number of blocks for partitioning the scene burst along azimuth direction to compute 2D coherence histogram"
+                },
+                "range_blocks_number": {
+                    "type": "integer",
+                    "description": "Number of blocks for partitioning the scene burst along range direction to compute 2D coherence histogram"
+                },
+                "coherence_kernel": {
+                    "type": "array",
+                    "description": "Coherence computation kernel, size along range and azimuth directions",
+                    "items": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "minItems": 2,
+                    "additionalItems": false
+                },
+                "coherence_bins_number": {
+                    "type": "integer",
+                    "description": "Number of coherence intensity histogram bins"
                 }
             }
         }

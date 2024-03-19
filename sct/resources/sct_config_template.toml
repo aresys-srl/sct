@@ -1,5 +1,6 @@
 [general]
-
+save_log = true
+save_config_copy = true
 
 [point_target_analysis]
 perform_irf = true
@@ -46,14 +47,21 @@ azimuth_block_size = 2000
 range_pixel_margin = 150
 radiometric_correction_exponent = 1.0
 
-[radiometric_analysis.advanced_configuration.profile_parameters]
+[radiometric_analysis.advanced_configuration.profile_extraction_parameters]
 outlier_removal = true
 smoothening_filter = true
-filtering_kernel_size = [ 11, 11,]
-outliers_percentile_boundaries = [ 20, 90,]
-outliers_kernel_size = [ 5, 5,]
+filtering_kernel_size = [11, 11]
+outliers_percentile_boundaries = [20, 90]
+outliers_kernel_size = [5, 5]
 
 [radiometric_analysis.advanced_configuration.histogram_parameters]
 x_bins_step = 10
 y_bins_num = 101
 y_bins_center_margin = 3
+
+[interferometric_analysis]
+azimuth_blocks_number = 100          # this is not the default, default is automatically computed when needed
+range_blocks_number = 100            # this is not the default, default is automatically computed when needed
+enable_coherence_computation = false
+coherence_kernel = [15, 15]
+coherence_bins_number = 80

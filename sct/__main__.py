@@ -5,7 +5,7 @@
 import logging
 import sys
 
-import arepyextras.quality.configuration.custom_logger as clg
+import arepyextras.quality.core.custom_logger as clg
 
 
 def main():

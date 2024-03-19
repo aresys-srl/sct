@@ -8,7 +8,7 @@ package as a command line executable software. All the implemented features have
 to perform the operation of choice.
 This commands have been developed to be run with a minimal setup and only the essential parameters to be specified, such
 as input and output folders.
-For an in-depth documentation of how to use the command line tool, please refer :ref:`to this page <sct_cli>`.
+For an in-depth documentation on how to use the command line tool, please refer :ref:`to this page <sct_cli>`.
 
 Nevertheless, a configuration file (TOML format) can be provided as input to tweak and tune several options and parameters
 in order to fully customize each analysis.
@@ -31,6 +31,7 @@ The .toml configuration file is organized in sections and subsections related to
 The available sections of this configuration file are:
 
 - **general**: the highest level of configuration, not related to a specific feature.
+
 - **point_target_analysis**: section that can be used to access *Point Target Analysis* options and parameters.
 
   * **corrections**: sub-section that can be used to enable/disable some corrections needed for this analysis.
@@ -50,7 +51,11 @@ The available sections of this configuration file are:
   * **advanced_configuration**: sub-section that can be used to tweak and tune lower level parameters that change the
     computation of the radiometric profiles.
 
-    - **parameters**: sub-sub-section dedicated to radiometric profiles parameters.
+    - **profile_extraction_parameters**: sub-sub-section dedicated to radiometric profiles parameters.
+    - **histogram_parameters**: sub-sub-section dedicated to radiometric 2D histograms parameters.
+
+- **interferometric_analysis**: section that can be used to access *Interferometric Analysis* options and parameters.
+
 
 .. seealso::
 
@@ -79,7 +84,15 @@ configuration file.
 Generic
 ^^^^^^^
 
-TBD
+The following parameters can be configured directly under the `general` section.
+
+.. code-block:: toml
+    :linenos:
+
+    [general]
+    save_log = true                 # save analysis log to output folder
+    save_config_copy = true         # save analysis config to output folder
+
 
 Point Target Analysis
 ^^^^^^^^^^^^^^^^^^^^^
@@ -173,7 +186,7 @@ Advanced Configuration
 ~~~~~~~~~~~~~~~~~~~~~~
 
 This sub-section cannot be expressed by itself but only through its sub-sections `irf_parameters` and `rcs_parameters`.
-This choice has been done to explicitly separate these two configuration categories from the other because changing these
+This choice has been done to explicitly separate these two configuration categories from the others because changing these
 parameters heavily affects the results and can also lead to code errors.
 
 IRF Parameters
@@ -225,43 +238,79 @@ The following parameters can be configured directly under the `radiometric_analy
     :linenos:
 
     [radiometric_analysis]
-    input_type = "beta_nought"         # input radiometric quantity
-    output_type = "beta_nought"        # output radiometric quantity
-    value = "amplitude"                # radiometric analysis value to be outputted
-    direction = "range"                # direction along which perform analysis
-    axis = "natural"                   # axis on which display output values
-    outlier_removal = false            # on/off outliers removal filter
-    smoothening_filter = true          # on/off smoothening filter
+    input_type = "beta_nought"              # input radiometric quantity
+    azimuth_block_size = 2000               # scene partitioning block size in pixel along azimuth
+    range_pixel_margin = 150                # margin in pixel to exclude near and far range from profile
+    radiometric_correction_exponent = 1.0   # radiometric correction exponent applied when converting radiometric quantity
 
 .. admonition:: Validation
 
-   | `input_type`, `output_type`, `value`, `direction`, `axis` map to an internal *enum classes* and are validated by the schema to match the valid values.
+   | `input_type` maps to an internal *enum class* and is validated by the schema to match the valid values.
    | Here are the possible values:
-   | `input_type` / `output_type`: ``beta_nought``, ``sigma_nought``, ``gamma_nought``
-   | `value`: ``amplitude``, ``phase``
-   | `direction`: ``range``, ``azimuth``, ``all``
-   | `axis`: ``natural``, ``incidence_angle``, ``look_angle``
+   | `input_type`: ``beta_nought``, ``sigma_nought``, ``gamma_nought``
    | :ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.
 
 
 Advanced Configuration
 ~~~~~~~~~~~~~~~~~~~~~~
 
-This sub-section cannot be expressed by itself but only through its sub-section `parameters`.
+This sub-section cannot be expressed by itself but only through its sub-sections `profile_extraction_parameters` and `histogram_parameters`.
+This choice has been done to explicitly separate these two configuration categories from the others because changing these
+parameters heavily affects the results.
 `radiometric_analysis` **is not required to be defined in the configuration file** for this sub-section to work.
 Changing these parameters can heavily affect the analysis.
+
+Profile Extraction Parameters
+*****************************
+
+This sub-sub-section is used when the the user wants to access low level parameters affecting the radiometric profiles
+extraction algorithm.
 
 .. code-block:: toml
     :linenos:
 
-    [radiometric_analysis.advanced_configuration.parameters]
-    smoothening_order = 3                       # smoothening poly order
-    smoothening_window_length = 71              # smoothening window length
-    radiometric_correction_exponent = 0.5       # radiometric correction exponent
-    outliers_kernel_size = [5, 5]               # outliers removal kernel size
-    outliers_filter_kernel_size = [10, 10]      # outliers filtering kernel size
-    outliers_percentile_boundaries = [20, 90]   # inliers percentiles limits
-    az_average_band = 1000                      # azimuth averaging band in pixels
-    rng_average_band = 1000                     # range averaging band in pixels
+    [radiometric_analysis.advanced_configuration.profile_extraction_parameters]
+    outlier_removal = true                      # enabling/disabling outlier removal filter
+    smoothening_filter = true                   # enabling/disabling smoothening filter
+    filtering_kernel_size = [11, 11]            # size of the smoothening filter kernel
+    outliers_kernel_size = [5, 5]               # size of the outliers removal kernel
+    outliers_percentile_boundaries = [20, 90]   # outliers percentile boundaries to be preserved
 
 :ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.
+
+2D Histograms Parameters
+************************
+
+This sub-sub-section is used when the the user wants to access low level parameters affecting the computation algorithm
+of the 2D histograms.
+
+.. code-block:: toml
+    :linenos:
+
+    [radiometric_analysis.advanced_configuration.histogram_parameters]
+    x_bins_step = 10            # number of bins along the x axis [look angles/azimuth times]
+    y_bins_num = 101            # number of bins along the y axis [intensity (dB)]
+    y_bins_center_margin = 3    # extent of the intensity graph (in dB) from the central bin
+
+:ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.
+
+
+Interferometric Analysis
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following parameters can be configured directly under the `interferometric_analysis` section.
+
+.. code-block:: toml
+    :linenos:
+
+    [interferometric_analysis]
+    enable_coherence_computation = false        # enable/disable coherence computation (to be enabled for interferogram products)
+    coherence_kernel = [15, 15]                 # kernel size for coherence computation
+    azimuth_blocks_number = x                   # number of azimuth blocks for computing coherence 2D histogram
+    range_blocks_number = y                     # number of range blocks for computing coherence 2D histogram
+    coherence_bins_number = 80                  # number of coherence intensity bins
+
+.. admonition:: Validation
+
+   | `azimuth_blocks_number` and `range_blocks_number` are actually automatically computed if not explicitly set from configuration.
+   | :ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.

@@ -5,17 +5,9 @@
 
 import unittest
 
-from arepyextras.quality.io.quality_input_protocol import (
-    ChannelData,
-    QualityInputProduct,
-    SARCoordinatesFunction,
-)
+from arepyextras.quality.io.quality_input_protocol import ChannelData, QualityInputProduct, SARCoordinatesFunction
 
-from sct.io.quality_input_from_iceye_product import (
-    ICEYEChannelManager,
-    ICEYEDopplerPolynomial,
-    ICEYEProductManager,
-)
+from sct.io.quality_input_from_iceye_product import ICEYEChannelManager, ICEYEDopplerPolynomial, ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import (
     NovaSAR1ChannelManager,
     NovaSAR1DopplerPolynomial,

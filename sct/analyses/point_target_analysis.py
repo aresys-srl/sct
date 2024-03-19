@@ -10,12 +10,12 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Union
 from uuid import uuid4
 
 import pandas as pd
 from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from arepyextras.quality.point_targets_analysis.analysis import point_target_analysis
+from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 from arepytools.io.io_support import NominalPointTarget
 from arepytools.timing.precisedatetime import PreciseDateTime
 
@@ -41,24 +41,24 @@ log = logging.getLogger("quality_analysis")
 
 
 def main(
-    product_path: Union[str, Path],
-    external_orbit_path: Union[str, Path] | None = None,
-    calibration_site: Union[str, SupportedCalibrationSites] | None = None,
-    external_target_source: Union[str, Path] | None = None,
+    product_path: str | Path,
+    external_orbit_path: str | Path | None = None,
+    calibration_site: str | SupportedCalibrationSites | None = None,
+    external_target_source: str | Path | None = None,
     config: SCTPointTargetAnalysisConfig | None = None,
-) -> tuple[pd.DataFrame, dict]:
+) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
     """Point Target Analysis high-level function that executes the proper wrapper of Arepyextras-Quality
     point_target_analysis function based on input product type.
 
     Parameters
     ----------
-    product_path : Union[str, Path]
+    product_path : str | Path
         Path to the input product
-    external_orbit_path : Union[str, Path], optional
+    external_orbit_path : str | Path | None, optional
         Path to the external orbit file,  by default None
-    calibration_site : Union[str, SupportedCalibrationSites], optional
+    calibration_site : str | SupportedCalibrationSites | None, optional
         calibration site to be analyzed, by default None
-    external_target_source : Union[str, Path], optional
+    external_target_source : str | Path, optional
         path to external point target source (file or folder), by default None
     config : SCTPointTargetAnalysisConfig, optional
         config file SCTPointTargetAnalysisConfig dataclass to enable and manage different features, if provided,
@@ -66,7 +66,7 @@ def main(
 
     Returns
     -------
-    tuple[pd.DataFrame, dict]
+    tuple[pd.DataFrame, list[PointTargetGraphicalData]]
         pandas dataframe containing all the computed features for each point target,
         dict of data stored for graphical output needs
     """
@@ -244,7 +244,7 @@ def sct_point_target_analysis(
     config: SCTPointTargetAnalysisConfig,
     azimuth_corrections_func: custom_corrections.ALECorrectionFunctionType | None = None,
     range_corrections_func: custom_corrections.ALECorrectionFunctionType | None = None,
-) -> tuple[pd.DataFrame, dict]:
+) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
     """Point target analysis wrapper customized for SCT workflow.
 
     Parameters
@@ -262,13 +262,13 @@ def sct_point_target_analysis(
 
     Returns
     -------
-    tuple[pd.DataFrame, dict]
-        results dataframe and graphs data
+    tuple[pd.DataFrame, list[PointTargetGraphicalData]]
+        results dataframe,
+        graphs data
     """
     data, graph_data = point_target_analysis(
         product=product,
         point_targets=point_targets_data,
-        ale_limits=config.ale_validity_limits,
         config=config.base_config,
     )
     data.reset_index(drop=True, inplace=True)

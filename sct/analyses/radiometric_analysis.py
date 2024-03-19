@@ -11,17 +11,10 @@ from __future__ import annotations
 import logging
 from enum import Enum
 from pathlib import Path
-from typing import Union
 
-from arepyextras.quality.radiometric_analysis.block_wise_analysis import (
-    gamma_profiles,
-    nesz_profiles,
-    scalloping_profiles,
-)
-from arepyextras.quality.radiometric_analysis.custom_dataclasses import (
-    RadiometricProfilesConfig,
-    RadiometricProfilesOutput,
-)
+from arepyextras.quality.radiometric_analysis.analysis import gamma_profiles, nesz_profiles, scalloping_profiles
+from arepyextras.quality.radiometric_analysis.config import RadiometricProfilesConfig
+from arepyextras.quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 
 from sct.configuration.sct_default_configuration import SCTRadiometricAnalysisConfig
 from sct.io.io_manager import input_detector, product_loader
@@ -39,13 +32,13 @@ class SupportedRadiometricProfiles(Enum):
 
 
 def sct_radiometric_profiles(
-    product_path: Union[str, Path], analysis_type: SupportedRadiometricProfiles, config: RadiometricProfilesConfig
+    product_path: str | Path, analysis_type: SupportedRadiometricProfiles, config: RadiometricProfilesConfig
 ) -> list[RadiometricProfilesOutput]:
     """Radiometric profiles SCT wrapper.
 
     Parameters
     ----------
-    product_path : Union[str, Path]
+    product_path : str | Path
         path to the product to be analyzed
     analysis_type : SupportedRadiometricProfiles
         type of analysis to perform
@@ -77,13 +70,13 @@ def sct_radiometric_profiles(
 
 
 def nesz_analysis(
-    product_path: Union[str, Path], config: SCTRadiometricAnalysisConfig | None = None
+    product_path: str | Path, config: SCTRadiometricAnalysisConfig | None = None
 ) -> list[RadiometricProfilesOutput]:
     """SCT Noise Equivalent Sigma-Zero (NESZ) radiometric block-wise analysis.
 
     Parameters
     ----------
-    product_path : Union[str, Path]
+    product_path : str | Path
         path to the product to be analyzed
     config : SCTRadiometricAnalysisConfig | None, optional
         SCT radiometric analysis configuration, by default None
@@ -105,13 +98,13 @@ def nesz_analysis(
 
 
 def gamma_analysis(
-    product_path: Union[str, Path], config: SCTRadiometricAnalysisConfig | None = None
+    product_path: str | Path, config: SCTRadiometricAnalysisConfig | None = None
 ) -> list[RadiometricProfilesOutput]:
     """SCT Gamma-Zero radiometric block-wise analysis.
 
     Parameters
     ----------
-    product_path : Union[str, Path]
+    product_path : str | Path
         path to the product to be analyzed
     config : SCTRadiometricAnalysisConfig | None, optional
         SCT radiometric analysis configuration, by default None
@@ -133,13 +126,13 @@ def gamma_analysis(
 
 
 def scalloping_analysis(
-    product_path: Union[str, Path], config: SCTRadiometricAnalysisConfig | None = None
+    product_path: str | Path, config: SCTRadiometricAnalysisConfig | None = None
 ) -> list[RadiometricProfilesOutput]:
     """SCT Scalloping radiometric block-wise analysis.
 
     Parameters
     ----------
-    product_path : Union[str, Path]
+    product_path : str | Path
         path to the product to be analyzed
     config : SCTRadiometricAnalysisConfig | None, optional
         SCT radiometric analysis configuration, by default None
