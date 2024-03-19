@@ -29,12 +29,7 @@ from sct.core.global_corrections import (
     get_etad_corrections,
 )
 from sct.io.io_manager import input_detector, product_loader
-from sct.io.point_target_manager import (
-    SupportedCalibrationSites,
-    convert_df_to_nominal_point_target,
-    extract_point_target_data_from_source,
-    query_calibration_sites_db,
-)
+from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
@@ -43,7 +38,6 @@ log = logging.getLogger("quality_analysis")
 def main(
     product_path: str | Path,
     external_orbit_path: str | Path | None = None,
-    calibration_site: str | SupportedCalibrationSites | None = None,
     external_target_source: str | Path | None = None,
     config: SCTPointTargetAnalysisConfig | None = None,
 ) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
@@ -56,8 +50,6 @@ def main(
         Path to the input product
     external_orbit_path : str | Path | None, optional
         Path to the external orbit file,  by default None
-    calibration_site : str | SupportedCalibrationSites | None, optional
-        calibration site to be analyzed, by default None
     external_target_source : str | Path, optional
         path to external point target source (file or folder), by default None
     config : SCTPointTargetAnalysisConfig, optional
@@ -94,21 +86,12 @@ def main(
 
     # CALIBRATION SITES MANAGEMENT
     if external_target_source is None:
-        # accessing internal database
-        if calibration_site is None:
-            log.critical(
-                "Cannot perform point target analysis: no external file provided and no calibration site selected"
-            )
-            raise RuntimeError
-        log.info(f"Querying calibration sites DB: extracting {calibration_site} info...")
-        point_targets_df = query_calibration_sites_db(
-            calibration_site=SupportedCalibrationSites(calibration_site), acquisition_time=acquisition_time
-        )
-    else:
-        external_target_source = Path(external_target_source)
-        log.info(f"Using external target source provided: {external_target_source}")
-        # external target source management
-        point_targets_df = extract_point_target_data_from_source(source=external_target_source)
+        raise RuntimeError("External source for point target data must be provided")
+
+    external_target_source = Path(external_target_source)
+    log.info(f"Using external target source provided: {external_target_source}")
+    # external target source management
+    point_targets_df = extract_point_target_data_from_source(source=external_target_source)
 
     # checking if acquisition time lies within point target data time validity boundaries
     try:
@@ -118,10 +101,7 @@ def main(
         date_upper_boundary = PreciseDateTime.fromisoformat(point_targets_df["validity_end_date"].mode()[0].isoformat())
 
         if acquisition_time < date_lower_boundary or acquisition_time > date_upper_boundary:
-            raise RuntimeError(
-                f"Acquisition time {acquisition_time} date is outside of validity boundaries"
-                + f"for selected {calibration_site} data"
-            )
+            raise RuntimeError(f"Acquisition time {acquisition_time} date is outside of validity boundaries")
 
         # computing time delta between acquisition time and calibration site measurement campaign date
         time_delta_s = acquisition_time - PreciseDateTime.fromisoformat(

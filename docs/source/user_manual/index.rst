@@ -5,8 +5,8 @@ User Manual
    :maxdepth: 2
 
    supported_missions
-   calibration_sites_db
    configuration
+   point_target_file
    command_line_tool
    analyses
    pta_corrections

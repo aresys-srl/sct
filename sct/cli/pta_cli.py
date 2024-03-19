@@ -50,17 +50,9 @@ share_config = click.make_pass_decorator(SCTConfiguration)
     help="Path to the external orbit file",
 )
 @click.option(
-    "--calibration-site",
-    "-cal",
-    required=False,
-    default=None,
-    type=click.STRING,
-    help="Calibration site to be checked",
-)
-@click.option(
     "--point-target-source",
     "-pt",
-    required=False,
+    required=True,
     default=None,
     type=click.Path(path_type=Path, exists=True, dir_okay=True),
     help="Path to the external point target source",
@@ -79,7 +71,6 @@ def target_analysis(
     product: Path,
     output_directory: Path,
     external_orbit: Path,
-    calibration_site: str,
     point_target_source: Path,
     graphs: bool,
 ):
@@ -102,16 +93,9 @@ def target_analysis(
             log.critical('Install graphs requirements "pip install sct[graphs]"')
             sys.exit(1)
 
-    if point_target_source is None and calibration_site is None:
-        log.critical("Cannot perform point target analysis: no external file provided and no calibration site selected")
-        sys.exit(1)
-
     log.info(f"Output folder is: {output_directory}")
 
-    if calibration_site is not None:
-        log.info(f"Calibration site {calibration_site} selected from internal database.")
-    else:
-        log.info(f"External point target source provided: {point_target_source}")
+    log.info(f"External point target source provided: {point_target_source}")
 
     log.info(f"Selected product is: {product}")
 
@@ -123,7 +107,6 @@ def target_analysis(
     results_df, graph_data = pta.main(
         product_path=product,
         external_orbit_path=external_orbit,
-        calibration_site=calibration_site,
         external_target_source=point_target_source,
         config=config_pta,
     )

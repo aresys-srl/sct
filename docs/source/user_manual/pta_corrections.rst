@@ -46,7 +46,6 @@ Plate Tectonics
 
 Plate tectonics displacements are computed using an internal model based on *ITRF2014 plate motion model* [#]_. For more
 accurate results, drift velocities measured directly during point targets measurement campaigns should be used.
-The internal Calibration Sites database provides these drift velocities for the supported locations that shared these information.
 
 These velocities can also be provided as inputs when using an external .csv source for point target locations that is compliant
 to the template provided.

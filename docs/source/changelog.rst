@@ -1,6 +1,19 @@
 Changelog
 =========
 
+v1.0.0dev2
+----------
+
+**Additional Features**
+
+- `Interferometric Analysis`: added a new module to perform interferometric coherence analysis
+- IO: introduced support for SAOCOM product format
+
+**Other changes**
+
+- Removed support for SQLite Point Target internal Database: .csv template-compliant file is the only viable input option
+
+
 v1.0.0dev1
 ----------
 
