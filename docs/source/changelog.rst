@@ -1,7 +1,7 @@
 Changelog
 =========
 
-v1.0.0dev2
+v1.0.0.dev2
 ----------
 
 **Additional Features**
@@ -12,9 +12,11 @@ v1.0.0dev2
 **Other changes**
 
 - Removed support for SQLite Point Target internal Database: .csv template-compliant file is the only viable input option
+- Minor type hint bugfixing
+- Removed unused ``get_acquisition_time`` function form `io.io_manager`
 
 
-v1.0.0dev1
+v1.0.0.dev1
 ----------
 
 **Additional Features**
@@ -24,7 +26,7 @@ v1.0.0dev1
 - IO: introduced support for ICEYE product format
 
 
-v1.0.0dev0
+v1.0.0.dev0
 ----------
 
 **Additional Features**
