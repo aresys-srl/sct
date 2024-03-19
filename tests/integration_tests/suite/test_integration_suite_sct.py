@@ -321,6 +321,7 @@ def test_point_target_analysis_sentinel1_slc_etad(session: TestSession, env: Env
     product_folder = data.pull("input/sentinel1/SLC_23")
     etad_product = data.pull("input/sentinel1/ETAD")
     report_ = data.pull("output/sentinel1/SLC_23_ETAD")
+    point_target = data.pull("input/sentinel1/SuratBasinDataCSV")
 
     # preparing config
     config = SCTConfiguration.from_toml(config_)
@@ -333,7 +334,7 @@ def test_point_target_analysis_sentinel1_slc_etad(session: TestSession, env: Env
     # analysis
     results_df, _ = pta.main(
         product_path=product_folder,
-        calibration_site="surat_basin",
+        external_target_source=point_target,
         config=config.point_target_analysis,
     )
     results_df.to_csv(out_file, index=False)

@@ -27,6 +27,7 @@ dependencies = [
     "h5py",
     "s1etad",
     "art",
+    "appdirs",
     "arepytools >= 1.6.1",
     "arepyextras-quality >= 1.2.1",
     "arepyextras-perturbations >= 1.1",

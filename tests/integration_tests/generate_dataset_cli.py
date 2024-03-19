@@ -164,6 +164,13 @@ sct_requests_dataset = [
         readonly_flag=False,
     ),
     PushRequest(
+        src_rel_path="sentinel1/surat_basin_data.csv",
+        dst_rel_path="input/sentinel1/SuratBasinDataCSV",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
         src_rel_path="sentinel1/PointTargetsBinarySurat",
         dst_rel_path="input/sentinel1/PointTargetsBinarySurat",
         preserve_filename_flag=False,
@@ -220,7 +227,7 @@ sct_requests_dataset = [
         readonly_flag=True,
     ),
     PushRequest(
-        src_rel_path="sentinel1/reports/sentinel1_slc_23_etad_calibration_site.csv",
+        src_rel_path="sentinel1/reports/sentinel1_slc_23_etad_point_target_csv.csv",
         dst_rel_path="output/sentinel1/SLC_23_ETAD",
         preserve_filename_flag=False,
         overwrite_flag=True,

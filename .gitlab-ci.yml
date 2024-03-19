@@ -26,7 +26,6 @@ variables:
 .tags_deploy:
   tags: ["eo", "deploy"]
 
-
 # === analysis ===============================================================
 # ============================================================================
 pylint:
@@ -45,116 +44,78 @@ format:
     - pip install nox
     - python -m nox -s format_check
 
-
 # === test - unittest ========================================================
 # ============================================================================
-.unittest_linux:
+unittest_linux:
   stage: test
-  extends:
-    - .tags_manylinux_2_28
   script:
     - python${PYTHON} -m pip install nox
     - python${PYTHON} -m nox -s unittest -p ${PYTHON}
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12"]
+  extends: .tags_manylinux_2_28
+  needs: []
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     reports:
       junit:
         - _build/unittest-report-*.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: _build/unittest-coverage-*.xml
 
-unittest_linux_py310:
-  extends:
-    - .unittest_linux
-  variables:
-    PYTHON: "3.10"
-
-unittest_linux_py311:
-  extends:
-    - .unittest_linux
-  variables:
-    PYTHON: "3.11"
-
-unittest_linux_py312:
-  extends:
-    - .unittest_linux
-  variables:
-    PYTHON: "3.12"
-
-.unittest_win10:
+unittest_win:
   stage: test
-  extends:
-    - .tags_win10
   script:
     - python -m pip install nox
     - python -m nox -s unittest -p ${PYTHON}
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12"]
+  needs: []
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  extends: .tags_win10
   artifacts:
     reports:
       junit:
         - _build/unittest-report-*.xml
-
-unittest_win10_py310:
-  extends:
-    - .unittest_win10
-  variables:
-    PYTHON: "3.10"
-
-unittest_win10_py311:
-  extends:
-    - .unittest_win10
-  variables:
-    PYTHON: "3.11"
-
-unittest_win10_py312:
-  extends:
-    - .unittest_win10
-  variables:
-    PYTHON: "3.12"
+      coverage_report:
+        coverage_format: cobertura
+        path: _build/unittest-coverage-*.xml
 
 # === test - integration =====================================================
 # ============================================================================
-.integration_test_linux:
+integration_test_linux:
   stage: test
-  extends:
-    - .tags_manylinux_2_28
   script:
-    - python${PYTHON} -m pip install -e .[test]
-    - python${PYTHON} -m pip install arepyextras-test
-    - python${PYTHON} -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
+    - python${PYTHON} -m venv ./ci_test
+    - source ./ci_test/bin/activate
+    - python -m pip install arepyextras-test
+    - python -m pip install setuptools
+    - python -m pip install -e .[test]
+    - python -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12"]
+  extends: .tags_manylinux_2_28
+  needs: []
 
-integration_test_linux_py310:
-  extends:
-    - .integration_test_linux
-  variables:
-    PYTHON: "3.10"
-
-integration_test_linux_py311:
-  extends:
-    - .integration_test_linux
-  variables:
-    PYTHON: "3.11"
-
-.integration_test_windows10:
+integration_test_windows:
   stage: test
-  extends:
-    - .tags_win10_conda
   script:
     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
     - conda create -y -n test python=${PYTHON}
     - conda activate test
-    - python -m pip install -e .[test]
     - python -m pip install arepyextras-test
+    - python -m pip install setuptools
+    - python -m pip install -e .[test]
     - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run .tests/integration_tests/suite
-
-integration_test_windows10_py310:
-  extends:
-    - .integration_test_windows10
-  variables:
-    PYTHON: "3.10"
-
-integration_test_windows10_py311:
-  extends:
-    - .integration_test_windows10
-  variables:
-    PYTHON: "3.11"
-
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12"]
+  extends: .tags_win10_conda
+  needs: []
 
 # === build ==================================================================
 # ============================================================================
@@ -165,6 +126,7 @@ sdist:
   script:
     - pip install nox
     - python -m nox -s build_sdist
+  needs: []
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -177,6 +139,7 @@ wheel:
   script:
     - pip install nox
     - python -m nox -s build_wheel
+  needs: []
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -188,8 +151,8 @@ conda_pkg:
     - .tags_conda
   script:
     - pip install nox
-    - conda config --add channels avalentino
     - python -m nox -s build_conda_pkg
+  needs: []
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -202,11 +165,11 @@ doc:
   script:
     - pip install nox
     - python -m nox -s build_doc
+  needs: []
   artifacts:
     expire_in: 2 weeks
     paths:
       - docs/build/*.zip
-
 
 # === deploy =================================================================
 # ============================================================================
@@ -214,32 +177,31 @@ deploy_package:
   stage: deploy
   extends: .tags_deploy
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_TAG"
   script:
     - eval "$(ssh-agent -s)"
     - for file in dist/*.tar.gz dist/*.whl; do
-        eo_pgp-signme ${file} > ${file}.asc &&
-       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
-       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
+      eo_pgp-signme ${file} > ${file}.asc &&
+      ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
+      ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
     - for file in dist/*.tar.bz2; do
-        eo_pgp-signme ${file} > ${file}.asc &&
-       ./.gitlab/ci/dashboard-copy.sh ${file} ${INTERNAL_CONDA_CHANNEL_PATH}/noarch &&
-       ./.gitlab/ci/dashboard-copy.sh ${file}.asc ${INTERNAL_CONDA_CHANNEL_PATH}/noarch;
+      eo_pgp-signme ${file} > ${file}.asc &&
+      ./.gitlab/ci/dashboard-copy.sh ${file} ${INTERNAL_CONDA_CHANNEL_PATH}/noarch &&
+      ./.gitlab/ci/dashboard-copy.sh ${file}.asc ${INTERNAL_CONDA_CHANNEL_PATH}/noarch;
       done
     - ./.gitlab/ci/conda-forge-update.sh ${INTERNAL_CONDA_CHANNEL_PATH}
-
 
 deploy_doc:
   stage: deploy
   extends: .tags_deploy
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_TAG"
     - if: '$DEPLOY_DOC == "true"'
   script:
     - eval "$(ssh-agent -s)"
     - for file in docs/build/*.zip; do
-        eo_pgp-signme ${file} > ${file}.asc &&
-       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
-       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
+      eo_pgp-signme ${file} > ${file}.asc &&
+      ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
+      ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
