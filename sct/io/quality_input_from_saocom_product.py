@@ -78,12 +78,12 @@ class SAOCOMProductManager:
         return self._path
 
     @property
-    def name(self) -> Path:
+    def name(self) -> str:
         """Get product name"""
         return self._name
 
     @property
-    def channels_list(self) -> list[int]:
+    def channels_list(self) -> list[str]:
         """Get list of available channels for this product"""
         return self._product.channels_list
 
