@@ -110,7 +110,7 @@ integration_test_windows:
     - python -m pip install arepyextras-test
     - python -m pip install setuptools
     - python -m pip install -e .[test]
-    - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run .tests/integration_tests/suite
+    - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run ./tests/integration_tests/suite
   parallel:
     matrix:
       - PYTHON: ["3.10", "3.11", "3.12"]
