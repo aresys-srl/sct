@@ -9,140 +9,29 @@ Point Target Analysis
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
-import numpy as np
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct, TwiceDifferentiable3DCurve
+from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from arepyextras.quality.point_targets_analysis.analysis import point_target_analysis
 from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 from arepytools.io.io_support import NominalPointTarget
-from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.configuration.sct_default_configuration import SCTPointTargetAnalysisConfig
 from sct.core import custom_corrections
-from sct.core.global_corrections import (
-    IonosphericInput,
-    PlateTectonicsInput,
-    SolidTidesInput,
-    TroposphereInput,
-    compute_atmospheric_delays,
-    compute_geodynamics_corrections,
+from sct.core.atmospheric_corrections_main import (
+    AtmosphericDelaysAcquisitionInfo,
     convert_atmospheric_delays_to_df,
-    get_etad_corrections,
+    run_compute_atmospheric_delays,
 )
+from sct.core.etad_corrections_main import get_etad_corrections
+from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
 from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
-
-
-@dataclass
-class AtmosphericDelaysAcquisitionInfo:
-    """Acquisition information required for computing atmospheric delays"""
-
-    trajectory: TwiceDifferentiable3DCurve
-    azimuth_time: PreciseDateTime
-    carrier_frequency: float
-
-
-def run_compute_atmospheric_delays(
-    target_coords: np.ndarray,
-    acquisition_info: AtmosphericDelaysAcquisitionInfo,
-    config: SCTPointTargetAnalysisConfig,
-) -> tuple[np.ndarray | None, tuple[np.ndarray, np.ndarray] | None]:
-    """Compute atmospheric delays"""
-    if config.enable_ionospheric_correction and config.ionospheric_maps_directory is None:
-        log.critical("Ionospheric perturbation computation requested but the maps directory is not valid")
-        raise RuntimeError("Invalid ionospheric maps directory")
-
-    if config.enable_tropospheric_correction and config.tropospheric_maps_directory is None:
-        log.critical("Tropospheric perturbation computation requested but the maps directory is not valid")
-        raise RuntimeError("Invalid tropospheric maps directory")
-
-    ionosphere_input = None
-    if config.enable_ionospheric_correction:
-        assert config.ionospheric_analysis_center is not None
-        assert config.ionospheric_maps_directory is not None
-        ionosphere_input = IonosphericInput(
-            analysis_center=config.ionospheric_analysis_center,
-            incidence_angle_method=config.ionospheric_tec_inc_angle_method,
-            map_dir=config.ionospheric_maps_directory,
-        )
-
-    troposphere_input = None
-    if config.enable_tropospheric_correction:
-        assert config.tropospheric_maps_directory
-        assert config.tropospheric_map_grid_resolution
-        troposphere_input = TroposphereInput(
-            maps_directory=config.tropospheric_maps_directory, maps_resolution=config.tropospheric_map_grid_resolution
-        )
-
-    # atmospheric delays for each point target
-    return compute_atmospheric_delays(
-        target_coords=target_coords,
-        trajectory=acquisition_info.trajectory,
-        az_time=acquisition_info.azimuth_time,
-        fc_hz=acquisition_info.carrier_frequency,
-        ionosphere_input=ionosphere_input,
-        troposphere_input=troposphere_input,
-    )
-
-
-def run_compute_geodynamics_corrections(
-    nominal_target_coords: np.ndarray,
-    acquisition_time: PreciseDateTime,
-    point_targets_df: pd.DataFrame,
-    config: SCTPointTargetAnalysisConfig,
-) -> np.ndarray | None:
-    """Compute geodynamics corrections"""
-    # checking if acquisition time lies within point target data time validity boundaries
-
-    plate_tectonics_input = None
-    if config.enable_plate_tectonics_correction:
-        try:
-
-            def _to_pdt(date: pd.Series) -> PreciseDateTime:
-                return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
-
-            date_lower_boundary = _to_pdt(point_targets_df["validity_start_date"])
-            date_upper_boundary = _to_pdt(point_targets_df["validity_end_date"])
-
-            if not date_lower_boundary <= acquisition_time <= date_upper_boundary:
-                raise RuntimeError(
-                    f"Acquisition time {acquisition_time} date is "
-                    + f"outside of validity boundaries: [{date_lower_boundary},{date_upper_boundary}]"
-                )
-
-            # computing time delta between acquisition time and calibration site measurement campaign date
-            time_delta_s = acquisition_time - _to_pdt(point_targets_df["measurement_date"])
-
-        except KeyError as err:
-            log.critical("Missing time validity required information in input point targets")
-            raise RuntimeError(
-                "Cannot apply Plate Tectonics correction: disable this feature from configuration or "
-                + "add validity dates to point targets data"
-            ) from err
-
-        drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
-        drift_velocities = None
-        if set(drift_vel).issubset(point_targets_df.columns):
-            drift_velocities = point_targets_df[drift_vel].to_numpy()
-
-        plate_tectonics_input = PlateTectonicsInput(
-            time_delta_s=time_delta_s, drift_velocities=drift_velocities, plate_ref=point_targets_df.plate[0]
-        )
-
-    solid_tides_input = SolidTidesInput(time=acquisition_time) if config.enable_solid_tides_correction else None
-
-    return compute_geodynamics_corrections(
-        target_coords=nominal_target_coords,
-        solid_tides_input=solid_tides_input,
-        plate_tectonics_input=plate_tectonics_input,
-    )
 
 
 def main(
