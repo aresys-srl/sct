@@ -151,18 +151,22 @@ def main(
 
     # checking if acquisition time lies within point target data time validity boundaries
     try:
-        date_lower_boundary = PreciseDateTime.fromisoformat(
-            point_targets_df["validity_start_date"].mode()[0].isoformat()
-        )
-        date_upper_boundary = PreciseDateTime.fromisoformat(point_targets_df["validity_end_date"].mode()[0].isoformat())
 
-        if acquisition_time < date_lower_boundary or acquisition_time > date_upper_boundary:
-            raise RuntimeError(f"Acquisition time {acquisition_time} date is outside of validity boundaries")
+        def _to_pdt(date) -> PreciseDateTime:
+            return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
+
+        date_lower_boundary = _to_pdt(point_targets_df["validity_start_date"])
+        date_upper_boundary = _to_pdt(point_targets_df["validity_end_date"])
+
+        if not date_lower_boundary <= acquisition_time <= date_upper_boundary:
+            raise RuntimeError(
+                f"Acquisition time {acquisition_time} date is "
+                + f"outside of validity boundaries: [{date_lower_boundary},{date_upper_boundary}]"
+            )
 
         # computing time delta between acquisition time and calibration site measurement campaign date
-        time_delta_s = acquisition_time - PreciseDateTime.fromisoformat(
-            point_targets_df["measurement_date"].mode()[0].isoformat()
-        )
+        time_delta_s = acquisition_time - _to_pdt(point_targets_df["measurement_date"])
+
     except KeyError as err:
         time_delta_s = 0
         if config.enable_plate_tectonics_correction:
