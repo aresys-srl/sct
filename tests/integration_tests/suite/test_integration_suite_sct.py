@@ -76,7 +76,7 @@ def _compare_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> Non
     )
 
 
-def test_point_target_analysis_novasar1_slc(session: TestSession, env: Environment, data: DataRepository):
+def test_pta_novasar1_slc(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on NovaSAR-1 SLC product.
 
     Parameters
@@ -119,7 +119,7 @@ def test_point_target_analysis_novasar1_slc(session: TestSession, env: Environme
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_novasar1_grd(session: TestSession, env: Environment, data: DataRepository):
+def test_pta_novasar1_grd(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on NovaSAR-1 GRD product.
 
     Parameters
@@ -162,7 +162,7 @@ def test_point_target_analysis_novasar1_grd(session: TestSession, env: Environme
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_novasar1_scd(session: TestSession, env: Environment, data: DataRepository):
+def test_pta_novasar1_scd(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on NovaSAR-1 SCD product.
 
     Parameters
@@ -205,9 +205,7 @@ def test_point_target_analysis_novasar1_scd(session: TestSession, env: Environme
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_sentinel1_slc_perturbations(
-    session: TestSession, env: Environment, data: DataRepository
-):
+def test_pta_s1_slc_perturb(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on Sentinel-1 SLC 19 product with all perturbations enabled.
 
     Parameters
@@ -254,9 +252,7 @@ def test_point_target_analysis_sentinel1_slc_perturbations(
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_sentinel1_slc_perturbations_ext_orbit(
-    session: TestSession, env: Environment, data: DataRepository
-):
+def test_pta_s1_slc_perturb_ext_orbit(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on Sentinel-1 SLC 19 product with all perturbations enabled with ext orbit.
 
     Parameters
@@ -305,7 +301,7 @@ def test_point_target_analysis_sentinel1_slc_perturbations_ext_orbit(
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_sentinel1_slc_etad(session: TestSession, env: Environment, data: DataRepository):
+def test_pta_s1_slc_etad(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on Sentinel-1 SLC 23 product with its etad product.
 
     Parameters
@@ -350,9 +346,7 @@ def test_point_target_analysis_sentinel1_slc_etad(session: TestSession, env: Env
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_sentinel1_grd_perturbations(
-    session: TestSession, env: Environment, data: DataRepository
-):
+def test_pta_s1_grd_perturb(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on Sentinel-1 GRD 19 product with all perturbations enabled.
 
     Parameters
@@ -399,7 +393,7 @@ def test_point_target_analysis_sentinel1_grd_perturbations(
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_iceye_stripmap(session: TestSession, env: Environment, data: DataRepository):
+def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on ICEYE stripmap product.
 
     Parameters
@@ -442,7 +436,7 @@ def test_point_target_analysis_iceye_stripmap(session: TestSession, env: Environ
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_iceye_spotlight(session: TestSession, env: Environment, data: DataRepository):
+def test_pta_iceye_spotlight(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on ICEYE spotlight product.
 
     Parameters
@@ -485,7 +479,7 @@ def test_point_target_analysis_iceye_spotlight(session: TestSession, env: Enviro
     _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
 
 
-def test_point_target_analysis_iceye_topsar(session: TestSession, env: Environment, data: DataRepository):
+def test_pta_iceye_topsar(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on ICEYE topsar product.
 
     Parameters
