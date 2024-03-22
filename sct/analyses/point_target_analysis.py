@@ -26,6 +26,8 @@ from sct.core import custom_corrections
 from sct.core.custom_corrections import select_custom_corrections
 from sct.core.global_corrections import (
     IonosphericInput,
+    PlateTectonicsInput,
+    SolidTidesInput,
     TroposphereInput,
     compute_atmospheric_delays,
     compute_geodynamics_corrections,
@@ -99,46 +101,48 @@ def run_compute_geodynamics_corrections(
 ) -> np.ndarray | None:
     """Compute geodynamics corrections"""
     # checking if acquisition time lies within point target data time validity boundaries
-    try:
 
-        def _to_pdt(date: pd.Series) -> PreciseDateTime:
-            return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
+    plate_tectonics_input = None
+    if config.enable_plate_tectonics_correction:
+        try:
 
-        date_lower_boundary = _to_pdt(point_targets_df["validity_start_date"])
-        date_upper_boundary = _to_pdt(point_targets_df["validity_end_date"])
+            def _to_pdt(date: pd.Series) -> PreciseDateTime:
+                return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
 
-        if not date_lower_boundary <= acquisition_time <= date_upper_boundary:
-            raise RuntimeError(
-                f"Acquisition time {acquisition_time} date is "
-                + f"outside of validity boundaries: [{date_lower_boundary},{date_upper_boundary}]"
-            )
+            date_lower_boundary = _to_pdt(point_targets_df["validity_start_date"])
+            date_upper_boundary = _to_pdt(point_targets_df["validity_end_date"])
 
-        # computing time delta between acquisition time and calibration site measurement campaign date
-        time_delta_s = acquisition_time - _to_pdt(point_targets_df["measurement_date"])
+            if not date_lower_boundary <= acquisition_time <= date_upper_boundary:
+                raise RuntimeError(
+                    f"Acquisition time {acquisition_time} date is "
+                    + f"outside of validity boundaries: [{date_lower_boundary},{date_upper_boundary}]"
+                )
 
-    except KeyError as err:
-        time_delta_s = 0
-        if config.enable_plate_tectonics_correction:
+            # computing time delta between acquisition time and calibration site measurement campaign date
+            time_delta_s = acquisition_time - _to_pdt(point_targets_df["measurement_date"])
+
+        except KeyError as err:
             log.critical("Missing time validity required information in input point targets")
             raise RuntimeError(
                 "Cannot apply Plate Tectonics correction: disable this feature from configuration or "
                 + "add validity dates to point targets data"
             ) from err
 
-    # COMPUTING GEODYNAMICS CORRECTIONS
-    drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
-    drift_velocities = None
-    if set(drift_vel).issubset(point_targets_df.columns):
-        drift_velocities = point_targets_df[drift_vel].to_numpy()
+        drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
+        drift_velocities = None
+        if set(drift_vel).issubset(point_targets_df.columns):
+            drift_velocities = point_targets_df[drift_vel].to_numpy()
+
+        plate_tectonics_input = PlateTectonicsInput(
+            time_delta_s=time_delta_s, drift_velocities=drift_velocities, plate_ref=point_targets_df.plate[0]
+        )
+
+    solid_tides_input = SolidTidesInput(time=acquisition_time) if config.enable_solid_tides_correction else None
 
     return compute_geodynamics_corrections(
         target_coords=nominal_target_coords,
-        drift_velocities=drift_velocities,
-        acq_time=acquisition_time,
-        time_delta_s=time_delta_s,
-        plate_ref=point_targets_df.plate[0],
-        tides_flag=config.enable_solid_tides_correction,
-        tectonics_flag=config.enable_plate_tectonics_correction,
+        solid_tides_input=solid_tides_input,
+        plate_tectonics_input=plate_tectonics_input,
     )
 
 
