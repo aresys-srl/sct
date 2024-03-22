@@ -93,8 +93,8 @@ def run_compute_atmospheric_delays(
 
 def main(
     product_path: str | Path,
+    external_target_source: str | Path,
     external_orbit_path: str | Path | None = None,
-    external_target_source: str | Path | None = None,
     config: SCTPointTargetAnalysisConfig | None = None,
 ) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
     """Point Target Analysis high-level function that executes the proper wrapper of Arepyextras-Quality
@@ -104,10 +104,10 @@ def main(
     ----------
     product_path : str | Path
         Path to the input product
+    external_target_source : str | Path
+        path to external point target source (file or folder)
     external_orbit_path : str | Path | None, optional
         Path to the external orbit file,  by default None
-    external_target_source : str | Path, optional
-        path to external point target source (file or folder), by default None
     config : SCTPointTargetAnalysisConfig, optional
         config file SCTPointTargetAnalysisConfig dataclass to enable and manage different features, if provided,
         by default None
@@ -115,14 +115,34 @@ def main(
     Returns
     -------
     tuple[pd.DataFrame, list[PointTargetGraphicalData]]
-        pandas dataframe containing all the computed features for each point target,
+        pandas data frame containing all the computed features for each point target,
         dict of data stored for graphical output needs
     """
 
+    # Input parameters analysis
     product_path = Path(product_path)
+    log.info(f"Input product: {product_path}")
+
+    external_target_source = Path(external_target_source)
+    log.info(f"Using external target source provided: {external_target_source}")
+
     external_orbit_path = Path(external_orbit_path) if external_orbit_path is not None else None
     if external_orbit_path is not None:
         log.info(f"Using external orbit {external_orbit_path}")
+
+    config = config or SCTPointTargetAnalysisConfig()
+
+    # ETAD configuration update
+    if config.enable_etad_corrections:
+        config.enable_solid_tides_correction = False
+        config.enable_ionospheric_correction = False
+        config.enable_tropospheric_correction = False
+        config.enable_sensor_specific_processing_corrections = False
+        log.debug("ETAD corrections enabled: forced disabling of other correction")
+
+        if config.etad_product_path is None:
+            log.critical("ETAD corrections requested but the ETAD product path is not valid")
+            raise RuntimeError("Invalid ETAD Product path")
 
     # DETECTING INPUT PRODUCT TYPE
     input_type = input_detector(product=product_path)
@@ -131,23 +151,15 @@ def main(
     product, first_channel = product_loader(
         product_path=product_path, external_orbit=external_orbit_path, input_type=input_type
     )
+    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
+    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
 
     # EXTRACTING PRODUCT ACQUISITION TIME
     acquisition_time = first_channel.azimuth_axis[0]  # approximating acquisition time with firs value of azimuth axis
 
-    # CONFIGURATION MANAGEMENT
-    if config is None:
-        # initializing a default configuration
-        config = SCTPointTargetAnalysisConfig()
-
-    # CALIBRATION SITES MANAGEMENT
-    if external_target_source is None:
-        raise RuntimeError("External source for point target data must be provided")
-
-    external_target_source = Path(external_target_source)
-    log.info(f"Using external target source provided: {external_target_source}")
-    # external target source management
+    # external target source
     point_targets_df = extract_point_target_data_from_source(source=external_target_source)
+    nominal_target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
 
     # checking if acquisition time lies within point target data time validity boundaries
     try:
@@ -176,21 +188,7 @@ def main(
                 + "add validity dates to point targets data"
             ) from err
 
-    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
-    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
-
-    # ETAD CORRECTIONS WORKFLOW
-    if config.enable_etad_corrections:
-        config.enable_solid_tides_correction = False
-        config.enable_ionospheric_correction = False
-        config.enable_tropospheric_correction = False
-        config.enable_sensor_specific_processing_corrections = False
-        if config.etad_product_path is None:
-            log.critical("ETAD corrections requested but the ETAD product path is not valid")
-            raise RuntimeError("Invalid ETAD Product path")
-
     # COMPUTING GEODYNAMICS CORRECTIONS
-    nominal_target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
     drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
     drift_velocities = None
     if set(drift_vel).issubset(point_targets_df.columns):
@@ -210,7 +208,7 @@ def main(
     if coords_displacements is not None:
         point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = nominal_target_coords + coords_displacements
 
-    # converting point target dataframe in list of NominalPointTarget dataclasses
+    # converting point target data frame in list of NominalPointTarget dataclasses
     point_targets_data = convert_df_to_nominal_point_target(data_df=point_targets_df)
 
     # computing atmospheric delays
@@ -228,7 +226,7 @@ def main(
         target_names=point_targets_df["target_name"].copy(), delays=atmospheric_delays
     )
 
-    # COMPUTING POINT TARGET ANALYSIS
+    # computing point target analysis
     data_df, graph_data = sct_point_target_analysis(
         product=product,
         config=config,
@@ -237,9 +235,10 @@ def main(
         range_corrections_func=rng_corr_func,
     )
 
-    # GET ETAD CORRECTIONS
+    # retrieving ETAD corrections
     if config.enable_etad_corrections:
         log.info("Extracting ALE range corrections from ETAD product...")
+        assert config.etad_product_path is not None
         etad_corrections = get_etad_corrections(etad_product_path=config.etad_product_path, target_df=point_targets_df)
         data_df = data_df.merge(etad_corrections, on=["target_name"])
 
