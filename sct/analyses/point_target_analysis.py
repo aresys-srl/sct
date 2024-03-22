@@ -91,6 +91,57 @@ def run_compute_atmospheric_delays(
     )
 
 
+def run_compute_geodynamics_corrections(
+    nominal_target_coords: np.ndarray,
+    acquisition_time: PreciseDateTime,
+    point_targets_df: pd.DataFrame,
+    config: SCTPointTargetAnalysisConfig,
+) -> np.ndarray | None:
+    """Compute geodynamics corrections"""
+    # checking if acquisition time lies within point target data time validity boundaries
+    try:
+
+        def _to_pdt(date: pd.Series) -> PreciseDateTime:
+            return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
+
+        date_lower_boundary = _to_pdt(point_targets_df["validity_start_date"])
+        date_upper_boundary = _to_pdt(point_targets_df["validity_end_date"])
+
+        if not date_lower_boundary <= acquisition_time <= date_upper_boundary:
+            raise RuntimeError(
+                f"Acquisition time {acquisition_time} date is "
+                + f"outside of validity boundaries: [{date_lower_boundary},{date_upper_boundary}]"
+            )
+
+        # computing time delta between acquisition time and calibration site measurement campaign date
+        time_delta_s = acquisition_time - _to_pdt(point_targets_df["measurement_date"])
+
+    except KeyError as err:
+        time_delta_s = 0
+        if config.enable_plate_tectonics_correction:
+            log.critical("Missing time validity required information in input point targets")
+            raise RuntimeError(
+                "Cannot apply Plate Tectonics correction: disable this feature from configuration or "
+                + "add validity dates to point targets data"
+            ) from err
+
+    # COMPUTING GEODYNAMICS CORRECTIONS
+    drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
+    drift_velocities = None
+    if set(drift_vel).issubset(point_targets_df.columns):
+        drift_velocities = point_targets_df[drift_vel].to_numpy()
+
+    return compute_geodynamics_corrections(
+        target_coords=nominal_target_coords,
+        drift_velocities=drift_velocities,
+        acq_time=acquisition_time,
+        time_delta_s=time_delta_s,
+        plate_ref=point_targets_df.plate[0],
+        tides_flag=config.enable_solid_tides_correction,
+        tectonics_flag=config.enable_plate_tectonics_correction,
+    )
+
+
 def main(
     product_path: str | Path,
     external_target_source: str | Path,
@@ -161,47 +212,11 @@ def main(
     point_targets_df = extract_point_target_data_from_source(source=external_target_source)
     nominal_target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
 
-    # checking if acquisition time lies within point target data time validity boundaries
-    try:
-
-        def _to_pdt(date) -> PreciseDateTime:
-            return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
-
-        date_lower_boundary = _to_pdt(point_targets_df["validity_start_date"])
-        date_upper_boundary = _to_pdt(point_targets_df["validity_end_date"])
-
-        if not date_lower_boundary <= acquisition_time <= date_upper_boundary:
-            raise RuntimeError(
-                f"Acquisition time {acquisition_time} date is "
-                + f"outside of validity boundaries: [{date_lower_boundary},{date_upper_boundary}]"
-            )
-
-        # computing time delta between acquisition time and calibration site measurement campaign date
-        time_delta_s = acquisition_time - _to_pdt(point_targets_df["measurement_date"])
-
-    except KeyError as err:
-        time_delta_s = 0
-        if config.enable_plate_tectonics_correction:
-            log.critical("Missing time validity required information in input point targets")
-            raise RuntimeError(
-                "Cannot apply Plate Tectonics correction: disable this feature from configuration or "
-                + "add validity dates to point targets data"
-            ) from err
-
-    # COMPUTING GEODYNAMICS CORRECTIONS
-    drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
-    drift_velocities = None
-    if set(drift_vel).issubset(point_targets_df.columns):
-        drift_velocities = point_targets_df[drift_vel].to_numpy()
-
-    coords_displacements = compute_geodynamics_corrections(
-        target_coords=nominal_target_coords,
-        drift_velocities=drift_velocities,
-        acq_time=acquisition_time,
-        time_delta_s=time_delta_s,
-        plate_ref=point_targets_df.plate[0],
-        tides_flag=config.enable_solid_tides_correction,
-        tectonics_flag=config.enable_plate_tectonics_correction,
+    coords_displacements = run_compute_geodynamics_corrections(
+        nominal_target_coords=nominal_target_coords,
+        acquisition_time=acquisition_time,
+        point_targets_df=point_targets_df,
+        config=config,
     )
 
     # APPLYING GEODYNAMICS CORRECTIONS TO TARGET COORDINATES
