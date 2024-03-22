@@ -186,14 +186,14 @@ def main(
             raise RuntimeError("Invalid ETAD Product path")
 
     # COMPUTING GEODYNAMICS CORRECTIONS
-    target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
+    nominal_target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
     drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
     drift_velocities = None
     if set(drift_vel).issubset(point_targets_df.columns):
         drift_velocities = point_targets_df[drift_vel].to_numpy()
 
     coords_displacements = compute_geodynamics_corrections(
-        target_coords=target_coords,
+        target_coords=nominal_target_coords,
         drift_velocities=drift_velocities,
         acq_time=acquisition_time,
         time_delta_s=time_delta_s,
@@ -204,7 +204,7 @@ def main(
 
     # APPLYING GEODYNAMICS CORRECTIONS TO TARGET COORDINATES
     if coords_displacements is not None:
-        point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = target_coords + coords_displacements
+        point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = nominal_target_coords + coords_displacements
 
     # converting point target dataframe in list of NominalPointTarget dataclasses
     point_targets_data = convert_df_to_nominal_point_target(data_df=point_targets_df)
@@ -216,7 +216,7 @@ def main(
         carrier_frequency=first_channel.carrier_frequency,
     )
     atmospheric_delays = run_compute_atmospheric_delays(
-        target_coords=target_coords,
+        target_coords=nominal_target_coords,
         acquisition_info=acquisition_info,
         config=config,
     )
