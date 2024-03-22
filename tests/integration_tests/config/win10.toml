@@ -1,6 +1,9 @@
 [data]
 url = "file:///c:/aresys/sct_tds_v1.2"
 
+[env]
+root = "tdir"
+
 [env.variables]
 OMP_NUM_THREADS = {}
 LD_LIBRARY_PATH = { is_list = true }
