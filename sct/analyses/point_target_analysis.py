@@ -23,6 +23,8 @@ from sct.configuration.sct_default_configuration import SCTPointTargetAnalysisCo
 from sct.core import custom_corrections
 from sct.core.custom_corrections import select_custom_corrections
 from sct.core.global_corrections import (
+    IonosphericInput,
+    TroposphereInput,
     compute_atmospheric_delays,
     compute_geodynamics_corrections,
     convert_atmospheric_delays_to_df,
@@ -161,22 +163,35 @@ def main(
         log.critical("Tropospheric perturbation computation requested but the maps directory is not valid")
         raise RuntimeError("Invalid tropospheric maps directory")
 
+    ionosphere_input = None
+    if config.enable_ionospheric_correction:
+        assert config.ionospheric_analysis_center is not None
+        assert config.ionospheric_maps_directory is not None
+        ionosphere_input = IonosphericInput(
+            analysis_center=config.ionospheric_analysis_center,
+            incidence_angle_method=config.ionospheric_tec_inc_angle_method,
+            map_dir=config.ionospheric_maps_directory,
+        )
+
+    troposphere_input = None
+    if config.enable_tropospheric_correction:
+        assert config.tropospheric_maps_directory
+        assert config.tropospheric_map_grid_resolution
+        troposphere_input = TroposphereInput(
+            maps_directory=config.tropospheric_maps_directory, maps_resolution=config.tropospheric_map_grid_resolution
+        )
+
     # atmospheric delays for each point target
     atmospheric_delays = compute_atmospheric_delays(
         target_coords=target_coords,
         trajectory=first_channel.trajectory,
         az_time=first_channel.mid_azimuth_time,
         fc_hz=first_channel.carrier_frequency,
-        analysis_center=config.ionospheric_analysis_center,
-        ionosphere_incidence_angle_method=config.ionospheric_tec_inc_angle_method,
-        troposphere_map_resolution=config.tropospheric_map_grid_resolution,
-        ionosphere_flag=config.enable_ionospheric_correction,
-        ionosphere_map_dir=config.ionospheric_maps_directory,
-        troposphere_flag=config.enable_tropospheric_correction,
-        troposphere_map_dir=config.tropospheric_maps_directory,
+        ionosphere_input=ionosphere_input,
+        troposphere_input=troposphere_input,
     )
     atmospheric_delays_df = convert_atmospheric_delays_to_df(
-        target_names=point_targets_df["target_name"].copy(), delays=tuple(atmospheric_delays)
+        target_names=point_targets_df["target_name"].copy(), delays=atmospheric_delays
     )
 
     # COMPUTING POINT TARGET ANALYSIS

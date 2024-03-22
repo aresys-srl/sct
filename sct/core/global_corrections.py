@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import warnings
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
 
@@ -113,19 +114,39 @@ def compute_geodynamics_corrections(
     return None
 
 
+@dataclass
+class IonosphericInput:
+    """Input for ionospheric delay computation"""
+
+    analysis_center: ionosphere.IonosphericAnalysisCenters
+    """ionospheric maps analysis center"""
+
+    incidence_angle_method: ionosphere.TECMappingFunctionIncidenceAngleMethod
+    """pierce point incidence angle computing method"""
+
+    map_dir: Path
+    """path to ionospheric maps directory"""
+
+
+@dataclass
+class TroposphereInput:
+    """Input for tropospheric delay computation"""
+
+    maps_resolution: troposphere.TroposphericGRIDResolution
+    """tropospheric maps resolution"""
+
+    maps_directory: Path
+    """path to tropospheric maps directory"""
+
+
 def compute_atmospheric_delays(
     target_coords: np.ndarray,
     trajectory: TwiceDifferentiable3DCurve,
     az_time: PreciseDateTime,
     fc_hz: float,
-    analysis_center: ionosphere.IonosphericAnalysisCenters,
-    ionosphere_incidence_angle_method: ionosphere.TECMappingFunctionIncidenceAngleMethod,
-    troposphere_map_resolution: troposphere.TroposphericGRIDResolution,
-    ionosphere_flag: bool,
-    ionosphere_map_dir: Path,
-    troposphere_flag: bool,
-    troposphere_map_dir: Path,
-) -> list[Union[np.ndarray, None]]:
+    ionosphere_input: IonosphericInput | None,
+    troposphere_input: TroposphereInput | None,
+) -> tuple[np.ndarray | None, tuple[np.ndarray, np.ndarray] | None]:
     """Atmospheric corrections management: computing ionospheric and tropospheric delays displacements from maps.
     These corrections are to be applied only in range direction.
 
@@ -139,64 +160,55 @@ def compute_atmospheric_delays(
         azimuth time corresponding to the product acquisition time
     fc_hz : float
         signal carrier frequency
-    analysis_center : ionosphere.IonosphericAnalysisCenters
-        ionospheric maps analysis center
-    ionosphere_incidence_angle_method : ionosphere.TECMappingFunctionIncidenceAngleMethod
-        pierce point incidence angle computing method
-    troposphere_map_resolution : troposphere.TroposphericGRIDResolution
-        tropospheric maps resolution
-    ionosphere_flag : bool
-        enabling flag for computing ionosphere corrections
-    ionosphere_map_dir : Path
-        path to ionospheric maps directory
-    troposphere_flag : bool
-        enabling flag for computing tropospheric corrections
-    troposphere_map_dir : Path
-        path to tropospheric maps directory
+    ionosphere_input: IonosphericInput | None
+        trigger ionospheric delay computation if provided
+    troposphere_input: TroposphereInput | None
+        trigger tropospheric delay computation if provided
 
     Returns
     -------
-    list[Union[np.ndarray, None]]
+    tuple[np.ndarray | None, tuple[np.ndarray, np.ndarray] | None]
         ionospheric delay,
         tropospheric hydrostatic and wet delays
     """
-    delays = [None, None]
+    if not ionosphere_input and not troposphere_input:
+        return None, None
 
-    if ionosphere_flag or troposphere_flag:
-        # computing sensor position at which the ground point targets are seen
-        az_times, _ = inverse_geocoding_monostatic_core(
-            trajectory=trajectory,
-            ground_points=target_coords,
-            initial_guesses=az_time,
-            frequencies_doppler_centroid=0,
-            wavelength=1,
-        )
-        sat_pos = trajectory.evaluate(az_times)
+    assert ionosphere_input or troposphere_input
 
-    if ionosphere_flag:
-        # estimating ionospheric delay corrections
-        delays[0] = ionosphere.compute_delay(
+    # computing sensor position at which the ground point targets are seen
+    az_times, _ = inverse_geocoding_monostatic_core(
+        trajectory=trajectory,
+        ground_points=target_coords,
+        initial_guesses=az_time,
+        frequencies_doppler_centroid=0,
+        wavelength=1,
+    )
+    sat_pos = trajectory.evaluate(az_times)
+
+    ionospheric_delay: np.ndarray | None = None
+    if ionosphere_input:
+        ionospheric_delay = -ionosphere.compute_delay(
             acq_time=az_time,
             targets_xyz_coords=target_coords,
             sat_xyz_coords=sat_pos,
-            analysis_center=analysis_center,
+            analysis_center=ionosphere_input.analysis_center,
             fc_hz=fc_hz,
-            map_folder=ionosphere_map_dir,
-            tec_mapping_method=ionosphere_incidence_angle_method,
+            map_folder=ionosphere_input.map_dir,
+            tec_mapping_method=ionosphere_input.incidence_angle_method,
         )
-        delays[0] *= -1
 
-    if troposphere_flag:
-        # estimating tropospheric delay corrections
-        delays[1] = troposphere.compute_delay(
+    tropospheric_delay: tuple[np.ndarray, np.ndarray] | None = None
+    if troposphere_input:
+        tropospheric_delay = troposphere.compute_delay(
             acq_time=az_time,
             targets_xyz_coords=target_coords,
             sat_xyz_coords=sat_pos,
-            map_folder=troposphere_map_dir,
-            map_resolution=troposphere_map_resolution,
+            map_folder=troposphere_input.maps_directory,
+            map_resolution=troposphere_input.maps_resolution,
         )
 
-    return delays
+    return ionospheric_delay, tropospheric_delay
 
 
 def convert_atmospheric_delays_to_df(
