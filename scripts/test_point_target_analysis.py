@@ -10,7 +10,7 @@ import arepyextras.quality.core.custom_logger as clg
 import arepyextras.quality.point_targets_analysis.graphical_output as ptgpo
 
 from sct.analyses import point_target_analysis as pta
-from sct.configuration.sct_default_configuration import SCTConfiguration
+from sct.configuration.sct_configuration import SCTConfiguration
 
 # setup custom logger
 log = logging.getLogger("quality_analysis")

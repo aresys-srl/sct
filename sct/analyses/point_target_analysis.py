@@ -18,7 +18,7 @@ from arepyextras.quality.point_targets_analysis.analysis import point_target_ana
 from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 from arepytools.io.io_support import NominalPointTarget
 
-from sct.configuration.sct_default_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core import custom_corrections
 from sct.core.atmospheric_corrections_main import (
     AtmosphericDelaysAcquisitionInfo,

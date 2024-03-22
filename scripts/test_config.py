@@ -3,7 +3,7 @@
 
 """SAFE product reader testing script"""
 
-from sct.configuration.sct_default_configuration import SCTConfiguration
+from sct.configuration.sct_configuration import SCTConfiguration
 
 if __name__ == "__main__":
     config = r"C:\Users\giorgio.parma\Desktop\temporary_outputs\prova.toml"

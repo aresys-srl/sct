@@ -10,7 +10,7 @@ import arepyextras.quality.core.custom_logger as clg
 from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
 
 from sct.analyses import radiometric_analysis as ra
-from sct.configuration.sct_default_configuration import SCTConfiguration
+from sct.configuration.sct_configuration import SCTConfiguration
 
 # setup custom logger
 log = logging.getLogger("quality_analysis")

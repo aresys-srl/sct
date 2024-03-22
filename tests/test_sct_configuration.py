@@ -19,7 +19,7 @@ from arepyextras.quality.radiometric_analysis.config import (
 )
 from jsonschema.exceptions import ValidationError
 
-from sct.configuration.sct_default_configuration import (
+from sct.configuration.sct_configuration import (
     SCTConfiguration,
     SCTInterferometricAnalysisConfig,
     SCTPointTargetAnalysisConfig,
@@ -211,7 +211,7 @@ def _validate_inter_config(config: SCTInterferometricAnalysisConfig) -> None:
 
 
 class SCTConfigurationTest(unittest.TestCase):
-    """Testing sct_default_configuration.py functionalities"""
+    """Testing sct_configuration.py functionalities"""
 
     def setUp(self) -> None:
         self.full_toml = point_target_analysis_toml + radiometric_analysis_toml + interferometric_analysis_toml

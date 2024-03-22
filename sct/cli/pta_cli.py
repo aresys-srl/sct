@@ -16,7 +16,7 @@ import click
 from arepyextras.quality.core.custom_logger import CustomFormatterFileHandler
 
 import sct.analyses.point_target_analysis as pta
-from sct.configuration.sct_default_configuration import SCTConfiguration
+from sct.configuration.sct_configuration import SCTConfiguration
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")

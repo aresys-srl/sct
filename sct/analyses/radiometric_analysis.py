@@ -16,7 +16,7 @@ from arepyextras.quality.radiometric_analysis.analysis import gamma_profiles, ne
 from arepyextras.quality.radiometric_analysis.config import RadiometricProfilesConfig
 from arepyextras.quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 
-from sct.configuration.sct_default_configuration import SCTRadiometricAnalysisConfig
+from sct.configuration.sct_configuration import SCTRadiometricAnalysisConfig
 from sct.io.io_manager import product_loader
 
 # syncing with logger

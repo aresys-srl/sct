@@ -14,7 +14,7 @@ from pathlib import Path
 from arepyextras.quality.interferometric_analysis.analysis import interferometric_analysis
 from arepyextras.quality.interferometric_analysis.custom_dataclasses import InterferometricCoherenceOutput
 
-from sct.configuration.sct_default_configuration import SCTInterferometricAnalysisConfig
+from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig
 from sct.io.io_manager import product_loader
 
 # syncing with logger

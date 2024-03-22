@@ -15,7 +15,7 @@ import click
 from sct.__init__ import __version__ as VERSION
 from sct.cli.pta_cli import target_analysis
 from sct.cli.ra_cli import radiometric_analysis
-from sct.configuration.sct_default_configuration import SCTConfiguration
+from sct.configuration.sct_configuration import SCTConfiguration
 
 version_option = click.version_option(VERSION, help="Show CLI version and exit")
 

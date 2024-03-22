@@ -9,7 +9,7 @@ import pandas as pd
 from arepyextras.test import DataRepository, Environment, TestSession
 
 from sct.analyses import point_target_analysis as pta
-from sct.configuration.sct_default_configuration import SCTConfiguration
+from sct.configuration.sct_configuration import SCTConfiguration
 
 PYTHON_INTERPRETER = sys.executable
 ABSOLUTE_TOLERANCE = 1e-6

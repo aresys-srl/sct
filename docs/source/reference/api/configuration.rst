@@ -1,4 +1,4 @@
 Configuration Module
 ====================
 
-.. automodule:: sct.configuration.sct_default_configuration
+.. automodule:: sct.configuration.sct_configuration

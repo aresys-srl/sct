@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from arepytools.timing.precisedatetime import PreciseDateTime
 
-from sct.configuration.sct_default_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core.geodynamics_corrections_core import PlateTectonicsInput, SolidTidesInput, compute_geodynamics_corrections
 
 # syncing with logger

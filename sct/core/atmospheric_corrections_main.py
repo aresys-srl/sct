@@ -13,7 +13,7 @@ import pandas as pd
 from arepyextras.quality.io.quality_input_protocol import TwiceDifferentiable3DCurve
 from arepytools.timing.precisedatetime import PreciseDateTime
 
-from sct.configuration.sct_default_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core.atmospheric_corrections_core import IonosphericInput, TroposphereInput, compute_atmospheric_delays
 
 # syncing with logger
