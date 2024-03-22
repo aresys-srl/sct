@@ -18,9 +18,10 @@ from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_p
 from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
 from arepyextras.eo_products.saocom.l1_products.utilities import is_saocom_product
 from arepyextras.quality.io.quality_input_from_product_folder import ProductFolderManager
-from arepyextras.quality.io.quality_input_protocol import ChannelData, QualityInputProduct
+from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from arepytools.io.productfolder2 import is_product_folder as is_aresys_product
 
+from sct.core.custom_corrections import ALECorrectionFunctionType, sentinel_1_ipf
 from sct.io.quality_input_from_iceye_product import ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
 from sct.io.quality_input_from_saocom_product import SAOCOMProductManager
@@ -43,32 +44,6 @@ class SupportedInputProductType(Enum):
     ICEYE = auto()
     SAOCOM = auto()
     UNKNOWN = auto()
-
-
-# class SupportedProcessors(Enum):
-#     """Supported processors"""
-
-
-# class SupportedMissions(Enum):
-#     """Supported processors"""
-
-
-# def SCTProductProtocol(QualityInputProduct):
-
-#     def __init__(self) -> None:
-#         ...
-
-#     @property
-#     def product_type(self) -> SupportedInputProductType:
-#         ...
-
-#     @property
-#     def mission(self) -> SupportedMissions:
-#         ...
-
-#     @property
-#     def processor(self) -> SupportedProcessors:
-#         ...
 
 
 def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
@@ -105,27 +80,50 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
     return SupportedInputProductType.UNKNOWN
 
 
+def select_custom_corrections(
+    product_type: SupportedInputProductType,
+) -> tuple[ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
+    """Selecting the proper correction functions based on input product type.
+
+    Parameters
+    ----------
+    product_type : SupportedInputProductType
+        product type
+
+    Returns
+    -------
+    tuple[ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
+        range custom correction function,
+        azimuth custom correction function
+    """
+    if product_type == SupportedInputProductType.S1_SAFE:
+        return sentinel_1_ipf.compute_range_corrections, sentinel_1_ipf.compute_azimuth_corrections
+    else:
+        return None, None
+
+
 def product_loader(
-    product_path: Path, input_type: SupportedInputProductType, external_orbit: Path | None = None
-) -> tuple[QualityInputProduct, ChannelData]:
-    """Loading product by it type. Extracting a QualityInputProduct protocol-compliant object and the first channel
-    ChannelData protocol-compliant object.
+    product_path: Path, external_orbit: Path | None = None
+) -> tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
+    """Loading product by it type. Extracting a QualityInputProduct protocol-compliant object.
 
     Parameters
     ----------
     product_path : Path
         Path to the product to be loaded
-    input_type : SupportedInputProductType
-        product type
     external_orbit : Path | None, optional
         Path to external orbit file, if needed, by default None
 
     Returns
     -------
-    tuple[QualityInputProduct, ChannelData]
+    tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
         QualityInputProduct compliant object,
-        first channel ChannelData compliant object
+        range ale correction function or none
+        azimuth ale correction function or none
     """
+    # DETECTING INPUT PRODUCT TYPE
+    input_type = input_detector(product=product_path)
+
     match input_type:
         case SupportedInputProductType.ARESYS:
             log.info("Product type: Product Folder Aresys")
@@ -145,7 +143,6 @@ def product_loader(
         case _:
             raise InvalidProductType("Unknown product type")
 
-    # extracting also first channel
-    first_channel = product.get_channel_data(channel_id=product.channels_list[0])
-
-    return product, first_channel
+    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
+    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
+    return product, rng_corr_func, az_corr_func

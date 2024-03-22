@@ -23,7 +23,6 @@ from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.configuration.sct_default_configuration import SCTPointTargetAnalysisConfig
 from sct.core import custom_corrections
-from sct.core.custom_corrections import select_custom_corrections
 from sct.core.global_corrections import (
     IonosphericInput,
     PlateTectonicsInput,
@@ -34,7 +33,7 @@ from sct.core.global_corrections import (
     convert_atmospheric_delays_to_df,
     get_etad_corrections,
 )
-from sct.io.io_manager import input_detector, product_loader
+from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
 # syncing with logger
@@ -199,17 +198,14 @@ def main(
             log.critical("ETAD corrections requested but the ETAD product path is not valid")
             raise RuntimeError("Invalid ETAD Product path")
 
-    # DETECTING INPUT PRODUCT TYPE
-    input_type = input_detector(product=product_path)
-
     # LOADING PRODUCT
-    product, first_channel = product_loader(
-        product_path=product_path, external_orbit=external_orbit_path, input_type=input_type
+    product, rng_corr_func, az_corr_func = product_loader(
+        product_path=product_path,
+        external_orbit=external_orbit_path,
     )
-    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
-    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
 
     # EXTRACTING PRODUCT ACQUISITION TIME
+    first_channel = product.get_channel_data(channel_id=product.channels_list[0])
     acquisition_time = first_channel.azimuth_axis[0]  # approximating acquisition time with firs value of azimuth axis
 
     # external target source

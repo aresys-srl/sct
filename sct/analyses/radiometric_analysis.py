@@ -17,7 +17,7 @@ from arepyextras.quality.radiometric_analysis.config import RadiometricProfilesC
 from arepyextras.quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 
 from sct.configuration.sct_default_configuration import SCTRadiometricAnalysisConfig
-from sct.io.io_manager import input_detector, product_loader
+from sct.io.io_manager import product_loader
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
@@ -53,11 +53,8 @@ def sct_radiometric_profiles(
 
     product_path = Path(product_path)
 
-    # DETECTING INPUT PRODUCT TYPE
-    input_type = input_detector(product=product_path)
-
     # LOADING PRODUCT
-    product, _ = product_loader(product_path=product_path, input_type=input_type)
+    product, _, _ = product_loader(product_path=product_path)
 
     if analysis_type == SupportedRadiometricProfiles.NESZ:
         results = nesz_profiles(product=product, config=config)

@@ -15,7 +15,7 @@ from arepyextras.quality.interferometric_analysis.analysis import interferometri
 from arepyextras.quality.interferometric_analysis.custom_dataclasses import InterferometricCoherenceOutput
 
 from sct.configuration.sct_default_configuration import SCTInterferometricAnalysisConfig
-from sct.io.io_manager import input_detector, product_loader
+from sct.io.io_manager import product_loader
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
@@ -64,10 +64,7 @@ def sct_interferometric_coherence_analysis(
     list[InterferometricCoherenceOutput]
         an InterferometricCoherenceOutput dataclass for each channel
     """
-    # DETECTING INPUT PRODUCT TYPE
-    input_type = input_detector(product=product_path)
-
     # LOADING PRODUCT
-    product, _ = product_loader(product_path=product_path, input_type=input_type)
+    product, _, _ = product_loader(product_path=product_path)
 
     return interferometric_analysis(product=product, config=config.base_config)
