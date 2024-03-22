@@ -257,7 +257,8 @@ def main(
     # retrieving ETAD corrections
     if config.enable_etad_corrections:
         log.info("Extracting ALE range corrections from ETAD product...")
-        assert config.etad_product_path is not None
+        if config.etad_product_path is None:
+            raise RuntimeError("Cannot perform ETAD corrections: missing input etad product")
         etad_corrections = get_etad_corrections(etad_product_path=config.etad_product_path, target_df=point_targets_df)
         data_df = data_df.merge(etad_corrections, on=["target_name"])
 
