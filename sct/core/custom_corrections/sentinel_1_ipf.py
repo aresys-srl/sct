@@ -14,30 +14,28 @@ from arepytools.timing.precisedatetime import PreciseDateTime
 import sct.io.safe_computing_utilities as s1_corrections
 
 
-def _detect_mid_swath_channel(times: dict[str, PreciseDateTime]) -> str:
-    """Detecting the mid swath channel name.
+def _detect_mid_swath_channel(subswaths: list[str]) -> str:
+    """Detecting the mid swath channel name. For Sentinel-1, only IW and EW
+    acquisition modes have multiple sub-swaths. For them, the middle sub-swaths
+    are IW2 and EW3, respectively. All other modes have a single swath.
 
     Parameters
     ----------
-    times : dict[str, PreciseDateTime]
-        dictionary with keys being the swaths and values being azimuth start times
+    times : list[str]
+        list with values being the sub-swath names
 
     Returns
     -------
     str
-        dictionary mid value key
+        mid-swath name
     """
-    # the dictionary must contain an odd number of values in order to be able do find a mid value
-    assert len(times) % 2 != 0
-
-    # removing max and min values at each iteration until just one value is left, that's the mid one
-    times = {t: v[0] for t, v in times.items()}
-    while len(times) > 1:
-        min_key = min(times, key=times.get)
-        max_key = max(times, key=times.get)
-        times.pop(min_key)
-        times.pop(max_key)
-    return list(times.keys())[0]
+    swath_names = sorted(subswaths)
+    if swath_names == ["IW1", "IW2", "IW3"]:
+        return "IW2"
+    if swath_names == ["EW1", "EW2", "EW3", "EW4", "EW5"]:
+        return "EW3"
+    assert len(swath_names) == 1
+    return swath_names[0]
 
 
 def _get_rid_of_pol_dependency(arg: dict[str, dict[str, tuple[PreciseDateTime, float]]]) -> dict[str, PreciseDateTime]:
@@ -144,7 +142,7 @@ def compute_azimuth_corrections(
             )
 
     subswath_mid_first_burst_times = _get_rid_of_pol_dependency(subswath_mid_first_burst_times)
-    mid_swath_channel_id = _detect_mid_swath_channel(times=subswath_mid_first_burst_times)
+    mid_swath_channel_id = _detect_mid_swath_channel(subswaths=list(subswath_mid_first_burst_times.keys()))
     bistatic_delay_applied = subswath_mid_first_burst_times[mid_swath_channel_id][1] / 2
 
     # computing azimuth corrections
