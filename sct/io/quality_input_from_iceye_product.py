@@ -474,7 +474,7 @@ class ICEYEChannelManager:
         incidence_angle = compute_incidence_angles_from_trajectory(
             trajectory=self.trajectory,
             azimuth_time=azimuth_time,
-            range_times=self.mid_range_time,
+            range_times=range_time,
             look_direction=self.looking_side.value,
         )
         look_angle = compute_look_angles_from_trajectory(
