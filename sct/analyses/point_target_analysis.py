@@ -211,10 +211,8 @@ def sct_point_target_analysis(
     data["id"] = [uuid4() for _ in range(len(data))]
 
     # COMPUTING SENSOR SPECIFIC CORRECTIONS
-    range_corrections_df = pd.DataFrame([None] * len(data), columns=["total_range_ale_correction_[m]"])
-    range_corrections_df["id"] = data["id"].copy()
-    azimuth_corrections_df = pd.DataFrame([None] * len(data), columns=["total_azimuth_ale_correction_[m]"])
-    azimuth_corrections_df["id"] = data["id"].copy()
+    range_corrections_df = pd.DataFrame(data["id"].copy(), columns=["id"])
+    azimuth_corrections_df = pd.DataFrame(data["id"].copy(), columns=["id"])
     if config.enable_sensor_specific_processing_corrections:
         # ale: slant_range_localization_error and azimuth_localization_error
         # atmospheric corrections
