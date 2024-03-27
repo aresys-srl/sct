@@ -90,7 +90,7 @@ def test_pta_novasar1_slc(session: TestSession, env: Environment, data: DataRepo
     """
     config_ = data.pull("input/novasar1/config")
     product_folder = data.pull("input/novasar1/SLC")
-    point_target = data.pull("input/novasar1/PointTargetsXML")
+    point_target = data.pull("input/novasar1/SuratBasinDataCSV")
     report_ = data.pull("output/novasar1/SLC")
 
     # preparing config
@@ -133,7 +133,7 @@ def test_pta_novasar1_grd(session: TestSession, env: Environment, data: DataRepo
     """
     config_ = data.pull("input/novasar1/config")
     product_folder = data.pull("input/novasar1/GRD")
-    point_target = data.pull("input/novasar1/PointTargetsXML")
+    point_target = data.pull("input/novasar1/SuratBasinDataCSV")
     report_ = data.pull("output/novasar1/GRD")
 
     # preparing config
@@ -176,7 +176,7 @@ def test_pta_novasar1_scd(session: TestSession, env: Environment, data: DataRepo
     """
     config_ = data.pull("input/novasar1/config")
     product_folder = data.pull("input/novasar1/SCD")
-    point_target = data.pull("input/novasar1/PointTargetsXML")
+    point_target = data.pull("input/novasar1/SuratBasinDataCSV")
     report_ = data.pull("output/novasar1/SCD")
 
     # preparing config
@@ -217,12 +217,12 @@ def test_pta_s1_slc_perturb(session: TestSession, env: Environment, data: DataRe
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/sentinel1/config_perturbations")
-    product_folder = data.pull("input/sentinel1/SLC_19")
-    point_target = data.pull("input/sentinel1/PointTargetsBinarySurat")
-    iono_maps = data.pull("input/sentinel1/ionosphere_maps")
-    tropo_maps = data.pull("input/sentinel1/troposphere_maps")
-    report_ = data.pull("output/sentinel1/SLC_19_PERT")
+    config_ = data.pull("input/s1/config_perturbations")
+    product_folder = data.pull("input/s1/SLC_19")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
+    iono_maps = data.pull("input/s1/ionosphere_maps")
+    tropo_maps = data.pull("input/s1/troposphere_maps")
+    report_ = data.pull("output/s1/SLC_19_PERT")
 
     # preparing config
     config = SCTConfiguration.from_toml(config_)
@@ -264,13 +264,13 @@ def test_pta_s1_slc_perturb_ext_orbit(session: TestSession, env: Environment, da
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/sentinel1/config_perturbations")
-    product_folder = data.pull("input/sentinel1/SLC_19")
-    point_target = data.pull("input/sentinel1/PointTargetsBinarySurat")
-    ext_orbit = data.pull("input/sentinel1/ext_orbit")
-    iono_maps = data.pull("input/sentinel1/ionosphere_maps")
-    tropo_maps = data.pull("input/sentinel1/troposphere_maps")
-    report_ = data.pull("output/sentinel1/SLC_19_PERT_EXT_ORBIT")
+    config_ = data.pull("input/s1/config_perturbations")
+    product_folder = data.pull("input/s1/SLC_19")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
+    ext_orbit = data.pull("input/s1/ext_orbit")
+    iono_maps = data.pull("input/s1/ionosphere_maps")
+    tropo_maps = data.pull("input/s1/troposphere_maps")
+    report_ = data.pull("output/s1/SLC_19_PERT_EXT_ORBIT")
 
     # preparing config
     config = SCTConfiguration.from_toml(config_)
@@ -313,11 +313,11 @@ def test_pta_s1_slc_etad(session: TestSession, env: Environment, data: DataRepos
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/sentinel1/config_etad")
-    product_folder = data.pull("input/sentinel1/SLC_23")
-    etad_product = data.pull("input/sentinel1/ETAD")
-    report_ = data.pull("output/sentinel1/SLC_23_ETAD")
-    point_target = data.pull("input/sentinel1/SuratBasinDataCSV")
+    config_ = data.pull("input/s1/config_etad")
+    product_folder = data.pull("input/s1/SLC_23")
+    etad_product = data.pull("input/s1/ETAD")
+    report_ = data.pull("output/s1/SLC_23_ETAD")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
 
     # preparing config
     config = SCTConfiguration.from_toml(config_)
@@ -358,12 +358,12 @@ def test_pta_s1_grd_perturb(session: TestSession, env: Environment, data: DataRe
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/sentinel1/config_perturbations")
-    product_folder = data.pull("input/sentinel1/GRD_19")
-    point_target = data.pull("input/sentinel1/PointTargetsBinarySurat")
-    iono_maps = data.pull("input/sentinel1/ionosphere_maps")
-    tropo_maps = data.pull("input/sentinel1/troposphere_maps")
-    report_ = data.pull("output/sentinel1/GRD_19_PERT")
+    config_ = data.pull("input/s1/config_perturbations")
+    product_folder = data.pull("input/s1/GRD_19")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
+    iono_maps = data.pull("input/s1/ionosphere_maps")
+    tropo_maps = data.pull("input/s1/troposphere_maps")
+    report_ = data.pull("output/s1/GRD_19_PERT")
 
     # preparing config
     config = SCTConfiguration.from_toml(config_)
@@ -407,7 +407,7 @@ def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRe
     """
     config_ = data.pull("input/iceye/config")
     product_folder = data.pull("input/iceye/SM")
-    point_target = data.pull("input/iceye/PointTargetsBinaryRosamond")
+    point_target = data.pull("input/iceye/RosamondCSV")
     report_ = data.pull("output/iceye/SM")
 
     # preparing config
@@ -450,7 +450,7 @@ def test_pta_iceye_spotlight(session: TestSession, env: Environment, data: DataR
     """
     config_ = data.pull("input/iceye/config")
     product_folder = data.pull("input/iceye/SLH")
-    point_target = data.pull("input/iceye/PointTargetsBinaryRosamond")
+    point_target = data.pull("input/iceye/RosamondCSV")
     report_ = data.pull("output/iceye/SLH")
 
     # preparing config
@@ -493,8 +493,94 @@ def test_pta_iceye_topsar(session: TestSession, env: Environment, data: DataRepo
     """
     config_ = data.pull("input/iceye/config")
     product_folder = data.pull("input/iceye/SC")
-    point_target = data.pull("input/iceye/PointTargetsBinaryRosamond")
+    point_target = data.pull("input/iceye/RosamondCSV")
     report_ = data.pull("output/iceye/SC")
+
+    # preparing config
+    config = SCTConfiguration.from_toml(config_)
+
+    # preparing report
+    expected_report = pd.read_csv(report_)
+    out_file = env.root.joinpath("sct_report.csv")
+
+    # analysis
+    results_df, _ = pta.main(
+        product_path=product_folder,
+        external_target_source=point_target,
+        config=config.point_target_analysis,
+    )
+    results_df.to_csv(out_file, index=False)
+    loaded_df = pd.read_csv(out_file)
+
+    # filtering only valid rows
+    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
+    loaded_df.reset_index(drop=True, inplace=True)
+    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
+    expected_report.reset_index(drop=True, inplace=True)
+
+    # comparing dataframes differences to specific tolerances
+    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+
+
+def test_pta_saocom_slc(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on SAOCOM stripmap SLC product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config_ = data.pull("input/saocom/config")
+    product_folder = data.pull("input/saocom/L1A_SLC_SM")
+    point_target = data.pull("input/saocom/SaocomCSV")
+    report_ = data.pull("output/saocom/L1A_SLC_SM")
+
+    # preparing config
+    config = SCTConfiguration.from_toml(config_)
+
+    # preparing report
+    expected_report = pd.read_csv(report_)
+    out_file = env.root.joinpath("sct_report.csv")
+
+    # analysis
+    results_df, _ = pta.main(
+        product_path=product_folder,
+        external_target_source=point_target,
+        config=config.point_target_analysis,
+    )
+    results_df.to_csv(out_file, index=False)
+    loaded_df = pd.read_csv(out_file)
+
+    # filtering only valid rows
+    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
+    loaded_df.reset_index(drop=True, inplace=True)
+    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
+    expected_report.reset_index(drop=True, inplace=True)
+
+    # comparing dataframes differences to specific tolerances
+    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+
+
+def test_pta_saocom_grd(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on SAOCOM stripmap GRD product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config_ = data.pull("input/saocom/config")
+    product_folder = data.pull("input/saocom/L1B_RGC_SM")
+    point_target = data.pull("input/saocom/SaocomCSV")
+    report_ = data.pull("output/saocom/L1B_RGC_SM")
 
     # preparing config
     config = SCTConfiguration.from_toml(config_)
