@@ -38,7 +38,7 @@ def run_compute_geodynamics_corrections(
                 return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
 
             date_lower_boundary = _to_pdt(point_targets_df["validity_start_date"])
-            date_upper_boundary = _to_pdt(point_targets_df["validity_end_date"])
+            date_upper_boundary = _to_pdt(point_targets_df["validity_stop_date"])
 
             if not date_lower_boundary <= acquisition_time <= date_upper_boundary:
                 raise RuntimeError(

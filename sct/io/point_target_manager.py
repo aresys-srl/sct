@@ -33,7 +33,7 @@ def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFr
     Returns
     -------
     pd.DataFrame
-        _description_
+        pandas dataframe corresponding to the input point target file
     """
     source = Path(source)
 
@@ -45,18 +45,14 @@ def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFr
         point_targets_df = convert_point_target_binary_to_df(source=source)
 
     elif str(source).endswith(".csv"):
-        # TODO validate with an internal schema? see pydantic
         # external format, .csv template compliant
         point_targets_df = pd.read_csv(source)
-        point_targets_df["measurement_date"] = point_targets_df["measurement_date"].apply(
-            PreciseDateTime.from_utc_string
-        )
-        point_targets_df["validity_start_date"] = point_targets_df["validity_start_date"].apply(
-            PreciseDateTime.from_utc_string
-        )
-        point_targets_df["validity_stop_date"] = point_targets_df["validity_stop_date"].apply(
-            PreciseDateTime.from_utc_string
-        )
+        for date_in in ("measurement_date", "validity_start_date", "validity_stop_date"):
+            if not point_targets_df["measurement_date"].isnull().all():
+                point_targets_df[date_in] = pd.to_datetime(point_targets_df[date_in])
+                point_targets_df[date_in] = point_targets_df[date_in].apply(
+                    lambda x: PreciseDateTime.fromisoformat(x.isoformat()) if not pd.isnull(x) else x
+                )
     else:
         raise UnsupportedPointTargetSource(source)
 
@@ -148,10 +144,10 @@ def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, Nomin
         data_dict[row["target_name"]] = NominalPointTarget(
             xyz_coordinates=row[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy(dtype=float),
             delay=delay,
-            rcs_hh=1,
-            rcs_hv=1,
-            rcs_vh=1,
-            rcs_vv=1,
+            rcs_hh=row["rcs_hh_dB"],
+            rcs_hv=row["rcs_hv_dB"],
+            rcs_vh=row["rcs_vh_dB"],
+            rcs_vv=row["rcs_vv_dB"],
         )
 
     return data_dict
