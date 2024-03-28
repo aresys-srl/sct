@@ -12,15 +12,14 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Union
 
-import numpy as np
 import pandas as pd
-from arepytools.geometry.conversions import llh2xyz
 from arepytools.timing.precisedatetime import PreciseDateTime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
+from sct.io.point_target_manager import convert_rosamund_file_to_compliant_csv
 from sct.web_scraping._utilities import download_watchdog
 
 _ROSAMOND_CENTER_DOWNLOAD_WEBSITE = r"https://uavsar.jpl.nasa.gov/cgi-bin/calibration.pl"
@@ -51,66 +50,6 @@ def _datetime_formatting(acq_date: PreciseDateTime) -> str:
     date = datetime.strptime(str(acq_date)[:-6], "%d-%b-%Y %H:%M:%S.%f")
 
     return datetime.strftime(date, "%Y-%m-%d %H:%M")
-
-
-def _format_dataframe(df: pd.DataFrame, measurement_date: PreciseDateTime) -> pd.DataFrame:
-    """Formatting downloaded database to be compliant with the SCT format.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        downloaded Rosamond dataframe
-    measurement_date : PreciseDateTime
-        measurement date of the current dataset
-
-    Returns
-    -------
-    pd.DataFrame
-        SCT compliant Rosamond dataframe
-    """
-
-    # cleaning dataframe
-    col_clean = [d.strip().replace('"', "") for d in df.columns]
-    df.columns = col_clean
-    df.drop(list(df.filter(regex="Epoch")), axis=1, inplace=True)
-
-    # formatting names
-    df.rename(
-        columns={
-            "Corner ID": "target_name",
-            "Latitude (deg)": "latitude_deg",
-            "Longitude (deg)": "longitude_deg",
-            "Height Above Ellipsoid (m)": "altitude_m",
-            "Azimuth (deg)": "corner_azimuth_deg",
-            "Tilt / Elevation angle (deg)": "corner_elevation_deg",
-            "Side Length (m)": "side_length_m",
-        },
-        inplace=True,
-    )
-
-    # composing target names
-    df["target_name"] = df["target_name"].apply(lambda x: "ROS" + f"{x:02d}" + "CR")
-
-    # computing XYZ ECEF coordinates
-    lat_lon = np.deg2rad(df[["latitude_deg", "longitude_deg"]])
-    lat_lon_h = np.c_[lat_lon, df["altitude_m"]]
-    xyz_coords = llh2xyz(lat_lon_h.T).T
-
-    # adding columns
-    df["target_type"] = "CR"
-    df["plate"] = "NOAM"
-    df["x_coord_m"] = xyz_coords[:, 0]
-    df["y_coord_m"] = xyz_coords[:, 1]
-    df["z_coord_m"] = xyz_coords[:, 2]
-    df["drift_velocity_x_my"] = np.nan
-    df["drift_velocity_y_my"] = np.nan
-    df["drift_velocity_z_my"] = np.nan
-    df["delay_s"] = 0
-    df["measurement_date"] = measurement_date
-    df["validity_start_date"] = measurement_date - 24 * 3600  # a day before
-    df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after
-
-    return df
 
 
 def download_rosamond_corner_reflector_data(
@@ -203,7 +142,7 @@ def get_rosamond_data(
         )
         data_df = pd.read_csv(file)
 
-    return _format_dataframe(df=data_df.copy(), measurement_date=acq_date)
+    return convert_rosamund_file_to_compliant_csv(df=data_df.copy(), measurement_date=acq_date)
 
 
 if __name__ == "__main__":
@@ -212,6 +151,6 @@ if __name__ == "__main__":
     )
     df = pd.read_csv(df_path)
     acq_date = PreciseDateTime.from_numeric_datetime(2023, 2, 13, 9, 30)
-    df_new = _format_dataframe(df, acq_date)
+    df_new = convert_rosamund_file_to_compliant_csv(df, acq_date)
     df_new.to_csv(df_path.parent.joinpath("calibration_target_rosamond.csv"), index=False)
     pass

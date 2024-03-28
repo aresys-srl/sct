@@ -11,6 +11,7 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
+from arepytools.geometry.conversions import llh2xyz
 from arepytools.io import PointSetProduct, read_point_targets_file
 from arepytools.io.io_support import NominalPointTarget
 from arepytools.timing.precisedatetime import PreciseDateTime
@@ -151,3 +152,68 @@ def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, Nomin
         )
 
     return data_dict
+
+
+def convert_rosamund_file_to_compliant_csv(
+    df: Union[str, Path, pd.DataFrame], measurement_date: PreciseDateTime
+) -> pd.DataFrame:
+    """Formatting downloaded Rosamond Point Target Dataset to be compliant with the SCT input .csv format.
+
+    Parameters
+    ----------
+    df : Union[str, Path, pd.DataFrame]
+        downloaded Rosamond Point Target dataset, can be a path to the .csv file or the corresponding pandas dataframe
+    measurement_date : PreciseDateTime
+        measurement date of the current dataset
+
+    Returns
+    -------
+    pd.DataFrame
+        SCT compliant Rosamond dataframe
+    """
+
+    if not isinstance(df, pd.DataFrame):
+        df = pd.read_csv(Path(df))
+
+    # cleaning dataframe
+    col_clean = [d.strip().replace('"', "") for d in df.columns]
+    df.columns = col_clean
+    df.drop(list(df.filter(regex="Epoch")), axis=1, inplace=True)
+
+    # formatting names
+    df.rename(
+        columns={
+            "Corner ID": "target_name",
+            "Latitude (deg)": "latitude_deg",
+            "Longitude (deg)": "longitude_deg",
+            "Height Above Ellipsoid (m)": "altitude_m",
+            "Azimuth (deg)": "corner_azimuth_deg",
+            "Tilt / Elevation angle (deg)": "corner_elevation_deg",
+            "Side Length (m)": "side_length_m",
+        },
+        inplace=True,
+    )
+
+    # composing target names
+    df["target_name"] = df["target_name"].apply(lambda x: "ROS" + f"{x:02d}" + "CR")
+
+    # computing XYZ ECEF coordinates
+    lat_lon = np.deg2rad(df[["latitude_deg", "longitude_deg"]])
+    lat_lon_h = np.c_[lat_lon, df["altitude_m"]]
+    xyz_coords = llh2xyz(lat_lon_h.T).T
+
+    # adding columns
+    df["target_type"] = "CR"
+    df["plate"] = "NOAM"
+    df["x_coord_m"] = xyz_coords[:, 0]
+    df["y_coord_m"] = xyz_coords[:, 1]
+    df["z_coord_m"] = xyz_coords[:, 2]
+    df["drift_velocity_x_my"] = np.nan
+    df["drift_velocity_y_my"] = np.nan
+    df["drift_velocity_z_my"] = np.nan
+    df["delay_s"] = 0
+    df["measurement_date"] = measurement_date
+    df["validity_start_date"] = measurement_date - 24 * 3600  # a day before
+    df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after
+
+    return df
