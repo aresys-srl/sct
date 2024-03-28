@@ -86,37 +86,37 @@ unittest_win:
 
 # === test - integration =====================================================
 # ============================================================================
-# integration_test_linux:
-#   stage: test
-#   script:
-#     - python${PYTHON} -m venv ./ci_test
-#     - source ./ci_test/bin/activate
-#     - python -m pip install arepyextras-test
-#     - python -m pip install setuptools
-#     - python -m pip install -e .[test]
-#     - python -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.10", "3.11", "3.12"]
-#   extends: .tags_manylinux_2_28
-#   needs: []
+integration_test_linux:
+  stage: test
+  script:
+    - python${PYTHON} -m venv ./ci_test
+    - source ./ci_test/bin/activate
+    - python -m pip install arepyextras-test
+    - python -m pip install setuptools
+    - python -m pip install -e .[test]
+    - python -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12"]
+  extends: .tags_manylinux_2_28
+  needs: []
 
-# integration_test_windows:
-#   stage: test
-#   script:
-#     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-#     - conda create -y -n test python=${PYTHON}
-#     - conda activate test
-#     - python -m pip install arepyextras-test
-#     - python -m pip install setuptools
-#     - python -m pip install -e .[test]
-#     - mkdir -p tdir
-#     - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run ./tests/integration_tests/suite
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.10", "3.11", "3.12"]
-#   extends: .tags_win10_conda
-#   needs: []
+integration_test_windows:
+  stage: test
+  script:
+    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+    - conda create -y -n test python=${PYTHON}
+    - conda activate test
+    - python -m pip install arepyextras-test
+    - python -m pip install setuptools
+    - python -m pip install -e .[test]
+    - mkdir -p tdir
+    - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run ./tests/integration_tests/suite
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12"]
+  extends: .tags_win10_conda
+  needs: []
 
 # === build ==================================================================
 # ============================================================================

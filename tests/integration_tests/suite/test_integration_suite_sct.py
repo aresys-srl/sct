@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """Integration test script to test the whole application using reference well known data"""
-
 import sys
+from pathlib import Path
 
 import pandas as pd
-from arepyextras.test import DataRepository, Environment, TestSession
+from arepyextras.test import DataRepository, Environment, TestSession, skip
 
 from sct.analyses import point_target_analysis as pta
 from sct.configuration.sct_configuration import SCTConfiguration
@@ -38,7 +38,7 @@ OTHER_VAR_LIST = [
 AZ_TIME_VAR = ["peak_azimuth_time_[UTC]"]
 
 
-def _compare_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> None:
+def _compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> None:
     """Comparing reference dataframe and current one, column by column to assess differences in values.
     Some values are grouped by theme ad compared with specific tolerances.
 
@@ -49,6 +49,13 @@ def _compare_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> Non
     current : pd.DataFrame
         current evaluated dataframe
     """
+
+    # filtering only valid rows
+    current = current.loc[~current["incidence_angle_[deg]"].isna()]
+    current.reset_index(drop=True, inplace=True)
+    ref = ref.loc[~ref["incidence_angle_[deg]"].isna()]
+    ref.reset_index(drop=True, inplace=True)
+
     # splitting dataframes to check different values with specific tolerances
     loc_df_ref = ref[LOC_VAR_LIST].copy()
     loc_report = current[LOC_VAR_LIST].copy()
@@ -76,6 +83,44 @@ def _compare_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> Non
     )
 
 
+def _run_cli_tool_pta(
+    session: TestSession, env: Environment, config: Path, product: Path, targets: Path, ext_orbit: Path | None = None
+) -> pd.DataFrame:
+    """Running SCT Point Target Analysis from CLI tool forwarding the inputs.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    config : Path
+        path to the toml config file
+    product : Path
+        path to the product to be analyzed
+    targets : Path
+        path to the point target file
+    ext_orbit : Path | None, optional
+        path to the external orbit file, by default None
+
+    Returns
+    -------
+    pd.DataFrame
+        results dataframe
+    """
+    out_file = env.root.joinpath("point_target_analysis_results.csv")
+
+    # analysis
+    result = env.run("sct", "--config", config, "target-analysis", "-p", product, "-out", env.root, "-pt", targets)
+    # checking successful run
+    if result.returncode != 0:
+        print(result.stderr.read_text())
+    session.expect_run_successful(result)
+    assert out_file.is_file()
+
+    return pd.read_csv(out_file)
+
+
 def test_pta_novasar1_slc(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on NovaSAR-1 SLC product.
 
@@ -88,35 +133,19 @@ def test_pta_novasar1_slc(session: TestSession, env: Environment, data: DataRepo
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/novasar1/config")
+    config = data.pull("input/novasar1/config")
     product_folder = data.pull("input/novasar1/SLC")
     point_target = data.pull("input/novasar1/SuratBasinDataCSV")
-    report_ = data.pull("output/novasar1/SLC")
+    report = data.pull("output/novasar1/SLC")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
 def test_pta_novasar1_grd(session: TestSession, env: Environment, data: DataRepository):
@@ -131,35 +160,19 @@ def test_pta_novasar1_grd(session: TestSession, env: Environment, data: DataRepo
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/novasar1/config")
+    config = data.pull("input/novasar1/config")
     product_folder = data.pull("input/novasar1/GRD")
     point_target = data.pull("input/novasar1/SuratBasinDataCSV")
-    report_ = data.pull("output/novasar1/GRD")
+    report = data.pull("output/novasar1/GRD")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
 def test_pta_novasar1_scd(session: TestSession, env: Environment, data: DataRepository):
@@ -174,223 +187,19 @@ def test_pta_novasar1_scd(session: TestSession, env: Environment, data: DataRepo
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/novasar1/config")
+    config = data.pull("input/novasar1/config")
     product_folder = data.pull("input/novasar1/SCD")
     point_target = data.pull("input/novasar1/SuratBasinDataCSV")
-    report_ = data.pull("output/novasar1/SCD")
+    report = data.pull("output/novasar1/SCD")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
-
-
-def test_pta_s1_slc_perturb(session: TestSession, env: Environment, data: DataRepository):
-    """Testing sct point target analysis on Sentinel-1 SLC 19 product with all perturbations enabled.
-
-    Parameters
-    ----------
-    session : TestSession
-        sct test session
-    env : Environment
-        sct test environment
-    data : DataRepository
-        sct dataset repository manager
-    """
-    config_ = data.pull("input/s1/config_perturbations")
-    product_folder = data.pull("input/s1/SLC_19")
-    point_target = data.pull("input/s1/SuratBasinDataCSV")
-    iono_maps = data.pull("input/s1/ionosphere_maps")
-    tropo_maps = data.pull("input/s1/troposphere_maps")
-    report_ = data.pull("output/s1/SLC_19_PERT")
-
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-    config.point_target_analysis.ionospheric_maps_directory = iono_maps
-    config.point_target_analysis.tropospheric_maps_directory = tropo_maps
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
-    )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
-
-    # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
-
-
-def test_pta_s1_slc_perturb_ext_orbit(session: TestSession, env: Environment, data: DataRepository):
-    """Testing sct point target analysis on Sentinel-1 SLC 19 product with all perturbations enabled with ext orbit.
-
-    Parameters
-    ----------
-    session : TestSession
-        sct test session
-    env : Environment
-        sct test environment
-    data : DataRepository
-        sct dataset repository manager
-    """
-    config_ = data.pull("input/s1/config_perturbations")
-    product_folder = data.pull("input/s1/SLC_19")
-    point_target = data.pull("input/s1/SuratBasinDataCSV")
-    ext_orbit = data.pull("input/s1/ext_orbit")
-    iono_maps = data.pull("input/s1/ionosphere_maps")
-    tropo_maps = data.pull("input/s1/troposphere_maps")
-    report_ = data.pull("output/s1/SLC_19_PERT_EXT_ORBIT")
-
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-    config.point_target_analysis.ionospheric_maps_directory = iono_maps
-    config.point_target_analysis.tropospheric_maps_directory = tropo_maps
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_orbit_path=ext_orbit,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
-    )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
-
-    # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
-
-
-def test_pta_s1_slc_etad(session: TestSession, env: Environment, data: DataRepository):
-    """Testing sct point target analysis on Sentinel-1 SLC 23 product with its etad product.
-
-    Parameters
-    ----------
-    session : TestSession
-        sct test session
-    env : Environment
-        sct test environment
-    data : DataRepository
-        sct dataset repository manager
-    """
-    config_ = data.pull("input/s1/config_etad")
-    product_folder = data.pull("input/s1/SLC_23")
-    etad_product = data.pull("input/s1/ETAD")
-    report_ = data.pull("output/s1/SLC_23_ETAD")
-    point_target = data.pull("input/s1/SuratBasinDataCSV")
-
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-    config.point_target_analysis.etad_product_path = etad_product
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
-    )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
-
-    # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
-
-
-def test_pta_s1_grd_perturb(session: TestSession, env: Environment, data: DataRepository):
-    """Testing sct point target analysis on Sentinel-1 GRD 19 product with all perturbations enabled.
-
-    Parameters
-    ----------
-    session : TestSession
-        sct test session
-    env : Environment
-        sct test environment
-    data : DataRepository
-        sct dataset repository manager
-    """
-    config_ = data.pull("input/s1/config_perturbations")
-    product_folder = data.pull("input/s1/GRD_19")
-    point_target = data.pull("input/s1/SuratBasinDataCSV")
-    iono_maps = data.pull("input/s1/ionosphere_maps")
-    tropo_maps = data.pull("input/s1/troposphere_maps")
-    report_ = data.pull("output/s1/GRD_19_PERT")
-
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-    config.point_target_analysis.ionospheric_maps_directory = iono_maps
-    config.point_target_analysis.tropospheric_maps_directory = tropo_maps
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
-    )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
-
-    # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
 def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRepository):
@@ -405,35 +214,19 @@ def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRe
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/iceye/config")
+    config = data.pull("input/iceye/config")
     product_folder = data.pull("input/iceye/SM")
     point_target = data.pull("input/iceye/RosamondCSV")
-    report_ = data.pull("output/iceye/SM")
+    report = data.pull("output/iceye/SM")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
 def test_pta_iceye_spotlight(session: TestSession, env: Environment, data: DataRepository):
@@ -448,35 +241,19 @@ def test_pta_iceye_spotlight(session: TestSession, env: Environment, data: DataR
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/iceye/config")
+    config = data.pull("input/iceye/config")
     product_folder = data.pull("input/iceye/SLH")
     point_target = data.pull("input/iceye/RosamondCSV")
-    report_ = data.pull("output/iceye/SLH")
+    report = data.pull("output/iceye/SLH")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
 def test_pta_iceye_topsar(session: TestSession, env: Environment, data: DataRepository):
@@ -491,35 +268,19 @@ def test_pta_iceye_topsar(session: TestSession, env: Environment, data: DataRepo
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/iceye/config")
+    config = data.pull("input/iceye/config")
     product_folder = data.pull("input/iceye/SC")
     point_target = data.pull("input/iceye/RosamondCSV")
-    report_ = data.pull("output/iceye/SC")
+    report = data.pull("output/iceye/SC")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
 def test_pta_saocom_slc(session: TestSession, env: Environment, data: DataRepository):
@@ -534,35 +295,19 @@ def test_pta_saocom_slc(session: TestSession, env: Environment, data: DataReposi
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/saocom/config")
+    config = data.pull("input/saocom/config")
     product_folder = data.pull("input/saocom/L1A_SLC_SM")
     point_target = data.pull("input/saocom/SaocomCSV")
-    report_ = data.pull("output/saocom/L1A_SLC_SM")
+    report = data.pull("output/saocom/L1A_SLC_SM")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
 def test_pta_saocom_grd(session: TestSession, env: Environment, data: DataRepository):
@@ -577,32 +322,174 @@ def test_pta_saocom_grd(session: TestSession, env: Environment, data: DataReposi
     data : DataRepository
         sct dataset repository manager
     """
-    config_ = data.pull("input/saocom/config")
+    config = data.pull("input/saocom/config")
     product_folder = data.pull("input/saocom/L1B_RGC_SM")
     point_target = data.pull("input/saocom/SaocomCSV")
-    report_ = data.pull("output/saocom/L1B_RGC_SM")
+    report = data.pull("output/saocom/L1B_RGC_SM")
+    expected_report = pd.read_csv(report)
 
-    # preparing config
-    config = SCTConfiguration.from_toml(config_)
-
-    # preparing report
-    expected_report = pd.read_csv(report_)
-    out_file = env.root.joinpath("sct_report.csv")
-
-    # analysis
-    results_df, _ = pta.main(
-        product_path=product_folder,
-        external_target_source=point_target,
-        config=config.point_target_analysis,
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
     )
-    results_df.to_csv(out_file, index=False)
-    loaded_df = pd.read_csv(out_file)
-
-    # filtering only valid rows
-    loaded_df = loaded_df.loc[~loaded_df["incidence_angle_[deg]"].isna()]
-    loaded_df.reset_index(drop=True, inplace=True)
-    expected_report = expected_report.loc[~expected_report["incidence_angle_[deg]"].isna()]
-    expected_report.reset_index(drop=True, inplace=True)
 
     # comparing dataframes differences to specific tolerances
-    _compare_df_with_tolerances(ref=expected_report.copy(), current=loaded_df.copy())
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+def test_pta_s1_slc_etad(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on Sentinel-1 SLC 23 product with its etad product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/s1/config_etad")
+    product_folder = data.pull("input/s1/SLC_23")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
+    etad_product = data.pull("input/s1/ETAD")
+    report = data.pull("output/s1/SLC_23_ETAD")
+    expected_report = pd.read_csv(report)
+
+    # preparing config
+    edited_config = SCTConfiguration.from_toml(config)
+    edited_config.point_target_analysis.etad_product_path = etad_product
+    new_config = env.root.joinpath("new_config.toml")
+    edited_config.dump_to_toml(out_file=new_config)
+    assert new_config.is_file()
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env,
+        session=session,
+        config=new_config,
+        product=product_folder,
+        targets=point_target,
+    )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+@skip
+def test_pta_s1_slc_perturb(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on Sentinel-1 SLC 19 product with all perturbations enabled.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/s1/config_perturbations")
+    product_folder = data.pull("input/s1/SLC_19")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
+    iono_maps = data.pull("input/s1/ionosphere_maps")
+    tropo_maps = data.pull("input/s1/troposphere_maps")
+    report = data.pull("output/s1/SLC_19_PERT")
+    expected_report = pd.read_csv(report)
+
+    # preparing config
+    edited_config = SCTConfiguration.from_toml(config)
+    edited_config.point_target_analysis.ionospheric_maps_directory = iono_maps
+    edited_config.point_target_analysis.tropospheric_maps_directory = tropo_maps
+    new_config = env.root.joinpath("new_config.toml")
+    edited_config.dump_to_toml(out_file=new_config)
+    assert new_config.is_file()
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=new_config, product=product_folder, targets=point_target
+    )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+@skip
+def test_pta_s1_slc_perturb_ext_orbit(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on Sentinel-1 SLC 19 product with all perturbations enabled with ext orbit.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/s1/config_perturbations")
+    product_folder = data.pull("input/s1/SLC_19")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
+    ext_orbit = data.pull("input/s1/ext_orbit")
+    iono_maps = data.pull("input/s1/ionosphere_maps")
+    tropo_maps = data.pull("input/s1/troposphere_maps")
+    report = data.pull("output/s1/SLC_19_PERT_EXT_ORBIT")
+    expected_report = pd.read_csv(report)
+
+    # preparing config
+    edited_config = SCTConfiguration.from_toml(config)
+    edited_config.point_target_analysis.ionospheric_maps_directory = iono_maps
+    edited_config.point_target_analysis.tropospheric_maps_directory = tropo_maps
+    new_config = env.root.joinpath("new_config.toml")
+    edited_config.dump_to_toml(out_file=new_config)
+    assert new_config.is_file()
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=new_config, product=product_folder, targets=point_target, ext_orbit=ext_orbit
+    )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+@skip
+def test_pta_s1_grd_perturb(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on Sentinel-1 GRD 19 product with all perturbations enabled.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/s1/config_perturbations")
+    product_folder = data.pull("input/s1/GRD_19")
+    point_target = data.pull("input/s1/SuratBasinDataCSV")
+    iono_maps = data.pull("input/s1/ionosphere_maps")
+    tropo_maps = data.pull("input/s1/troposphere_maps")
+    report = data.pull("output/s1/GRD_19_PERT")
+    expected_report = pd.read_csv(report)
+
+    # preparing config
+    edited_config = SCTConfiguration.from_toml(config)
+    edited_config.point_target_analysis.ionospheric_maps_directory = iono_maps
+    edited_config.point_target_analysis.tropospheric_maps_directory = tropo_maps
+    new_config = env.root.joinpath("new_config.toml")
+    edited_config.dump_to_toml(out_file=new_config)
+    assert new_config.is_file()
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env,
+        session=session,
+        config=new_config,
+        product=product_folder,
+        targets=point_target,
+    )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
