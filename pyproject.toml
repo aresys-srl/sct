@@ -53,6 +53,9 @@ doc = [
 file = "README.md"
 content-type = "text/markdown"
 
+[project.scripts]
+sct = "sct.__main__:main"
+
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
 include-package-data = true
