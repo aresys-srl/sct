@@ -422,6 +422,9 @@ class SCTConfiguration:
             # interferometric analysis re-ordering
             inter_dict = dtc_dict["interferometric_analysis"]["base_config"]
 
+            if not isinstance(inter_dict["coherence_kernel"], (tuple, list)):
+                inter_dict["coherence_kernel"] = (inter_dict["coherence_kernel"], inter_dict["coherence_kernel"])
+
             # saving to configuration dict to be dumped
             conf_dict["interferometric_analysis"] = inter_dict
 

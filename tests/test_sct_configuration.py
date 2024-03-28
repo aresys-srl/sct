@@ -307,6 +307,23 @@ class SCTConfigurationTest(unittest.TestCase):
         self.assertEqual(config.interferometric_analysis.base_config.range_blocks_number, 100)
         self.assertIsNone(config.interferometric_analysis.base_config.azimuth_blocks_number, None)
 
+    def test_dump_read_default(self) -> None:
+        """Test full configuration reading"""
+        with TemporaryDirectory() as temp_dir:
+            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+            default_config = SCTConfiguration()
+            default_config.dump_to_toml(path_to_file)
+            default_config_read = SCTConfiguration.from_toml(path_to_file)
+
+        self.assertEqual(default_config.general, default_config_read.general)
+        self.assertEqual(default_config.point_target_analysis, default_config_read.point_target_analysis)
+        self.assertEqual(default_config.radiometric_analysis, default_config_read.radiometric_analysis)
+        default_config.interferometric_analysis.base_config.coherence_kernel = (
+            default_config.interferometric_analysis.base_config.coherence_kernel,
+            default_config.interferometric_analysis.base_config.coherence_kernel,
+        )
+        self.assertEqual(default_config.interferometric_analysis, default_config_read.interferometric_analysis)
+
     def test_dump_read(self) -> None:
         """Test full configuration dump to toml and reading"""
         with TemporaryDirectory() as temp_dir:
