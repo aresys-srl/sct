@@ -19,7 +19,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-from sct.io.point_target_manager import convert_rosamund_file_to_compliant_csv
+from sct.io.point_target_manager import convert_rosamond_file_to_compliant_csv
 from sct.web_scraping._utilities import download_watchdog
 
 _ROSAMOND_CENTER_DOWNLOAD_WEBSITE = r"https://uavsar.jpl.nasa.gov/cgi-bin/calibration.pl"
@@ -142,7 +142,7 @@ def get_rosamond_data(
         )
         data_df = pd.read_csv(file)
 
-    return convert_rosamund_file_to_compliant_csv(df=data_df.copy(), measurement_date=acq_date)
+    return convert_rosamond_file_to_compliant_csv(df=data_df.copy(), measurement_date=acq_date)
 
 
 if __name__ == "__main__":
@@ -151,6 +151,6 @@ if __name__ == "__main__":
     )
     df = pd.read_csv(df_path)
     acq_date = PreciseDateTime.from_numeric_datetime(2023, 2, 13, 9, 30)
-    df_new = convert_rosamund_file_to_compliant_csv(df, acq_date)
+    df_new = convert_rosamond_file_to_compliant_csv(df, acq_date)
     df_new.to_csv(df_path.parent.joinpath("calibration_target_rosamond.csv"), index=False)
     pass
