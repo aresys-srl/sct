@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: MIT
 
 """Integration test script to test the whole application using reference well known data"""
+import json
 import sys
 from pathlib import Path
 
 import pandas as pd
 from arepyextras.test import DataRepository, Environment, TestSession, skip
 
-from sct.analyses import point_target_analysis as pta
+from sct.analyses.automatic_analyses import sct_automatic_analysis
 from sct.configuration.sct_configuration import SCTConfiguration
 
 PYTHON_INTERPRETER = sys.executable
@@ -224,6 +225,57 @@ def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRe
     current_df = _run_cli_tool_pta(
         env=env, session=session, config=config, product=product_folder, targets=point_target
     )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+def test_pta_iceye_stripmap_automatic(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on ICEYE stripmap product via automatic sct analysis detection.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/iceye/config")
+    product_folder = data.pull("input/iceye/SM")
+    point_target = data.pull("input/iceye/RosamondCSV")
+    report = data.pull("output/iceye/SM")
+    expected_report = pd.read_csv(report)
+
+    # creating json calibration sites registry
+    registry_json = env.root.joinpath("registry.json")
+    cal_sites_registry = {
+        "regions": {
+            "rosamond": {
+                "description": "Rosamond Corner Reflector Array, Rosamond Dry Lakebed, California, USA",
+                "latitude_boundaries_deg": [34, 35],
+                "longitude_boundaries_deg": [-119, -117],
+                "supported_analyses": ["point_target_analysis"],
+                "reference_dataset": str(point_target),
+            }
+        }
+    }
+    with open(registry_json, "w", encoding="utf-8") as f_out:
+        json.dump(cal_sites_registry, f_out)
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
+    )
+    sct_automatic_analysis(
+        product_path=product_folder,
+        output_dir=env.root,
+        calibration_sites_registry=registry_json,
+        graphs=False,
+        config=SCTConfiguration.from_toml(config),
+    )
+    current_df = pd.read_csv(env.root.joinpath("point_target_analysis_results.csv"))
 
     # comparing dataframes differences to specific tolerances
     _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())

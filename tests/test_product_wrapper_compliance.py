@@ -7,6 +7,7 @@ import unittest
 
 from arepyextras.quality.io.quality_input_protocol import ChannelData, QualityInputProduct, SARCoordinatesFunction
 
+from sct.io.extended_protocols import SCTInputProduct
 from sct.io.quality_input_from_iceye_product import ICEYEChannelManager, ICEYEDopplerPolynomial, ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import (
     NovaSAR1ChannelManager,
@@ -22,6 +23,10 @@ from sct.io.quality_input_from_sentinel1_product import (
 
 class SENTINEL1ProductWrapperTest(unittest.TestCase):
     """Testing quality_input_from_safe_product.py functionalities"""
+
+    def test_product_protocol_compliance_sct(self) -> None:
+        """Test SCT protocol-compliance of Sentinel1ProductManager"""
+        assert isinstance(Sentinel1ProductManager, SCTInputProduct)
 
     def test_product_protocol_compliance(self) -> None:
         """Test protocol-compliance of Sentinel1ProductManager"""
@@ -39,6 +44,10 @@ class SENTINEL1ProductWrapperTest(unittest.TestCase):
 class NOVASAR1ProductWrapperTest(unittest.TestCase):
     """Testing quality_input_from_novasar_product.py functionalities"""
 
+    def test_product_protocol_compliance_sct(self) -> None:
+        """Test SCT protocol-compliance of NovaSAR1ProductManager"""
+        assert isinstance(NovaSAR1ProductManager, SCTInputProduct)
+
     def test_product_protocol_compliance(self) -> None:
         """Test protocol-compliance of NovaSAR1ProductManager"""
         assert isinstance(NovaSAR1ProductManager, QualityInputProduct)
@@ -54,6 +63,10 @@ class NOVASAR1ProductWrapperTest(unittest.TestCase):
 
 class ICEYEProductWrapperTest(unittest.TestCase):
     """Testing quality_input_from_iceye_product.py functionalities"""
+
+    def test_product_protocol_compliance_sct(self) -> None:
+        """Test SCT protocol-compliance of ICEYEProductManager"""
+        assert isinstance(ICEYEProductManager, SCTInputProduct)
 
     def test_product_protocol_compliance(self) -> None:
         """Test protocol-compliance of ICEYEProductManager"""

@@ -87,7 +87,7 @@ def target_analysis(
 
     if graphs:
         try:
-            import arepyextras.quality.point_targets_analysis.graphical_output as ptgpo
+            from sct.analyses.graphical_output import sct_pta_graphs
 
         except ImportError:
             log.critical('Install graphs requirements "pip install sct[graphs]"')
@@ -104,7 +104,7 @@ def target_analysis(
     click.echo(txt + "\n")
 
     start = time.perf_counter_ns()
-    results_df, graph_data = pta.main(
+    results_df, graphs_data = pta.point_target_analysis_with_corrections(
         product_path=product,
         external_orbit_path=external_orbit,
         external_target_source=point_target_source,
@@ -121,29 +121,7 @@ def target_analysis(
     # graphical output management
     if graphs:
         log.info("Plotting graphs...")
-        for item in graph_data:
-            try:
-                data_val = results_df.query(f"target_name == @item.target & channel == @item.channel").to_dict(
-                    "records"
-                )[0]
-                label = (
-                    f"target_{data_val['target_name']}_{data_val['swath']}_"
-                    + f"polarization_{data_val['polarization'].replace('/','')}"
-                )
-                ptgpo.irf_parameters(
-                    data_graph=item.irf,
-                    data_values=data_val,
-                    label=label,
-                    out_dir=output_directory,
-                )
-                ptgpo.rcs_parameters(
-                    data_graph=item.rcs,
-                    label=label,
-                    out_dir=output_directory,
-                )
-            except Exception:
-                log.error(f"Could not create graph for {item.channel}, target {item.target} ...")
-                continue
+        sct_pta_graphs(graphs_data=graphs_data, results_df=results_df, output_dir=output_directory)
 
     elapsed = (time.perf_counter_ns() - start) / 1e9
     log.info(f"Point Target Analysis completed in {elapsed} s.")

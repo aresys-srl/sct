@@ -24,6 +24,7 @@ dependencies = [
     "jsonschema",
     "toml",
     "pyproj",
+    "shapely",
     "h5py",
     "s1etad",
     "art",

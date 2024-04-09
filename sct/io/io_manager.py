@@ -18,10 +18,10 @@ from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_p
 from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
 from arepyextras.eo_products.saocom.l1_products.utilities import is_saocom_product
 from arepyextras.quality.io.quality_input_from_product_folder import ProductFolderManager
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from arepytools.io.productfolder2 import is_product_folder as is_aresys_product
 
 from sct.core.custom_corrections import ALECorrectionFunctionType, sentinel_1_ipf
+from sct.io.extended_protocols import SCTInputProduct
 from sct.io.quality_input_from_iceye_product import ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
 from sct.io.quality_input_from_saocom_product import SAOCOMProductManager
@@ -104,8 +104,8 @@ def select_custom_corrections(
 
 def product_loader(
     product_path: Path, external_orbit: Path | None = None
-) -> tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
-    """Loading product by it type. Extracting a QualityInputProduct protocol-compliant object.
+) -> tuple[SCTInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
+    """Loading product by it type. Extracting a SCTInputProduct protocol-compliant object.
 
     Parameters
     ----------
@@ -116,8 +116,8 @@ def product_loader(
 
     Returns
     -------
-    tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
-        QualityInputProduct compliant object,
+    tuple[SCTInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
+        SCTInputProduct compliant object,
         range ale correction function or none
         azimuth ale correction function or none
     """

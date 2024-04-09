@@ -7,6 +7,7 @@ NovaSAR-1 format Arepyextras-Quality protocol-compliant wrapper
 """
 from __future__ import annotations
 
+from itertools import product
 from pathlib import Path
 from typing import Union
 
@@ -39,6 +40,7 @@ from arepytools.geometry.geometric_functions import (
 from arepytools.geometry.inverse_geocoding import inverse_geocoding_monostatic
 from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
+from shapely import Polygon
 
 
 class NovaSAR1DopplerPolynomial:
@@ -66,13 +68,15 @@ class NovaSAR1DopplerPolynomial:
 
 
 class NovaSAR1ProductManager:
-    """Arepyextras-quality QualityInputProduct protocol compliant NovaSAR-1 wrapper"""
+    """SCTInputProduct protocol compliant NovaSAR-1 wrapper"""
 
     def __init__(self, path: Union[str, Path]) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
         self._metadata = read_product_metadata(self._product.metadata_file)
+        region_corners = list(product(self._product.footprint[:2], self._product.footprint[2:]))
+        self._footprint = Polygon(region_corners)
 
     @property
     def path(self) -> Path:
@@ -83,6 +87,11 @@ class NovaSAR1ProductManager:
     def name(self) -> str:
         """Get product name"""
         return self._name
+
+    @property
+    def footprint(self) -> Polygon:
+        """Get product footprint"""
+        return self._footprint
 
     @property
     def channels_list(self) -> list[str]:

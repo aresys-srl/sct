@@ -7,6 +7,7 @@ ICEYE format Arepyextras-Quality protocol-compliant wrapper
 """
 from __future__ import annotations
 
+from itertools import product
 from pathlib import Path
 from typing import Union
 
@@ -38,6 +39,7 @@ from arepytools.geometry.geometric_functions import (
 from arepytools.geometry.inverse_geocoding import inverse_geocoding_monostatic
 from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
+from shapely import Polygon
 
 
 class ICEYEDopplerPolynomial:
@@ -65,12 +67,14 @@ class ICEYEDopplerPolynomial:
 
 
 class ICEYEProductManager:
-    """Arepyextras-quality QualityInputProduct protocol compliant ICEYE wrapper"""
+    """SCTInputProduct protocol compliant ICEYE wrapper"""
 
     def __init__(self, path: Union[str, Path]) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
+        region_corners = list(product(self._product.footprint[:2], self._product.footprint[2:]))
+        self._footprint = Polygon(region_corners)
 
     @property
     def path(self) -> Path:
@@ -81,6 +85,11 @@ class ICEYEProductManager:
     def name(self) -> str:
         """Get product name"""
         return self._name
+
+    @property
+    def footprint(self) -> Polygon:
+        """Get product footprint"""
+        return self._footprint
 
     @property
     def channels_list(self) -> list[str]:

@@ -13,7 +13,6 @@ from pathlib import Path
 from uuid import uuid4
 
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from arepyextras.quality.point_targets_analysis.analysis import point_target_analysis
 from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 from arepytools.io.io_support import NominalPointTarget
@@ -27,6 +26,7 @@ from sct.core.atmospheric_corrections_main import (
 )
 from sct.core.etad_corrections_main import get_etad_corrections
 from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
+from sct.io.extended_protocols import SCTInputProduct
 from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
@@ -34,7 +34,7 @@ from sct.io.point_target_manager import convert_df_to_nominal_point_target, extr
 log = logging.getLogger("quality_analysis")
 
 
-def main(
+def point_target_analysis_with_corrections(
     product_path: str | Path,
     external_target_source: str | Path,
     external_orbit_path: str | Path | None = None,
@@ -172,7 +172,7 @@ def main(
 
 
 def sct_point_target_analysis(
-    product: QualityInputProduct,
+    product: SCTInputProduct,
     point_targets_data: dict[str, NominalPointTarget],
     config: SCTPointTargetAnalysisConfig,
     azimuth_corrections_func: custom_corrections.ALECorrectionFunctionType | None = None,
@@ -182,7 +182,7 @@ def sct_point_target_analysis(
 
     Parameters
     ----------
-    product : QualityInputProduct
+    product : SCTInputProduct
         product to be analyzed
     point_targets_data : dict[str, NominalPointTarget]
         point target data

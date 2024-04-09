@@ -17,32 +17,31 @@ log = logging.getLogger("quality_analysis")
 log.setLevel("INFO")
 log.addHandler(clg.MyHandler())
 
-out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs")
+out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs\wv_pta\sct_reports\report_WV_DT059DA1")
 logging_file_handler = logging.FileHandler(out_fldr.joinpath("sct_pta_analysis.log"))
 logging_file_handler.setFormatter(clg.CustomFormatterFileHandler())
 log.addHandler(logging_file_handler)
 
 if __name__ == "__main__":
     # products
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\saocom\outputDir_335616\L1A_SLC"
+    prod = r"C:\Users\giorgio.parma\Desktop\temporary_outputs\wv_pta\WV_DT059DA1\iSLC_RgCorr"
 
     # external orbits
     ext_orbit = None
     # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
-    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\saocom\PointTargets_File__SAOCOM.xml"
+    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\reference_datasets\surat_basin_data.csv"
 
     # test config
-    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\saocom\config.toml"
+    test_config = r"C:\Users\giorgio.parma\Desktop\temporary_outputs\wv_pta\config.toml"
     test_config = SCTConfiguration.from_toml(test_config)
 
     # executing point target analysis
-    out, out_graph = pta.main(
+    out, out_graph = pta.point_target_analysis_with_corrections(
         product_path=prod,
         external_orbit_path=ext_orbit,
         external_target_source=ext_target,
-        # calibration_site="surat_basin",
         config=test_config.point_target_analysis,
     )
 

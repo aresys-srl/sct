@@ -8,10 +8,10 @@ Custom Corrections: Sentinel-1 IPF range and azimuth corrections
 
 import numpy as np
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 import sct.io.safe_computing_utilities as s1_corrections
+from sct.io.extended_protocols import SCTInputProduct
 
 
 def _detect_mid_swath_channel(subswaths: list[str]) -> str:
@@ -61,7 +61,7 @@ def _get_rid_of_pol_dependency(arg: dict[str, dict[str, tuple[PreciseDateTime, f
 
 
 def compute_range_corrections(
-    product: QualityInputProduct,
+    product: SCTInputProduct,
     data: pd.DataFrame,
 ) -> pd.DataFrame:
     """Computing Sentinel-1 specific range corrections for ALE measurements.
@@ -69,7 +69,7 @@ def compute_range_corrections(
 
     Parameters
     ----------
-    product : QualityInputProduct
+    product : SCTInputProduct
         product
     data : pd.DataFrame
         point target analysis data
@@ -101,7 +101,7 @@ def compute_range_corrections(
 
 
 def compute_azimuth_corrections(
-    product: QualityInputProduct,
+    product: SCTInputProduct,
     data: pd.DataFrame,
 ) -> pd.DataFrame:
     """Computing Sentinel-1 specific azimuth corrections for ALE measurements.
@@ -109,7 +109,7 @@ def compute_azimuth_corrections(
 
     Parameters
     ----------
-    product : QualityInputProduct
+    product : SCTInputProduct
         product
     data : pd.DataFrame
         point target analysis data

@@ -10,7 +10,8 @@ from __future__ import annotations
 from collections.abc import Callable
 
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
+
+from sct.io.extended_protocols import SCTInputProduct
 
 # custom correction function type to be matched
-ALECorrectionFunctionType = Callable[[QualityInputProduct, pd.DataFrame], pd.DataFrame]
+ALECorrectionFunctionType = Callable[[SCTInputProduct, pd.DataFrame], pd.DataFrame]
