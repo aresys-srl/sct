@@ -96,7 +96,7 @@ def compute_atmospheric_delays(
 
     ionospheric_delay: np.ndarray | None = None
     if ionosphere_input:
-        ionospheric_delay = -ionosphere.compute_delay(
+        ionospheric_delay = ionosphere.compute_delay(
             acq_time=az_time,
             targets_xyz_coords=target_coords,
             sat_xyz_coords=sat_pos,

@@ -16,6 +16,9 @@ def compute_doppler_shift_correction(
 ) -> Union[float, np.ndarray]:
     """Compute doppler shift correction that affects ALE along range direction.
 
+    The term doppler_shift_correction should be added to the coordinate found by measurement
+    The negative sign is added so that the function returns a value that can be subtracted from the coordinate found by measurement
+
     Parameters
     ----------
     pulse_rate : Union[float, np.ndarray]
@@ -33,13 +36,18 @@ def compute_doppler_shift_correction(
     doppler_shift = squint_frequency / pulse_rate
     doppler_shift_correction = doppler_shift * LIGHT_SPEED / 2
 
-    return doppler_shift_correction
+    return -doppler_shift_correction
 
 
 def compute_fmrate_shift_correction(
-    ground_velocity: float, doppler_frequency: float, doppler_rate: np.ndarray, doppler_rate_th: np.ndarray
+    ground_velocity: float,
+    doppler_frequency: float,
+    doppler_rate_processor: np.ndarray,
+    doppler_rate_geometry: np.ndarray,
 ) -> float:
     """Compute FM rate shift correction.
+
+    The term fmrate_shift should be subtracted from the coordinate found by measurement
 
     Parameters
     ----------
@@ -47,10 +55,10 @@ def compute_fmrate_shift_correction(
         sensor ground velocity
     doppler_frequency : float
         doppler frequency in Hz
-    doppler_rate : np.ndarray
-        doppler rate
-    doppler_rate_th : np.ndarray
-        doppler rate theoretical
+    doppler_rate_processor : np.ndarray
+        doppler rate applied by the SAR processor
+    doppler_rate_geometry : np.ndarray
+        doppler rate derived from the orbit to ground point geometry
 
     Returns
     -------
@@ -58,7 +66,7 @@ def compute_fmrate_shift_correction(
         FM rate shift correction in meters
     """
 
-    fmrate_shift = -doppler_frequency * (-1 / doppler_rate + 1 / doppler_rate_th)
+    fmrate_shift = doppler_frequency * (-1 / doppler_rate_processor + 1 / doppler_rate_geometry)
     return fmrate_shift * ground_velocity
 
 
@@ -89,7 +97,7 @@ def compute_instrument_timing_correction(
     selected_change_time_idx = np.ma.masked_less(np.abs(azimuth_time - swst_times).astype(float), 0).argmin()
 
     instrument_timing = swst_values[selected_change_time_idx] + pulse_latch_time
-    return instrument_timing * ground_velocity
+    return -instrument_timing * ground_velocity
 
 
 def compute_mid_swath_index(acquisition_mode: S1AcquisitionMode) -> int:
@@ -125,6 +133,10 @@ def compute_real_bistatic_delay_correction(
 
         \\frac{\\tau_0 - \\Delta \\tau}{2}
 
+    The term bistatic_delay should be added to the coordinate found by measurement
+    The negative sign is added so that the function returns a value that can be subtracted from the coordinate found by measurement
+
+
     Parameters
     ----------
     ground_velocity : float
@@ -142,5 +154,5 @@ def compute_real_bistatic_delay_correction(
         bistatic delay correction in meters
     """
     delta_tau = range_time - burst_start_time
-    bistatic_delay = -bistatic_delay_applied + (burst_start_time - delta_tau) / 2
+    bistatic_delay = bistatic_delay_applied + (-burst_start_time + delta_tau) / 2
     return -bistatic_delay * ground_velocity

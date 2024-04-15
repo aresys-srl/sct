@@ -157,8 +157,8 @@ def compute_azimuth_corrections(
                     s1_corrections.compute_fmrate_shift_correction(
                         ground_velocity=row["ground_velocity_[ms]"],
                         doppler_frequency=row["total_doppler_frequency_[Hz]"],
-                        doppler_rate=row["doppler_rate_real_[Hzs]"],
-                        doppler_rate_th=row["doppler_rate_theoretical_[Hzs]"],
+                        doppler_rate_processor=row["doppler_rate_real_[Hzs]"],
+                        doppler_rate_geometry=row["doppler_rate_theoretical_[Hzs]"],
                     ),
                 )
             )

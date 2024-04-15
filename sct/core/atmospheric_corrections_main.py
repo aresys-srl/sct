@@ -95,8 +95,8 @@ def convert_atmospheric_delays_to_df(
     else:
         df["ionospheric_delay_range_correction_[m]"] = np.nan
     if delays[1] is not None:
-        df["tropospheric_delay_hydrostatic_range_correction_[m]"] = -delays[1][0]
-        df["tropospheric_delay_wet_range_correction_[m]"] = -delays[1][1]
+        df["tropospheric_delay_hydrostatic_range_correction_[m]"] = delays[1][0]
+        df["tropospheric_delay_wet_range_correction_[m]"] = delays[1][1]
     else:
         df["tropospheric_delay_hydrostatic_range_correction_[m]"] = np.nan
         df["tropospheric_delay_wet_range_correction_[m]"] = np.nan
