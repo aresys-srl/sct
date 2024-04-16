@@ -1,8 +1,29 @@
 Changelog
 =========
 
+v1.0.0.dev3
+-----------
+
+**Additional Features**
+
+- Added an automatic analyses detection feature based on intersection of product footprint with a registry of supported locations
+- Added an utility to download Ionospheric TEC Maps from NASA/CDDIS archive
+
+**Other changes**
+
+- Improved and extended the .csv template for Point Targets input data
+- Global re-organization of the corrections management inside the library
+- Integration tests updated and extended
+
+
+**Bug Fixing**
+
+- Fixed perturbations signs to correct ALE values both in range and azimuth directions
+- Incidence angles computation evaluated at target range time instead of mid-range
+- Fixed Sentinel-1 mid-swath detection function
+
 v1.0.0.dev2
-----------
+-----------
 
 **Additional Features**
 
@@ -17,7 +38,7 @@ v1.0.0.dev2
 
 
 v1.0.0.dev1
-----------
+-----------
 
 **Additional Features**
 
@@ -27,7 +48,7 @@ v1.0.0.dev1
 
 
 v1.0.0.dev0
-----------
+-----------
 
 **Additional Features**
 
