@@ -5,5 +5,3 @@
 SCT: Web Scraping utilities
 ---------------------------
 """
-
-url_sep = "/"

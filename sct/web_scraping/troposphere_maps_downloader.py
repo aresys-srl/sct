@@ -8,7 +8,6 @@ Troposphere products downloader
 
 from enum import Enum
 from pathlib import Path
-from typing import Union
 
 import requests
 from arepyextras.perturbations.atmospheric.troposphere import (
@@ -18,8 +17,6 @@ from arepyextras.perturbations.atmospheric.troposphere import (
     generate_tropospheric_map_name_for_vmf_data,
 )
 from arepytools.timing.precisedatetime import PreciseDateTime
-
-from sct.web_scraping import url_sep
 
 
 class TroposphericWebArchives(Enum):
@@ -48,7 +45,7 @@ def _generate_download_link_vmf(
     str
         complete url to download the compressed map
     """
-    return url_sep.join(
+    return "/".join(
         [
             TroposphericWebArchives.VMF.value,
             TroposphericMapModel.GRID.name,
@@ -63,7 +60,7 @@ def _generate_download_link_vmf(
 
 def download_tropospheric_products(
     acq_date: PreciseDateTime,
-    output_dir: Union[str, Path],
+    output_dir: str | Path,
     map_type: TroposphericMapType = TroposphericMapType.VMF3,
     map_grid_resolution: TroposphericGRIDResolution = TroposphericGRIDResolution.FINE,
 ) -> list[Path]:
@@ -73,7 +70,7 @@ def download_tropospheric_products(
     ----------
     acq_date : PreciseDateTime
         acquisition date of interest
-    output_dir : Union[str, Path]
+    output_dir : str | Path
         path to output directory where to save downloaded files
     map_type : TroposphericMapType, optional
         tropospheric product map type, by default TroposphericMapType.VMF3
