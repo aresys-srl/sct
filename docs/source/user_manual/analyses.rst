@@ -31,7 +31,7 @@ Radiometric Profiles
 --------------------
 
 This features let the user compute radiometric profiles along range and/or azimuth directions starting from any supported
-SAR product. Profiles are average ...
+SAR product.
 
 An in-depth description of the core algorithm used for radiometric analysis profiles computation can be found here.
 

@@ -5,10 +5,14 @@
 CDDIS Archive Data Downloader Utility
 -------------------------------------
 """
-from ftplib import FTP_TLS
+from ftplib import FTP_TLS, error_perm
 from pathlib import Path
 
 FTP_HOST = "gdc.cddis.eosdis.nasa.gov"
+
+
+class InvalidCDDISRequest(error_perm):
+    """Invalid e-mail authentication on CDDIS platform or file requested not found"""
 
 
 def cddis_ftps_archive_downloader(directory: str, filename: str, email: str, out_dir: str | Path) -> Path:
@@ -38,18 +42,13 @@ def cddis_ftps_archive_downloader(directory: str, filename: str, email: str, out
     ftps.login(user="anonymous", passwd=email)
     ftps.prot_p()
     ftps.cwd(directory)
-    ftps.retrbinary("RETR " + filename, open(output_file, "wb").write)
-    return output_file
-
-
-if __name__ == "__main__":
-    out_dir = r"C:\Users\giorgio.parma\Desktop\temporary_outputs"
-    # out_file = cddis_downloader(download_link, out_dir)
-    # print(out_file)
-    prova = cddis_ftps_archive_downloader(
-        directory="gnss/products/ionex/2024/009",
-        filename="JPL0OPSFIN_20240090000_01D_02H_GIM.INX.gz",
-        email="giorgio.parma@aresys.it",
-        out_dir=out_dir,
-    )
-    print(prova)
+    try:
+        with open(output_file, "wb") as f_out:
+            ftps.retrbinary("RETR " + filename, f_out.write)
+        return output_file
+    except error_perm as err:
+        if output_file.exists():
+            output_file.unlink()
+        raise InvalidCDDISRequest("Check e-mail provided for authentication or if requested file is available") from err
+    finally:
+        ftps.close()

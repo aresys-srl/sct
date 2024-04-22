@@ -8,6 +8,7 @@ User Manual
    configuration
    point_target_file
    command_line_tool
+   command_line_side_utilities
    analyses
    automatic_mode
    pta_corrections

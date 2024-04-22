@@ -93,11 +93,3 @@ def download_ionospheric_tec_maps(
     return cddis_ftps_archive_downloader(
         directory=server_directory, filename=map_name, email=auth_email, out_dir=output_dir
     )
-
-
-if __name__ == "__main__":
-    out_dir = r"C:\Users\giorgio.parma\Desktop\temporary_outputs"
-    date = PreciseDateTime.from_utc_string("04-JAN-2023 08:41:34.530204377325")
-    download_ionospheric_tec_maps(
-        acq_date=date, center=IonosphericAnalysisCenters.COD, auth_email="giorgio.parma@aresys.it", output_dir=out_dir
-    )
