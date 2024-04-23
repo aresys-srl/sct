@@ -7,7 +7,7 @@ import unittest
 
 import numpy as np
 
-from sct.core.rcs import compute_rcs_trihedral_corner_reflector
+from sct.core.rcs_computation import compute_rcs_trihedral_corner_reflector
 
 
 class SCTRCSTest(unittest.TestCase):

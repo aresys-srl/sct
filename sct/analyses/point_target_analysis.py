@@ -19,6 +19,7 @@ from arepyextras.quality.point_targets_analysis.analysis import point_target_ana
 from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.io.io_support import NominalPointTarget
+from scipy.constants import speed_of_light as LIGHT_SPEED
 
 from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core import custom_corrections
@@ -29,7 +30,7 @@ from sct.core.atmospheric_corrections_main import (
 )
 from sct.core.etad_corrections_main import get_etad_corrections
 from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
-from sct.core.rcs import compute_elevation_azimuth_wrt_enu, compute_rcs_trihedral_corner_reflector
+from sct.core.rcs_computation import compute_elevation_azimuth_wrt_enu, compute_rcs_trihedral_corner_reflector
 from sct.io.extended_protocols import SCTInputProduct
 from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
@@ -66,8 +67,7 @@ def _compute_theoretical_rcs(
 
     # orientation of boresight in CR reference frame
     ELEV_BORE_CR = np.pi / 180 * 35.2644
-    AZIM_BORE_CR = np.pi / 4
-    LIGHT_SPEED = 299_792_458
+    AZIMUTH_BORE_CR = np.pi / 4
 
     results = []
 
@@ -83,32 +83,32 @@ def _compute_theoretical_rcs(
 
         # orientation of boresight in ENU
         elev_bore_enu = np.pi / 180 * curr_point_target["corner_elevation_deg"].iloc[0]
-        azim_bore_enu = np.pi / 180 * curr_point_target["corner_azimuth_deg"].iloc[0]
+        azimuth_bore_enu = np.pi / 180 * curr_point_target["corner_azimuth_deg"].iloc[0]
 
-        satellite_position_at_ZD = trajectory.evaluate(row["peak_azimuth_time_[UTC]"])
+        sensor_position_at_zd = trajectory.evaluate(row["peak_azimuth_time_[UTC]"])
 
         cr_position = curr_point_target[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy().flatten()
 
         # compute orientation of satellite in ENU
-        elev_los_enu, azim_los_enu = compute_elevation_azimuth_wrt_enu(
-            pos_cr=cr_position, pos_sat=satellite_position_at_ZD
+        elev_los_enu, azimuth_los_enu = compute_elevation_azimuth_wrt_enu(
+            pos_cr=cr_position, pos_sat=sensor_position_at_zd
         )
 
         # compute orientation of satellite in CR reference frame
         elev_los_cr = elev_los_enu - elev_bore_enu + ELEV_BORE_CR
-        azim_los_cr = (azim_los_enu % (2 * np.pi)) - (azim_bore_enu % (2 * np.pi)) + AZIM_BORE_CR
+        azimuth_los_cr = (azimuth_los_enu % (2 * np.pi)) - (azimuth_bore_enu % (2 * np.pi)) + AZIMUTH_BORE_CR
 
         # compute CR RCS
         # if the radio wave does not impinge on the front of the CR, the RCS computation is not valid
         is_angle_range_valid = (
-            np.all(azim_los_cr >= 0)
-            and np.all(azim_los_cr <= np.pi / 2)
+            np.all(azimuth_los_cr >= 0)
+            and np.all(azimuth_los_cr <= np.pi / 2)
             and np.all(elev_los_cr >= 0)
             and np.all(elev_los_cr <= np.pi / 2)
         )
         if is_angle_range_valid:
             cr_rcs_m2 = compute_rcs_trihedral_corner_reflector(
-                cr_arm_length, LIGHT_SPEED / carrier_frequency_hz, elev_los_cr, azim_los_cr
+                cr_arm_length, LIGHT_SPEED / carrier_frequency_hz, elev_los_cr, azimuth_los_cr
             )
         else:
             cr_rcs_m2 = np.nan
@@ -223,13 +223,16 @@ def point_target_analysis_with_corrections(
         range_corrections_func=rng_corr_func,
     )
 
-    results = _compute_theoretical_rcs(
-        data_df=data_df,
-        point_targets_df=point_targets_df,
-        carrier_frequency_hz=first_channel.carrier_frequency,
-        trajectory=first_channel.trajectory,
-    )
-    data_df["rcs_theoretical_[dB]"] = results
+    if "target_size_m" in point_targets_df:
+        theoretical_rcs = _compute_theoretical_rcs(
+            data_df=data_df,
+            point_targets_df=point_targets_df,
+            carrier_frequency_hz=first_channel.carrier_frequency,
+            trajectory=first_channel.trajectory,
+        )
+        data_df["rcs_theoretical_[dB]"] = theoretical_rcs
+    else:
+        data_df["rcs_theoretical_[dB]"] = None
 
     # retrieving ETAD corrections
     if config.enable_etad_corrections:

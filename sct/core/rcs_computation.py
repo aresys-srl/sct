@@ -3,7 +3,7 @@
 
 """
 Radar Cross Section computation utilities
---------------------------------------------
+-----------------------------------------
 """
 
 import numpy as np
@@ -19,7 +19,7 @@ def compute_rcs_trihedral_corner_reflector(
     The function requires in input the size (arm length) of the CR, the frequency of the radar source, and the angular
     coordinates of the radar source as see by the corner reflector.
 
-    The angular coordinates (elevation and azimuth) are expressed in a refence frame such that the three axes are
+    The angular coordinates (elevation and azimuth) are expressed in a reference frame such that the three axes are
     parallel to the trihedral CR edges, with the xy plane parallel to the horizontal plate, so that:
     - the elevation is the angle between the viewing direction and the x-y plane, assumed to be parallel to the
     horizontal plate of the CR
@@ -58,15 +58,18 @@ def compute_rcs_trihedral_corner_reflector(
     rcs_peak = 4 * np.pi * (cr_arm_length_m**4) / (wavelength_m**2)
 
     sin_elev = np.sin(elevation_rad)
-    cos_elev_sin_azim = np.cos(elevation_rad) * np.sin(azimuth_rad)
-    cos_elev_cos_azim = np.cos(elevation_rad) * np.cos(azimuth_rad)
+    cos_elev_sin_azimuth = np.cos(elevation_rad) * np.sin(azimuth_rad)
+    cos_elev_cos_azimuth = np.cos(elevation_rad) * np.cos(azimuth_rad)
 
-    geometrical_condition = sin_elev + cos_elev_sin_azim <= cos_elev_cos_azim
+    geometrical_condition = sin_elev + cos_elev_sin_azimuth <= cos_elev_cos_azimuth
     first_angular_dependency = (
-        (4 * sin_elev * cos_elev_sin_azim) / (sin_elev + cos_elev_sin_azim + cos_elev_cos_azim)
+        (4 * sin_elev * cos_elev_sin_azimuth) / (sin_elev + cos_elev_sin_azimuth + cos_elev_cos_azimuth)
     ) ** 2
     second_angular_dependency = (
-        sin_elev + cos_elev_sin_azim + cos_elev_cos_azim - 2 / (sin_elev + cos_elev_sin_azim + cos_elev_cos_azim)
+        sin_elev
+        + cos_elev_sin_azimuth
+        + cos_elev_cos_azimuth
+        - 2 / (sin_elev + cos_elev_sin_azimuth + cos_elev_cos_azimuth)
     ) ** 2
     angular_dependency = np.where(
         geometrical_condition,
@@ -106,11 +109,11 @@ def _compute_enu_axes(latitude_rad: float, longitude_rad: float) -> tuple[np.nda
     cos_lon = np.cos(longitude_rad)
     sin_lon = np.sin(longitude_rad)
 
-    east_versor = np.array([-sin_lon, cos_lon, 0.0])
-    north_versor = np.array([-cos_lon * sin_lat, -sin_lon * sin_lat, cos_lat])
-    up_versor = np.array([cos_lon * cos_lat, sin_lon * cos_lat, sin_lat])
+    east_unit_vector = np.array([-sin_lon, cos_lon, 0.0])
+    north_unit_vector = np.array([-cos_lon * sin_lat, -sin_lon * sin_lat, cos_lat])
+    up_unit_vector = np.array([cos_lon * cos_lat, sin_lon * cos_lat, sin_lat])
 
-    return east_versor, north_versor, up_versor
+    return east_unit_vector, north_unit_vector, up_unit_vector
 
 
 def compute_elevation_azimuth_wrt_enu(pos_cr: np.ndarray, pos_sat: np.ndarray) -> tuple[float, float]:
@@ -118,7 +121,7 @@ def compute_elevation_azimuth_wrt_enu(pos_cr: np.ndarray, pos_sat: np.ndarray) -
     another point in the sky (e.g. a satellite), with respect to its local ENU reference frame.
 
     Letting rho be the normalized line of sight vector pointing from the corner reflector to the satellite, and letting
-    e, n, and u, the versors of the ENU reference frame local to the corner reflector, then the elevation angle and
+    e, n, and u, the unit vectors of the ENU reference frame local to the corner reflector, then the elevation angle and
     azimuth angle are, respectively:
 
     .. math::
