@@ -1,0 +1,20 @@
+# VS Code project settings
+.vscode
+
+# Distribution / packaging
+docs/build
+build/
+_build/
+dist/
+*.egg-info/
+
+# Byte-compiled / optimized
+__pycache__
+*.py[co]
+docs/make.bat
+docs/Makefile
+
+# Other
+.coverage
+
+venv

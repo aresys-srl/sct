@@ -9,8 +9,8 @@ from importlib import resources as res
 
 from . import resources
 
-calibration_sites_db = res.files(resources).joinpath("calibration_sites_db", "calibration_sites.sqlite")
 config_schema = res.files(resources).joinpath("configuration_schema.json")
 csv_template = res.files(resources).joinpath("calibration_targets_external_source_template.csv")
+calibration_sites_registry_schema = res.files(resources).joinpath("known_calibration_sites_registry_schema.json")
 
-__version__ = "1.0.0dev0"
+__version__ = "1.0.0"

@@ -10,178 +10,211 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Union
 from uuid import uuid4
 
+import numpy as np
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
+from arepyextras.quality.core.signal_processing import convert_to_db
 from arepyextras.quality.point_targets_analysis.analysis import point_target_analysis
+from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
+from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.io.io_support import NominalPointTarget
-from arepytools.timing.precisedatetime import PreciseDateTime
+from scipy.constants import speed_of_light as LIGHT_SPEED
 
-from sct.configuration.sct_default_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core import custom_corrections
-from sct.core.custom_corrections import select_custom_corrections
-from sct.core.global_corrections import (
-    compute_atmospheric_delays,
-    compute_geodynamics_corrections,
+from sct.core.atmospheric_corrections_main import (
+    AtmosphericDelaysAcquisitionInfo,
     convert_atmospheric_delays_to_df,
+    run_compute_atmospheric_delays,
 )
-from sct.io.io_manager import input_detector, product_loader
-from sct.io.point_target_manager import (
-    SupportedCalibrationSites,
-    convert_df_to_nominal_point_target,
-    extract_point_target_data_from_source,
-    query_calibration_sites_db,
-)
+from sct.core.etad_corrections_main import get_etad_corrections
+from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
+from sct.core.rcs_computation import compute_elevation_azimuth_wrt_enu, compute_rcs_trihedral_corner_reflector
+from sct.io.extended_protocols import SCTInputProduct
+from sct.io.io_manager import product_loader
+from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
 
 
-def main(
-    product_path: Union[str, Path],
-    external_orbit_path: Union[str, Path] | None = None,
-    calibration_site: Union[str, SupportedCalibrationSites] | None = None,
-    external_target_source: Union[str, Path] | None = None,
+def _compute_theoretical_rcs(
+    data_df: pd.DataFrame,
+    point_targets_df: pd.DataFrame,
+    carrier_frequency_hz: float,
+    trajectory: TwiceDifferentiable3DCurve,
+) -> list:
+    """Returns a list containing, for each record in data_df, the theoretical RCS computed considering the target and
+    satellite positions.
+
+    Parameters
+    ----------
+    data_df : pd.DataFrame
+        Database of SCT analysis results
+    point_targets_df : pd.DataFrame
+        Database with information on each target
+    carrier_frequency_hz : float
+        Carrier frequency of the radar signal impinging on the target
+    trajectory : TwiceDifferentiable3DCurve
+        Trajectory of the satellite observing the target
+
+    Returns
+    -------
+    list
+        List of theoretical RCS values
+    """
+
+    # orientation of boresight in CR reference frame
+    ELEV_BORE_CR = np.pi / 180 * 35.2644
+    AZIMUTH_BORE_CR = np.pi / 4
+
+    results = []
+
+    for _, row in data_df.iterrows():
+
+        if np.any(row.isna()):
+            results.append(np.nan)
+            continue
+
+        curr_point_target = point_targets_df[point_targets_df["target_name"] == row["target_name"]]
+
+        cr_arm_length = curr_point_target["target_size_m"].iloc[0]
+
+        # orientation of boresight in ENU
+        elev_bore_enu = np.pi / 180 * curr_point_target["corner_elevation_deg"].iloc[0]
+        azimuth_bore_enu = np.pi / 180 * curr_point_target["corner_azimuth_deg"].iloc[0]
+
+        sensor_position_at_zd = trajectory.evaluate(row["peak_azimuth_time_[UTC]"])
+
+        cr_position = curr_point_target[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy().flatten()
+
+        # compute orientation of satellite in ENU
+        elev_los_enu, azimuth_los_enu = compute_elevation_azimuth_wrt_enu(
+            pos_cr=cr_position, pos_sat=sensor_position_at_zd
+        )
+
+        # compute orientation of satellite in CR reference frame
+        elev_los_cr = elev_los_enu - elev_bore_enu + ELEV_BORE_CR
+        azimuth_los_cr = (azimuth_los_enu % (2 * np.pi)) - (azimuth_bore_enu % (2 * np.pi)) + AZIMUTH_BORE_CR
+
+        # compute CR RCS
+        # if the radio wave does not impinge on the front of the CR, the RCS computation is not valid
+        is_angle_range_valid = (
+            np.all(azimuth_los_cr >= 0)
+            and np.all(azimuth_los_cr <= np.pi / 2)
+            and np.all(elev_los_cr >= 0)
+            and np.all(elev_los_cr <= np.pi / 2)
+        )
+        if is_angle_range_valid:
+            cr_rcs_m2 = compute_rcs_trihedral_corner_reflector(
+                cr_arm_length, LIGHT_SPEED / carrier_frequency_hz, elev_los_cr, azimuth_los_cr
+            )
+        else:
+            cr_rcs_m2 = np.nan
+
+        results.append(convert_to_db(cr_rcs_m2))
+
+    return results
+
+
+def point_target_analysis_with_corrections(
+    product_path: str | Path,
+    external_target_source: str | Path,
+    external_orbit_path: str | Path | None = None,
     config: SCTPointTargetAnalysisConfig | None = None,
-) -> tuple[pd.DataFrame, dict]:
+) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
     """Point Target Analysis high-level function that executes the proper wrapper of Arepyextras-Quality
     point_target_analysis function based on input product type.
 
     Parameters
     ----------
-    product_path : Union[str, Path]
+    product_path : str | Path
         Path to the input product
-    external_orbit_path : Union[str, Path], optional
+    external_target_source : str | Path
+        path to external point target source (file or folder)
+    external_orbit_path : str | Path | None, optional
         Path to the external orbit file,  by default None
-    calibration_site : Union[str, SupportedCalibrationSites], optional
-        calibration site to be analyzed, by default None
-    external_target_source : Union[str, Path], optional
-        path to external point target source (file or folder), by default None
     config : SCTPointTargetAnalysisConfig, optional
         config file SCTPointTargetAnalysisConfig dataclass to enable and manage different features, if provided,
         by default None
 
     Returns
     -------
-    tuple[pd.DataFrame, dict]
-        pandas dataframe containing all the computed features for each point target,
+    tuple[pd.DataFrame, list[PointTargetGraphicalData]]
+        pandas data frame containing all the computed features for each point target,
         dict of data stored for graphical output needs
     """
 
+    # Input parameters analysis
     product_path = Path(product_path)
-    external_orbit_path = Path(external_orbit_path) if external_orbit_path is not None else None
+    log.info(f"Input product: {product_path}")
 
-    # DETECTING INPUT PRODUCT TYPE
-    input_type = input_detector(product=product_path)
+    external_target_source = Path(external_target_source)
+    log.info(f"Using external target source provided: {external_target_source}")
+
+    external_orbit_path = Path(external_orbit_path) if external_orbit_path is not None else None
+    if external_orbit_path is not None:
+        log.info(f"Using external orbit {external_orbit_path}")
+
+    config = config or SCTPointTargetAnalysisConfig()
+
+    # ETAD configuration update
+    if config.enable_etad_corrections:
+        config.enable_solid_tides_correction = False
+        config.enable_ionospheric_correction = False
+        config.enable_tropospheric_correction = False
+        config.enable_sensor_specific_processing_corrections = False
+        log.debug("ETAD corrections enabled: forced disabling of other correction")
+
+        if config.etad_product_path is None:
+            log.critical("ETAD corrections requested but the ETAD product path is not valid")
+            raise RuntimeError("Invalid ETAD Product path")
 
     # LOADING PRODUCT
-    product, first_channel = product_loader(
-        product_path=product_path, external_orbit=external_orbit_path, input_type=input_type
+    product, rng_corr_func, az_corr_func = product_loader(
+        product_path=product_path,
+        external_orbit=external_orbit_path,
     )
 
     # EXTRACTING PRODUCT ACQUISITION TIME
+    first_channel = product.get_channel_data(channel_id=product.channels_list[0])
     acquisition_time = first_channel.azimuth_axis[0]  # approximating acquisition time with firs value of azimuth axis
 
-    # CONFIGURATION MANAGEMENT
-    if config is None:
-        # initializing a default configuration
-        config = SCTPointTargetAnalysisConfig()
+    # external target source
+    point_targets_df = extract_point_target_data_from_source(source=external_target_source)
+    nominal_target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
 
-    # CALIBRATION SITES MANAGEMENT
-    if external_target_source is None:
-        # accessing internal database
-        if calibration_site is None:
-            log.critical(
-                "Cannot perform point target analysis: no external file provided and no calibration site selected"
-            )
-            raise RuntimeError
-        log.info(f"Querying calibration sites DB: extracting {calibration_site} info...")
-        point_targets_df = query_calibration_sites_db(
-            calibration_site=SupportedCalibrationSites(calibration_site), acquisition_time=acquisition_time
-        )
-    else:
-        external_target_source = Path(external_target_source)
-        log.info(f"Using external target source provided: {external_target_source}")
-        # external target source management
-        point_targets_df = extract_point_target_data_from_source(source=external_target_source)
-
-    # checking if acquisition time lies within point target data time validity boundaries
-    try:
-        date_lower_boundary = PreciseDateTime.fromisoformat(
-            point_targets_df["validity_start_date"].mode()[0].isoformat()
-        )
-        date_upper_boundary = PreciseDateTime.fromisoformat(point_targets_df["validity_end_date"].mode()[0].isoformat())
-
-        if acquisition_time < date_lower_boundary or acquisition_time > date_upper_boundary:
-            raise RuntimeError(
-                f"Acquisition time {acquisition_time} date is outside of validity boundaries"
-                + f"for selected {calibration_site} data"
-            )
-
-        # computing time delta between acquisition time and calibration site measurement campaign date
-        time_delta_s = acquisition_time - PreciseDateTime.fromisoformat(
-            point_targets_df["measurement_date"].mode()[0].isoformat()
-        )
-    except KeyError as err:
-        time_delta_s = 0
-        if config.enable_plate_tectonics_correction:
-            log.critical("Missing time validity required information in input point targets")
-            raise RuntimeError(
-                "Cannot apply Plate Tectonics correction: disable this feature from configuration or "
-                + "add validity dates to point targets data"
-            ) from err
-
-    # COMPUTING GEODYNAMICS CORRECTIONS
-    target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
-    drift_vel = ["drift_velocity_x_my", "drift_velocity_y_my", "drift_velocity_z_my"]
-    drift_velocities = None
-    if set(drift_vel).issubset(point_targets_df.columns):
-        drift_velocities = point_targets_df[drift_vel].to_numpy()
-
-    coords_displacements = compute_geodynamics_corrections(
-        target_coords=target_coords,
-        drift_velocities=drift_velocities,
-        acq_time=acquisition_time,
-        time_delta_s=time_delta_s,
-        plate_ref=point_targets_df.plate[0],
-        tides_flag=config.enable_solid_tides_correction,
-        tectonics_flag=config.enable_plate_tectonics_correction,
+    coords_displacements = run_compute_geodynamics_corrections(
+        nominal_target_coords=nominal_target_coords,
+        acquisition_time=acquisition_time,
+        point_targets_df=point_targets_df,
+        config=config,
     )
 
     # APPLYING GEODYNAMICS CORRECTIONS TO TARGET COORDINATES
     if coords_displacements is not None:
-        point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = target_coords + coords_displacements
+        point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = nominal_target_coords + coords_displacements
 
-    # converting point target dataframe in list of NominalPointTarget dataclasses
+    # converting point target data frame in list of NominalPointTarget dataclasses
     point_targets_data = convert_df_to_nominal_point_target(data_df=point_targets_df)
 
-    # COMPUTING ATMOSPHERIC CORRECTIONS
-    iono_flag = config.enable_ionospheric_correction and config.ionospheric_maps_directory is not None
-    tropo_flag = config.enable_tropospheric_correction and config.tropospheric_maps_directory is not None
-    # atmospheric delays for each point target
-    atmospheric_delays = compute_atmospheric_delays(
-        target_coords=target_coords,
+    # computing atmospheric delays
+    acquisition_info = AtmosphericDelaysAcquisitionInfo(
         trajectory=first_channel.trajectory,
-        az_time=first_channel.mid_azimuth_time,
-        fc_hz=first_channel.carrier_frequency,
-        analysis_center=config.ionospheric_analysis_center,
-        ionosphere_incidence_angle_method=config.ionospheric_tec_inc_angle_method,
-        troposphere_map_resolution=config.tropospheric_map_grid_resolution,
-        ionosphere_flag=iono_flag,
-        ionosphere_map_dir=config.ionospheric_maps_directory,
-        troposphere_flag=tropo_flag,
-        troposphere_map_dir=config.tropospheric_maps_directory,
+        azimuth_time=first_channel.mid_azimuth_time,
+        carrier_frequency=first_channel.carrier_frequency,
+    )
+    atmospheric_delays = run_compute_atmospheric_delays(
+        target_coords=nominal_target_coords,
+        acquisition_info=acquisition_info,
+        config=config,
     )
     atmospheric_delays_df = convert_atmospheric_delays_to_df(
-        target_names=point_targets_df["target_name"].copy(), delays=tuple(atmospheric_delays)
+        target_names=point_targets_df["target_name"].copy(), delays=atmospheric_delays
     )
 
-    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
-    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
-
-    # COMPUTING POINT TARGET ANALYSIS
+    # computing point target analysis
     data_df, graph_data = sct_point_target_analysis(
         product=product,
         config=config,
@@ -190,21 +223,61 @@ def main(
         range_corrections_func=rng_corr_func,
     )
 
-    return data_df.merge(atmospheric_delays_df, on=["target_name"]), graph_data
+    if "target_size_m" in point_targets_df:
+        theoretical_rcs = _compute_theoretical_rcs(
+            data_df=data_df,
+            point_targets_df=point_targets_df,
+            carrier_frequency_hz=first_channel.carrier_frequency,
+            trajectory=first_channel.trajectory,
+        )
+        data_df["rcs_theoretical_[dB]"] = theoretical_rcs
+    else:
+        data_df["rcs_theoretical_[dB]"] = None
+
+    # retrieving ETAD corrections
+    if config.enable_etad_corrections:
+        log.info("Extracting ALE range corrections from ETAD product...")
+        if config.etad_product_path is None:
+            raise RuntimeError("Cannot perform ETAD corrections: missing input etad product")
+        etad_corrections = get_etad_corrections(etad_product_path=config.etad_product_path, target_df=point_targets_df)
+        data_df = data_df.merge(etad_corrections, on=["target_name"])
+
+    if config.enable_ionospheric_correction or config.enable_tropospheric_correction:
+        data_df = data_df.merge(atmospheric_delays_df, on=["target_name"])
+
+    # sum all corrections along a specific direction
+    data_df["total_ale_range_correction_[m]"] = data_df[
+        [c for c in data_df.columns if "_range_correction_[m]" in c]
+    ].sum(axis=1)
+    data_df["total_ale_azimuth_correction_[m]"] = data_df[
+        [c for c in data_df.columns if "_azimuth_correction_[m]" in c]
+    ].sum(axis=1)
+
+    # compute corrected ALE measurement
+    data_df["revised_ale_range_[m]"] = (
+        data_df["slant_range_localization_error_[m]"] + data_df["total_ale_range_correction_[m]"]
+    )
+    data_df["revised_ale_azimuth_[m]"] = (
+        data_df["azimuth_localization_error_[m]"] + data_df["total_ale_azimuth_correction_[m]"]
+    )
+
+    log.info("Analysis completed.")
+
+    return data_df, graph_data
 
 
 def sct_point_target_analysis(
-    product: QualityInputProduct,
+    product: SCTInputProduct,
     point_targets_data: dict[str, NominalPointTarget],
     config: SCTPointTargetAnalysisConfig,
     azimuth_corrections_func: custom_corrections.ALECorrectionFunctionType | None = None,
     range_corrections_func: custom_corrections.ALECorrectionFunctionType | None = None,
-) -> tuple[pd.DataFrame, dict]:
+) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
     """Point target analysis wrapper customized for SCT workflow.
 
     Parameters
     ----------
-    product : QualityInputProduct
+    product : SCTInputProduct
         product to be analyzed
     point_targets_data : dict[str, NominalPointTarget]
         point target data
@@ -217,15 +290,20 @@ def sct_point_target_analysis(
 
     Returns
     -------
-    tuple[pd.DataFrame, dict]
-        results dataframe and graphs data
+    tuple[pd.DataFrame, list[PointTargetGraphicalData]]
+        results dataframe,
+        graphs data
     """
     data, graph_data = point_target_analysis(
         product=product,
         point_targets=point_targets_data,
-        ale_limits=config.ale_validity_limits,
         config=config.base_config,
     )
+
+    if len(data) == 0:
+        log.critical("Point target analysis results is empty: no visible targets detected")
+        raise ValueError("No visible point targets")
+
     data.reset_index(drop=True, inplace=True)
     data.rename(columns={"target": "target_name"}, inplace=True)
     data["total_doppler_frequency_[Hz]"] = data["doppler_frequency_[Hz]"] + data["steering_doppler_frequency_[Hz]"]
@@ -233,34 +311,26 @@ def sct_point_target_analysis(
     data["id"] = [uuid4() for _ in range(len(data))]
 
     # COMPUTING SENSOR SPECIFIC CORRECTIONS
-    range_corrections_df = pd.DataFrame([None] * len(data), columns=["total_range_ale_correction_[m]"])
-    range_corrections_df["id"] = data["id"].copy()
-    azimuth_corrections_df = pd.DataFrame([None] * len(data), columns=["total_azimuth_ale_correction_[m]"])
-    azimuth_corrections_df["id"] = data["id"].copy()
+    range_corrections_df = pd.DataFrame(data["id"].copy(), columns=["id"])
+    azimuth_corrections_df = pd.DataFrame(data["id"].copy(), columns=["id"])
     if config.enable_sensor_specific_processing_corrections:
         # ale: slant_range_localization_error and azimuth_localization_error
         # atmospheric corrections
         if range_corrections_func is not None:
             log.info("Computing sensor specific range corrections...")
             range_corrections_df = range_corrections_func(product, data.copy())
-            range_corrections_df["total_range_ale_correction_[m]"] = range_corrections_df[
-                [c for c in range_corrections_df.columns if "id" not in c]
-            ].sum(axis=1)
         else:
             log.info("Sensor specific range corrections function has not been selected")
         if azimuth_corrections_func is not None:
             log.info("Computing sensor specific azimuth corrections...")
             azimuth_corrections_df = azimuth_corrections_func(product, data.copy())
-            azimuth_corrections_df["total_azimuth_ale_correction_[m]"] = azimuth_corrections_df[
-                [c for c in azimuth_corrections_df.columns if "id" not in c]
-            ].sum(axis=1)
         else:
             log.info("Sensor specific azimuth corrections function has not been selected")
 
     # ADDING CORRECTIONS TO RESULTS
+    data["solid_tides_correction"] = config.enable_solid_tides_correction
+    data["plate_tectonics_correction"] = config.enable_plate_tectonics_correction
     data_out = data.merge(range_corrections_df, on="id").merge(azimuth_corrections_df, on="id")
     data_out.drop(columns="id", axis=1, inplace=True)
-
-    log.info("Analysis completed.")
 
     return data_out, graph_data

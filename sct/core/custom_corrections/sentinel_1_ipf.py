@@ -8,36 +8,34 @@ Custom Corrections: Sentinel-1 IPF range and azimuth corrections
 
 import numpy as np
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 import sct.io.safe_computing_utilities as s1_corrections
+from sct.io.extended_protocols import SCTInputProduct
 
 
-def _detect_mid_swath_channel(times: dict[str, PreciseDateTime]) -> str:
-    """Detecting the mid swath channel name.
+def _detect_mid_swath_channel(subswaths: list[str]) -> str:
+    """Detecting the mid swath channel name. For Sentinel-1, only IW and EW
+    acquisition modes have multiple sub-swaths. For them, the middle sub-swaths
+    are IW2 and EW3, respectively. All other modes have a single swath.
 
     Parameters
     ----------
-    times : dict[str, PreciseDateTime]
-        dictionary with keys being the swaths and values being azimuth start times
+    times : list[str]
+        list with values being the sub-swath names
 
     Returns
     -------
     str
-        dictionary mid value key
+        mid-swath name
     """
-    # the dictionary must contain an odd number of values in order to be able do find a mid value
-    assert len(times) % 2 != 0
-
-    # removing max and min values at each iteration until just one value is left, that's the mid one
-    times = {t: v[0] for t, v in times.items()}
-    while len(times) > 1:
-        min_key = min(times, key=times.get)
-        max_key = max(times, key=times.get)
-        times.pop(min_key)
-        times.pop(max_key)
-    return list(times.keys())[0]
+    swath_names = sorted(subswaths)
+    if swath_names == ["IW1", "IW2", "IW3"]:
+        return "IW2"
+    if swath_names == ["EW1", "EW2", "EW3", "EW4", "EW5"]:
+        return "EW3"
+    assert len(swath_names) == 1
+    return swath_names[0]
 
 
 def _get_rid_of_pol_dependency(arg: dict[str, dict[str, tuple[PreciseDateTime, float]]]) -> dict[str, PreciseDateTime]:
@@ -63,7 +61,7 @@ def _get_rid_of_pol_dependency(arg: dict[str, dict[str, tuple[PreciseDateTime, f
 
 
 def compute_range_corrections(
-    product: QualityInputProduct,
+    product: SCTInputProduct,
     data: pd.DataFrame,
 ) -> pd.DataFrame:
     """Computing Sentinel-1 specific range corrections for ALE measurements.
@@ -71,7 +69,7 @@ def compute_range_corrections(
 
     Parameters
     ----------
-    product : QualityInputProduct
+    product : SCTInputProduct
         product
     data : pd.DataFrame
         point target analysis data
@@ -99,11 +97,11 @@ def compute_range_corrections(
             )
         )
 
-    return pd.DataFrame(rng_corr, columns=["id", "doppler_shift_correction_[m]"])
+    return pd.DataFrame(rng_corr, columns=["id", "doppler_shift_range_correction_[m]"])
 
 
 def compute_azimuth_corrections(
-    product: QualityInputProduct,
+    product: SCTInputProduct,
     data: pd.DataFrame,
 ) -> pd.DataFrame:
     """Computing Sentinel-1 specific azimuth corrections for ALE measurements.
@@ -111,7 +109,7 @@ def compute_azimuth_corrections(
 
     Parameters
     ----------
-    product : QualityInputProduct
+    product : SCTInputProduct
         product
     data : pd.DataFrame
         point target analysis data
@@ -139,12 +137,12 @@ def compute_azimuth_corrections(
         if channel_data.swath_name not in subswath_mid_first_burst_times:
             subswath_mid_first_burst_times[channel_data.swath_name] = {}
         if channel_data.polarization.value not in subswath_mid_first_burst_times[channel_data.swath_name]:
-            subswath_mid_first_burst_times[channel_data.swath_name][
-                channel_data.polarization.value
-            ] = channel_data.get_mid_burst_times(0)
+            subswath_mid_first_burst_times[channel_data.swath_name][channel_data.polarization.value] = (
+                channel_data.get_mid_burst_times(0)
+            )
 
     subswath_mid_first_burst_times = _get_rid_of_pol_dependency(subswath_mid_first_burst_times)
-    mid_swath_channel_id = _detect_mid_swath_channel(times=subswath_mid_first_burst_times)
+    mid_swath_channel_id = _detect_mid_swath_channel(subswaths=list(subswath_mid_first_burst_times.keys()))
     bistatic_delay_applied = subswath_mid_first_burst_times[mid_swath_channel_id][1] / 2
 
     # computing azimuth corrections
@@ -159,8 +157,8 @@ def compute_azimuth_corrections(
                     s1_corrections.compute_fmrate_shift_correction(
                         ground_velocity=row["ground_velocity_[ms]"],
                         doppler_frequency=row["total_doppler_frequency_[Hz]"],
-                        doppler_rate=row["doppler_rate_real_[Hzs]"],
-                        doppler_rate_th=row["doppler_rate_theoretical_[Hzs]"],
+                        doppler_rate_processor=row["doppler_rate_real_[Hzs]"],
+                        doppler_rate_geometry=row["doppler_rate_theoretical_[Hzs]"],
                     ),
                 )
             )
@@ -201,9 +199,9 @@ def compute_azimuth_corrections(
             bistatic_delay.append((row["id"], np.nan))
 
     # converting output to dataframe
-    fm_rate_shift = pd.DataFrame(fm_rate_shift, columns=["id", "fm_rate_shift_correction_[m]"])
-    instrument_timing = pd.DataFrame(instrument_timing, columns=["id", "instrument_timing_correction_[m]"])
-    bistatic_delay = pd.DataFrame(bistatic_delay, columns=["id", "bistatic_delay_correction_[m]"])
+    fm_rate_shift = pd.DataFrame(fm_rate_shift, columns=["id", "fm_rate_shift_azimuth_correction_[m]"])
+    instrument_timing = pd.DataFrame(instrument_timing, columns=["id", "instrument_timing_azimuth_correction_[m]"])
+    bistatic_delay = pd.DataFrame(bistatic_delay, columns=["id", "bistatic_delay_azimuth_correction_[m]"])
     az_corrections = fm_rate_shift.merge(instrument_timing, on="id").merge(bistatic_delay, on="id")
 
     return az_corrections

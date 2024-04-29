@@ -6,51 +6,21 @@ Point Target and Calibration Sites utilities
 --------------------------------------------
 """
 
-import datetime
-import sqlite3
-from enum import Enum
 from pathlib import Path
 from typing import Union
 
 import numpy as np
 import pandas as pd
+from arepytools.geometry.conversions import llh2xyz
 from arepytools.io import PointSetProduct, read_point_targets_file
 from arepytools.io.io_support import NominalPointTarget
 from arepytools.timing.precisedatetime import PreciseDateTime
 
-from sct import calibration_sites_db, csv_template
-
-SELECT_JOIN_QUERY = """
-SELECT target_name, target_type.type, plate.plate, reference_frame.reference,
-x_coord_m, y_coord_m, z_coord_m, drift_velocity_x_my, drift_velocity_y_my, drift_velocity_z_my,
-delay_s, measurement_date, validity_start_date, validity_end_date
-FROM XXXX
-INNER JOIN target_type ON target_type.ID = XXXX.target_type
-INNER JOIN plate ON plate.ID = XXXX.plate
-INNER JOIN reference_frame ON reference_frame.ID = XXXX.xyz_reference_frame;
-"""
-
-SELECT_JOIN_QUERY_WITH_TIME = """
-SELECT target_name, target_type.type, plate.plate, reference_frame.reference,
-x_coord_m, y_coord_m, z_coord_m, drift_velocity_x_my, drift_velocity_y_my, drift_velocity_z_my,
-delay_s, measurement_date, validity_start_date, validity_end_date
-FROM XXXX
-WHERE XXXX.validity_start_date <  ?;
-"""
-# INNER JOIN target_type ON target_type.ID = XXXX.target_type
-# INNER JOIN plate ON plate.ID = XXXX.plate
-# INNER JOIN reference_frame ON reference_frame.ID = XXXX.xyz_reference_frame;
-# """
+from sct import csv_template
 
 
 class UnsupportedPointTargetSource(RuntimeError):
     """External point target source provided is not supported"""
-
-
-class SupportedCalibrationSites(Enum):
-    """Supported Calibration Sites inside internal point target database"""
-
-    SURAT_BASIN = "surat_basin"
 
 
 def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFrame:
@@ -64,14 +34,13 @@ def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFr
     Returns
     -------
     pd.DataFrame
-        _description_
+        pandas dataframe corresponding to the input point target file
     """
     source = Path(source)
 
     if str(source).endswith(".xml"):
         # internal format, point target xml file
-        point_targets = read_point_targets_file(xml_file=source)
-        raise NotImplementedError
+        point_targets_df = convert_point_target_file_xml_to_df(source=source)
     elif source.is_dir():
         # internal format, point target binary
         point_targets_df = convert_point_target_binary_to_df(source=source)
@@ -79,49 +48,16 @@ def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFr
     elif str(source).endswith(".csv"):
         # external format, .csv template compliant
         point_targets_df = pd.read_csv(source)
-        point_targets_df["measurement_date"] = pd.to_datetime(point_targets_df["measurement_date"])
-        point_targets_df["validity_start_date"] = pd.to_datetime(point_targets_df["validity_start_date"])
-        point_targets_df["validity_stop_date"] = pd.to_datetime(point_targets_df["validity_stop_date"])
+        for date_in in ("measurement_date", "validity_start_date", "validity_stop_date"):
+            if not point_targets_df["measurement_date"].isnull().all():
+                point_targets_df[date_in] = pd.to_datetime(point_targets_df[date_in])
+                point_targets_df[date_in] = point_targets_df[date_in].apply(
+                    lambda x: PreciseDateTime.fromisoformat(x.isoformat()) if not pd.isnull(x) else x
+                )
     else:
         raise UnsupportedPointTargetSource(source)
 
     return point_targets_df
-
-
-def query_calibration_sites_db(
-    calibration_site: SupportedCalibrationSites = SupportedCalibrationSites.SURAT_BASIN,
-    acquisition_time: PreciseDateTime = None,
-) -> pd.DataFrame:
-    """Reading calibration sites DB to extract data corresponding to a given site.
-
-    Parameters
-    ----------
-    calibration_site : SupportedCalibrationSites, optional
-        calibration site of interest, by default SupportedCalibrationSites.SURAT_BASIN
-    acquisition_time : PreciseDateTime, optional
-        if provided, query is restricted only to those target valid at the time of acquisition, by default None
-
-    Returns
-    -------
-    pd.DataFrame
-        dataframe containing point target data extracted from db
-    """
-    connection = sqlite3.connect(calibration_sites_db)
-
-    data_df = pd.read_sql_query(
-        SELECT_JOIN_QUERY.replace("XXXX", calibration_site.value),
-        connection,
-        parse_dates=["measurement_date", "validity_start_date", "validity_end_date"],
-    )
-
-    if acquisition_time is not None:
-        acq_date = datetime.datetime(acquisition_time.year, acquisition_time.month, acquisition_time.day_of_the_month)
-        data_df = data_df.query("validity_start_date <= @acq_date & validity_end_date >= @acq_date")
-
-    # substituting all None with Nan
-    data_df = data_df.fillna(value=np.nan)
-
-    return data_df
 
 
 def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
@@ -156,8 +92,42 @@ def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
     return point_targets_df
 
 
+def convert_point_target_file_xml_to_df(source: Union[str, Path]) -> pd.DataFrame:
+    """Convert Aresys Point Target File XML product to SCT internal point target dataframe format.
+
+    Parameters
+    ----------
+    source : Union[str, Path]
+        Path to Point Target File XML product
+
+    Returns
+    -------
+    pd.DataFrame
+        SCT compliant internal point target dataframe
+    """
+    point_targets = read_point_targets_file(xml_file=source)
+    coords = np.stack([c.xyz_coordinates for c in point_targets.values()])
+    delays = [c.delay for c in point_targets.values()]
+    df = pd.DataFrame(["cr_" + f"{int(k):02}" for k in list(point_targets.keys())], columns=["target_name"])
+    df = df.assign(
+        target_type="CR",
+        plate="NONE",
+        x_coord_m=coords[:, 0],
+        y_coord_m=coords[:, 1],
+        z_coord_m=coords[:, 2],
+        drift_velocity_x_my=np.nan,
+        drift_velocity_y_my=np.nan,
+        drift_velocity_z_my=np.nan,
+        delay_s=delays,
+        measurement_date=PreciseDateTime(),
+        validity_start_date=PreciseDateTime(),
+        validity_stop_date=PreciseDateTime.from_numeric_datetime(3000),
+    )
+    return df
+
+
 def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, NominalPointTarget]:
-    """Convert dataframe read from database to dictionary of NominalPointTarget values.
+    """Convert dataframe to dictionary of NominalPointTarget values.
 
     Parameters
     ----------
@@ -171,13 +141,79 @@ def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, Nomin
     """
     data_dict = dict.fromkeys(data_df.target_name)
     for _, row in data_df.iterrows():
+        delay = row["delay_s"] if not np.isnan(row["delay_s"]) else None
         data_dict[row["target_name"]] = NominalPointTarget(
             xyz_coordinates=row[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy(dtype=float),
-            delay=row["delay_s"],
-            rcs_hh=1,
-            rcs_hv=1,
-            rcs_vh=1,
-            rcs_vv=1,
+            delay=delay,
+            rcs_hh=row["rcs_hh_dB"],
+            rcs_hv=row["rcs_hv_dB"],
+            rcs_vh=row["rcs_vh_dB"],
+            rcs_vv=row["rcs_vv_dB"],
         )
 
     return data_dict
+
+
+def convert_rosamund_file_to_compliant_csv(
+    df: Union[str, Path, pd.DataFrame], measurement_date: PreciseDateTime
+) -> pd.DataFrame:
+    """Formatting downloaded Rosamond Point Target Dataset to be compliant with the SCT input .csv format.
+
+    Parameters
+    ----------
+    df : Union[str, Path, pd.DataFrame]
+        downloaded Rosamond Point Target dataset, can be a path to the .csv file or the corresponding pandas dataframe
+    measurement_date : PreciseDateTime
+        measurement date of the current dataset
+
+    Returns
+    -------
+    pd.DataFrame
+        SCT compliant Rosamond dataframe
+    """
+
+    if not isinstance(df, pd.DataFrame):
+        df = pd.read_csv(Path(df))
+
+    # cleaning dataframe
+    col_clean = [d.strip().replace('"', "") for d in df.columns]
+    df.columns = col_clean
+    df.drop(list(df.filter(regex="Epoch")), axis=1, inplace=True)
+
+    # formatting names
+    df.rename(
+        columns={
+            "Corner ID": "target_name",
+            "Latitude (deg)": "latitude_deg",
+            "Longitude (deg)": "longitude_deg",
+            "Height Above Ellipsoid (m)": "altitude_m",
+            "Azimuth (deg)": "corner_azimuth_deg",
+            "Tilt / Elevation angle (deg)": "corner_elevation_deg",
+            "Side Length (m)": "side_length_m",
+        },
+        inplace=True,
+    )
+
+    # composing target names
+    df["target_name"] = df["target_name"].apply(lambda x: "ROS" + f"{x:02d}" + "CR")
+
+    # computing XYZ ECEF coordinates
+    lat_lon = np.deg2rad(df[["latitude_deg", "longitude_deg"]])
+    lat_lon_h = np.c_[lat_lon, df["altitude_m"]]
+    xyz_coords = llh2xyz(lat_lon_h.T).T
+
+    # adding columns
+    df["target_type"] = "CR"
+    df["plate"] = "NOAM"
+    df["x_coord_m"] = xyz_coords[:, 0]
+    df["y_coord_m"] = xyz_coords[:, 1]
+    df["z_coord_m"] = xyz_coords[:, 2]
+    df["drift_velocity_x_my"] = np.nan
+    df["drift_velocity_y_my"] = np.nan
+    df["drift_velocity_z_my"] = np.nan
+    df["delay_s"] = 0
+    df["measurement_date"] = measurement_date
+    df["validity_start_date"] = measurement_date - 24 * 3600  # a day before
+    df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after
+
+    return df

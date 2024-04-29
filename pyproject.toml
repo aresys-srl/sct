@@ -19,22 +19,46 @@ classifiers = [
 ]
 requires-python = ">= 3.10"
 dependencies = [
+    "numpy",
+    "pandas",
     "jsonschema",
     "toml",
-    "arepytools >= 1.6.1",
-    "arepyextras-quality >= 1.1",
-    "arepyextras-perturbations >= 1.1",
-    "arepyextras-eo_products",
+    "pyproj",
+    "shapely",
+    "h5py",
+    "s1etad",
+    "art",
+    "appdirs",
+    "arepytools >= 1.6.2",
+    "arepyextras-quality >= 1.1.1",
+    "arepyextras-perturbations >= 1.1.1",
+    "arepyextras-eo_products >= 1.0.1"
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
 cli = ["click"]
-graphs = ["matplotlib >= 3.5", "plotly >= 5.10"]
+graphs = ["matplotlib", "plotly"]
+dev = ["black", "isort", "pylint"]
+test = ["unittest-xml-reporting", "coverage"]
+doc = [
+    "ipython",
+    "nbsphinx",
+    "sphinx",
+    "sphinx-design",
+    "sphinx-copybutton",
+    "pydata-sphinx-theme",
+]
 
 [project.readme]
 file = "README.md"
 content-type = "text/markdown"
+
+[project.scripts]
+sct = "sct.__main__:main"
+sct-rosamond-data-to-csv = "sct.cli.utility_commands_cli:convert_rosamond_csv"
+sct-ionospheric-maps-download = "sct.cli.utility_commands_cli:download_ionex_tec_maps"
+sct-tropospheric-maps-download = "sct.cli.utility_commands_cli:download_tropospheric_vmf3_maps"
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
@@ -46,3 +70,20 @@ namespaces = true
 
 [tool.setuptools.dynamic]
 version = { attr = "sct.__version__" }
+
+[tool.pylint.MASTER]
+fail-under = 8.5
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = ["import-error", "logging-fstring-interpolation", "logging-not-lazy"]
+
+[tool.pylint.FORMAT]
+max-line-length = 120
+
+[tool.black]
+line-length = 120
+target-version = ["py310", "py311", "py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 120

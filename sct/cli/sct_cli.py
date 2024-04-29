@@ -13,9 +13,9 @@ from typing import Optional
 import click
 
 from sct.__init__ import __version__ as VERSION
-from sct.cli.nesz_cli import nesz_analysis
 from sct.cli.pta_cli import target_analysis
-from sct.configuration.sct_default_configuration import SCTConfiguration
+from sct.cli.ra_cli import radiometric_analysis
+from sct.configuration.sct_configuration import SCTConfiguration
 
 version_option = click.version_option(VERSION, help="Show CLI version and exit")
 
@@ -53,4 +53,4 @@ def sct_analysis(ctx: click.Context, config: Optional[Path]):
 
 
 sct_analysis.add_command(target_analysis)
-sct_analysis.add_command(nesz_analysis)
+sct_analysis.add_command(radiometric_analysis)

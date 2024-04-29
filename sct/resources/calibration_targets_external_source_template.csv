@@ -1,2 +1,2 @@
-target_name,target_type,plate,description,latitude_deg,longitude_deg,altitude_m,x_coord_m,y_coord_m,z_coord_m,drift_velocity_x_my,drift_velocity_y_my,drift_velocity_z_my,corner_azimuth_deg,corner_elevation_deg,delay_s,measurement_date,validity_start_date,validity_stop_date
-,,,,,,,,,,,,,,,,,,
+target_name,target_type,plate,description,latitude_deg,longitude_deg,altitude_m,x_coord_m,y_coord_m,z_coord_m,drift_velocity_x_my,drift_velocity_y_my,drift_velocity_z_my,corner_azimuth_deg,corner_elevation_deg,target_shape,target_size_m,rcs_hh_dB,rcs_hv_dB,rcs_vv_dB,rcs_vh_dB,delay_s,measurement_date,validity_start_date,validity_stop_date
+,,,,,,,,,,,,,,,,,,,,,,,,

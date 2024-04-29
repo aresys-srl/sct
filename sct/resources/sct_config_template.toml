@@ -1,5 +1,6 @@
 [general]
-
+save_log = true
+save_config_copy = true
 
 [point_target_analysis]
 perform_irf = true
@@ -41,32 +42,26 @@ calibration_factor = 1.0
 resampling_factor = 1.0
 
 [radiometric_analysis]
-input_type = "beta_nought"
-output_type = "beta_nought"
-value = "amplitude"
-direction = "range"
-axis = "natural"
-outlier_removal = false
+input_quantity = "beta_nought"
+azimuth_block_size = 2000
+range_pixel_margin = 150
+radiometric_correction_exponent = 1.0
+
+[radiometric_analysis.advanced_configuration.profile_extraction_parameters]
+outlier_removal = true
 smoothening_filter = true
-
-[radiometric_analysis.advanced_configuration.parameters]
-smoothening_order = 3
-smoothening_window_length = 71
-radiometric_correction_exponent = 0.5
-outliers_kernel_size = [5, 5]
-outliers_filter_kernel_size = [10, 10]
+filtering_kernel_size = [11, 11]
 outliers_percentile_boundaries = [20, 90]
-az_average_band = 1000
-rng_average_band = 1000
+outliers_kernel_size = [5, 5]
 
-[nesz_analysis]
-incidence_compensation = false
+[radiometric_analysis.advanced_configuration.histogram_parameters]
+x_bins_step = 10
+y_bins_num = 101
+y_bins_center_margin = 3
 
-[nesz_analysis.advanced_configuration.parameters]
-rng_multilook_length = 7
-az_multilook_length = 7
-az_block_size = 2000
-look_angle_step = 0.01
-look_angle_margin = 0.5
-pixel_margin = 150
-burst_center_block_size = 100
+[interferometric_analysis]
+azimuth_blocks_number = 100          # this is not the default, default is automatically computed when needed
+range_blocks_number = 100            # this is not the default, default is automatically computed when needed
+enable_coherence_computation = false
+coherence_kernel = [15, 15]
+coherence_bins_number = 80

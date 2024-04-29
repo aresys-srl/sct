@@ -5,14 +5,14 @@
 import logging
 import sys
 
-import arepyextras.quality.configuration.custom_logger as clg
+import arepyextras.quality.core.custom_logger as clg
 
 
 def main():
     """Main function to launch the python SQT CLI program"""
     # setup custom logger
     log = logging.getLogger("quality_analysis")
-    log.setLevel("DEBUG")
+    log.setLevel("INFO")
     log.addHandler(clg.MyHandler())
 
     try:

@@ -1,0 +1,91 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "regions": {
+            "type": "object",
+            "description": "Registered calibration sites for automatic analysis",
+            "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": {
+                    "type": "object",
+                    "properties": {
+                        "description": {
+                            "type": "string",
+                            "description": "Description of the calibration site"
+                        },
+                        "latitude_boundaries_deg": {
+                            "type": "array",
+                            "description": "Minimum and maximum latitude deg values of the area bounding box",
+                            "minItems": 2,
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "additionalItems": false,
+                            "required": []
+                        },
+                        "longitude_boundaries_deg": {
+                            "type": "array",
+                            "description": "Minimum and maximum longitude deg values of the area bounding box",
+                            "minItems": 2,
+                            "items": [
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "additionalItems": false
+                        },
+                        "supported_analyses": {
+                            "type": "array",
+                            "description": "Supported analyses for this specific calibration site",
+                            "minItems": 1,
+                            "items": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "point_target_analysis", "nesz", "gamma", "scalloping", "interferometry"
+                                    ]
+                                }
+                            ]
+                        },
+                        "reference_dataset": {
+                            "type": "string",
+                            "description": "Optional reference dataset, required for point target analysis at this site"
+                        }
+                    },
+                    "required": ["latitude_boundaries_deg", "longitude_boundaries_deg", "supported_analyses"],
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                    "supported_analyses": {
+                                        "type": "array",
+                                        "contains": {
+                                            "const": "point_target_analysis"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "supported_analyses"
+                                ]
+                            },
+                            "then": {
+                                "required": [
+                                    "reference_dataset"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}
