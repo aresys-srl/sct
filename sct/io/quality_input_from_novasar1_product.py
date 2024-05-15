@@ -769,8 +769,6 @@ class NovaSAR1ChannelManager:
             raster_file=self._raster_file,
             block_to_read=target_block,
             scaling_conversion=self._channel.image_calibration_factor,
-            lines_time_ordering=self._channel.lines_time_ordering,
-            samples_time_ordering=self._channel.samples_time_ordering,
         ).T
 
         # converting to beta nought if radiometric quantity is different

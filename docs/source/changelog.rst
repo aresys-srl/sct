@@ -9,6 +9,10 @@ v1.0.1
 - IO: introduced support for EOS-04 product format
 - Added support for input RCS values for PointTargetBinary format
 
+**Bug Fixing**
+
+- Removed lines/samples ordering reference from NovaSAR-1 product format implementation
+
 v1.0.0
 ------
 
