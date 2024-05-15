@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.0.1
+------
+
+**Additional Features**
+
+- Added support for input RCS values for PointTargetBinary format
+
 v1.0.0
 ------
 
