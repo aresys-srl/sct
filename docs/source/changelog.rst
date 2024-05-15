@@ -1,8 +1,8 @@
 Changelog
 =========
 
-v1.0.0.dev3
------------
+v1.0.0
+------
 
 **Additional Features**
 
