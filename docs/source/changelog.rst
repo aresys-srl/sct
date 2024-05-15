@@ -6,6 +6,7 @@ v1.0.1
 
 **Additional Features**
 
+- IO: introduced support for EOS-04 product format
 - Added support for input RCS values for PointTargetBinary format
 
 v1.0.0
