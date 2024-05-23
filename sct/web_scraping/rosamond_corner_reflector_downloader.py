@@ -143,14 +143,3 @@ def get_rosamond_data(
         data_df = pd.read_csv(file)
 
     return convert_rosamund_file_to_compliant_csv(df=data_df.copy(), measurement_date=acq_date)
-
-
-if __name__ == "__main__":
-    df_path = Path(
-        r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\iceye\SC_2178486_110090\2023-05-24_2210_Rosamond-corner-reflectors_with_plate_motion.csv"
-    )
-    df = pd.read_csv(df_path)
-    acq_date = PreciseDateTime.from_numeric_datetime(2023, 2, 13, 9, 30)
-    df_new = convert_rosamund_file_to_compliant_csv(df, acq_date)
-    df_new.to_csv(df_path.parent.joinpath("calibration_target_rosamond.csv"), index=False)
-    pass

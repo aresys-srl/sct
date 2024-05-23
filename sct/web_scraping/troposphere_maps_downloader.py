@@ -101,9 +101,3 @@ def download_tropospheric_products(
         out_files.append(filename)
 
     return out_files
-
-
-if __name__ == "__main__":
-    out_dir = r"C:\Users\giorgio.parma\Desktop\temporary_outputs"
-    date = PreciseDateTime.from_numeric_datetime(2023, 5, 23, 13, 30)
-    download_tropospheric_products(acq_date=date, output_dir=out_dir)
