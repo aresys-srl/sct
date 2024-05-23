@@ -11,6 +11,8 @@ The main command line tool that can be accessed using the ``sct`` command in you
 Another set of companion CLI utilities has been developed aside from the main CLI tool and can be accessed using specific
 commands :ref:`that are listed here<sct_cli_utils>`
 
+See the :ref:`tutorials page<sct_tutorials>` for actual examples on how to use CLI to perform specific analyses.
+
 
 SCT CLI
 ^^^^^^^

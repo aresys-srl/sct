@@ -21,7 +21,7 @@ to the :ref:`related section <sct_supported_missions>`.
 
 A detailed list of currently supported analyses can be found :ref:`here <sct_analyses>`. 
 
-.. grid:: 4
+.. grid:: 3
 
     .. grid-item-card::
         :img-top: _static/icons/api_icon.svg
@@ -77,20 +77,3 @@ A detailed list of currently supported analyses can be found :ref:`here <sct_ana
             :click-parent:
 
             Getting started
-
-    .. grid-item-card::
-        :img-top: _static/icons/api_icon.svg
-
-        DUMMY
-        ^^^^^
-
-        dummy
-
-        +++
-
-        .. button-ref:: user_manual/configuration
-            :expand:
-            :color: secondary
-            :click-parent:
-
-            Dummy
