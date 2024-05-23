@@ -37,7 +37,7 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-cli = ["click"]
+cli = ["click", "requests"]
 graphs = ["matplotlib >= 3.5", "plotly >= 5.10"]
 dev = ["nox", "black", "isort", "pylint"]
 test = ["unittest-xml-reporting", "coverage"]
