@@ -10,8 +10,8 @@ import numpy as np
 from sct.core.rcs_computation import compute_rcs_trihedral_corner_reflector
 
 
-class SCTRCSTest(unittest.TestCase):
-    """Testing sct_configuration.py functionalities"""
+class RCSComputationTestCase(unittest.TestCase):
+    """Testing rcs computation functionalities"""
 
     def setUp(self) -> None:
         self.cr_arm = 0.7
