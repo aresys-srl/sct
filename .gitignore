@@ -17,5 +17,6 @@ docs/Makefile
 # Other
 .coverage
 tests/integration_tests/config/local.toml
+.nox
 
 venv
