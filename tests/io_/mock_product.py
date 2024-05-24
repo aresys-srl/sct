@@ -25,6 +25,8 @@ class MockProduct:
     def get_raster_files_from_channel_name(self, channel_id):
         return f"file_{channel_id}"
 
+    get_raster_file_from_channel_name = get_raster_files_from_channel_name
+
 
 class MockEnum(Enum):
     """Mock values for several enums"""
