@@ -12,7 +12,11 @@ from tempfile import TemporaryDirectory
 
 from click.testing import CliRunner
 
-from sct.cli.utility_commands_cli import sct_ionex_map_downloader, sct_tropospheric_map_downloader
+from sct.cli.utility_commands_cli import (
+    sct_ionex_map_downloader,
+    sct_rosamond_dataset_converter,
+    sct_tropospheric_map_downloader,
+)
 
 
 class AuxiliaryCLITestCase(unittest.TestCase):
@@ -43,6 +47,19 @@ class AuxiliaryCLITestCase(unittest.TestCase):
             command.extend(f"-c JPL -e name@domain.it -out {out_dir}".split())
             result = self.cli_runner.invoke(sct_ionex_map_downloader, command)
             self.assertEqual(result.exit_code, -1)
+
+    def test_rosamond_converter(self):
+        rosamond_out = """ "Corner ID","Latitude (deg)","Longitude (deg)","Height Above Ellipsoid (m)","Azimuth (deg)","Tilt / Elevation angle (deg)","Side Length (m)", "Epoch: 2024-05-24 00:00"
+        00,34.79696931,-118.09653087,660.7853,170.50,12.10,2.4384
+        01,34.79984857,-118.08698886,661.0342,170.50,8.72,2.4384
+        02,34.80523758,-118.08738926,660.7955,170.00,9.30,2.4384"""
+        with TemporaryDirectory() as tmp_dir:
+            input_csv = Path(tmp_dir).joinpath("rosamond.csv")
+            input_csv.write_text(rosamond_out)
+            command = f"-s {input_csv} -d".split() + ["2024-05-24 00:00:00"]
+            result = self.cli_runner.invoke(sct_rosamond_dataset_converter, command)
+            self.assertEqual(result.exit_code, 0)
+            self.assertTrue(Path(tmp_dir).joinpath("rosamond_point_target.csv"))
 
 
 if __name__ == "__main__":
