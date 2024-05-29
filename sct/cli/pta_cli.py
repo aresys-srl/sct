@@ -121,7 +121,9 @@ def target_analysis(
     # graphical output management
     if graphs:
         log.info("Plotting graphs...")
-        sct_pta_graphs(graphs_data=graphs_data, results_df=results_df, output_dir=output_directory)
+        graphs_out_dir = output_directory.joinpath("graphs")
+        graphs_out_dir.mkdir(exist_ok=True)
+        sct_pta_graphs(graphs_data=graphs_data, results_df=results_df, output_dir=graphs_out_dir)
 
     elapsed = (time.perf_counter_ns() - start) / 1e9
     log.info(f"Point Target Analysis completed in {elapsed} s.")
