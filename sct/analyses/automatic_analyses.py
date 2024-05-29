@@ -46,10 +46,11 @@ class SupportedAutomaticAnalyses(Enum):
     INTERFEROMETRY = "interferometry"
 
 
-# instantiating logger
-log = logging.getLogger("quality_analysis")
-log.setLevel("INFO")
-log.addHandler(clg.MyHandler())
+def basic_logger_setup() -> logging.Logger:
+    log = logging.getLogger("quality_analysis")
+    log.setLevel("INFO")
+    log.addHandler(clg.MyHandler())
+    return log
 
 
 @dataclass
@@ -172,6 +173,7 @@ def sct_automatic_analysis(
     config : SCTConfiguration | None, optional
         SCT configuration, by default None
     """
+    log = basic_logger_setup()
 
     output_dir = Path(output_dir)
     product_path = Path(product_path)
