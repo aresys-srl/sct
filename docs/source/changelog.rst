@@ -1,17 +1,20 @@
 Changelog
 =========
 
-v1.0.1
-------
+v1.0.1[unreleased]
+------------------
 
 **Additional Features**
 
 - IO: introduced support for EOS-04 product format
 - Added support for input RCS values for PointTargetBinary format
+- Documentation updated and improved
 
 **Bug Fixing**
 
 - Removed lines/samples ordering reference from NovaSAR-1 product format implementation
+- Improved point target analysis graphical output points selection to match the arepyextras-quality bugfix
+- Unittest coverage improved
 
 v1.0.0
 ------

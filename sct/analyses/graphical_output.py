@@ -37,10 +37,15 @@ def sct_pta_graphs(
 
     for item in graphs_data:
         try:
-            data_val = results_df.query("target_name == @item.target & channel == @item.channel").to_dict("records")[0]
+            data_val = results_df.query(
+                "target_name == @item.target & channel == @item.channel & "
+                + "burst == @item.burst & swath == @item.swath & "
+                + "polarization == @item.polarization.value"
+            ).to_dict("records")[0]
             label = (
                 f"target_{data_val['target_name']}_{data_val['swath']}_"
-                + f"polarization_{data_val['polarization'].replace('/','')}"
+                + f"polarization_{data_val['polarization'].replace('/','')}_"
+                + f"{data_val['product_type']}_b{data_val['burst']}"
             )
             pta_go.irf_graphs(
                 data_graph=item.irf,

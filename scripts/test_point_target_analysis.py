@@ -24,7 +24,7 @@ log.addHandler(logging_file_handler)
 
 if __name__ == "__main__":
     # products
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\eos04\L1A_SLC\244692311"
+    prod = r"C:\Users\giorgio.parma\Aresys_DATA\eos04\L1A_SLC\244692341"
 
     # external orbits
     ext_orbit = None
@@ -53,10 +53,15 @@ if __name__ == "__main__":
     out_graph_fldr.mkdir(exist_ok=True)
     for item in out_graph:
         try:
-            data_val = out.query("target_name == @item.target & channel == @item.channel").to_dict("records")[0]
+            data_val = out.query(
+                "target_name == @item.target & channel == @item.channel & "
+                + "burst == @item.burst & swath == @item.swath & "
+                + "polarization == @item.polarization.value"
+            ).to_dict("records")[0]
             label = (
                 f"target_{data_val['target_name']}_{data_val['swath']}_"
-                + f"polarization_{data_val['polarization'].replace('/','')}_{data_val['product_type']}"
+                + f"polarization_{data_val['polarization'].replace('/','')}_"
+                + f"{data_val['product_type']}_b{data_val['burst']}"
             )
             ptgpo.irf_graphs(
                 data_graph=item.irf,
