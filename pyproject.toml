@@ -73,6 +73,7 @@ version = { attr = "sct.__version__" }
 
 [tool.pylint.MASTER]
 fail-under = 8.5
+fail-on = ["unused-import"]
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = ["import-error", "logging-fstring-interpolation", "logging-not-lazy"]
