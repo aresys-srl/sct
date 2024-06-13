@@ -13,8 +13,12 @@ v1.0.1[unreleased]
 **Bug Fixing**
 
 - Removed lines/samples ordering reference from NovaSAR-1 product format implementation
-- Improved point target analysis graphical output points selection to match the arepyextras-quality bugfix
+
+**Other changes**
+
 - Unittest coverage improved
+- Theoretical RCS computation improved
+- Improved point target analysis graphical output points selection to match the arepyextras-quality bugfix
 
 v1.0.0
 ------
