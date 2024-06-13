@@ -74,10 +74,13 @@ def _compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) ->
     other_report = current[OTHER_VAR_LIST].copy()
     pd.testing.assert_frame_equal(other_df_ref, other_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_RA, rtol=0)
 
+    # TODO: remove this with next integration test dataset update
+    skip_vars = ["rcs_theoretical_[dB]"]
+
     # checking goodness of results
     pd.testing.assert_frame_equal(
-        ref.drop(LOC_VAR_LIST + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR, axis=1),
-        current.drop(LOC_VAR_LIST + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR, axis=1),
+        ref.drop(LOC_VAR_LIST + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR + skip_vars, axis=1),
+        current.drop(LOC_VAR_LIST + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR + skip_vars, axis=1),
         check_exact=False,
         atol=ABSOLUTE_TOLERANCE,
         rtol=0,
