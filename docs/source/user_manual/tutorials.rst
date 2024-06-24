@@ -94,9 +94,17 @@ to your needs. Passing the input configuration can be avoided if default values 
 
 .. code-block:: bash
 
-    sct --config path_to_config_toml radiometric-analysis [nesz/gamma/scalloping] -p path_to_product -out path_to_output_folder [-g]
+    sct --config path_to_config_toml radiometric-analysis [nesz/elevation_profile/scalloping] -p path_to_product -out path_to_output_folder [-g] [-r "output_radiometric_quantity"]
 
 Graphical output for radiometric analysis can be enabled using the `--graphs/-g` option for the CLI tool.
+
+Average radiometric profiles output radiometric quantity can be setup by using the `--output_radiometric_quantity/-r` option.
+
+.. admonition:: Validation
+
+   | `output_radiometric_quantity` maps to an internal *enum class*.
+   | Here are the possible values:
+   | `input_type`: ``beta``, ``sigma``, ``gamma``
 
 The exact same thing can be done from a custom script using SCT as a library:
 
@@ -106,18 +114,24 @@ The exact same thing can be done from a custom script using SCT as a library:
     import sct.analyses.radiometric_analysis as ra
     from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf  # optional, if netCDF saving is needed
     from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot  # optional, if graphs are needed
+    from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 
     # adding a configuration is optional
     config_toml_path = ...
     config = SCTConfiguration.from_toml(config_toml_path)
     product_path = ...
     output_directory = ...
+    output_radiometric_quantity = SARRadiometricQuantity.GAMMA_NOUGHT
 
     results = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
     tag = "nesz"
     # or
-    results = ra.gamma_analysis(product_path=product, config=config.radiometric_analysis)
-    tag = "gamma"
+    results = ra.average_elevation_profile_analysis(
+        product_path=product,
+        output_quantity=output_radiometric_quantity,
+        config=config.radiometric_analysis
+    )
+    tag = "average_gamma"
     # or
     results = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
     tag = "scalloping"

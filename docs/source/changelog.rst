@@ -10,6 +10,10 @@ v1.0.1[unreleased]
 - Added support for input RCS values for PointTargetBinary format
 - Documentation updated and improved
 
+**Incompatible Features**
+
+- `Radiometric Analysis`: ``Gamma Profiles`` removed, substituted with ``Average Radiometric Profiles``
+
 **Bug Fixing**
 
 - Removed lines/samples ordering reference from NovaSAR-1 product format implementation

@@ -50,9 +50,18 @@
                                 {
                                     "type": "string",
                                     "enum": [
-                                        "point_target_analysis", "nesz", "gamma", "scalloping", "interferometry"
+                                        "point_target_analysis", "nesz", "radiometric_profiles", "scalloping", "interferometry"
                                     ]
                                 }
+                            ]
+                        },
+                        "output_radiometric_quantity": {
+                            "type": "string",
+                            "description": "Output radiometric quantity for radiometric profiles analysis, if needed",
+                            "enum": [
+                                "beta_nought",
+                                "sigma_nought",
+                                "gamma_nought"
                             ]
                         },
                         "reference_dataset": {
@@ -79,6 +88,26 @@
                             "then": {
                                 "required": [
                                     "reference_dataset"
+                                ]
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "supported_analyses": {
+                                        "type": "array",
+                                        "contains": {
+                                            "const": "radiometric_profiles"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "supported_analyses"
+                                ]
+                            },
+                            "then": {
+                                "required": [
+                                    "output_radiometric_quantity"
                                 ]
                             }
                         }

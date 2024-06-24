@@ -285,7 +285,7 @@
         },
         "radiometric_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to NESZ, Gamma Profiles and Scalloping",
+            "description": "Section of configuration file dedicated to NESZ, Average Elevation Profiles and Scalloping",
             "properties": {
                 "input_quantity": {
                     "type": "string",

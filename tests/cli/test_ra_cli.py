@@ -48,9 +48,9 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
         result = self.cli_runner.invoke(sct_analysis, [self.command, "--help"])
         self.assertEqual(result.exit_code, 0)
 
-    def test_display_help_gamma(self):
-        """Display help gamma"""
-        result = self.cli_runner.invoke(sct_analysis, [self.command, "gamma", "--help"])
+    def test_display_help_elevation_profile(self):
+        """Display help elevation profile"""
+        result = self.cli_runner.invoke(sct_analysis, [self.command, "elevation_profile", "--help"])
         self.assertEqual(result.exit_code, 0)
 
     def test_display_help_nesz(self):
@@ -63,11 +63,13 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
         result = self.cli_runner.invoke(sct_analysis, [self.command, "scalloping", "--help"])
         self.assertEqual(result.exit_code, 0)
 
-    def test_gamma_invalid_product(self):
+    def test_elevation_profile_invalid_product(self):
         """Error on invalid product"""
         with TemporaryDirectoriesAndConfFile() as (product, output_dir, conf_file):
             self.test_configuration.dump_to_toml(conf_file)
-            command_args = f"--config {conf_file} {self.command} gamma -p {product} -out {output_dir}".split()
+            command_args = (
+                f"--config {conf_file} {self.command} elevation_profile -p {product} -out {output_dir} -r gamma".split()
+            )
             result = self.cli_runner.invoke(
                 sct_analysis,
                 command_args,
@@ -96,11 +98,11 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
             )
             self.assertEqual(result.exit_code, 1)
 
-    def test_gamma_invalid_product_graph(self):
+    def test_elevation_profile_invalid_product_graph(self):
         """Error on invalid product"""
         with TemporaryDirectoriesAndConfFile() as (product, output_dir, conf_file):
             self.test_configuration.dump_to_toml(conf_file)
-            command_args = f"--config {conf_file} {self.command} gamma -p {product} -out {output_dir} -g".split()
+            command_args = f"--config {conf_file} {self.command} elevation_profile -p {product} -out {output_dir} -r gamma -g".split()
             result = self.cli_runner.invoke(
                 sct_analysis,
                 command_args,
