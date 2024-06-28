@@ -13,6 +13,7 @@ from typing import Optional
 import click
 
 from sct.__init__ import __version__ as VERSION
+from sct.cli.int_cli import interf_coherence_analysis
 from sct.cli.pta_cli import target_analysis
 from sct.cli.ra_cli import radiometric_analysis
 from sct.configuration.sct_configuration import SCTConfiguration
@@ -50,7 +51,9 @@ def sct_analysis(ctx: click.Context, config: Optional[Path]):
         log.info("Using the custom configuration file provided.")
         ctx.ensure_object(SCTConfiguration)
         ctx.obj = SCTConfiguration.from_toml(config)
+    click.echo("\n")
 
 
 sct_analysis.add_command(target_analysis)
 sct_analysis.add_command(radiometric_analysis)
+sct_analysis.add_command(interf_coherence_analysis)
