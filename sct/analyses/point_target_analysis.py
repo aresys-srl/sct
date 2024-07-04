@@ -38,6 +38,9 @@ from sct.io.point_target_manager import convert_df_to_nominal_point_target, extr
 # syncing with logger
 log = logging.getLogger("quality_analysis")
 
+AZIMUTH_BORE_CR = np.pi / 4
+ELEV_BORE_CR = np.deg2rad(35.2644)
+
 
 def _compute_theoretical_rcs(
     data_df: pd.DataFrame,
@@ -66,11 +69,8 @@ def _compute_theoretical_rcs(
     """
 
     # orientation of boresight in CR reference frame
-    ELEV_BORE_CR = np.pi / 180 * 35.2644
-    AZIMUTH_BORE_CR = np.pi / 4
 
     results = []
-
     for _, row in data_df.iterrows():
 
         curr_point_target = point_targets_df[point_targets_df["target_name"] == row["target_name"]]
@@ -78,8 +78,8 @@ def _compute_theoretical_rcs(
         cr_arm_length = curr_point_target["target_size_m"].iloc[0]
 
         # orientation of boresight in ENU
-        elev_bore_enu = np.pi / 180 * curr_point_target["corner_elevation_deg"].iloc[0]
-        azimuth_bore_enu = np.pi / 180 * curr_point_target["corner_azimuth_deg"].iloc[0]
+        elev_bore_enu = np.deg2rad(curr_point_target["corner_elevation_deg"].iloc[0])
+        azimuth_bore_enu = np.deg2rad(curr_point_target["corner_azimuth_deg"].iloc[0])
 
         try:
             sensor_position_at_zd = trajectory.evaluate(row["peak_azimuth_time_[UTC]"])
@@ -98,10 +98,7 @@ def _compute_theoretical_rcs(
             # compute CR RCS
             # if the radio wave does not impinge on the front of the CR, the RCS computation is not valid
             is_angle_range_valid = (
-                np.all(azimuth_los_cr >= 0)
-                and np.all(azimuth_los_cr <= np.pi / 2)
-                and np.all(elev_los_cr >= 0)
-                and np.all(elev_los_cr <= np.pi / 2)
+                azimuth_los_cr >= 0 and azimuth_los_cr <= np.pi / 2 and elev_los_cr >= 0 and elev_los_cr <= np.pi / 2
             )
             if is_angle_range_valid:
                 cr_rcs_m2 = convert_to_db(
