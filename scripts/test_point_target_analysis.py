@@ -24,19 +24,21 @@ log.addHandler(logging_file_handler)
 
 if __name__ == "__main__":
     # products
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\eos04\L1A_SLC\244692341"
+    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\iceye\SM_1874381_93245"
+    # prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\SLC_23.SAFE"
 
     # external orbits
     ext_orbit = None
     # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
-    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\reference_datasets\rosamond_data.csv"
-    # ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\reference_datasets\surat_basin_data.csv"
+    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\reference_datasets\rosamond_corner_reflectors_data.csv"
+    # ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\reference_datasets\surat_basin_corner_reflectors_data.csv"
 
     # test config
-    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\eos04\config.toml"
+    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\iceye\config.toml"
     test_config = SCTConfiguration.from_toml(test_config)
+    # test_config = SCTConfiguration()
 
     # executing point target analysis
     out, out_graph = pta.point_target_analysis_with_corrections(
