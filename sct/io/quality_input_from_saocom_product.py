@@ -30,6 +30,7 @@ from arepyextras.quality.core.generic_dataclasses import (
     SARSamplingFrequencies,
     SARSideLooking,
 )
+from arepyextras.quality.core.signal_processing import radiometric_correction
 from arepytools.constants import LIGHT_SPEED
 from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper, compute_ground_velocity
 from arepytools.geometry.geometric_functions import (
@@ -416,6 +417,11 @@ class SAOCOMChannelManager:
         return self._lines_per_burst_array
 
     @property
+    def radiometric_quantity(self) -> np.ndarray:
+        """Product radiometric quantity"""
+        return self._radiometric_quantity
+
+    @property
     def pulse_latch_time(self) -> None:
         """Signal pulse latch time"""
         return None
@@ -740,6 +746,7 @@ class SAOCOMChannelManager:
         azimuth_index: float,
         range_index: float,
         cropping_size: tuple[int, int] = (150, 150),
+        output_radiometric_quantity: SARRadiometricQuantity = SARRadiometricQuantity.BETA_NOUGHT,
     ) -> np.ndarray:
         """Extracting the swath portion centered to the provided target position and of size cropping_size by
         cropping_size. Target position is provided via its azimuth and range indexes in the swath array.
@@ -752,11 +759,15 @@ class SAOCOMChannelManager:
             index of range time in swath array
         cropping_size : tuple[int, int], optional
             size in pixel of the swath portion to be read (number of samples, number of lines), by default (150, 150)
+        output_radiometric_quantity : SARRadiometricQuantity, optional
+            selected output radiometric quantity to convert the read data to, if needed,
+            by default SARRadiometricQuantity.BETA_NOUGHT
 
         Returns
         -------
         np.ndarray
             cropped swath array centered to the input target coordinates, output array is (samples, lines)
+            by default the output radiometric quantity is BETA_NOUGHT, unless specified otherwise
 
         Raises
         ------
@@ -800,5 +811,21 @@ class SAOCOMChannelManager:
             raster_info=self._channel.raster_info,
             block_to_read=target_block,
         ).T
+
+        # converting to beta nought if radiometric quantity is different
+        if self._radiometric_quantity != output_radiometric_quantity:
+            azimuth_time, _ = self.pixel_to_times_conversion(azimuth_index=azimuth_index, range_index=range_index)
+            incidence_angles = compute_incidence_angles_from_trajectory(
+                trajectory=self.trajectory,
+                azimuth_time=azimuth_time,
+                range_times=self._slant_range_axis[target_block[1] : target_block[1] + target_block[3]],
+                look_direction=self.looking_side.value,
+            )
+            data = radiometric_correction(
+                data=data,
+                incidence_angle=incidence_angles,
+                input_quantity=self._radiometric_quantity,
+                output_quantity=output_radiometric_quantity,
+            )
 
         return data
