@@ -124,6 +124,7 @@ def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_di
                 data=item,
                 out_dir=output_directory,
                 title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
+                plot_mode="min",
             )
 
     elapsed = (time.perf_counter_ns() - start) / 1e9
