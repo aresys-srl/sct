@@ -6,8 +6,11 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 from arepyextras.test import DataRepository, Environment, TestSession, skip
+from netCDF4 import Dataset
 
 from sct.analyses.automatic_analyses import sct_automatic_analysis
 from sct.configuration.sct_configuration import SCTConfiguration
@@ -87,6 +90,46 @@ def _compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) ->
     )
 
 
+def _compare_netcdf_with_tolerances(ref: Path, current: Path) -> None:
+    """Compare netCDF output results with tolerances.
+
+    Parameters
+    ----------
+    ref : Path
+        Path to the reference netCDF4 file
+    current : Path
+        Path to the current run netCDF4 file
+    """
+
+    ref_dataset = Dataset(ref, "r", format="NETCDF4")
+    current_dataset = Dataset(current, "r", format="NETCDF4")
+
+    assert ref_dataset.swath == current_dataset.swath
+    assert ref_dataset.channel == current_dataset.channel
+    assert ref_dataset.polarization == current_dataset.polarization
+    assert ref_dataset.direction == current_dataset.direction
+    assert ref_dataset.output_radiometric_quantity == current_dataset.output_radiometric_quantity
+    assert ref_dataset.azimuth_blocks_num == current_dataset.azimuth_blocks_num
+    assert ref_dataset.azimuth_block_centers == current_dataset.azimuth_block_centers
+
+    np.testing.assert_allclose(
+        ref_dataset.range_block_centers, current_dataset.range_block_centers, atol=ABSOLUTE_TOLERANCE, rtol=0
+    )
+
+    np.testing.assert_allclose(
+        ref_dataset["look_angles"][:], current_dataset["look_angles"][:], atol=ABSOLUTE_TOLERANCE, rtol=0
+    )
+    np.testing.assert_allclose(
+        ref_dataset["radiometric_profiles"][:],
+        current_dataset["radiometric_profiles"][:],
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+
+    ref_dataset.close()
+    current_dataset.close()
+
+
 def _run_cli_tool_pta(
     session: TestSession, env: Environment, config: Path, product: Path, targets: Path, ext_orbit: Path | None = None
 ) -> pd.DataFrame:
@@ -123,6 +166,46 @@ def _run_cli_tool_pta(
     assert out_file.is_file()
 
     return pd.read_csv(out_file)
+
+
+def _run_cli_tool_ra(session: TestSession, env: Environment, config: Path, product: Path, analysis: str):
+    """Running SCT Radiometric Analysis from CLI tool forwarding the inputs.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    config : Path
+        path to the toml config file
+    product : Path
+        path to the product to be analyzed
+    analysis : str
+        analysis to be performed, [NESZ, RF]
+    """
+
+    # analysis
+    if analysis == "RF":
+        result = env.run(
+            "sct",
+            "--config",
+            config,
+            "radiometric-analysis",
+            "elevation_profile",
+            "-p",
+            product,
+            "-out",
+            env.root,
+            "-r",
+            "gamma",
+        )
+    elif analysis == "NESZ":
+        result = env.run("sct", "--config", config, "radiometric-analysis", "nesz", "-p", product, "-out", env.root)
+    # checking successful run
+    if result.returncode != 0:
+        print(result.stderr.read_text())
+    session.expect_run_successful(result)
 
 
 def test_pta_novasar1_slc(session: TestSession, env: Environment, data: DataRepository):
@@ -204,6 +287,68 @@ def test_pta_novasar1_scd(session: TestSession, env: Environment, data: DataRepo
 
     # comparing dataframes differences to specific tolerances
     _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+def test_rain_forest_novasar1_scd(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct average radiometric profiles (gamma) on NovaSAR-1 SCD product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    product_folder = data.pull("input/novasar1/SCD_RF")
+    ref = data.pull("output/novasar1/SCD_RF")
+    out_file = env.root.joinpath("AVERAGE_GAMMA_NOUGHT_profiles_S_VV.nc")
+
+    config_file = env.root.joinpath("new_config.toml")
+    config = SCTConfiguration()
+    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.SIGMA_NOUGHT
+    config.radiometric_analysis.base_config.profile_extraction_parameters.outlier_removal = False
+    config.radiometric_analysis.base_config.profile_extraction_parameters.smoothening_filter = False
+    config.dump_to_toml(out_file=config_file)
+    assert config_file.is_file()
+
+    # running analysis using CLI
+    _run_cli_tool_ra(env=env, session=session, config=config_file, product=product_folder, analysis="RF")
+
+    # comparing netcdf differences to specific tolerances
+    _compare_netcdf_with_tolerances(ref=ref, current=out_file)
+
+
+def test_nesz_novasar1_grd(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct average radiometric profiles (gamma) on NovaSAR-1 SCD product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    product_folder = data.pull("input/novasar1/SLC_NESZ")
+    ref = data.pull("output/novasar1/SLC_NESZ")
+    out_file = env.root.joinpath("NESZ_profiles_S1_HH.nc")
+
+    config_file = env.root.joinpath("new_config.toml")
+    config = SCTConfiguration()
+    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.BETA_NOUGHT
+    config.radiometric_analysis.base_config.profile_extraction_parameters.outlier_removal = False
+    config.radiometric_analysis.base_config.profile_extraction_parameters.smoothening_filter = False
+    config.dump_to_toml(out_file=config_file)
+    assert config_file.is_file()
+
+    # running analysis using CLI
+    _run_cli_tool_ra(env=env, session=session, config=config_file, product=product_folder, analysis="NESZ")
+
+    # comparing netcdf differences to specific tolerances
+    _compare_netcdf_with_tolerances(ref=ref, current=out_file)
 
 
 def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRepository):

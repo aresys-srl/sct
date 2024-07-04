@@ -38,6 +38,20 @@ sct_requests_dataset = [
         readonly_flag=True,
     ),
     PushRequest(
+        src_rel_path="novasar1/NovaSAR_01_40720_scd_20_221231_214639_VV",
+        dst_rel_path="input/novasar1/SCD_RF",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/NovaSAR_01_40080_slc_11_221210_092053_HH",
+        dst_rel_path="input/novasar1/SLC_NESZ",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
         src_rel_path="novasar1/novasar_surat_data.csv",
         dst_rel_path="input/novasar1/SuratBasinDataCSV",
         preserve_filename_flag=False,
@@ -68,6 +82,20 @@ sct_requests_dataset = [
     PushRequest(
         src_rel_path="novasar1/reports/NovaSAR_01_41461_scd_23_230126_005204_VV_HH_sct.csv",
         dst_rel_path="output/novasar1/SCD",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/reports/NovaSAR_01_40720_scd_20_221231_214639_VV_RAIN_FOREST.nc",
+        dst_rel_path="output/novasar1/SCD_RF",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="novasar1/reports/NovaSAR_01_40080_slc_11_221210_092053_HH_NESZ.nc",
+        dst_rel_path="output/novasar1/SLC_NESZ",
         preserve_filename_flag=False,
         overwrite_flag=True,
         readonly_flag=True,
