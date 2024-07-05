@@ -46,6 +46,22 @@ This is a generic example of th structure of the registry:
             ],
             "reference_dataset": "path/to/point/target/csv"
         },
+        "rain_forest_amazon": {
+            "description": "Rain Forest, Amazon",
+            "latitude_boundaries_deg": [
+                -10,
+                -4
+            ],
+            "longitude_boundaries_deg": [
+                -71,
+                -65
+            ],
+            "supported_analyses": [
+                "radiometric_profiles",
+                "scalloping"
+            ],
+            "output_radiometric_quantity": "gamma_nought"
+        },
     }
 
 This means that when an input product is passed to this function, SCT checks the intersection of its footprint with those

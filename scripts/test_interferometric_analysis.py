@@ -25,5 +25,6 @@ if __name__ == "__main__":
 
     output = interf.interferometric_coherence_analysis(product_path=prod, config=config)
     for out in output:
-        generate_coherence_graphs(out, output_dir=out_dir)
+        generate_coherence_graphs(out, output_dir=out_dir, mode="magnitude")
+        generate_coherence_graphs(out, output_dir=out_dir, mode="phase")
         coherence_histograms_to_netcdf(out, output_dir=out_dir)

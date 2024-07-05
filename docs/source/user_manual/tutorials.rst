@@ -92,6 +92,11 @@ Radiometric Analysis
 To perform a Radiometric Analysis using SCT CLI, run the following command in your shell, adapting the input parameters
 to your needs. Passing the input configuration can be avoided if default values are good enough.
 
+.. note::
+
+    Input radiometric quantity of the product is set to be **BETA_NOUGHT** by default. This property can be changed via
+    configuration by adding ``[radiometric_analysis] input_quantity = "sigma_nought"`` inserting the proper radiometric quantity.
+
 .. code-block:: bash
 
     sct --config path_to_config_toml radiometric-analysis [nesz/elevation_profile/scalloping] -p path_to_product -out path_to_output_folder [-g] [-r "output_radiometric_quantity"]
@@ -110,6 +115,7 @@ The exact same thing can be done from a custom script using SCT as a library:
 
 .. code-block:: python
 
+    from pathlib import Path
     from sct.configuration.sct_configuration import SCTConfiguration
     import sct.analyses.radiometric_analysis as ra
     from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf  # optional, if netCDF saving is needed
@@ -117,24 +123,26 @@ The exact same thing can be done from a custom script using SCT as a library:
     from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 
     # adding a configuration is optional
-    config_toml_path = ...
+    config_toml_path: str | Path = ...
     config = SCTConfiguration.from_toml(config_toml_path)
-    product_path = ...
-    output_directory = ...
+    # specify the input radiometric quantity if different from BETA NOUGHT
+    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.SIGMA_NOUGHT
+    product_path: str | Path = ...
+    output_directory: str | Path = ...
     output_radiometric_quantity = SARRadiometricQuantity.GAMMA_NOUGHT
 
-    results = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
     tag = "nesz"
+    results = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
     # or
+    tag = "average_gamma"
     results = ra.average_elevation_profile_analysis(
         product_path=product,
         output_quantity=output_radiometric_quantity,
         config=config.radiometric_analysis
     )
-    tag = "average_gamma"
     # or
-    results = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
     tag = "scalloping"
+    results = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
 
     for item in results:
         radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)
@@ -145,3 +153,42 @@ The exact same thing can be done from a custom script using SCT as a library:
             out_dir=output_directory,
             title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
         )
+
+Interferometric Analysis
+------------------------
+
+To perform an Interferometric Analysis using SCT CLI, run the following command in your shell, adapting the input parameters
+to your needs. Passing the input configuration can be avoided if default values are good enough.
+
+.. note::
+
+    Coherence computation is disabled by default for a single product input (while it's enabled when two products are provided).
+    To enable its computation, provide a config with ``[interferometric_analysis] enable_coherence_computation = true``.
+
+.. code-block:: bash
+
+    sct --config path_to_config_toml interferometric-analysis -p path_to_product -out path_to_output_folder -pp path_to_second_product [-g]
+
+Graphical output for interferometric analysis can be enabled using the `--graphs/-g` option for the CLI tool.
+
+The exact same thing can be done from a custom script using SCT as a library:
+
+.. code-block:: python
+
+    from pathlib import Path
+    from arepyextras.quality.interferometric_analysis.graphical_output import generate_coherence_graphs
+    from arepyextras.quality.interferometric_analysis.support import coherence_histograms_to_netcdf
+
+    from sct.analyses import interferometric_analysis as interf
+    from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig
+
+    product_path: str | Path = ...
+    output_dir: str | Path = ...
+    config = SCTInterferometricAnalysisConfig()
+    config.base_config.enable_coherence_computation = True
+
+    output = interf.interferometric_coherence_analysis(product_path=prod, config=config)
+    for out in output:
+        generate_coherence_graphs(out, output_dir=out_dir, mode="magnitude")
+        generate_coherence_graphs(out, output_dir=out_dir, mode="phase")
+        coherence_histograms_to_netcdf(out, output_dir=out_dir)
