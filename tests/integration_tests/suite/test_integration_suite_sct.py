@@ -90,8 +90,8 @@ def _compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) ->
     )
 
 
-def _compare_netcdf_with_tolerances(ref: Path, current: Path) -> None:
-    """Compare netCDF output results with tolerances.
+def _compare_ra_netcdf_with_tolerances(ref: Path, current: Path) -> None:
+    """Compare radiometric netCDF output results with tolerances.
 
     Parameters
     ----------
@@ -124,6 +124,42 @@ def _compare_netcdf_with_tolerances(ref: Path, current: Path) -> None:
         current_dataset["radiometric_profiles"][:],
         atol=ABSOLUTE_TOLERANCE,
         rtol=0,
+    )
+
+    ref_dataset.close()
+    current_dataset.close()
+
+
+def _compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
+    """Compare interferometric netCDF output results with tolerances.
+
+    Parameters
+    ----------
+    ref : Path
+        Path to the reference netCDF4 file
+    current : Path
+        Path to the current run netCDF4 file
+    """
+
+    ref_dataset = Dataset(ref, "r", format="NETCDF4")
+    current_dataset = Dataset(current, "r", format="NETCDF4")
+
+    assert ref_dataset.swath == current_dataset.swath
+    assert ref_dataset.channel == current_dataset.channel
+    assert ref_dataset.polarization == current_dataset.polarization
+    assert ref_dataset.burst == current_dataset.burst
+
+    np.testing.assert_allclose(
+        ref_dataset["coherence_bins"][:], current_dataset["coherence_bins"][:], atol=ABSOLUTE_TOLERANCE, rtol=0
+    )
+    np.testing.assert_allclose(
+        ref_dataset["azimuth_histogram"][:],
+        current_dataset["azimuth_histogram"][:],
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+    np.testing.assert_allclose(
+        ref_dataset["range_histogram"][:], current_dataset["range_histogram"][:], atol=ABSOLUTE_TOLERANCE, rtol=0
     )
 
     ref_dataset.close()
@@ -202,6 +238,34 @@ def _run_cli_tool_ra(session: TestSession, env: Environment, config: Path, produ
         )
     elif analysis == "NESZ":
         result = env.run("sct", "--config", config, "radiometric-analysis", "nesz", "-p", product, "-out", env.root)
+    # checking successful run
+    if result.returncode != 0:
+        print(result.stderr.read_text())
+    session.expect_run_successful(result)
+
+
+def _run_cli_tool_interf(session: TestSession, env: Environment, config: Path, product: Path | list[Path]):
+    """Running SCT Interferometric Analysis from CLI tool forwarding the inputs.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    config : Path
+        path to the toml config file
+    product : Path | list[Path]
+        path or list of paths to the product(s) to be analyzed
+    """
+
+    # analysis
+    if isinstance(product, list):
+        result = env.run(
+            "sct", "--config", config, "interferometric-analysis", "-p", product[0], "-pp", product[1], "-out", env.root
+        )
+    else:
+        result = env.run("sct", "--config", config, "interferometric-analysis", "-p", product, "-out", env.root)
     # checking successful run
     if result.returncode != 0:
         print(result.stderr.read_text())
@@ -317,7 +381,7 @@ def test_rain_forest_novasar1_scd(session: TestSession, env: Environment, data: 
     _run_cli_tool_ra(env=env, session=session, config=config_file, product=product_folder, analysis="RF")
 
     # comparing netcdf differences to specific tolerances
-    _compare_netcdf_with_tolerances(ref=ref, current=out_file)
+    _compare_ra_netcdf_with_tolerances(ref=ref, current=out_file)
 
 
 def test_nesz_novasar1_grd(session: TestSession, env: Environment, data: DataRepository):
@@ -332,15 +396,13 @@ def test_nesz_novasar1_grd(session: TestSession, env: Environment, data: DataRep
     data : DataRepository
         sct dataset repository manager
     """
-    product_folder = data.pull("input/novasar1/SLC_NESZ")
-    ref = data.pull("output/novasar1/SLC_NESZ")
+    product_folder = data.pull("input/novasar1/GRD_NESZ")
+    ref = data.pull("output/novasar1/GRD_NESZ")
     out_file = env.root.joinpath("NESZ_profiles_S1_HH.nc")
 
     config_file = env.root.joinpath("new_config.toml")
     config = SCTConfiguration()
-    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.BETA_NOUGHT
-    config.radiometric_analysis.base_config.profile_extraction_parameters.outlier_removal = False
-    config.radiometric_analysis.base_config.profile_extraction_parameters.smoothening_filter = False
+    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.SIGMA_NOUGHT
     config.dump_to_toml(out_file=config_file)
     assert config_file.is_file()
 
@@ -348,7 +410,7 @@ def test_nesz_novasar1_grd(session: TestSession, env: Environment, data: DataRep
     _run_cli_tool_ra(env=env, session=session, config=config_file, product=product_folder, analysis="NESZ")
 
     # comparing netcdf differences to specific tolerances
-    _compare_netcdf_with_tolerances(ref=ref, current=out_file)
+    _compare_ra_netcdf_with_tolerances(ref=ref, current=out_file)
 
 
 def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRepository):
@@ -690,3 +752,102 @@ def test_pta_s1_grd_perturb(session: TestSession, env: Environment, data: DataRe
 
     # comparing dataframes differences to specific tolerances
     _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+def test_interferometry_pf_co_registered(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct interferometric analysis on two co-registered PF products.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    pf_1 = data.pull("input/pf/INT_PROD_1")
+    pf_2 = data.pull("input/pf/INT_PROD_2")
+    ref_outputs = {f.name: f for f in data.pull("output/pf/co_registered").iterdir()}
+    out_files = [
+        env.root.joinpath("coherence_histograms_IW1_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_VV.nc"),
+    ]
+
+    config_file = env.root.joinpath("new_config.toml")
+    config = SCTConfiguration()
+    config.dump_to_toml(out_file=config_file)
+    assert config_file.is_file()
+
+    # running analysis using CLI
+    _run_cli_tool_interf(env=env, session=session, config=config_file, product=[pf_1, pf_2])
+
+    # comparing netcdf differences to specific tolerances
+    for file in out_files:
+        _compare_interf_netcdf_with_tolerances(ref=ref_outputs[file.name], current=file)
+
+
+def test_interferometry_pf_interferogram(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct interferometric analysis on interferogram PF.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    pf = data.pull("input/pf/INT_PROD")
+    ref_outputs = {f.name: f for f in data.pull("output/pf/interferogram").iterdir()}
+    out_files = [
+        env.root.joinpath("coherence_histograms_IW1_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_VV.nc"),
+    ]
+
+    config_file = env.root.joinpath("new_config.toml")
+    config = SCTConfiguration()
+    config.interferometric_analysis.base_config.enable_coherence_computation = True
+    config.interferometric_analysis.base_config.coherence_kernel = [5, 5]
+    config.dump_to_toml(out_file=config_file)
+    assert config_file.is_file()
+
+    # running analysis using CLI
+    _run_cli_tool_interf(env=env, session=session, config=config_file, product=pf)
+
+    # comparing netcdf differences to specific tolerances
+    for file in out_files:
+        _compare_interf_netcdf_with_tolerances(ref=ref_outputs[file.name], current=file)
+
+
+def test_interferometry_pf_coherence_map(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct interferometric analysis on coherence map PF.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    pf = data.pull("input/pf/INT_PROD_CM")
+    ref_outputs = {f.name: f for f in data.pull("output/pf/coherence_map").iterdir()}
+    out_files = [
+        env.root.joinpath("coherence_histograms_IW1_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_VV.nc"),
+    ]
+
+    config_file = env.root.joinpath("new_config.toml")
+    config = SCTConfiguration()
+    config.dump_to_toml(out_file=config_file)
+    assert config_file.is_file()
+
+    # running analysis using CLI
+    _run_cli_tool_interf(env=env, session=session, config=config_file, product=pf)
+
+    # comparing netcdf differences to specific tolerances
+    for file in out_files:
+        _compare_interf_netcdf_with_tolerances(ref=ref_outputs[file.name], current=file)
