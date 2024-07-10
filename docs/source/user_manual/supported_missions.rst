@@ -11,3 +11,8 @@ features is the herein reported:
 * **ICEYE**: official stripmap and topsar products.
 * **NovaSAR**: official stripmap and topsar products.
 * **SAOCOM**: official stripmap and topsar products.
+* **EOS-04**: official stripmap and topsar products.
+
+.. note::
+
+    Support for **L1 products only** (both L1-A and L1-B) for each of these formats is available.
