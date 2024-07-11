@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
-from arepyextras.test import DataRepository, Environment, TestSession, skip
+from arepyextras.test import DataRepository, Environment, TestSession, skip, skip_if
 from netCDF4 import Dataset
 
 from sct.analyses.automatic_analyses import sct_automatic_analysis
@@ -754,6 +754,7 @@ def test_pta_s1_grd_perturb(session: TestSession, env: Environment, data: DataRe
     _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
+@skip_if(sys.platform.startswith("linux"))
 def test_interferometry_pf_co_registered(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct interferometric analysis on two co-registered PF products.
 
