@@ -199,10 +199,17 @@ deploy_doc:
   rules:
     - if: "$CI_COMMIT_TAG"
     - if: '$DEPLOY_DOC == "true"'
+  before_script:
+    - export PACKAGE_VERSION=v$(grep "__version__" sct/__init__.py | awk -F '"' '{print $2}')
   script:
-    - eval "$(ssh-agent -s)"
+    - eval "$(ssh-agent)"
+    - cat "$DASHBOARD_PRIVATE_KEY" | base64 -d | ssh-add -
     - for file in docs/build/*.zip; do
       eo_pgp-signme ${file} > ${file}.asc &&
       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
+    - unzip docs/build/*.zip
+    - mv *-html-doc ${PACKAGE_VERSION}
+    - rsync --stats -r ${PACKAGE_VERSION} sardashboard@intranet.aresys.it:develop/sct/docs
+    - ssh sardashboard@intranet.aresys.it "cd develop/sct/docs && rm latest && ln -s ${PACKAGE_VERSION} latest"
