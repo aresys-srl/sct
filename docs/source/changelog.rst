@@ -1,12 +1,13 @@
 Changelog
 =========
 
-v1.0.1[unreleased]
-------------------
+v1.0.1
+------
 
 **Additional Features**
 
 - IO: introduced support for EOS-04 product format
+- `Interferometric Analysis`: coherence computation from two co-registered products added
 - Added support for input RCS values for PointTargetBinary format
 - Documentation updated and improved
 
@@ -23,6 +24,8 @@ v1.0.1[unreleased]
 - Unittest coverage improved
 - Theoretical RCS computation improved
 - Improved point target analysis graphical output points selection to match the arepyextras-quality bugfix
+- Rosamond corner data converter updated to express azimuth elevation and tilt with the same reference system as surat basin's
+
 
 v1.0.0
 ------
