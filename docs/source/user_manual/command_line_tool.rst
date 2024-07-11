@@ -11,6 +11,8 @@ The main command line tool that can be accessed using the ``sct`` command in you
 Another set of companion CLI utilities has been developed aside from the main CLI tool and can be accessed using specific
 commands :ref:`that are listed here<sct_cli_utils>`
 
+See the :ref:`tutorials page<sct_tutorials>` for actual examples on how to use CLI to perform specific analyses.
+
 
 SCT CLI
 ^^^^^^^
@@ -50,11 +52,11 @@ Radiometric Analysis
 ^^^^^^^^^^^^^^^^^^^^
 
 Radiometric analysis has been implemented with a set of commands that let the user select the specific type of Radiometric
-analysis to be performed, namely ``nesz``, ``gamma`` and ``scalloping``.
+analysis to be performed, namely ``nesz``, ``average elevation profiles`` and ``scalloping``.
 Further information about each of these analysis :ref:`can be found here<sct_analyses>`.
 
 .. code-block:: bash
 
-   sct [--config "path_to_config"] radiometric-analysis [nesz/gamma/scalloping] -p "product_path" -out "output_dir" -g "graphs_enabled"
+   sct [--config "path_to_config"] radiometric-analysis [nesz/average_profiles/scalloping] -p "product_path" -out "output_dir" -g "graphs_enabled"
 
 To list all the available options use the `--help/-h` argument.

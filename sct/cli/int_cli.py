@@ -31,7 +31,7 @@ share_config = click.make_pass_decorator(SCTConfiguration)
     "-p",
     required=True,
     type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the product to be analyzed",
+    help="Path to the interferogram product or to the co-registered product to be analyzed",
 )
 @click.option(
     "--output_directory",
@@ -40,6 +40,14 @@ share_config = click.make_pass_decorator(SCTConfiguration)
     default=None,
     type=click.Path(path_type=Path, exists=True, dir_okay=True),
     help="Path to the folder where to save output data",
+)
+@click.option(
+    "--product_2",
+    "-pp",
+    required=False,
+    default=None,
+    type=click.Path(path_type=Path, exists=True, dir_okay=True),
+    help="Second co-registered product, must be provided if the first product is not an interferogram",
 )
 @click.option(
     "--graphs",
@@ -54,9 +62,15 @@ def interf_coherence_analysis(
     config: SCTConfiguration,
     product: Path,
     output_directory: Path,
-    graphs: bool,
+    product_2: Path | None = None,
+    graphs: bool = False,
 ):
-    """Interferometric Analysis (Coherence and Coherence intensity 2D histograms)"""
+    """Interferometric Analysis (Coherence and Coherence intensity 2D histograms)
+
+    \b
+    It can be performed using a single interferogram product, provided via -p/--product argument or by using two
+    co-registered products, provided respectively with -p/--product and -pp/--product_2
+    """
 
     # saving log file to output folder
     if config.general.save_log:
@@ -85,6 +99,7 @@ def interf_coherence_analysis(
     start = time.perf_counter_ns()
     coherence_res = intf.interferometric_coherence_analysis(
         product_path=product,
+        second_product_path=product_2,
         config=config_interferometry,
     )
 
@@ -100,7 +115,12 @@ def interf_coherence_analysis(
     if graphs:
         log.info("Plotting graphs...")
         for res in coherence_res:
-            generate_coherence_graphs(data=res, output_dir=output_directory, config=config_interferometry.base_config)
+            generate_coherence_graphs(
+                data=res, output_dir=output_directory, mode="magnitude", config=config_interferometry.base_config
+            )
+            generate_coherence_graphs(
+                data=res, output_dir=output_directory, mode="phase", config=config_interferometry.base_config
+            )
 
     elapsed = (time.perf_counter_ns() - start) / 1e9
     log.info(f"Interferometric Analysis completed in {elapsed} s.")

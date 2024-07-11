@@ -408,6 +408,11 @@ class ICEYEChannelManager:
         return self._lines_per_burst_array
 
     @property
+    def radiometric_quantity(self) -> np.ndarray:
+        """Product radiometric quantity"""
+        return self._radiometric_quantity
+
+    @property
     def pulse_latch_time(self) -> None:
         """Signal pulse latch time"""
         return None
@@ -732,6 +737,7 @@ class ICEYEChannelManager:
         azimuth_index: float,
         range_index: float,
         cropping_size: tuple[int, int] = (150, 150),
+        output_radiometric_quantity: SARRadiometricQuantity = SARRadiometricQuantity.BETA_NOUGHT,
     ) -> np.ndarray:
         """Extracting the swath portion centered to the provided target position and of size cropping_size by
         cropping_size. Target position is provided via its azimuth and range indexes in the swath array.
@@ -744,11 +750,15 @@ class ICEYEChannelManager:
             index of range time in swath array
         cropping_size : tuple[int, int], optional
             size in pixel of the swath portion to be read (number of samples, number of lines), by default (150, 150)
+        output_radiometric_quantity : SARRadiometricQuantity, optional
+            selected output radiometric quantity to convert the read data to, if needed,
+            by default SARRadiometricQuantity.BETA_NOUGHT
 
         Returns
         -------
         np.ndarray
             cropped swath array centered to the input target coordinates, output array is (samples, lines)
+            by default the output radiometric quantity is BETA_NOUGHT, unless specified otherwise
 
         Raises
         ------
@@ -794,7 +804,7 @@ class ICEYEChannelManager:
         ).T
 
         # converting to beta nought if radiometric quantity is different
-        if self._radiometric_quantity != SARRadiometricQuantity.BETA_NOUGHT:
+        if self._radiometric_quantity != output_radiometric_quantity:
             azimuth_time, _ = self.pixel_to_times_conversion(azimuth_index=azimuth_index, range_index=range_index)
             incidence_angles_deg_from_poly = self._channel.incidence_angles_poly.evaluate_incidence_angle(
                 azimuth_time=azimuth_time, range_pixels=np.arange(target_block[1], target_block[1] + target_block[3], 1)
@@ -803,7 +813,7 @@ class ICEYEChannelManager:
                 data=data,
                 incidence_angle=np.deg2rad(incidence_angles_deg_from_poly),
                 input_quantity=self._radiometric_quantity,
-                output_quantity=SARRadiometricQuantity.BETA_NOUGHT,
+                output_quantity=output_radiometric_quantity,
             )
 
         return data

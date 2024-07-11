@@ -109,7 +109,7 @@ The following parameters can be configured directly under the `point_target_anal
     evaluate_islr = true            # on/off ISLR computation
     evaluate_sslr = true            # on/off SSLR computation
     evaluate_localization = true    # on/off Localization Errors computation
-    ale_validity_limits = [x, y]    # set Absolute Localization Error validity limits
+    ale_validity_limits = [x, y]    # set Absolute Localization Error validity limits in meters [rng, az]
 
 .. note::
 
@@ -270,8 +270,8 @@ extraction algorithm.
     :linenos:
 
     [radiometric_analysis.advanced_configuration.profile_extraction_parameters]
-    outlier_removal = true                      # enabling/disabling outlier removal filter
-    smoothening_filter = true                   # enabling/disabling smoothening filter
+    outlier_removal = false                     # enabling/disabling outlier removal filter
+    smoothening_filter = false                  # enabling/disabling smoothening filter
     filtering_kernel_size = [11, 11]            # size of the smoothening filter kernel
     outliers_kernel_size = [5, 5]               # size of the outliers removal kernel
     outliers_percentile_boundaries = [20, 90]   # outliers percentile boundaries to be preserved

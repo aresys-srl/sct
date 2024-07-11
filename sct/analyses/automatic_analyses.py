@@ -16,13 +16,14 @@ from pathlib import Path
 
 import arepyextras.quality.core.custom_logger as clg
 from arepyextras.quality.core.custom_logger import CustomFormatterFileHandler
+from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf
 from jsonschema import validate
 from shapely import Polygon
 
 from sct import calibration_sites_registry_schema
 from sct.analyses.point_target_analysis import point_target_analysis_with_corrections
-from sct.analyses.radiometric_analysis import gamma_analysis, nesz_analysis, scalloping_analysis
+from sct.analyses.radiometric_analysis import average_elevation_profile_analysis, nesz_analysis, scalloping_analysis
 from sct.configuration.sct_configuration import SCTConfiguration
 from sct.io.io_manager import product_loader
 
@@ -41,14 +42,15 @@ class SupportedAutomaticAnalyses(Enum):
     POINT_TARGET_ANALYSIS = "point_target_analysis"
     NESZ = "nesz"
     SCALLOPING = "scalloping"
-    GAMMA = "gamma"
+    AVERAGE_PROFILES = "average_profiles"
     INTERFEROMETRY = "interferometry"
 
 
-# instantiating logger
-log = logging.getLogger("quality_analysis")
-log.setLevel("INFO")
-log.addHandler(clg.MyHandler())
+def basic_logger_setup() -> logging.Logger:
+    log = logging.getLogger("quality_analysis")
+    log.setLevel("INFO")
+    log.addHandler(clg.MyHandler())
+    return log
 
 
 @dataclass
@@ -171,6 +173,7 @@ def sct_automatic_analysis(
     config : SCTConfiguration | None, optional
         SCT configuration, by default None
     """
+    log = basic_logger_setup()
 
     output_dir = Path(output_dir)
     product_path = Path(product_path)
@@ -218,9 +221,13 @@ def sct_automatic_analysis(
             if SupportedAutomaticAnalyses(analysis.lower()) == SupportedAutomaticAnalyses.NESZ:
                 tag = "nesz"
                 rad_results = nesz_analysis(product_path=product_path, config=config.radiometric_analysis)
-            elif SupportedAutomaticAnalyses(analysis.lower()) == SupportedAutomaticAnalyses.GAMMA:
+            elif SupportedAutomaticAnalyses(analysis.lower()) == SupportedAutomaticAnalyses.AVERAGE_PROFILES:
                 tag = "nesz"
-                rad_results = gamma_analysis(product_path=product_path, config=config.radiometric_analysis)
+                rad_results = average_elevation_profile_analysis(
+                    product_path=product_path,
+                    output_quantity=SARRadiometricQuantity.GAMMA_NOUGHT,
+                    config=config.radiometric_analysis,
+                )
             elif SupportedAutomaticAnalyses(analysis.lower()) == SupportedAutomaticAnalyses.SCALLOPING:
                 tag = "scalloping"
                 rad_results = scalloping_analysis(product_path=product_path, config=config.radiometric_analysis)

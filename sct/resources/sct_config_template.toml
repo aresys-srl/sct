@@ -48,8 +48,8 @@ range_pixel_margin = 150
 radiometric_correction_exponent = 1.0
 
 [radiometric_analysis.advanced_configuration.profile_extraction_parameters]
-outlier_removal = true
-smoothening_filter = true
+outlier_removal = false
+smoothening_filter = false
 filtering_kernel_size = [11, 11]
 outliers_percentile_boundaries = [20, 90]
 outliers_kernel_size = [5, 5]

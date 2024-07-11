@@ -1,0 +1,75 @@
+{
+    "novasar1-grd-pta": {
+        "product": "SCT_E2E_TDS_repo/NovaSAR/PT/NovaSAR_01_38993_grd_13_221103_004941_HH",
+        "config": "SCT_E2E_TDS_repo/NovaSAR/PT/config.toml",
+        "targets": "SCT_E2E_TDS_repo/NovaSAR/PT/surat_basin_corner_reflectors_data.csv",
+        "report": "SCT_E2E_TDS_repo/NovaSAR/PT/ref_output/grd_ref_report.csv",
+        "analysis": "pta"
+    },
+    "novasar1-slc-pta": {
+        "product": "SCT_E2E_TDS_repo/NovaSAR/PT/NovaSAR_01_38993_slc_11_221103_004941_HH",
+        "config": "SCT_E2E_TDS_repo/NovaSAR/PT/config.toml",
+        "targets": "SCT_E2E_TDS_repo/NovaSAR/PT/surat_basin_corner_reflectors_data.csv",
+        "report": "SCT_E2E_TDS_repo/NovaSAR/PT/ref_output/slc_ref_report.csv",
+        "analysis": "pta"
+    },
+    "novasar1-grd-rain-forest": {
+        "product": "SCT_E2E_TDS_repo/NovaSAR/RainForest/NovaSAR_01_40720_scd_20_221231_214639_VV",
+        "config": "SCT_E2E_TDS_repo/NovaSAR/RainForest/config.toml",
+        "targets": "",
+        "report": "SCT_E2E_TDS_repo/NovaSAR/RainForest/ref_output/RAIN_FOREST_profiles_S_VV.nc",
+        "analysis": "rf"
+    },
+    "novasar1-grd-nesz": {
+        "product": "SCT_E2E_TDS_repo/NovaSAR/NESZ/NovaSAR_01_29655_grd_211218_150627_HH",
+        "config": "SCT_E2E_TDS_repo/NovaSAR/NESZ/config.toml",
+        "targets": "",
+        "report": "SCT_E2E_TDS_repo/NovaSAR/NESZ/ref_output/NESZ_profiles_S1_HH.nc",
+        "analysis": "nesz"
+    },
+    "sentinel-slc-etad": {
+        "product": "SCT_E2E_TDS_repo/S1/PT/S1A_IW_SLC__1SDV_20231218T084126_20231218T084153_051706_063E98_DBBD.SAFE",
+        "config": "SCT_E2E_TDS_repo/S1/PT/config.toml",
+        "targets": "SCT_E2E_TDS_repo/S1/PT/surat_basin_corner_reflectors_data.csv",
+        "report": "SCT_E2E_TDS_repo/S1/PT/ref_output/ref_slc_etad.csv",
+        "etad_product": "SCT_E2E_TDS_repo/S1/PT/S1A_IW_ETA__AXDV_20231218T084126_20231218T084153_051706_063E98_4134.SAFE",
+        "analysis": "pta"
+    },
+    "sentinel-slc-perturbations": {
+        "product": "SCT_E2E_TDS_repo/S1/PT/S1A_IW_SLC__1SSH_20190108T083240_20190108T083310_025383_02CF92_AB14.SAFE",
+        "config": "SCT_E2E_TDS_repo/S1/PT/config_pert.toml",
+        "targets": "SCT_E2E_TDS_repo/S1/PT/surat_basin_corner_reflectors_data.csv",
+        "report": "SCT_E2E_TDS_repo/S1/PT/ref_output/ref_slc_perturbations.csv",
+        "ionospheric_maps": "SCT_E2E_TDS_repo/S1/PT/perturbations_maps/ionosphere_maps",
+        "tropospheric_maps": "SCT_E2E_TDS_repo/S1/PT/perturbations_maps/troposphere_maps",
+        "analysis": "pta"
+    },
+    "sentinel-slc-external-orbit": {
+        "product": "SCT_E2E_TDS_repo/S1/PT/S1A_IW_SLC__1SSH_20190108T083240_20190108T083310_025383_02CF92_AB14.SAFE",
+        "config": "SCT_E2E_TDS_repo/S1/PT/config.toml",
+        "targets": "SCT_E2E_TDS_repo/S1/PT/surat_basin_corner_reflectors_data.csv",
+        "report": "SCT_E2E_TDS_repo/S1/PT/ref_output/ref_slc_external_orbit.csv",
+        "external_orbit": "SCT_E2E_TDS_repo/S1/PT/S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF",
+        "analysis": "pta"
+    },
+    "sentinel-grd-rain-forest": {
+        "product": "SCT_E2E_TDS_repo/S1/RainForest/S1A_IW_GRDH_1SDV_20240707T095601_20240707T095626_054653_06A741_72F6.SAFE",
+        "config": "",
+        "targets": "",
+        "report": [
+            "SCT_E2E_TDS_repo/S1/RainForest/ref_output/RAIN_FOREST_profiles_IW_VH.nc",
+            "SCT_E2E_TDS_repo/S1/RainForest/ref_output/RAIN_FOREST_profiles_IW_VV.nc"
+        ],
+        "analysis": "rf"
+    },
+    "sentinel-grd-nesz": {
+        "product": "SCT_E2E_TDS_repo/S1/NESZ/S1A_IW_GRDH_1SDV_20230505T064848_20230505T064913_048395_05D237_35B6.SAFE",
+        "config": "",
+        "targets": "",
+        "report": [
+            "SCT_E2E_TDS_repo/S1/NESZ/ref_output/NESZ_profiles_IW_VH.nc",
+            "SCT_E2E_TDS_repo/S1/NESZ/ref_output/NESZ_profiles_IW_VV.nc"
+        ],
+        "analysis": "nesz"
+    }
+}

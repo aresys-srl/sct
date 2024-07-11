@@ -18,7 +18,7 @@ def main():
     try:
         from sct.cli.sct_cli import sct_analysis
 
-        sct_analysis()
+        sct_analysis(max_content_width=120)
 
     except ImportError:
         print('Install cli requirements "pip install sct[cli]"')

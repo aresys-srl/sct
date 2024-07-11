@@ -38,6 +38,9 @@ from sct.io.point_target_manager import convert_df_to_nominal_point_target, extr
 # syncing with logger
 log = logging.getLogger("quality_analysis")
 
+AZIMUTH_BORE_CR = np.pi / 4
+ELEV_BORE_CR = np.deg2rad(35.2644)
+
 
 def _compute_theoretical_rcs(
     data_df: pd.DataFrame,
@@ -66,54 +69,49 @@ def _compute_theoretical_rcs(
     """
 
     # orientation of boresight in CR reference frame
-    ELEV_BORE_CR = np.pi / 180 * 35.2644
-    AZIMUTH_BORE_CR = np.pi / 4
 
     results = []
-
     for _, row in data_df.iterrows():
-
-        if np.any(row.isna()):
-            results.append(np.nan)
-            continue
 
         curr_point_target = point_targets_df[point_targets_df["target_name"] == row["target_name"]]
 
         cr_arm_length = curr_point_target["target_size_m"].iloc[0]
 
         # orientation of boresight in ENU
-        elev_bore_enu = np.pi / 180 * curr_point_target["corner_elevation_deg"].iloc[0]
-        azimuth_bore_enu = np.pi / 180 * curr_point_target["corner_azimuth_deg"].iloc[0]
+        elev_bore_enu = np.deg2rad(curr_point_target["corner_elevation_deg"].iloc[0])
+        azimuth_bore_enu = np.deg2rad(curr_point_target["corner_azimuth_deg"].iloc[0])
 
-        sensor_position_at_zd = trajectory.evaluate(row["peak_azimuth_time_[UTC]"])
+        try:
+            sensor_position_at_zd = trajectory.evaluate(row["peak_azimuth_time_[UTC]"])
 
-        cr_position = curr_point_target[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy().flatten()
+            cr_position = curr_point_target[["x_coord_m", "y_coord_m", "z_coord_m"]].values.squeeze()
 
-        # compute orientation of satellite in ENU
-        elev_los_enu, azimuth_los_enu = compute_elevation_azimuth_wrt_enu(
-            pos_cr=cr_position, pos_sat=sensor_position_at_zd
-        )
-
-        # compute orientation of satellite in CR reference frame
-        elev_los_cr = elev_los_enu - elev_bore_enu + ELEV_BORE_CR
-        azimuth_los_cr = (azimuth_los_enu % (2 * np.pi)) - (azimuth_bore_enu % (2 * np.pi)) + AZIMUTH_BORE_CR
-
-        # compute CR RCS
-        # if the radio wave does not impinge on the front of the CR, the RCS computation is not valid
-        is_angle_range_valid = (
-            np.all(azimuth_los_cr >= 0)
-            and np.all(azimuth_los_cr <= np.pi / 2)
-            and np.all(elev_los_cr >= 0)
-            and np.all(elev_los_cr <= np.pi / 2)
-        )
-        if is_angle_range_valid:
-            cr_rcs_m2 = compute_rcs_trihedral_corner_reflector(
-                cr_arm_length, LIGHT_SPEED / carrier_frequency_hz, elev_los_cr, azimuth_los_cr
+            # compute orientation of satellite in ENU
+            elev_los_enu, azimuth_los_enu = compute_elevation_azimuth_wrt_enu(
+                pos_cr=cr_position, pos_sat=sensor_position_at_zd
             )
-        else:
-            cr_rcs_m2 = np.nan
 
-        results.append(convert_to_db(cr_rcs_m2))
+            # compute orientation of satellite in CR reference frame
+            elev_los_cr = elev_los_enu - elev_bore_enu + ELEV_BORE_CR
+            azimuth_los_cr = (azimuth_los_enu % (2 * np.pi)) - (azimuth_bore_enu % (2 * np.pi)) + AZIMUTH_BORE_CR
+
+            # compute CR RCS
+            # if the radio wave does not impinge on the front of the CR, the RCS computation is not valid
+            is_angle_range_valid = (
+                azimuth_los_cr >= 0 and azimuth_los_cr <= np.pi / 2 and elev_los_cr >= 0 and elev_los_cr <= np.pi / 2
+            )
+            if is_angle_range_valid:
+                cr_rcs_m2 = convert_to_db(
+                    compute_rcs_trihedral_corner_reflector(
+                        cr_arm_length, LIGHT_SPEED / carrier_frequency_hz, elev_los_cr, azimuth_los_cr
+                    )
+                )
+            else:
+                cr_rcs_m2 = np.nan
+
+            results.append(cr_rcs_m2)
+        except TypeError:
+            results.append(np.nan)
 
     return results
 
@@ -223,10 +221,11 @@ def point_target_analysis_with_corrections(
         range_corrections_func=rng_corr_func,
     )
 
-    if "target_size_m" in point_targets_df:
+    if all(x in point_targets_df for x in ["target_size_m", "corner_elevation_deg", "corner_azimuth_deg"]):
+        log.info("Computing theoretical RCS...")
         theoretical_rcs = _compute_theoretical_rcs(
-            data_df=data_df,
-            point_targets_df=point_targets_df,
+            data_df=data_df.copy(),
+            point_targets_df=point_targets_df.copy(),
             carrier_frequency_hz=first_channel.carrier_frequency,
             trajectory=first_channel.trajectory,
         )

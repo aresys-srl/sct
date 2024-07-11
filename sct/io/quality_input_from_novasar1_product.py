@@ -210,6 +210,8 @@ class NovaSAR1ChannelManager:
         # get burst boundaries
         self._burst_az_boundaries, self._burst_rng_boundaries = self._get_raster_layout()
 
+        self._corrected_calibration_constant = self._channel.image_calibration_factor
+
     def _compute_range_step_m(self) -> float:
         """Computing step along range direction, in meters"""
         if self._projection == SARProjection.GROUND_RANGE:
@@ -405,6 +407,11 @@ class NovaSAR1ChannelManager:
     def lines_per_burst(self) -> np.ndarray:
         """Lines per burst, for each burst in the swath"""
         return self._lines_per_burst_array
+
+    @property
+    def radiometric_quantity(self) -> np.ndarray:
+        """Product radiometric quantity"""
+        return self._radiometric_quantity
 
     @property
     def pulse_latch_time(self) -> None:
@@ -710,6 +717,7 @@ class NovaSAR1ChannelManager:
         azimuth_index: float,
         range_index: float,
         cropping_size: tuple[int, int] = (150, 150),
+        output_radiometric_quantity: SARRadiometricQuantity = SARRadiometricQuantity.BETA_NOUGHT,
     ) -> np.ndarray:
         """Extracting the swath portion centered to the provided target position and of size cropping_size by
         cropping_size. Target position is provided via its azimuth and range indexes in the swath array.
@@ -722,11 +730,15 @@ class NovaSAR1ChannelManager:
             index of range time in swath array
         cropping_size : tuple[int, int], optional
             size in pixel of the swath portion to be read (number of samples, number of lines), by default (150, 150)
+        output_radiometric_quantity : SARRadiometricQuantity, optional
+            selected output radiometric quantity to convert the read data to, if needed,
+            by default SARRadiometricQuantity.BETA_NOUGHT
 
         Returns
         -------
         np.ndarray
             cropped swath array centered to the input target coordinates, output array is (samples, lines)
+            by default the output radiometric quantity is BETA_NOUGHT, unless specified otherwise
 
         Raises
         ------
@@ -768,13 +780,11 @@ class NovaSAR1ChannelManager:
         data = read_channel_data(
             raster_file=self._raster_file,
             block_to_read=target_block,
-            scaling_conversion=self._channel.image_calibration_factor,
-            lines_time_ordering=self._channel.lines_time_ordering,
-            samples_time_ordering=self._channel.samples_time_ordering,
+            scaling_conversion=self._corrected_calibration_constant,
         ).T
 
         # converting to beta nought if radiometric quantity is different
-        if self._radiometric_quantity != SARRadiometricQuantity.BETA_NOUGHT:
+        if self._radiometric_quantity != output_radiometric_quantity:
             azimuth_time, _ = self.pixel_to_times_conversion(azimuth_index=azimuth_index, range_index=range_index)
             incidence_angles_deg_from_poly = self._channel.incidence_angles_poly.evaluate_incidence_angle(
                 azimuth_time=azimuth_time, range_pixels=np.arange(target_block[1], target_block[1] + target_block[3], 1)

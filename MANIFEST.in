@@ -1,2 +1,6 @@
+graft sct/resources
 global-exclude __pycache__
 global-exclude *.py[co]
+prune docs
+prune tests
+prune scripts

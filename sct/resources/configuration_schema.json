@@ -50,7 +50,7 @@
                 },
                 "ale_validity_limits": {
                     "type": "array",
-                    "description": "Absolute localization error limits that can be set as boundaries for the point target analysis",
+                    "description": "Absolute localization error limits that can be set as boundaries for the point target analysis in meters [rng, az]",
                     "items": [
                         {
                             "type": "number"
@@ -285,7 +285,7 @@
         },
         "radiometric_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to NESZ, Gamma Profiles and Scalloping",
+            "description": "Section of configuration file dedicated to NESZ, Average Elevation Profiles and Scalloping",
             "properties": {
                 "input_quantity": {
                     "type": "string",

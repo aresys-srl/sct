@@ -215,6 +215,7 @@ class Sentinel1ChannelManager:
 
         # compute image scaling factor
         # !!!! BETA NOUGHT fixed and taking only first value of first calibration vector
+        self._radiometric_quantity = radiometric_quantity
         self._scaling_factor = read_channel_calibration(
             xml_path=channel_calibration_path, radiometric_quantity=radiometric_quantity
         )
@@ -441,6 +442,11 @@ class Sentinel1ChannelManager:
         return self._lines_per_burst_array
 
     @property
+    def radiometric_quantity(self) -> np.ndarray:
+        """Product radiometric quantity"""
+        return self._radiometric_quantity
+
+    @property
     def pulse_latch_time(self) -> float:
         """Signal pulse latch time"""
         return self._channel.pulse.tx_pulse_latch_time
@@ -450,7 +456,7 @@ class Sentinel1ChannelManager:
         """SWST changes list as tuple of time of change and new SWST value"""
         return self._swst_changes
 
-    def get_mid_burst_times(self, burst: int) -> tuple(PreciseDateTime, float):
+    def get_mid_burst_times(self, burst: int) -> tuple[PreciseDateTime, float]:
         """Compute mid azimuth and range times for a given burst.
 
         Returns
@@ -525,7 +531,6 @@ class Sentinel1ChannelManager:
             range_times=self.mid_range_time,
             look_direction=self.looking_side.value,
         )
-        # TODO rimettere range time input invece di mid range???
         v_ground = compute_ground_velocity(
             orbit=self._channel.general_sar_orbit, time_point=azimuth_time, look_angles=look_angle
         )
@@ -749,6 +754,7 @@ class Sentinel1ChannelManager:
         azimuth_index: float,
         range_index: float,
         cropping_size: tuple[int, int] = (150, 150),
+        output_radiometric_quantity: SARRadiometricQuantity = SARRadiometricQuantity.BETA_NOUGHT,
     ) -> np.ndarray:
         """Extracting the swath portion centered to the provided target position and of size cropping_size by
         cropping_size. Target position is provided via its azimuth and range indexes in the swath array.
@@ -761,6 +767,9 @@ class Sentinel1ChannelManager:
             index of range time in swath array
         cropping_size : tuple[int, int], optional
             size in pixel of the swath portion to be read (number of samples, number of lines), by default (150, 150)
+        output_radiometric_quantity : SARRadiometricQuantity, optional
+            selected output radiometric quantity to convert the read data to, if needed,
+            by default SARRadiometricQuantity.BETA_NOUGHT
 
         Returns
         -------

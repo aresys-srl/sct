@@ -19,7 +19,7 @@ classifiers = [
 ]
 requires-python = ">= 3.10"
 dependencies = [
-    "numpy",
+    "numpy<2",
     "pandas",
     "jsonschema",
     "toml",
@@ -29,15 +29,16 @@ dependencies = [
     "s1etad",
     "art",
     "appdirs",
-    "arepytools >= 1.6.2",
-    "arepyextras-quality >= 1.1.1",
-    "arepyextras-perturbations >= 1.1.1",
-    "arepyextras-eo_products >= 1.0.1"
+    "arepytools",
+    "arepyextras-quality",
+    "arepyextras-perturbations",
+    "arepyextras-eo_products",
+    "scipy<1.14"
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-cli = ["click"]
+cli = ["click", "requests"]
 graphs = ["matplotlib", "plotly"]
 dev = ["black", "isort", "pylint"]
 test = ["unittest-xml-reporting", "coverage"]
@@ -73,6 +74,7 @@ version = { attr = "sct.__version__" }
 
 [tool.pylint.MASTER]
 fail-under = 8.5
+fail-on = ["unused-import"]
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = ["import-error", "logging-fstring-interpolation", "logging-not-lazy"]

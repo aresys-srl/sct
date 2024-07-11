@@ -18,11 +18,11 @@ Supported analyses:
 
 SCT package and its dependencies can be installed using ``pip`` tool:
 
-    $ pip install sct[cli, graphs]
+    $ pip install sct[cli,graphs]
 
 To locally install this package as editable with ``pip``:
 
-    $ pip install -e .[cli, graphs]
+    $ pip install -e .[cli,graphs]
 
 > **_NOTE:_**  This package comes with Command Line Interface (CLI) functionalities that can be installed specifying the **[cli]** option. It can also generate graphs for the available analyses by installing the package using the **[graphs]** option.
 

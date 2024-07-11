@@ -13,6 +13,7 @@ from pathlib import Path
 import art
 import click
 from arepyextras.quality.core.custom_logger import CustomFormatterFileHandler
+from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf
 
 import sct.analyses.radiometric_analysis as ra
@@ -23,6 +24,21 @@ log = logging.getLogger("quality_analysis")
 
 # creating a decorator to pass a SCTConfiguration dataclass object between commands
 share_config = click.make_pass_decorator(SCTConfiguration)
+
+
+class RadiometricQuantity(click.ParamType):
+    """Custom click type to manage radiometric quantities from string"""
+
+    name = "radiometric_quantity"
+
+    def convert(self, value, param, ctx):
+        try:
+            str_in = SARRadiometricQuantity[value.upper() + "_NOUGHT"]
+
+            return str_in
+
+        except ValueError:
+            self.fail(f"{value!r} wrong input format", param, ctx)
 
 
 @click.group(
@@ -108,13 +124,14 @@ def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_di
                 data=item,
                 out_dir=output_directory,
                 title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
+                plot_mode="min",
             )
 
     elapsed = (time.perf_counter_ns() - start) / 1e9
     log.info(f"NESZ Analysis completed in {elapsed} s.")
 
 
-@radiometric_analysis.command("gamma")
+@radiometric_analysis.command("elevation_profile")
 @click.option(
     "--product",
     "-p",
@@ -131,6 +148,14 @@ def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_di
     help="Path to the folder where to save output data",
 )
 @click.option(
+    "--output_radiometric_quantity",
+    "-r",
+    required=True,
+    default=None,
+    type=RadiometricQuantity(),
+    help="Output radiometric quantity. It can be set to: beta, gamma, sigma",
+)
+@click.option(
     "--graphs",
     "-g",
     default=False,
@@ -139,8 +164,14 @@ def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_di
     help="Flag to generate graphical output at the end of the analysis",
 )
 @share_config
-def radiometric_analysis_gamma(config: SCTConfiguration, product: Path, output_directory: Path, graphs: bool):
-    """Gamma-Zero Profiles radiometric analysis"""
+def radiometric_analysis_average_profiles(
+    config: SCTConfiguration,
+    product: Path,
+    output_radiometric_quantity: SARRadiometricQuantity,
+    output_directory: Path,
+    graphs: bool,
+):
+    """Average Elevation Profiles radiometric analysis"""
 
     # saving log file to output folder
     if config.general.save_log:
@@ -159,13 +190,16 @@ def radiometric_analysis_gamma(config: SCTConfiguration, product: Path, output_d
             sys.exit(1)
 
     log.info(f"Selected product is: {product}")
+    log.info(f"Selected output quantity is: {output_radiometric_quantity.name}")
 
     click.echo("\n")
-    txt = art.text2art("Gamma   Profiles   Analysis", font="doom")
+    txt = art.text2art("Radiometric   Profiles   Analysis", font="doom")
     click.echo(txt + "\n")
 
     start = time.perf_counter_ns()
-    output = ra.gamma_analysis(product_path=product, config=config_ra)
+    output = ra.average_elevation_profile_analysis(
+        product_path=product, output_quantity=output_radiometric_quantity, config=config_ra
+    )
 
     # saving configuration used to output folder as .toml file
     if config.general.save_config_copy:
@@ -176,7 +210,7 @@ def radiometric_analysis_gamma(config: SCTConfiguration, product: Path, output_d
     else:
         log.info("Saving results to netCDF format...")
 
-    tag = "GAMMA"
+    tag = f"AVERAGE_{output_radiometric_quantity.name}"
     for item in output:
         radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)
 
@@ -189,7 +223,7 @@ def radiometric_analysis_gamma(config: SCTConfiguration, product: Path, output_d
             )
 
     elapsed = (time.perf_counter_ns() - start) / 1e9
-    log.info(f"Gamma Profiles Analysis completed in {elapsed} s.")
+    log.info(f"Average Elevation Profiles Analysis completed in {elapsed} s.")
 
 
 @radiometric_analysis.command("scalloping")

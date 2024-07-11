@@ -11,6 +11,7 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
+from arepyextras.quality.core.signal_processing import convert_to_db
 from arepytools.geometry.conversions import llh2xyz
 from arepytools.io import PointSetProduct, read_point_targets_file
 from arepytools.io.io_support import NominalPointTarget
@@ -50,7 +51,7 @@ def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFr
         point_targets_df = pd.read_csv(source)
         for date_in in ("measurement_date", "validity_start_date", "validity_stop_date"):
             if not point_targets_df["measurement_date"].isnull().all():
-                point_targets_df[date_in] = pd.to_datetime(point_targets_df[date_in])
+                point_targets_df[date_in] = pd.to_datetime(point_targets_df[date_in], format="mixed")
                 point_targets_df[date_in] = point_targets_df[date_in].apply(
                     lambda x: PreciseDateTime.fromisoformat(x.isoformat()) if not pd.isnull(x) else x
                 )
@@ -73,7 +74,7 @@ def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
     pd.DataFrame
         SCT compliant internal point target dataframe
     """
-    coords, _ = PointSetProduct(path=source).read_data()
+    coords, rcs = PointSetProduct(path=source).read_data()
     num = len(coords)
     dummy_data = [None] * len(coords)
     point_targets_df = pd.read_csv(csv_template)
@@ -88,6 +89,10 @@ def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
     point_targets_df["measurement_date"] = dummy_data
     point_targets_df["validity_start_date"] = dummy_data
     point_targets_df["validity_stop_date"] = dummy_data
+    point_targets_df["rcs_hh_dB"] = convert_to_db(np.abs(rcs[:, 0]))
+    point_targets_df["rcs_hv_dB"] = convert_to_db(np.abs(rcs[:, 1]))
+    point_targets_df["rcs_vv_dB"] = convert_to_db(np.abs(rcs[:, 2]))
+    point_targets_df["rcs_vh_dB"] = convert_to_db(np.abs(rcs[:, 3]))
 
     return point_targets_df
 
@@ -189,13 +194,28 @@ def convert_rosamund_file_to_compliant_csv(
             "Height Above Ellipsoid (m)": "altitude_m",
             "Azimuth (deg)": "corner_azimuth_deg",
             "Tilt / Elevation angle (deg)": "corner_elevation_deg",
-            "Side Length (m)": "side_length_m",
+            "Side Length (m)": "target_size_m",
         },
         inplace=True,
     )
 
+    # correcting corner_azimuth_deg to express it with respect to North and not East
+    df["corner_azimuth_deg"] = (df["corner_azimuth_deg"] + 90) % 360
+
+    # correcting corner_elevation_deg to express it with respect to the corner max pointing angle and not to the earth
+    # surface
+    df["corner_elevation_deg"] += 35.2644  # for trihedral corner reflectors
+
     # composing target names
     df["target_name"] = df["target_name"].apply(lambda x: "ROS" + f"{x:02d}" + "CR")
+
+    # creating dummy RCS info for the corner reflectors
+    df["target_shape"] = "trihedral"
+    df["rcs_hh_dB"] = 0
+    df["rcs_hv_dB"] = 0
+    df["rcs_vv_dB"] = 0
+    df["rcs_vh_dB"] = 0
+    df["delay_s"] = 0
 
     # computing XYZ ECEF coordinates
     lat_lon = np.deg2rad(df[["latitude_deg", "longitude_deg"]])
@@ -211,7 +231,6 @@ def convert_rosamund_file_to_compliant_csv(
     df["drift_velocity_x_my"] = np.nan
     df["drift_velocity_y_my"] = np.nan
     df["drift_velocity_z_my"] = np.nan
-    df["delay_s"] = 0
     df["measurement_date"] = measurement_date
     df["validity_start_date"] = measurement_date - 24 * 3600  # a day before
     df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after

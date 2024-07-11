@@ -1,0 +1,287 @@
+SCT E2E Tests
+-------------
+
+1) download the SCT_E2E_TDS_repo.zip
+2) unzip it inside the end to end folder with the scripts as uploaded on github
+3) unzip each SAR product inside of this dataset and remove the original .zip archive (use "extract here", check that each product folder contains the product data)
+4) check that the root folder for the E2E tests match the following tree architecture:
+
+.
+├── SCT_E2E_TDS_repo
+│   ├── NovaSAR
+│   │   ├── NESZ
+│   │   │   ├── NovaSAR_01_29655_grd_211218_150627_HH
+│   │   │   │   ├── image_HH.tif
+│   │   │   │   ├── metadata.xml
+│   │   │   │   └── QL_image_HH.tif
+│   │   │   ├── ref_output
+│   │   │   │   └── NESZ_profiles_S1_HH.nc
+│   │   │   └── config.toml
+│   │   ├── PT
+│   │   │   ├── NovaSAR_01_38993_grd_13_221103_004941_HH
+│   │   │   │   ├── image_HH.tif
+│   │   │   │   ├── metadata.xml
+│   │   │   │   └── QL_image_HH.tif
+│   │   │   ├── NovaSAR_01_38993_slc_11_221103_004941_HH
+│   │   │   │   ├── image_HH.tif
+│   │   │   │   ├── metadata.xml
+│   │   │   │   └── QL_image_HH.tif
+│   │   │   ├── ref_output
+│   │   │   │   ├── grd_ref_report.csv
+│   │   │   │   └── slc_ref_report.csv
+│   │   │   ├── config.toml
+│   │   │   └── surat_basin_corner_reflectors_data.csv
+│   │   └── RainForest
+│   │       ├── NovaSAR_01_40720_scd_20_221231_214639_VV
+│   │       │   ├── image_VV.tif
+│   │       │   ├── metadata.xml
+│   │       │   └── QL_image_VV.tif
+│   │       ├── ref_output
+│   │       │   ├── gamma_histogram_s_vv.png
+│   │       │   └── RAIN_FOREST_profiles_S_VV.nc
+│   │       └── config.toml
+│   ├── PF
+│   │   └── Interferometry
+│   │       ├── ref_output
+│   │       │   ├── co_registered
+│   │       │   │   ├── coherence_histograms_IW1_VH.nc
+│   │       │   │   ├── coherence_histograms_IW1_VV.nc
+│   │       │   │   ├── coherence_magnitude_graph_IW1_VH.png
+│   │       │   │   ├── coherence_magnitude_graph_IW1_VV.png
+│   │       │   │   ├── coherence_phase_graph_IW1_VH.png
+│   │       │   │   └── coherence_phase_graph_IW1_VV.png
+│   │       │   ├── coherence_map
+│   │       │   │   ├── coherence_histograms_IW1_VH.nc
+│   │       │   │   ├── coherence_histograms_IW1_VV.nc
+│   │       │   │   ├── coherence_magnitude_graph_IW1_VH.png
+│   │       │   │   ├── coherence_magnitude_graph_IW1_VV.png
+│   │       │   │   ├── coherence_phase_graph_IW1_VH.png
+│   │       │   │   └── coherence_phase_graph_IW1_VV.png
+│   │       │   └── interferogram
+│   │       │       ├── coherence_histograms_IW1_VH.nc
+│   │       │       ├── coherence_histograms_IW1_VV.nc
+│   │       │       ├── coherence_magnitude_graph_IW1_VH.png
+│   │       │       ├── coherence_magnitude_graph_IW1_VV.png
+│   │       │       ├── coherence_phase_graph_IW1_VH.png
+│   │       │       └── coherence_phase_graph_IW1_VV.png
+│   │       ├── S1A_IW_SLC__0S_DV_20210611T053528_PF
+│   │       │   ├── aresys_product
+│   │       │   ├── S1A_IW_SLC__0S_DV_20210611T053528_PF_0003
+│   │       │   ├── S1A_IW_SLC__0S_DV_20210611T053528_PF_0003.xml
+│   │       │   ├── S1A_IW_SLC__0S_DV_20210611T053528_PF_0007
+│   │       │   ├── S1A_IW_SLC__0S_DV_20210611T053528_PF_0007.xml
+│   │       │   └── S1A_IW_SLC__0S_DV_20210611T053528_PF.config
+│   │       ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor
+│   │       │   ├── aresys_product
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_0003
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_0003.xml
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_0007
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_0007.xml
+│   │       │   └── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor.config
+│   │       ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI
+│   │       │   ├── aresys_product
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_0003
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_0003.xml
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_0007
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_0007.xml
+│   │       │   └── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI.config
+│   │       ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_CM
+│   │       │   ├── aresys_product
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_CM_0003
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_CM_0003.xml
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_CM_0007
+│   │       │   ├── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_CM_0007.xml
+│   │       │   └── S1B_IW_SLC__0S_DV_20210605T053455_PF_Cor_SCI_CM.config
+│   │       └── config.toml
+│   └── S1
+│       ├── NESZ
+│       │   ├── ref_output
+│       │   │   ├── NESZ_profiles_IW_VH.nc
+│       │   │   └── NESZ_profiles_IW_VV.nc
+│       │   └── S1A_IW_GRDH_1SDV_20230505T064848_20230505T064913_048395_05D237_35B6.SAFE
+│       │       ├── annotation
+│       │       │   ├── calibration
+│       │       │   │   ├── calibration-s1a-iw-grd-vh-20230505t064848-20230505t064913-048395-05d237-002.xml
+│       │       │   │   ├── calibration-s1a-iw-grd-vv-20230505t064848-20230505t064913-048395-05d237-001.xml
+│       │       │   │   ├── noise-s1a-iw-grd-vh-20230505t064848-20230505t064913-048395-05d237-002.xml
+│       │       │   │   └── noise-s1a-iw-grd-vv-20230505t064848-20230505t064913-048395-05d237-001.xml
+│       │       │   ├── rfi
+│       │       │   │   ├── rfi-s1a-iw-grd-vh-20230505t064848-20230505t064913-048395-05d237-002.xml
+│       │       │   │   └── rfi-s1a-iw-grd-vv-20230505t064848-20230505t064913-048395-05d237-001.xml
+│       │       │   ├── s1a-iw-grd-vh-20230505t064848-20230505t064913-048395-05d237-002.xml
+│       │       │   └── s1a-iw-grd-vv-20230505t064848-20230505t064913-048395-05d237-001.xml
+│       │       ├── measurement
+│       │       │   ├── s1a-iw-grd-vh-20230505t064848-20230505t064913-048395-05d237-002.tiff
+│       │       │   └── s1a-iw-grd-vv-20230505t064848-20230505t064913-048395-05d237-001.tiff
+│       │       ├── preview
+│       │       │   ├── icons
+│       │       │   │   └── logo.png
+│       │       │   ├── map-overlay.kml
+│       │       │   ├── product-preview.html
+│       │       │   └── quick-look.png
+│       │       ├── support
+│       │       │   ├── s1-level-1-calibration.xsd
+│       │       │   ├── s1-level-1-measurement.xsd
+│       │       │   ├── s1-level-1-noise.xsd
+│       │       │   ├── s1-level-1-product.xsd
+│       │       │   ├── s1-level-1-quicklook.xsd
+│       │       │   ├── s1-level-1-rfi.xsd
+│       │       │   ├── s1-map-overlay.xsd
+│       │       │   ├── s1-object-types.xsd
+│       │       │   └── s1-product-preview.xsd
+│       │       ├── manifest.safe
+│       │       └── S1A_IW_GRDH_1SDV_20230505T064848_20230505T064913_048395_05D237_35B6.SAFE-report-20230505T075302.pdf
+│       ├── PT
+│       │   ├── perturbations_maps
+│       │   │   ├── ionosphere_maps
+│       │   │   │   ├── corg0080.19i
+│       │   │   │   └── corg0080.19i.Z
+│       │   │   └── troposphere_maps
+│       │   │       ├── VMF3_20190108.H00
+│       │   │       ├── VMF3_20190108.H06
+│       │   │       ├── VMF3_20190108.H12
+│       │   │       └── VMF3_20190108.H18
+│       │   ├── ref_output
+│       │   │   ├── ref_slc_etad.csv
+│       │   │   ├── ref_slc_external_orbit.csv
+│       │   │   └── ref_slc_perturbations.csv
+│       │   ├── S1A_IW_ETA__AXDV_20231218T084126_20231218T084153_051706_063E98_4134.SAFE
+│       │   │   ├── annotation
+│       │   │   │   ├── S1A_IW_ETA__AXDV_20231218T084126_20231218T084153_051706_063E98.xml
+│       │   │   │   └── S1A_OPER_AUX_POEORB_ETAD_20240107T225015_V20231218T083942_20231218T084342.EOF
+│       │   │   ├── measurement
+│       │   │   │   └── S1A_IW_ETA__AXDV_20231218T084126_20231218T084153_051706_063E98.nc
+│       │   │   ├── preview
+│       │   │   │   └── s1a-iw-eta-dv-20231218t084126-20231218t084153-051706-063e98-000.kmz
+│       │   │   ├── support
+│       │   │   │   ├── aux_poeorb.xsd
+│       │   │   │   ├── etadNetCDF.xsd
+│       │   │   │   ├── etadProduct.xsd
+│       │   │   │   └── etadProductPreview.xsd
+│       │   │   ├── manifest.safe
+│       │   │   └── S1A_IW_ETA__AXDV_20231218T084126_20231218T084153_051706_063E98_4134.SAFE.txt
+│       │   ├── S1A_IW_SLC__1SDV_20231218T084126_20231218T084153_051706_063E98_DBBD.SAFE
+│       │   │   ├── annotation
+│       │   │   │   ├── calibration
+│       │   │   │   │   ├── calibration-s1a-iw1-slc-vh-20231218t084128-20231218t084153-051706-063e98-001.xml
+│       │   │   │   │   ├── calibration-s1a-iw1-slc-vv-20231218t084128-20231218t084153-051706-063e98-004.xml
+│       │   │   │   │   ├── calibration-s1a-iw2-slc-vh-20231218t084126-20231218t084151-051706-063e98-002.xml
+│       │   │   │   │   ├── calibration-s1a-iw2-slc-vv-20231218t084126-20231218t084151-051706-063e98-005.xml
+│       │   │   │   │   ├── calibration-s1a-iw3-slc-vh-20231218t084127-20231218t084152-051706-063e98-003.xml
+│       │   │   │   │   ├── calibration-s1a-iw3-slc-vv-20231218t084127-20231218t084152-051706-063e98-006.xml
+│       │   │   │   │   ├── noise-s1a-iw1-slc-vh-20231218t084128-20231218t084153-051706-063e98-001.xml
+│       │   │   │   │   ├── noise-s1a-iw1-slc-vv-20231218t084128-20231218t084153-051706-063e98-004.xml
+│       │   │   │   │   ├── noise-s1a-iw2-slc-vh-20231218t084126-20231218t084151-051706-063e98-002.xml
+│       │   │   │   │   ├── noise-s1a-iw2-slc-vv-20231218t084126-20231218t084151-051706-063e98-005.xml
+│       │   │   │   │   ├── noise-s1a-iw3-slc-vh-20231218t084127-20231218t084152-051706-063e98-003.xml
+│       │   │   │   │   └── noise-s1a-iw3-slc-vv-20231218t084127-20231218t084152-051706-063e98-006.xml
+│       │   │   │   ├── rfi
+│       │   │   │   │   ├── rfi-s1a-iw1-slc-vh-20231218t084128-20231218t084153-051706-063e98-001.xml
+│       │   │   │   │   ├── rfi-s1a-iw1-slc-vv-20231218t084128-20231218t084153-051706-063e98-004.xml
+│       │   │   │   │   ├── rfi-s1a-iw2-slc-vh-20231218t084126-20231218t084151-051706-063e98-002.xml
+│       │   │   │   │   ├── rfi-s1a-iw2-slc-vv-20231218t084126-20231218t084151-051706-063e98-005.xml
+│       │   │   │   │   ├── rfi-s1a-iw3-slc-vh-20231218t084127-20231218t084152-051706-063e98-003.xml
+│       │   │   │   │   └── rfi-s1a-iw3-slc-vv-20231218t084127-20231218t084152-051706-063e98-006.xml
+│       │   │   │   ├── s1a-iw1-slc-vh-20231218t084128-20231218t084153-051706-063e98-001.xml
+│       │   │   │   ├── s1a-iw1-slc-vv-20231218t084128-20231218t084153-051706-063e98-004.xml
+│       │   │   │   ├── s1a-iw2-slc-vh-20231218t084126-20231218t084151-051706-063e98-002.xml
+│       │   │   │   ├── s1a-iw2-slc-vv-20231218t084126-20231218t084151-051706-063e98-005.xml
+│       │   │   │   ├── s1a-iw3-slc-vh-20231218t084127-20231218t084152-051706-063e98-003.xml
+│       │   │   │   └── s1a-iw3-slc-vv-20231218t084127-20231218t084152-051706-063e98-006.xml
+│       │   │   ├── measurement
+│       │   │   │   ├── s1a-iw1-slc-vh-20231218t084128-20231218t084153-051706-063e98-001.tiff
+│       │   │   │   ├── s1a-iw1-slc-vv-20231218t084128-20231218t084153-051706-063e98-004.tiff
+│       │   │   │   ├── s1a-iw2-slc-vh-20231218t084126-20231218t084151-051706-063e98-002.tiff
+│       │   │   │   ├── s1a-iw2-slc-vv-20231218t084126-20231218t084151-051706-063e98-005.tiff
+│       │   │   │   ├── s1a-iw3-slc-vh-20231218t084127-20231218t084152-051706-063e98-003.tiff
+│       │   │   │   └── s1a-iw3-slc-vv-20231218t084127-20231218t084152-051706-063e98-006.tiff
+│       │   │   ├── preview
+│       │   │   │   ├── icons
+│       │   │   │   │   └── logo.png
+│       │   │   │   ├── map-overlay.kml
+│       │   │   │   ├── product-preview.html
+│       │   │   │   ├── quick-look.png
+│       │   │   │   └── thumbnail.png
+│       │   │   ├── support
+│       │   │   │   ├── s1-level-1-calibration.xsd
+│       │   │   │   ├── s1-level-1-measurement.xsd
+│       │   │   │   ├── s1-level-1-noise.xsd
+│       │   │   │   ├── s1-level-1-product.xsd
+│       │   │   │   ├── s1-level-1-quicklook.xsd
+│       │   │   │   ├── s1-level-1-rfi.xsd
+│       │   │   │   ├── s1-map-overlay.xsd
+│       │   │   │   ├── s1-object-types.xsd
+│       │   │   │   └── s1-product-preview.xsd
+│       │   │   ├── manifest.safe
+│       │   │   ├── S1A_IW_SLC__1SDV_20231218T084126_20231218T084153_051706_063E98_DBBD.SAFE-report-20231218T100404.pdf
+│       │   │   └── S1A_IW_SLC__1SDV_20231218T084126_20231218T084153_051706_063E98_DBBD.SAFE.txt
+│       │   ├── S1A_IW_SLC__1SSH_20190108T083240_20190108T083310_025383_02CF92_AB14.SAFE
+│       │   │   ├── annotation
+│       │   │   │   ├── calibration
+│       │   │   │   │   ├── calibration-s1a-iw1-slc-hh-20190108t083240-20190108t083308-025383-02cf92-001.xml
+│       │   │   │   │   ├── calibration-s1a-iw2-slc-hh-20190108t083241-20190108t083309-025383-02cf92-002.xml
+│       │   │   │   │   ├── calibration-s1a-iw3-slc-hh-20190108t083242-20190108t083310-025383-02cf92-003.xml
+│       │   │   │   │   ├── noise-s1a-iw1-slc-hh-20190108t083240-20190108t083308-025383-02cf92-001.xml
+│       │   │   │   │   ├── noise-s1a-iw2-slc-hh-20190108t083241-20190108t083309-025383-02cf92-002.xml
+│       │   │   │   │   └── noise-s1a-iw3-slc-hh-20190108t083242-20190108t083310-025383-02cf92-003.xml
+│       │   │   │   ├── s1a-iw1-slc-hh-20190108t083240-20190108t083308-025383-02cf92-001.xml
+│       │   │   │   ├── s1a-iw2-slc-hh-20190108t083241-20190108t083309-025383-02cf92-002.xml
+│       │   │   │   └── s1a-iw3-slc-hh-20190108t083242-20190108t083310-025383-02cf92-003.xml
+│       │   │   ├── measurement
+│       │   │   │   ├── s1a-iw1-slc-hh-20190108t083240-20190108t083308-025383-02cf92-001.tiff
+│       │   │   │   ├── s1a-iw2-slc-hh-20190108t083241-20190108t083309-025383-02cf92-002.tiff
+│       │   │   │   └── s1a-iw3-slc-hh-20190108t083242-20190108t083310-025383-02cf92-003.tiff
+│       │   │   ├── preview
+│       │   │   │   ├── map-overlay.kml
+│       │   │   │   └── quick-look.png
+│       │   │   ├── manifest.safe
+│       │   │   └── S1A_IW_SLC__1SSH_20190108T083240_20190108T083310_025383_02CF92_AB14.SAFE.txt
+│       │   ├── config_pert.toml
+│       │   ├── config.toml
+│       │   ├── S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF
+│       │   └── surat_basin_corner_reflectors_data.csv
+│       └── RainForest
+│           ├── ref_output
+│           │   ├── RAIN_FOREST_profiles_IW_VH.nc
+│           │   └── RAIN_FOREST_profiles_IW_VV.nc
+│           └── S1A_IW_GRDH_1SDV_20240707T095601_20240707T095626_054653_06A741_72F6.SAFE
+│               ├── annotation
+│               │   ├── calibration
+│               │   │   ├── calibration-s1a-iw-grd-vh-20240707t095601-20240707t095626-054653-06a741-002.xml
+│               │   │   ├── calibration-s1a-iw-grd-vv-20240707t095601-20240707t095626-054653-06a741-001.xml
+│               │   │   ├── noise-s1a-iw-grd-vh-20240707t095601-20240707t095626-054653-06a741-002.xml
+│               │   │   └── noise-s1a-iw-grd-vv-20240707t095601-20240707t095626-054653-06a741-001.xml
+│               │   ├── rfi
+│               │   │   ├── rfi-s1a-iw-grd-vh-20240707t095601-20240707t095626-054653-06a741-002.xml
+│               │   │   └── rfi-s1a-iw-grd-vv-20240707t095601-20240707t095626-054653-06a741-001.xml
+│               │   ├── s1a-iw-grd-vh-20240707t095601-20240707t095626-054653-06a741-002.xml
+│               │   └── s1a-iw-grd-vv-20240707t095601-20240707t095626-054653-06a741-001.xml
+│               ├── measurement
+│               │   ├── s1a-iw-grd-vh-20240707t095601-20240707t095626-054653-06a741-002.tiff
+│               │   └── s1a-iw-grd-vv-20240707t095601-20240707t095626-054653-06a741-001.tiff
+│               ├── preview
+│               │   ├── icons
+│               │   │   └── logo.png
+│               │   ├── map-overlay.kml
+│               │   ├── product-preview.html
+│               │   ├── quick-look.png
+│               │   └── thumbnail.png
+│               ├── support
+│               │   ├── s1-level-1-calibration.xsd
+│               │   ├── s1-level-1-measurement.xsd
+│               │   ├── s1-level-1-noise.xsd
+│               │   ├── s1-level-1-product.xsd
+│               │   ├── s1-level-1-quicklook.xsd
+│               │   ├── s1-level-1-rfi.xsd
+│               │   ├── s1-map-overlay.xsd
+│               │   ├── s1-object-types.xsd
+│               │   └── s1-product-preview.xsd
+│               ├── manifest.safe
+│               └── S1A_IW_GRDH_1SDV_20240707T095601_20240707T095626_054653_06A741_72F6.SAFE-report-20240707T113533.pdf
+├── run_sct_e2e_tests.py
+└── test_registry.json
+
+5) create a dedicated python virtual environment and activate it
+6) install sct
+7) launch the run_sct_e2e_tests.py
+8) check the results printed in the terminal
