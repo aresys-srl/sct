@@ -10,3 +10,4 @@ API Reference
    io
    core
    analyses
+   web_scraping
