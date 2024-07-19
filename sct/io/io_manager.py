@@ -61,9 +61,16 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
     -------
     SupportedInputProductType
         detected type for input product
+
+    Raises
+    ------
+    InvalidProductType
+        if input product is not a directory or does not exist on disk
     """
 
     product = Path(product)
+    if not product.is_dir():
+        raise InvalidProductType(f"Product {str(product)} is not a directory or does not exist")
 
     if is_aresys_product(product):
         return SupportedInputProductType.ARESYS
@@ -150,7 +157,7 @@ def product_loader(
             log.info("Product type: EOS-04")
             product = EOS04ProductManager(product_path)
         case _:
-            raise InvalidProductType("Unknown product type")
+            raise InvalidProductType(f"Unknown product type for product {str(product_path)}")
 
     # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
     rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
