@@ -11,23 +11,17 @@ from pathlib import Path
 
 import nox
 
+os.environ.update({"PDM_IGNORE_SAVED_PYTHON": "1"})
+
 nox.options.error_on_missing_interpreters = True
 
 _LICENSE_HEADER = """# SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
 """
-PYVERSIONS = ["3.10", "3.11", "3.12"]
+PY_VERSIONS = ["3.10", "3.11", "3.12"]
 WIN32 = sys.platform == "win32"
 PLATFORM = "win" if WIN32 else "linux"
-
-
-@nox.session()
-def fix_format(session: nox.Session):
-    """Force formatting on python files"""
-    session.install("isort", "black")
-    session.run("python", "-m", "isort", ".")
-    session.run("python", "-m", "black", ".")
 
 
 @nox.session()
@@ -58,20 +52,6 @@ def pylint(session: nox.Session):
     session.run("python", "-m", "pylint", "sct")
 
 
-@nox.session()
-def build_sdist(session: nox.Session):
-    """Building source distribution"""
-    session.install("build")
-    session.run("python", "-m", "build", "--sdist", silent=True)
-
-
-@nox.session()
-def build_wheel(session: nox.Session):
-    """Building wheel for distribution"""
-    session.install("build")
-    session.run("python", "-m", "build", "--wheel", silent=True)
-
-
 def _get_only_file_matching_in_dir(directory: Path, pattern: str):
     matching_dir_content = list(directory.glob(pattern))
     assert len(matching_dir_content) == 1
@@ -81,7 +61,8 @@ def _get_only_file_matching_in_dir(directory: Path, pattern: str):
 @nox.session(venv_backend="conda", python="3.11")
 def build_conda_recipe(session: nox.Session):
     """Build a conda recipe from sdist"""
-    build_sdist(session)
+    session.install("build")
+    session.run("python", "-m", "build", "--sdist", silent=True)
 
     sdist_file = _get_only_file_matching_in_dir(Path("dist"), "*.tar.gz").absolute()
 
@@ -110,12 +91,12 @@ def build_conda_pkg(session: nox.Session):
     shutil.copy(str(package), "dist")
 
 
-@nox.session(python=PYVERSIONS)
+@nox.session(python=PY_VERSIONS)
 def unittest(session: nox.Session):
     """Module testing with unittest"""
     Path("_build").mkdir(exist_ok=True)
 
-    session.install("-e", ".[cli, graphs, test]")
+    session.run_always("pdm", "sync", "-d", "-G:all", external=True)
 
     session.run(
         "python",
@@ -150,10 +131,10 @@ def build_doc(session: nox.Session):
     else:
         build_dir = "docs/build/"
 
-    session.install("-e", ".[doc]")
+    session.run_always("pdm", "sync", "-d", "-G:all", external=True)
 
-    session.run("python", "-m", "sphinx", "-M", "clean", "docs/source", build_dir)
-    session.run("python", "-m", "sphinx", "-b", "html", "docs/source", build_dir)
+    session.run("pdm", "clean_doc", build_dir)
+    session.run("pdm", "build_doc", build_dir)
 
     if os.getenv("CI") == "true":
         session.log(f"compressing '{build_dir}'")

@@ -49,8 +49,9 @@ format:
 unittest_linux:
   stage: test
   script:
-    - python${PYTHON} -m pip install nox
-    - python${PYTHON} -m nox -s unittest -p ${PYTHON}
+    - pdm use python${PYTHON}
+    - python3 -m pip install nox
+    - python3 -m nox -s unittest -p ${PYTHON}
   parallel:
     matrix:
       - PYTHON: ["3.10", "3.11", "3.12"]
@@ -68,6 +69,8 @@ unittest_linux:
 unittest_win:
   stage: test
   script:
+    - $py_vers = ${PYTHON}.replace(".", "")
+    - pdm use python$py_vers
     - python -m pip install nox
     - python -m nox -s unittest -p ${PYTHON}
   parallel:
@@ -89,12 +92,10 @@ unittest_win:
 integration_test_linux:
   stage: test
   script:
-    - python${PYTHON} -m venv ./ci_test
-    - source ./ci_test/bin/activate
-    - python -m pip install arepyextras-test
-    - python -m pip install setuptools
-    - python -m pip install -e .[test]
-    - python -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
+    - pdm use python3
+    - eval $(pdm venv activate)
+    - pdm sync -d -G:all
+    - pdm integration_tests ./tests/integration_tests/config/linux.toml
   parallel:
     matrix:
       - PYTHON: ["3.10", "3.11", "3.12"]
@@ -120,31 +121,20 @@ integration_test_windows:
 
 # === build ==================================================================
 # ============================================================================
-sdist:
+build_package:
   stage: build
-  extends:
-    - .tags_conda
+  extends: .tags_manylinux_2_28
   script:
-    - pip install nox
-    - python -m nox -s build_sdist
+    - pdm use python3
+    - eval $(pdm venv activate)
+    - pdm sync -d
+    - pdm build
   needs: []
   artifacts:
     expire_in: 2 weeks
     paths:
-      - dist/*.tar.gz
-
-wheel:
-  stage: build
-  extends:
-    - .tags_conda
-  script:
-    - pip install nox
-    - python -m nox -s build_wheel
-  needs: []
-  artifacts:
-    expire_in: 2 weeks
-    paths:
-      - dist/*.whl
+      - ${SUBPROJECT}/dist/*.tar.gz
+      - ${SUBPROJECT}/dist/*.whl
 
 conda_pkg:
   stage: build
@@ -162,10 +152,11 @@ conda_pkg:
 doc:
   stage: build
   extends:
-    - .tags_conda
+    - .tags_manylinux_2_28
   script:
-    - pip install nox
-    - python -m nox -s build_doc
+    - yum install -y pandoc
+    - python3 -m pip install nox
+    - python3 -m nox -s build_doc
   needs: []
   artifacts:
     expire_in: 2 weeks
@@ -204,12 +195,12 @@ deploy_doc:
   script:
     - eval "$(ssh-agent)"
     - cat "$DASHBOARD_PRIVATE_KEY" | base64 -d | ssh-add -
-    - for file in docs/build/*.zip; do
+    - for file in ${SUBPROJECT}/docs/build/*.zip; do
       eo_pgp-signme ${file} > ${file}.asc &&
       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
-    - unzip docs/build/*.zip
-    - mv *-html-doc ${PACKAGE_VERSION}
+    - unzip ${SUBPROJECT}/docs/build/*.zip
+    - mv *${SUBPROJECT}*-html-doc ${PACKAGE_VERSION}
     - rsync --stats -r ${PACKAGE_VERSION} sardashboard@intranet.aresys.it:develop/sct/docs
     - ssh sardashboard@intranet.aresys.it "cd develop/sct/docs && rm latest && ln -s ${PACKAGE_VERSION} latest"

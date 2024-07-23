@@ -1,0 +1,3 @@
+[pypi.aresys]
+url = "http://intranet.aresys.it/pypi"
+verify_ssl = false

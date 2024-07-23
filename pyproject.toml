@@ -1,23 +1,10 @@
-[build-system]
-requires = ["setuptools>=61.2"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "sct"
-description = "SCT is the Aresys Python module for SAR products quality analysis."
+description = "SCT (SAR Calibration Toolbox) is the Aresys Python module for SAR products quality analysis."
 authors = [{ name = "Aresys S.R.L.", email = "info@aresys.it" }]
-license = { text = "MIT" }
-classifiers = [
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries",
-    "Topic :: Utilities",
-    "License :: OSI Approved :: MIT License",
-]
 requires-python = ">= 3.10"
+readme = "README.md"
+license = { file = "LICENSE.txt" }
 dependencies = [
     "numpy<2",
     "pandas",
@@ -33,15 +20,48 @@ dependencies = [
     "arepyextras-quality >= 1.2.2",
     "arepyextras-perturbations >= 1.1",
     "arepyextras-eo_products >= 1.0.2.dev1",
-    "scipy<1.14"
+    "scipy<1.14",
 ]
 dynamic = ["version"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
 
 [project.optional-dependencies]
 cli = ["click", "requests"]
 graphs = ["matplotlib >= 3.5", "plotly >= 5.10"]
+
+[project.scripts]
+sct = "sct.__main__:main"
+sct-rosamond-data-to-csv = "sct.cli.utility_commands_cli:convert_rosamond_csv"
+sct-ionospheric-maps-download = "sct.cli.utility_commands_cli:download_ionex_tec_maps"
+sct-tropospheric-maps-download = "sct.cli.utility_commands_cli:download_tropospheric_vmf3_maps"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.dev-dependencies]
 dev = ["nox", "black", "isort", "pylint"]
-test = ["unittest-xml-reporting", "coverage"]
+test = ["unittest-xml-reporting", "coverage", "arepyextras-test"]
 doc = [
     "ipython",
     "nbsphinx",
@@ -51,35 +71,18 @@ doc = [
     "pydata-sphinx-theme",
 ]
 
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+[tool.pdm.version]
+source = "file"
+path = "sct/__init__.py"
 
-[project.scripts]
-sct = "sct.__main__:main"
-sct-rosamond-data-to-csv = "sct.cli.utility_commands_cli:convert_rosamond_csv"
-sct-ionospheric-maps-download = "sct.cli.utility_commands_cli:download_ionex_tec_maps"
-sct-tropospheric-maps-download = "sct.cli.utility_commands_cli:download_tropospheric_vmf3_maps"
-
-[tool.setuptools]
-license-files = ["LICENSE.txt"]
-include-package-data = true
-
-[tool.setuptools.packages.find]
-exclude = ["tests", "tests*"]
-namespaces = true
-
-[tool.setuptools.dynamic]
-version = { attr = "sct.__version__" }
-
-[tool.pylint.MASTER]
+[tool.pylint.master]
 fail-under = 8.5
 fail-on = ["unused-import"]
 
-[tool.pylint."MESSAGES CONTROL"]
+[tool.pylint.message_control]
 disable = ["import-error", "logging-fstring-interpolation", "logging-not-lazy"]
 
-[tool.pylint.FORMAT]
+[tool.pylint.format]
 max-line-length = 120
 
 [tool.black]
@@ -89,3 +92,17 @@ target-version = ["py310", "py311", "py312"]
 [tool.isort]
 profile = "black"
 line_length = 120
+
+[tool.pdm.scripts]
+format = "black ."
+format_c = "black --check ."
+sort = "isort ."
+sort_c = "isort --check ."
+lint = "pylint --recursive=y sct"
+test = "python -m unittest discover -s ./tests -p test_*.py"
+integration_tests = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite"
+integration_tests_keep = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite --keep-working-dir"
+clean_doc = "python -m sphinx -M clean docs/source {args}"
+build_doc = "python -m sphinx -b html docs/source {args}"
+check_format = { composite = ["sort_c", "format_c"] }
+fix_format = { composite = ["sort", "format"] }
