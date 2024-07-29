@@ -3,6 +3,7 @@ Installation
 
 Requirements
 ------------
+
 SCT requires a Python version **equal or higher than 3.10**.
 
 
@@ -15,12 +16,10 @@ SCT package and its dependencies can be installed using ``pip`` tool:
 
     $ pip install sct
 
-
-Install with conda
-------------------
-
-SCT package and its dependencies can be installed using ``conda`` tool:
+In particular, this project can be installed after cloning this repository and using pip installation of local package
+in editable mode:
 
 .. code-block:: bash
 
-    $ conda install sct
+    $ cd sct
+    $ pip install -e .
