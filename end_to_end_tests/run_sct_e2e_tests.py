@@ -8,6 +8,7 @@ SCT End to End Tests
 
 from __future__ import annotations
 
+from itertools import compress
 import json
 import time
 import warnings
@@ -136,11 +137,15 @@ def compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> 
     # splitting dataframes to check different values with specific tolerances
     loc_df_ref = ref[LOC_VAR_LIST].copy()
     loc_report = current[LOC_VAR_LIST].copy()
-    pd.testing.assert_frame_equal(loc_df_ref, loc_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_LOC, rtol=0)
+    pd.testing.assert_frame_equal(
+        loc_df_ref, loc_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_LOC, rtol=0
+    )
 
     deg_df_ref = ref[DEG_VAR_LIST].copy()
     deg_report = current[DEG_VAR_LIST].copy()
-    pd.testing.assert_frame_equal(deg_df_ref, deg_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_DEG, rtol=0)
+    pd.testing.assert_frame_equal(
+        deg_df_ref, deg_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_DEG, rtol=0
+    )
 
     islr_df_ref = ref[ISLR_VAR_LIST].copy()
     islr_report = current[ISLR_VAR_LIST].copy()
@@ -196,7 +201,10 @@ def compare_ra_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     assert ref_dataset.channel == current_dataset.channel
     assert ref_dataset.polarization == current_dataset.polarization
     assert ref_dataset.direction == current_dataset.direction
-    assert ref_dataset.output_radiometric_quantity == current_dataset.output_radiometric_quantity
+    assert (
+        ref_dataset.output_radiometric_quantity
+        == current_dataset.output_radiometric_quantity
+    )
     assert ref_dataset.azimuth_blocks_num == current_dataset.azimuth_blocks_num
     assert ref_dataset.azimuth_block_centers == current_dataset.azimuth_block_centers
 
@@ -266,7 +274,9 @@ def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     current_dataset.close()
 
 
-def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> pd.DataFrame:
+def run_pta_api(
+    params: TestParams, output_dir: Path, config: SCTConfiguration | None
+) -> pd.DataFrame:
     """Running SCT Point Target Analysis from API forwarding the inputs.
 
     Parameters
@@ -290,10 +300,14 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
         config.point_target_analysis.etad_product_path = params.etad_product
     if params.ionospheric_maps is not None:
         config.point_target_analysis.enable_ionospheric_correction = True
-        config.point_target_analysis.ionospheric_maps_directory = params.ionospheric_maps
+        config.point_target_analysis.ionospheric_maps_directory = (
+            params.ionospheric_maps
+        )
     if params.tropospheric_maps is not None:
         config.point_target_analysis.enable_tropospheric_correction = True
-        config.point_target_analysis.tropospheric_maps_directory = params.tropospheric_maps
+        config.point_target_analysis.tropospheric_maps_directory = (
+            params.tropospheric_maps
+        )
     results_df, _ = point_target_analysis_with_corrections(
         product_path=params.product,
         external_target_source=params.targets,
@@ -305,7 +319,9 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
     return pd.read_csv(out_file)
 
 
-def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+def run_nesz_api(
+    params: TestParams, output_dir: Path, config: SCTConfiguration | None
+) -> Path:
     """Running SCT NESZ Analysis from API forwarding the inputs.
 
     Parameters
@@ -332,7 +348,9 @@ def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration 
     return output_dir.joinpath(params.report.name)
 
 
-def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+def run_rain_forest_api(
+    params: TestParams, output_dir: Path, config: SCTConfiguration | None
+) -> Path:
     """Running SCT Average Radiometric Profiles Analysis from API forwarding the inputs.
 
     Parameters
@@ -363,7 +381,9 @@ def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfigu
     return output_dir.joinpath(params.report.name)
 
 
-def run_interferometry_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+def run_interferometry_api(
+    params: TestParams, output_dir: Path, config: SCTConfiguration | None
+) -> Path:
     """Running SCT Interferometric Analysis from API forwarding the inputs.
 
     Parameters
@@ -381,7 +401,9 @@ def run_interferometry_api(params: TestParams, output_dir: Path, config: SCTConf
         path to output netcdf file
     """
 
-    first_prod = params.product if isinstance(params.product, Path) else params.product[0]
+    first_prod = (
+        params.product if isinstance(params.product, Path) else params.product[0]
+    )
     second_prod = params.product[1] if isinstance(params.product, list) else None
     coherence_res = interferometric_coherence_analysis(
         product_path=first_prod, second_product_path=second_prod, config=config
@@ -404,13 +426,17 @@ def test_session(params: TestParams, test_name: str) -> bool:
     """
     out_dir = BASE_OUTPUT_DIRECTORY.joinpath(test_name)
     out_dir.mkdir(exist_ok=True)
-    config = SCTConfiguration.from_toml(params.config) if params.config is not None else None
+    config = (
+        SCTConfiguration.from_toml(params.config) if params.config is not None else None
+    )
     try:
         if params.analysis == SCTAnalyses.POINT_TARGET:
             config = config.point_target_analysis if config is not None else None
             results = run_pta_api(params=params, output_dir=out_dir, config=config)
             # comparing dataframes differences to specific tolerances
-            compare_pta_df_with_tolerances(ref=pd.read_csv(params.report), current=results.copy())
+            compare_pta_df_with_tolerances(
+                ref=pd.read_csv(params.report), current=results.copy()
+            )
         elif params.analysis == SCTAnalyses.NESZ:
             config = config.radiometric_analysis if config is not None else None
             results = run_nesz_api(params=params, output_dir=out_dir, config=config)
@@ -422,7 +448,9 @@ def test_session(params: TestParams, test_name: str) -> bool:
                 compare_ra_netcdf_with_tolerances(ref=params.report, current=results)
         elif params.analysis == SCTAnalyses.RAIN_FOREST:
             config = config.radiometric_analysis if config is not None else None
-            results = run_rain_forest_api(params=params, output_dir=out_dir, config=config)
+            results = run_rain_forest_api(
+                params=params, output_dir=out_dir, config=config
+            )
             if isinstance(params.report, list):
                 for report in params.report:
                     result = [r for r in results if report.name == r.name]
@@ -431,7 +459,9 @@ def test_session(params: TestParams, test_name: str) -> bool:
                 compare_ra_netcdf_with_tolerances(ref=params.report, current=results)
         elif params.analysis == SCTAnalyses.INTERFEROMETRY:
             config = config.interferometric_analysis if config is not None else None
-            results = run_interferometry_api(params=params, output_dir=out_dir, config=config)
+            results = run_interferometry_api(
+                params=params, output_dir=out_dir, config=config
+            )
             for report in params.report:
                 result = [r for r in results if report.name == r.name]
                 compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
@@ -456,13 +486,17 @@ def run() -> None:
         start_time = time.perf_counter()
         params = TestParams.from_dict(parameters)
         results.append(test_session(params=params, test_name=test_name))
-        print(f"Elapsed: {np.round((time.perf_counter() - start_time) / 60, 2)} minutes\n")
+        print(
+            f"Elapsed: {np.round((time.perf_counter() - start_time) / 60, 2)} minutes\n"
+        )
 
-    print("SCT E2E Summary:")
-    print(f"{sum(results)}/{len(results)} tests passed")
+    print("\n---------------")
+    print("SCT E2E Summary\n")
+    print(f"PASSED: {sum(results)}/{len(results)} tests\n")
     if sum(results) != len(results):
-        failed_tests = test_config.keys()[not results]
-        print("Tests failed:")
+        failed_tests = list(compress(test_config.keys(), [not r for r in results]))
+        print(f"FAILED: {len(failed_tests)}\n")
+        print("List of failed tests:")
         for t in failed_tests:
             print(t)
 
