@@ -1,7 +1,7 @@
 SCT E2E Tests
 -------------
 
-1) download the SCT_E2E_TDS_repo.zip
+1) download the sct_e2e_tds.zip file from this link https://we.tl/t-JF1Hn9iwpE
 2) unzip it inside the end to end folder with the scripts as uploaded on github
 3) unzip each SAR product inside of this dataset and remove the original .zip archive (use "extract here", check that each product folder contains the product data)
 4) check that the root folder for the E2E tests match the following tree architecture:
