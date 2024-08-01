@@ -16,6 +16,10 @@ Supported analyses:
 - Point Target Analysis
 - Radiometric Analyses: Noise Equivalent Sigma Zero (NESZ), Gamma Profiles, Scalloping Profiles
 
+This project derives from the original [SAR Calibration Tool](https://github.com/aresys-srl/sar-calibration-tool) developed
+by Aresys since 2021 and it's aimed at expanding and refining its codebase and main algorithms, extending the support to
+several other missions and sensors with an architecture that is well suited for new features additions.
+
 ## Package Installation
 
 This package depends on several python packages that can be found on the [public Aresys github page](https://github.com/aresys-srl) that must be installed before SCT itself. To do so, follow the procedure listed below.
