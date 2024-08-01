@@ -44,3 +44,26 @@ After all these packages have been installed in the same Python environment, do 
 > [!NOTE]
 > This package comes with Command Line Interface (CLI) functionalities that can be installed specifying the **[cli]** option.\
 > It can also generate graphs for the available analyses by installing the package using the **[graphs]** option.
+
+## E2E Dataset
+
+A dataset for end to end tests is available at the following link and can be downloaded to assess the correct functionalities of the SCT tool.
+
+> Download link:\
+> [SCT E2E Tests Dataset](https://we.tl/t-JF1Hn9iwpE)
+
+This dataset contains Sentinel-1A and NovaSAR products that let the users quantitatively test and verify all the main functionalities of SCT, namely
+Point Target Analysis (on Surat Basin calibration site), Rain Forest and NESZ radiometric analyses and interferometric coherence
+computation.
+
+Once downloaded, follow the **sct_e2e_tests_instructions** that can be found inside the *end_to_end_tests* directory of this repo.
+
+> [!IMPORTANT]
+> An End User License Agreement (EULA) is included within the .zip archive dataset related to the usage of NovaSAR data.\
+> When downloading this dataset, the user accepts the content of this EULA, that are summarized below.
+> Regarding Sentinel-1 data, the access and use of Copernicus Sentinel data is available on a free, full and open basis and shall
+> be governed by the [Legal Notice on the use of Copernicus Sentinel Data and Service](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice).
+
+### NovaSAR EULA Summary
+
+>"Accepting the EULA, the user may analyze, process and display the licensed SSTL Data (NovaSAR), make results available to employees of its organization and only reproduce SSTL Data (NovaSAR) in print or internet display including one of the copyright notices listed within the EULA. The End User and licensed entities shall not sell, rent, lease or loan the data. For a full list of restrictions, permitted uses and others on SSTL Data (NovaSAR) definitions and license, the user shall refer to the EULA."
