@@ -1,7 +1,7 @@
 Changelog
 =========
 
-v1.0.1
+v2.0.0
 ------
 
 first official release
