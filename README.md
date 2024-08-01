@@ -16,12 +16,31 @@ Supported analyses:
 - Point Target Analysis
 - Radiometric Analyses: Noise Equivalent Sigma Zero (NESZ), Gamma Profiles, Scalloping Profiles
 
-SCT package and its dependencies can be installed using ``pip`` tool:
+## Package Installation
 
-    $ pip install sct[cli,graphs]
+This package depends on several python packages that can be found on the [public Aresys github page](https://github.com/aresys-srl) that must be installed before SCT itself. To do so, follow the procedure listed below.
 
-To locally install this package as editable with ``pip``:
+After cloning all the repositories of the following Aresys packages, ``cd`` in each of them and locally install the packages
+following this order:
 
-    $ pip install -e .[cli,graphs]
+- [Arepytools](https://github.com/aresys-srl/arepytools)
+- [Arepyextras - Iers Solid Tides](https://github.com/aresys-srl/arepyextras-iers_solid_tides)
+- [Arepyextras - Perturbations](https://github.com/aresys-srl/arepyextras-perturbations)
+- [Arepyextras - EO Products](https://github.com/aresys-srl/arepyextras-eo_products)
+- [Arepyextras - Quality](https://github.com/aresys-srl/arepyextras-quality)
 
-> **_NOTE:_**  This package comes with Command Line Interface (CLI) functionalities that can be installed specifying the **[cli]** option. It can also generate graphs for the available analyses by installing the package using the **[graphs]** option.
+using with ``pip``:
+
+    $ pip install .
+
+> [!NOTE]
+> Arepyextras - Quality comes with graphical functionalities that can be installed using the **[graphs]** option, as shown
+> in the snippet below for the SCT installation.
+
+After all these packages have been installed in the same Python environment, do the same with the SCT project:
+
+    $ pip install .[cli,graphs]
+
+> [!NOTE]
+> This package comes with Command Line Interface (CLI) functionalities that can be installed specifying the **[cli]** option.\
+> It can also generate graphs for the available analyses by installing the package using the **[graphs]** option.
