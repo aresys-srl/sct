@@ -17,7 +17,9 @@ from arepyextras.quality.core.generic_dataclasses import (
     SARSideLooking,
 )
 from arepyextras.quality.io.quality_input_protocol import ChannelData, QualityInputProduct, SARCoordinatesFunction
+from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper
+from arepytools.geometry.orbit import Orbit
 from arepytools.math.genericpoly import GenericPoly, SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
 from mock_product import MockChannel, MockProduct
@@ -136,7 +138,7 @@ def create_product_manager_test_case(
             self.assertEqual(
                 channel_data.mid_azimuth_time, PreciseDateTime.from_utc_string("01-JAN-2000 00:00:50.000000000000")
             )
-            self.assertEqual(type(channel_data.trajectory), GSO3DCurveWrapper)
+            self.assertTrue(isinstance(channel_data.trajectory, (GSO3DCurveWrapper, Orbit)))
             self.assertEqual(channel_data.boresight_normal_curve, None)
             self.assertTrue(isinstance(channel_data.doppler_centroid, (custom_polynomial_class, NoneType)))
             self.assertTrue(isinstance(channel_data.doppler_rate, (custom_polynomial_class, NoneType)))
@@ -177,5 +179,6 @@ def create_product_manager_test_case(
                 [0],
             )
             self.assertEqual(channel_data.read_data(50, 10, (2, 2)).shape, (2, 2))
+            self.assertEqual(channel_data.prf, 1000)
 
     return ProductManagerTestCase

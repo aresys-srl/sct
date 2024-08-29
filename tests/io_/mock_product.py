@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
+from arepytools.geometry.orbit import Orbit
 from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
 
@@ -86,8 +87,12 @@ class MockChannel:
     class MockSwathInfo:
         azimuth_steering_rate_poly = [0, 0, 0]
         azimuth_steering_rate_pol = [0, 0, 0]
+        prf = 1000
 
     class MockGSO:
+        pass
+
+    class MockOrbit:
         pass
 
     class MockATL:
@@ -100,6 +105,7 @@ class MockChannel:
     pulse = MockPulse()
     swath_info = MockSwathInfo()
     general_sar_orbit = MockGSO()
+    orbit = Orbit(np.array([1, 2]), np.tile([1, 2, 3], (2, 1)), np.tile([1, 2, 3], (2, 1)))
     doppler_centroid_poly = SortedPolyList()
     doppler_rate_poly = SortedPolyList()
     doppler_rate_vector = SortedPolyList()

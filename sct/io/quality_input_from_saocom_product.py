@@ -195,6 +195,9 @@ class SAOCOMChannelManager:
         else:
             self._signal_pulse_rate = 1
 
+        # prf
+        self._prf = self._channel.swath_info.prf
+
         # steering rate
         self._steering_rate_poly_coeff = self._channel.swath_info.azimuth_steering_rate_pol
 
@@ -315,6 +318,11 @@ class SAOCOMChannelManager:
     def channel_id(self) -> str:
         """Identifier of current channel data"""
         return self._channel_id
+
+    @property
+    def prf(self) -> float:
+        """Sensor Pulse Repetition Frequency (PRF)"""
+        return self._prf
 
     @property
     def range_step_m(self) -> float:
@@ -478,7 +486,7 @@ class SAOCOMChannelManager:
         )
 
     def get_location_data(self, azimuth_time: PreciseDateTime, range_time: float) -> LocationData:
-        """Generating a LocationData object containing data and info derived from the current ICEYEChannelManager
+        """Generating a LocationData object containing data and info derived from the current SAOCOMChannelManager
         and declined to the specific azimuth and range times selected.
 
         Parameters
@@ -512,9 +520,11 @@ class SAOCOMChannelManager:
         azimuth_step_m = self.azimuth_step_s * v_ground
 
         if self.projection == SARProjection.SLANT_RANGE:
-            ground_range_step_m = self.range_step_m / np.sin(incidence_angle)
+            ground_range_step_m: float = self.range_step_m / np.sin(incidence_angle)
+            range_step_m = self.range_step_m
         elif self.projection == SARProjection.GROUND_RANGE:
-            ground_range_step_m = self.range_step_m
+            ground_range_step_m: float = self.range_step_m
+            range_step_m = self.range_step_m * np.sin(incidence_angle)
 
         return LocationData(
             abs_azimuth_time=azimuth_time,
@@ -523,7 +533,7 @@ class SAOCOMChannelManager:
             look_angle=look_angle,
             ground_velocity=v_ground,
             azimuth_step_m=azimuth_step_m,
-            range_step_m=self.range_step_m,
+            range_step_m=range_step_m,
             ground_range_step_m=ground_range_step_m,
         )
 
