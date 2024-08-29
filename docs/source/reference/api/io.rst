@@ -15,4 +15,8 @@ Input/Output Module
 
 .. automodule:: sct.io.quality_input_from_saocom_product
 
+.. automodule:: sct.io.quality_input_from_eos04_product
+
+.. automodule:: sct.io.quality_input_from_cosmo_product
+
 .. automodule:: sct.io.safe_computing_utilities

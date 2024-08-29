@@ -13,6 +13,7 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Union
 
+from arepyextras.eo_products.cosmo.l1_products.utilities import is_cosmo_product
 from arepyextras.eo_products.eos.l1_products.utilities import is_eos04_product
 from arepyextras.eo_products.iceye.l1_products.utilities import is_iceye_product
 from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_product
@@ -23,6 +24,7 @@ from arepytools.io.productfolder2 import is_product_folder as is_aresys_product
 
 from sct.core.custom_corrections import ALECorrectionFunctionType, sentinel_1_ipf
 from sct.io.extended_protocols import SCTInputProduct
+from sct.io.quality_input_from_cosmo_product import COSMOProductManager
 from sct.io.quality_input_from_eos04_product import EOS04ProductManager
 from sct.io.quality_input_from_iceye_product import ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
@@ -46,6 +48,7 @@ class SupportedInputProductType(Enum):
     ICEYE = auto()
     SAOCOM = auto()
     EOS04 = auto()
+    COSMO = auto()
     UNKNOWN = auto()
 
 
@@ -69,7 +72,8 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
     """
 
     product = Path(product)
-    if not product.is_dir():
+    if not product.exists():
+        log.critical("Input product does not exist on disk")
         raise InvalidProductType(f"Product {str(product)} is not a directory or does not exist")
 
     if is_aresys_product(product):
@@ -89,6 +93,9 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
 
     if is_eos04_product(product):
         return SupportedInputProductType.EOS04
+
+    if is_cosmo_product(product):
+        return SupportedInputProductType.COSMO
 
     return SupportedInputProductType.UNKNOWN
 
@@ -156,6 +163,9 @@ def product_loader(
         case SupportedInputProductType.EOS04:
             log.info("Product type: EOS-04")
             product = EOS04ProductManager(product_path)
+        case SupportedInputProductType.COSMO:
+            log.info("Product type: COSMO SkyMed")
+            product = COSMOProductManager(product_path)
         case _:
             raise InvalidProductType(f"Unknown product type for product {str(product_path)}")
 

@@ -1,6 +1,17 @@
 Changelog
 =========
 
+v1.0.2
+------
+
+**Additional Features**
+
+- IO: introduced support for COSMO SkyMed product format
+
+**Bug Fixing**
+
+- Fixed computation of ground range step and slant range step in meters for GRD products
+
 v1.0.1
 ------
 

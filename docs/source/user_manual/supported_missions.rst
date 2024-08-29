@@ -12,6 +12,7 @@ features is the herein reported:
 * **NovaSAR**: official stripmap and topsar products.
 * **SAOCOM**: official stripmap and topsar products.
 * **EOS-04**: official stripmap and topsar products.
+* **COSMO SkyMed**: official stripmap and topsar products.
 
 .. note::
 

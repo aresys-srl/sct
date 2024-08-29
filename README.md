@@ -7,6 +7,10 @@ Supported products:
 
 - Aresys Product Folder
 - Sentinel-1 SAFE
+- ICEYE
+- NovaSAR-1
+- EOS-04
+- COSMO SkyMed
 
 Supported analyses:
 
