@@ -196,7 +196,7 @@ class SAOCOMChannelManager:
             self._signal_pulse_rate = 1
 
         # prf
-        self._prf = self._channel.swath_info.prf
+        self._prf = self._channel.swath_info.acquisition_prf
 
         # steering rate
         self._steering_rate_poly_coeff = self._channel.swath_info.azimuth_steering_rate_pol
