@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
-    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\cosmo\PointTargetsNeustrelitzSite"
+    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\cosmo\neusterlitz_corner_reflectors_data.csv"
     # ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\reference_datasets\surat_basin_corner_reflectors_data.csv"
 
     # test config

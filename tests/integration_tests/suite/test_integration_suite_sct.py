@@ -440,7 +440,7 @@ def test_pta_iceye_stripmap(session: TestSession, env: Environment, data: DataRe
     _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
-def test_pta_iceye_stripmap_automatic(session: TestSession, env: Environment, data: DataRepository):
+def test_z_pta_iceye_stripmap_automatic(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct point target analysis on ICEYE stripmap product via automatic sct analysis detection.
 
     Parameters
@@ -754,6 +754,33 @@ def test_pta_s1_grd_perturb(session: TestSession, env: Environment, data: DataRe
     _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
+def test_pta_cosmo_grd(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on COSMO SkyMed scansar GRD product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/cosmo/config")
+    product_folder = data.pull("input/cosmo/DGM_SCANSAR")
+    point_target = data.pull("input/cosmo/NeusterlitzCSV")
+    report = data.pull("output/cosmo/DGM_SCANSAR")
+    expected_report = pd.read_csv(report)
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
+    )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
 @skip_if(sys.platform.startswith("linux"))
 def test_interferometry_pf_co_registered(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct interferometric analysis on two co-registered PF products.
@@ -771,12 +798,15 @@ def test_interferometry_pf_co_registered(session: TestSession, env: Environment,
     pf_2 = data.pull("input/pf/INT_PROD_2")
     ref_outputs = {f.name: f for f in data.pull("output/pf/co_registered").iterdir()}
     out_files = [
-        env.root.joinpath("coherence_histograms_IW1_VH.nc"),
-        env.root.joinpath("coherence_histograms_IW1_VV.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b0_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b1_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b0_VV.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b1_VV.nc"),
     ]
 
     config_file = env.root.joinpath("new_config.toml")
     config = SCTConfiguration()
+    config.interferometric_analysis.base_config.enable_coherence_computation = True
     config.dump_to_toml(out_file=config_file)
     assert config_file.is_file()
 
@@ -803,8 +833,10 @@ def test_interferometry_pf_interferogram(session: TestSession, env: Environment,
     pf = data.pull("input/pf/INT_PROD")
     ref_outputs = {f.name: f for f in data.pull("output/pf/interferogram").iterdir()}
     out_files = [
-        env.root.joinpath("coherence_histograms_IW1_VH.nc"),
-        env.root.joinpath("coherence_histograms_IW1_VV.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b0_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b1_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b0_VV.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b1_VV.nc"),
     ]
 
     config_file = env.root.joinpath("new_config.toml")
@@ -837,8 +869,10 @@ def test_interferometry_pf_coherence_map(session: TestSession, env: Environment,
     pf = data.pull("input/pf/INT_PROD_CM")
     ref_outputs = {f.name: f for f in data.pull("output/pf/coherence_map").iterdir()}
     out_files = [
-        env.root.joinpath("coherence_histograms_IW1_VH.nc"),
-        env.root.joinpath("coherence_histograms_IW1_VV.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b0_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b1_VH.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b0_VV.nc"),
+        env.root.joinpath("coherence_histograms_IW1_b1_VV.nc"),
     ]
 
     config_file = env.root.joinpath("new_config.toml")

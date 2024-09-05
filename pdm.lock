@@ -5,7 +5,7 @@
 groups = ["default", "cli", "dev", "doc", "graphs", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:6687a766a35a58c7ab364583672090bcc9507f3687df78fa1bbdea62c56cfb3f"
+content_hash = "sha256:756fa72d960f1cafaba10de5351005712cf5413533a65076418dc674ea259d0c"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -101,10 +101,10 @@ files = [
 
 [[package]]
 name = "arepyextras-quality"
-version = "1.2.8"
+version = "2.0.0"
 requires_python = ">=3.9"
 summary = "ArePyExtras Quality is the Aresys Python module for SAR products quality analysis."
-groups = ["default"]
+groups = ["default", "graphs"]
 dependencies = [
     "arepytools>=1.6.1",
     "netCDF4",
@@ -113,8 +113,24 @@ dependencies = [
     "scipy",
 ]
 files = [
-    {file = "arepyextras-quality-1.2.8.tar.gz", hash = "sha256:2b08dd80127b367c03798d2a2c511b68a7bdce72f5676126ed8527afd12a740e"},
-    {file = "arepyextras_quality-1.2.8-py3-none-any.whl", hash = "sha256:463046b54d2391a92d88ea8605928818345f5e760eb9a293def6ccdf05e42461"},
+    {file = "arepyextras-quality-2.0.0.tar.gz", hash = "sha256:e3c8f05e0cb20be6a2ee621bfc7707c2ed46a16d6248fe64c1c1ab14a8f27e59"},
+    {file = "arepyextras_quality-2.0.0-py3-none-any.whl", hash = "sha256:c74f7ce3cea92de3ab24dc8ecff424ae3ef3e441a2d921ca0840bdb6dc9d018e"},
+]
+
+[[package]]
+name = "arepyextras-quality"
+version = "2.0.0"
+extras = ["graphs"]
+requires_python = ">=3.9"
+summary = "ArePyExtras Quality is the Aresys Python module for SAR products quality analysis."
+groups = ["graphs"]
+dependencies = [
+    "arepyextras-quality==2.0.0",
+    "matplotlib>=3.5",
+]
+files = [
+    {file = "arepyextras-quality-2.0.0.tar.gz", hash = "sha256:e3c8f05e0cb20be6a2ee621bfc7707c2ed46a16d6248fe64c1c1ab14a8f27e59"},
+    {file = "arepyextras_quality-2.0.0-py3-none-any.whl", hash = "sha256:c74f7ce3cea92de3ab24dc8ecff424ae3ef3e441a2d921ca0840bdb6dc9d018e"},
 ]
 
 [[package]]
@@ -149,10 +165,10 @@ files = [
 
 [[package]]
 name = "arepytools"
-version = "1.7.1"
+version = "1.7.2"
 requires_python = ">=3.9"
 summary = "ArePyTools is the Aresys Python toolset for SAR data processing."
-groups = ["default"]
+groups = ["default", "graphs"]
 dependencies = [
     "lxml",
     "numpy>=1.20",
@@ -161,8 +177,8 @@ dependencies = [
     "xsdata",
 ]
 files = [
-    {file = "arepytools-1.7.1-py3-none-any.whl", hash = "sha256:226ba891810b830ba6407dfdbb357a2be228f75225bdfcfc30d7564a03e48128"},
-    {file = "arepytools-1.7.1.tar.gz", hash = "sha256:6b779f5f0d32fa02cad0efc69ccc72d963f087838deec71511fe93c712352f8a"},
+    {file = "arepytools-1.7.2-py3-none-any.whl", hash = "sha256:3f1b9a81d0a750cc45df357fa65c6922d9a32ef1162dd71684838d572f6e2ed3"},
+    {file = "arepytools-1.7.2.tar.gz", hash = "sha256:6cc1c7aeb0c756ede1bb413577d1c0efcd29ef9aeee2a0e93ae964ef4a70de01"},
 ]
 
 [[package]]
@@ -318,7 +334,7 @@ name = "certifi"
 version = "2024.7.4"
 requires_python = ">=3.6"
 summary = "Python package for providing Mozilla's CA Bundle."
-groups = ["default", "cli", "doc"]
+groups = ["default", "cli", "doc", "graphs"]
 files = [
     {file = "certifi-2024.7.4-py3-none-any.whl", hash = "sha256:c198e21b1289c2ab85ee4e67bb4b4ef3ead0892059901a8d5b622f24a1101e90"},
     {file = "certifi-2024.7.4.tar.gz", hash = "sha256:5a1e7645bc0ec61a09e26c36f6106dd4cf40c6db3a1fb6352b0244e7fb057c7b"},
@@ -389,7 +405,7 @@ name = "cftime"
 version = "1.6.4"
 requires_python = ">=3.8"
 summary = "Time-handling functionality from netcdf4-python"
-groups = ["default"]
+groups = ["default", "graphs"]
 dependencies = [
     "numpy>1.13.3; python_version < \"3.12.0.rc1\"",
     "numpy>=1.26.0b1; python_version >= \"3.12.0.rc1\"",
@@ -877,7 +893,7 @@ files = [
 
 [[package]]
 name = "ipython"
-version = "8.26.0"
+version = "8.27.0"
 requires_python = ">=3.10"
 summary = "IPython: Productive Interactive Computing"
 groups = ["doc"]
@@ -895,8 +911,8 @@ dependencies = [
     "typing-extensions>=4.6; python_version < \"3.12\"",
 ]
 files = [
-    {file = "ipython-8.26.0-py3-none-any.whl", hash = "sha256:e6b347c27bdf9c32ee9d31ae85defc525755a1869f14057e900675b9e8d6e6ff"},
-    {file = "ipython-8.26.0.tar.gz", hash = "sha256:1cec0fbba8404af13facebe83d04436a7434c7400e59f47acf467c64abd0956c"},
+    {file = "ipython-8.27.0-py3-none-any.whl", hash = "sha256:f68b3cb8bde357a5d7adc9598d57e22a45dfbea19eb6b98286fa3b288c9cd55c"},
+    {file = "ipython-8.27.0.tar.gz", hash = "sha256:0b99a2dc9f15fd68692e898e5568725c6d49c527d36a9fb5960ffbdeaa82ff7e"},
 ]
 
 [[package]]
@@ -1081,7 +1097,7 @@ name = "lxml"
 version = "5.3.0"
 requires_python = ">=3.6"
 summary = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
-groups = ["default", "test"]
+groups = ["default", "graphs", "test"]
 files = [
     {file = "lxml-5.3.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:dd36439be765e2dde7660212b5275641edbc813e7b24668831a5c8ac91180656"},
     {file = "lxml-5.3.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ae5fe5c4b525aa82b8076c1a59d642c17b6e8739ecf852522c6321852178119d"},
@@ -1396,7 +1412,7 @@ name = "netcdf4"
 version = "1.7.1.post2"
 requires_python = ">=3.8"
 summary = "Provides an object-oriented python interface to the netCDF version 4 library"
-groups = ["default"]
+groups = ["default", "graphs"]
 dependencies = [
     "certifi",
     "cftime",
@@ -1516,7 +1532,7 @@ name = "pandas"
 version = "2.2.2"
 requires_python = ">=3.9"
 summary = "Powerful data structures for data analysis, time series, and statistics"
-groups = ["default"]
+groups = ["default", "graphs"]
 dependencies = [
     "numpy>=1.22.4; python_version < \"3.11\"",
     "numpy>=1.23.2; python_version == \"3.11\"",
@@ -1670,21 +1686,6 @@ files = [
 ]
 
 [[package]]
-name = "plotly"
-version = "5.23.0"
-requires_python = ">=3.8"
-summary = "An open-source, interactive data visualization library for Python"
-groups = ["graphs"]
-dependencies = [
-    "packaging",
-    "tenacity>=6.2.0",
-]
-files = [
-    {file = "plotly-5.23.0-py3-none-any.whl", hash = "sha256:76cbe78f75eddc10c56f5a4ee3e7ccaade7c0a57465546f02098c0caed6c2d1a"},
-    {file = "plotly-5.23.0.tar.gz", hash = "sha256:89e57d003a116303a34de6700862391367dd564222ab71f8531df70279fc0193"},
-]
-
-[[package]]
 name = "prompt-toolkit"
 version = "3.0.47"
 requires_python = ">=3.7.0"
@@ -1765,7 +1766,7 @@ files = [
 
 [[package]]
 name = "pylint"
-version = "3.2.6"
+version = "3.2.7"
 requires_python = ">=3.8.0"
 summary = "python code static checker"
 groups = ["dev"]
@@ -1783,8 +1784,8 @@ dependencies = [
     "typing-extensions>=3.10.0; python_version < \"3.10\"",
 ]
 files = [
-    {file = "pylint-3.2.6-py3-none-any.whl", hash = "sha256:03c8e3baa1d9fb995b12c1dbe00aa6c4bcef210c2a2634374aedeb22fb4a8f8f"},
-    {file = "pylint-3.2.6.tar.gz", hash = "sha256:a5d01678349454806cff6d886fb072294f56a58c4761278c97fb557d708e1eb3"},
+    {file = "pylint-3.2.7-py3-none-any.whl", hash = "sha256:02f4aedeac91be69fb3b4bea997ce580a4ac68ce58b89eaefeaf06749df73f4b"},
+    {file = "pylint-3.2.7.tar.gz", hash = "sha256:1b7a721b575eaeaa7d39db076b6e7743c993ea44f57979127c517c6c572c803e"},
 ]
 
 [[package]]
@@ -1858,7 +1859,7 @@ files = [
 name = "pytz"
 version = "2024.1"
 summary = "World timezone definitions, modern and historical"
-groups = ["default"]
+groups = ["default", "graphs"]
 files = [
     {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
     {file = "pytz-2024.1.tar.gz", hash = "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812"},
@@ -2087,7 +2088,7 @@ name = "scipy"
 version = "1.13.1"
 requires_python = ">=3.9"
 summary = "Fundamental algorithms for scientific computing in Python"
-groups = ["default"]
+groups = ["default", "graphs"]
 dependencies = [
     "numpy<2.3,>=1.22.4",
 ]
@@ -2322,17 +2323,6 @@ files = [
 ]
 
 [[package]]
-name = "tenacity"
-version = "9.0.0"
-requires_python = ">=3.8"
-summary = "Retry code until it succeeds"
-groups = ["graphs"]
-files = [
-    {file = "tenacity-9.0.0-py3-none-any.whl", hash = "sha256:93de0c98785b27fcf659856aa9f54bfbd399e29969b0621bc7f762bd441b4539"},
-    {file = "tenacity-9.0.0.tar.gz", hash = "sha256:807f37ca97d62aa361264d497b0e31e92b8027044942bfa756160d908320d73b"},
-]
-
-[[package]]
 name = "tifffile"
 version = "2024.8.28"
 requires_python = ">=3.9"
@@ -2430,7 +2420,7 @@ name = "typing-extensions"
 version = "4.12.2"
 requires_python = ">=3.8"
 summary = "Backported and Experimental Type Hints for Python 3.8+"
-groups = ["default", "dev", "doc"]
+groups = ["default", "dev", "doc", "graphs"]
 files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
@@ -2441,7 +2431,7 @@ name = "tzdata"
 version = "2024.1"
 requires_python = ">=2"
 summary = "Provider of IANA time zone data"
-groups = ["default"]
+groups = ["default", "graphs"]
 files = [
     {file = "tzdata-2024.1-py2.py3-none-any.whl", hash = "sha256:9068bc196136463f5245e51efda838afa15aaeca9903f49050dfa2679db4d252"},
     {file = "tzdata-2024.1.tar.gz", hash = "sha256:2674120f8d891909751c38abcdfd386ac0a5a1127954fbc332af6b5ceae07efd"},
@@ -2517,7 +2507,7 @@ name = "xsdata"
 version = "24.7"
 requires_python = ">=3.8"
 summary = "Python XML Binding"
-groups = ["default"]
+groups = ["default", "graphs"]
 dependencies = [
     "typing-extensions>=4.7.0",
 ]
