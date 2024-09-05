@@ -91,8 +91,8 @@ def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
     point_targets_df["validity_stop_date"] = dummy_data
     point_targets_df["rcs_hh_dB"] = convert_to_db(np.abs(rcs[:, 0]))
     point_targets_df["rcs_hv_dB"] = convert_to_db(np.abs(rcs[:, 1]))
-    point_targets_df["rcs_vv_dB"] = convert_to_db(np.abs(rcs[:, 2]))
-    point_targets_df["rcs_vh_dB"] = convert_to_db(np.abs(rcs[:, 3]))
+    point_targets_df["rcs_vh_dB"] = convert_to_db(np.abs(rcs[:, 2]))
+    point_targets_df["rcs_vv_dB"] = convert_to_db(np.abs(rcs[:, 3]))
 
     return point_targets_df
 

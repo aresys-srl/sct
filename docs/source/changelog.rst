@@ -11,6 +11,7 @@ v1.0.2
 **Bug Fixing**
 
 - Fixed computation of ground range step and slant range step in meters for GRD products
+- Fixed Point Target Binary reader after Arepytools bugfix
 
 v1.0.1
 ------

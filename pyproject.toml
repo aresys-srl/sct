@@ -16,7 +16,7 @@ dependencies = [
     "s1etad",
     "art",
     "appdirs",
-    "arepytools >= 1.7.0",
+    "arepytools >= 1.7.2",
     "arepyextras-quality >= 1.2.2",
     "arepyextras-perturbations >= 1.1",
     "arepyextras-eo_products >= 1.1.0",
