@@ -9,12 +9,14 @@ Supported product formats:
 - Sentinel-1 SAFE
 - ICEYE
 - NovaSAR-1
+- EOS-04
 - SAOCOM
 
 Supported analyses:
 
 - Point Target Analysis
-- Radiometric Analyses: Noise Equivalent Sigma Zero (NESZ), Gamma Profiles, Scalloping Profiles
+- Radiometric Analyses: Noise Equivalent Sigma Zero (NESZ), Average Elevation Profiles, Scalloping Profiles
+- Interferometric Coherence Analysis
 
 This project derives from the original [SAR Calibration Tool](https://github.com/aresys-srl/sar-calibration-tool) developed
 by Aresys since 2021 and it's aimed at expanding and refining its codebase and main algorithms, extending the support to
