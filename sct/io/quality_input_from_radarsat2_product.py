@@ -2,19 +2,17 @@
 # SPDX-License-Identifier: MIT
 
 """
-NovaSAR-1 format Arepyextras-Quality protocol-compliant wrapper
----------------------------------------------------------------
+RADARSAT-2 format Arepyextras-Quality protocol-compliant wrapper
+----------------------------------------------------------------
 """
 from __future__ import annotations
 
 from itertools import product
 from pathlib import Path
-from typing import Union
 
 import numpy as np
-import numpy.typing as npt
-from arepyextras.eo_products.novasar.l1_products.reader import open_product, read_channel_data, read_product_metadata
-from arepyextras.eo_products.novasar.l1_products.utilities import NovaSAR1ChannelMetadata
+from arepyextras.eo_products.radarsat.l1_products.reader import open_product, read_channel_data, read_product_metadata
+from arepyextras.eo_products.radarsat.l1_products.utilities import RADARSATChannelMetadata, RADARSATTimeOrdering
 from arepyextras.quality.core.custom_errors import (
     AzimuthExceedsBoundariesError,
     CoordinatesOutOfBounds,
@@ -32,19 +30,21 @@ from arepyextras.quality.core.generic_dataclasses import (
 )
 from arepyextras.quality.core.signal_processing import radiometric_correction
 from arepytools.constants import LIGHT_SPEED
-from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper, compute_ground_velocity
 from arepytools.geometry.geometric_functions import (
+    compute_ground_velocity_from_trajectory,
     compute_incidence_angles_from_trajectory,
     compute_look_angles_from_trajectory,
 )
-from arepytools.geometry.inverse_geocoding import inverse_geocoding_monostatic
+from arepytools.geometry.inverse_geocoding_core import inverse_geocoding_monostatic_core
+from arepytools.geometry.orbit import Orbit
 from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
+from numpy.typing import ArrayLike
 from shapely import Polygon
 
 
-class NovaSAR1DopplerPolynomial:
-    """Arepyextras-quality Doppler Function protocol compliant NovaSAR-1 doppler polynomial wrapper"""
+class RADARSAT2DopplerPolynomial:
+    """Arepyextras-quality Doppler Function protocol compliant RADARSAT-2 doppler polynomial wrapper"""
 
     def __init__(self, sorted_poly: SortedPolyList) -> None:
         self._sorted_poly = sorted_poly
@@ -67,16 +67,18 @@ class NovaSAR1DopplerPolynomial:
         return self._sorted_poly.evaluate((azimuth_time, range_time))
 
 
-class NovaSAR1ProductManager:
-    """SCTInputProduct protocol compliant NovaSAR-1 wrapper"""
+class RADARSAT2ProductManager:
+    """SCTInputProduct protocol compliant RADARSAT-2 wrapper"""
 
-    def __init__(self, path: Union[str, Path]) -> None:
+    def __init__(self, path: str | Path) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
-        self._metadata = read_product_metadata(self._product.metadata_file)
         region_corners = list(product(self._product.footprint[:2], self._product.footprint[2:]))
         self._footprint = Polygon(region_corners)
+        self._metadata = read_product_metadata(
+            xml_path=self._product.metadata_file, beta_calibration_xml=self._product.beta_calibration_lut_file
+        )
 
     @property
     def path(self) -> Path:
@@ -94,11 +96,16 @@ class NovaSAR1ProductManager:
         return self._footprint
 
     @property
+    def metadata(self) -> str:
+        """Get product metadata content"""
+        return self._metadata
+
+    @property
     def channels_list(self) -> list[str]:
         """Get list of available channels for this product"""
         return self._product.channels_list
 
-    def get_channel_data(self, channel_id: str) -> NovaSAR1ChannelManager:
+    def get_channel_data(self, channel_id: str) -> RADARSAT2ChannelManager:
         """Gathering all the information that are channel dependent and storing them in a protocol compliant object.
 
         Parameters
@@ -108,35 +115,30 @@ class NovaSAR1ProductManager:
 
         Returns
         -------
-        NovaSAR1ChannelManager
+        RADARSAT2ChannelManager
             ChannelData-compliant object containing data corresponding to the selected channel
         """
-        return NovaSAR1ChannelManager(
-            channel_metadata=self._metadata[channel_id],
-            channel_raster_path=self._product.get_raster_files_from_channel_name(channel_id),
+        return RADARSAT2ChannelManager(
             channel_name=channel_id,
+            channel_raster_path=self._product.get_raster_file_from_channel_name(channel_name=channel_id),
+            channel_metadata=self.metadata[channel_id],
         )
 
 
-class NovaSAR1ChannelManager:
-    """Arepyextras-quality ChannelData protocol compliant NovaSAR-1 channel wrapper"""
+class RADARSAT2ChannelManager:
+    """Arepyextras-quality ChannelData protocol compliant RADARSAT channel wrapper"""
 
-    def __init__(
-        self,
-        channel_metadata: NovaSAR1ChannelMetadata,
-        channel_raster_path: Path,
-        channel_name: str,
-    ) -> None:
+    def __init__(self, channel_name: str, channel_raster_path: Path, channel_metadata: RADARSATChannelMetadata) -> None:
         """Creating a ChannelManager object compliant with the ChannelData protocol.
 
         Parameters
         ----------
-        channel_metadata : NovaSAR1ChannelMetadata
-            channel metadata dataclass
-        channel_raster_path : int
-            Path to the channel raster file
         channel_name : int
             name of current channel
+        channel_raster_path : int
+            Path to the channel raster file
+        channel_metadata : RADARSATChannelMetadata
+            metadata content for the current channel
         """
 
         self._channel_id = channel_name
@@ -181,7 +183,7 @@ class NovaSAR1ChannelManager:
             self._lines_per_burst_array = np.repeat(self._channel.raster_info.lines, 1)
 
         # pulse rate
-        self._signal_pulse_rate = self._channel.pulse.bandwidth / self._channel.pulse.pulse_length
+        self._signal_pulse_rate = None
 
         # prf
         self._prf = self._channel.swath_info.prf
@@ -190,21 +192,22 @@ class NovaSAR1ChannelManager:
         self._steering_rate_poly_coeff = self._channel.swath_info.azimuth_steering_rate_poly
 
         # generating trajectory from orbit
-        self._trajectory_rx = GSO3DCurveWrapper(orbit=self._channel.general_sar_orbit)
+        self._trajectory_rx = self._channel.orbit
         self._trajectory_tx = None
 
         # generating doppler centroid wrappers
-        self._doppler_centroid_poly = NovaSAR1DopplerPolynomial(sorted_poly=self._channel.doppler_centroid_poly)
+        self._doppler_centroid_poly = RADARSAT2DopplerPolynomial(sorted_poly=self._channel.doppler_centroid_poly)
 
+        # TODO
         # re-organizing SWST changes
-        self._swst_changes = list(
-            zip(self._channel.acquisition_timeline.swst_changes[1], self._channel.acquisition_timeline.swst_changes[2])
-        )
+        # self._swst_changes = ...
 
         # get burst boundaries
         self._burst_az_boundaries, self._burst_rng_boundaries = self._get_raster_layout()
 
-        self._corrected_calibration_constant = self._channel.image_calibration_factor
+        # axes ordering
+        self._samples_order_flip_flag = self._channel.samples_ordering == RADARSATTimeOrdering.DECREASING
+        self._lines_order_flip_flag = self._channel.lines_ordering == RADARSATTimeOrdering.DECREASING
 
     def _compute_range_step_m(self) -> float:
         """Computing step along range direction, in meters"""
@@ -226,7 +229,6 @@ class NovaSAR1ChannelManager:
             slant_rng_axis = self._channel.coordinate_conversions.evaluate_ground_to_slant(
                 azimuth_time=self._az_time_half_swath, ground_range=self._range_axis
             )
-
         return slant_rng_axis
 
     def _compute_azimuth_axis(self) -> np.ndarray:
@@ -343,9 +345,9 @@ class NovaSAR1ChannelManager:
         return self._channel.sampling_constants
 
     @property
-    def pulse_rate(self) -> float:
+    def pulse_rate(self) -> None:
         """Signal pulse rate"""
-        return self._signal_pulse_rate
+        return None
 
     @property
     def looking_side(self) -> SARSideLooking:
@@ -363,7 +365,7 @@ class NovaSAR1ChannelManager:
         return self._az_time_half_swath
 
     @property
-    def trajectory(self) -> GSO3DCurveWrapper:
+    def trajectory(self) -> Orbit:
         """Channel trajectory rx 3D curve"""
         return self._trajectory_rx
 
@@ -373,7 +375,7 @@ class NovaSAR1ChannelManager:
         return None
 
     @property
-    def doppler_centroid(self) -> NovaSAR1DopplerPolynomial:
+    def doppler_centroid(self) -> RADARSAT2DopplerPolynomial:
         """Channel doppler centroid polynomial wrapper"""
         return self._doppler_centroid_poly
 
@@ -420,7 +422,8 @@ class NovaSAR1ChannelManager:
     @property
     def swst_changes(self) -> list[tuple[PreciseDateTime, float]]:
         """SWST changes list as tuple of time of change and new SWST value"""
-        return self._swst_changes
+        # TODO: not defined yet
+        return [(0, 0)]
 
     def get_mid_burst_times(self, burst: int) -> tuple[PreciseDateTime, float]:
         """Compute mid azimuth and range times for a given burst.
@@ -469,7 +472,7 @@ class NovaSAR1ChannelManager:
         )
 
     def get_location_data(self, azimuth_time: PreciseDateTime, range_time: float) -> LocationData:
-        """Generating a LocationData object containing data and info derived from the current NovaSAR1ChannelManager
+        """Generating a LocationData object containing data and info derived from the current RADARSAT2ChannelManager
         and declined to the specific azimuth and range times selected.
 
         Parameters
@@ -497,11 +500,12 @@ class NovaSAR1ChannelManager:
             range_times=self.mid_range_time,
             look_direction=self.looking_side.value,
         )
-        v_ground = compute_ground_velocity(
-            orbit=self._channel.general_sar_orbit, time_point=azimuth_time, look_angles=look_angle
+        v_ground = compute_ground_velocity_from_trajectory(
+            trajectory=self.trajectory, azimuth_time=azimuth_time, look_angles_rad=look_angle
         )
         azimuth_step_m = self.azimuth_step_s * v_ground
 
+        # TODO: this should be a common feature, also: slant_range_step_m, not range_step_m
         if self.projection == SARProjection.SLANT_RANGE:
             ground_range_step_m: float = self.range_step_m / np.sin(incidence_angle)
             range_step_m = self.range_step_m
@@ -542,6 +546,13 @@ class NovaSAR1ChannelManager:
             range time
         """
 
+        # TODO: check this
+        if self._lines_order_flip_flag:
+            azimuth_index = self._channel.raster_info.lines - azimuth_index
+
+        if self._samples_order_flip_flag:
+            range_index = self._channel.raster_info.samples - range_index
+
         start_time_rng = self._channel.raster_info.samples_start
         if self._channel.burst_info.num > 0 and burst is not None:
             start_time_az = self._channel.burst_info.azimuth_start_times[burst]
@@ -562,7 +573,7 @@ class NovaSAR1ChannelManager:
         return az_time, rng_time
 
     def times_to_pixel_conversion(
-        self, azimuth_time: PreciseDateTime, range_time: float, burst: int = None
+        self, azimuth_time: PreciseDateTime, range_time: float, burst: int | None = None
     ) -> tuple[float, float]:
         """Converting azimuth and range times to raster image pixels indexes with subpixel precision.
 
@@ -572,8 +583,8 @@ class NovaSAR1ChannelManager:
             azimuth time
         range_time : float
             range time
-        burst : int
-            burst number corresponding to these times
+        burst : int | None, optional
+            burst number corresponding to these times, by default None
 
         Returns
         -------
@@ -590,6 +601,10 @@ class NovaSAR1ChannelManager:
             )
 
         rng_idx = (rng_value - self._channel.raster_info.samples_start) / self._channel.raster_info.samples_step
+        # TODO: check this
+        if self._samples_order_flip_flag:
+            rng_idx = self._channel.raster_info.samples - rng_idx
+
         if self._channel.burst_info.num > 0:
             if burst is None:
                 burst = self.times_to_burst_association([azimuth_time])[0]
@@ -599,48 +614,74 @@ class NovaSAR1ChannelManager:
         else:
             azmth_idx = (azimuth_time - self._channel.raster_info.lines_start) / self._channel.raster_info.lines_step
 
+        # TODO: check this
+        if self._lines_order_flip_flag:
+            azmth_idx = self._channel.raster_info.lines - azmth_idx
+
         return azmth_idx, rng_idx
 
-    def ground_points_to_burst_association(self, coordinates: npt.ArrayLike) -> list[Union[list[int], None]]:
+    def ground_points_to_burst_association(self, coordinates: ArrayLike) -> list[list[int] | None]:
         """Determining the burst (or bursts) where the input coordinates lie. If no association can be found (i.e. the
         point is not visible in the scene), None is returned.
 
         Parameters
         ----------
-        coordinates : npt.ArrayLike
+        coordinates : ArrayLike
             array of coordinates, in the form (N, 3)
 
         Returns
         -------
-        list[Union[list[int], None]]
+        list[list[int] | None]
             list containing the burst association for each input point, None if no association was found
         """
 
         coordinates = np.atleast_2d(coordinates)
 
-        t_azmth, t_rng = inverse_geocoding_monostatic(
-            orbit=self._channel.general_sar_orbit,
-            ground_points=coordinates,
-            wavelength=1,
-            frequencies_doppler_centroid=0,
-        )
+        t_azmth, t_rng = [], []
+        for coord in coordinates:
+            try:
+                t_azmth_i, t_rng_i = inverse_geocoding_monostatic_core(
+                    trajectory=self.trajectory,
+                    ground_points=coord,
+                    wavelength=1,
+                    frequencies_doppler_centroid=0,
+                    initial_guesses=self.mid_azimuth_time,
+                )
+                t_azmth.append(t_azmth_i)
+                t_rng.append(t_rng_i)
+            except Exception:
+                t_azmth.append(np.nan)
+                t_rng.append(np.nan)
 
-        az_check = [[(t < az[1] and t > az[0]) for az in self._burst_az_boundaries] for t in t_azmth]
-        rng_check = [[(t < rng[1] and t > rng[0]) for rng in self._burst_rng_boundaries] for t in t_rng]
+        t_azmth = np.asarray(t_azmth)
+        t_rng = np.asarray(t_rng)
+
+        az_check = [
+            (
+                [(t < az[1] and t > az[0]) for az in self._burst_az_boundaries]
+                if isinstance(t, PreciseDateTime)
+                else [False]
+            )
+            for t in t_azmth
+        ]
+        rng_check = [
+            [(t < rng[1] and t > rng[0]) for rng in self._burst_rng_boundaries] if ~np.isnan(t) else [False]
+            for t in t_rng
+        ]
         check = [np.logical_and(az_check[c], rng_check[c]) for c in range(len(az_check))]
 
         bursts = [list(np.where(c)[0]) if c.any() else None for c in check]
 
         return bursts
 
-    def times_to_burst_association(self, azimuth_times: npt.ArrayLike) -> list[int]:
+    def times_to_burst_association(self, azimuth_times: ArrayLike) -> list[int]:
         """Associate the right burst to a given input time point. This function returns 1 association for each
         input time.
         Associating time only to the first burst containing it.
 
         Parameters
         ----------
-        azimuth_time : npt.ArrayLike
+        azimuth_time : ArrayLike
             azimuth time array in PreciseDateTime format
 
         Returns
@@ -676,13 +717,13 @@ class NovaSAR1ChannelManager:
 
         return bursts
 
-    def pixel_to_burst_association(self, azimuth_px_indexes: npt.ArrayLike) -> list[int]:
+    def pixel_to_burst_association(self, azimuth_px_indexes: ArrayLike) -> list[int]:
         """Associate the azimuth pixel value to the right burst. This function returns 1 association for each
         input time.
 
         Parameters
         ----------
-        azimuth_px_indexes : npt.ArrayLike
+        azimuth_px_indexes : ArrayLike
             azimuth pixel indexes array
 
         Returns
@@ -781,20 +822,23 @@ class NovaSAR1ChannelManager:
         data = read_channel_data(
             raster_file=self._raster_file,
             block_to_read=target_block,
-            scaling_conversion=self._corrected_calibration_constant,
+            scaling_conversion=self._channel.image_calibration_factor,
         ).T
 
         # converting to beta nought if radiometric quantity is different
         if self._radiometric_quantity != output_radiometric_quantity:
             azimuth_time, _ = self.pixel_to_times_conversion(azimuth_index=azimuth_index, range_index=range_index)
-            incidence_angles_deg_from_poly = self._channel.incidence_angles_poly.evaluate_incidence_angle(
-                azimuth_time=azimuth_time, range_pixels=np.arange(target_block[1], target_block[1] + target_block[3], 1)
+            incidence_angles = compute_incidence_angles_from_trajectory(
+                trajectory=self.trajectory,
+                azimuth_time=azimuth_time,
+                range_times=self._slant_range_axis[target_block[1] : target_block[1] + target_block[3]],
+                look_direction=self.looking_side.value,
             )
             data = radiometric_correction(
                 data=data,
-                incidence_angle=np.deg2rad(incidence_angles_deg_from_poly),
+                incidence_angle=incidence_angles,
                 input_quantity=self._radiometric_quantity,
-                output_quantity=SARRadiometricQuantity.BETA_NOUGHT,
+                output_quantity=output_radiometric_quantity,
             )
 
         return data

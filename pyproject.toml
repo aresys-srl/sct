@@ -60,7 +60,12 @@ build-backend = "pdm.backend"
 distribution = true
 
 [tool.pdm.dev-dependencies]
-dev = ["nox", "black", "isort", "pylint"]
+dev = [
+    "nox",
+    "black",
+    "isort",
+    "pylint",
+]
 test = ["unittest-xml-reporting", "coverage", "arepyextras-test"]
 doc = [
     "ipython",

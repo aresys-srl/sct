@@ -112,6 +112,10 @@ def convert_point_target_file_xml_to_df(source: Union[str, Path]) -> pd.DataFram
     """
     point_targets = read_point_targets_file(xml_file=source)
     coords = np.stack([c.xyz_coordinates for c in point_targets.values()])
+    rcs_hh = np.array([c.rcs_hh for c in point_targets.values()])
+    rcs_hv = np.array([c.rcs_hv for c in point_targets.values()])
+    rcs_vh = np.array([c.rcs_vh for c in point_targets.values()])
+    rcs_vv = np.array([c.rcs_vv for c in point_targets.values()])
     delays = [c.delay for c in point_targets.values()]
     df = pd.DataFrame(["cr_" + f"{int(k):02}" for k in list(point_targets.keys())], columns=["target_name"])
     df = df.assign(
@@ -127,6 +131,10 @@ def convert_point_target_file_xml_to_df(source: Union[str, Path]) -> pd.DataFram
         measurement_date=PreciseDateTime(),
         validity_start_date=PreciseDateTime(),
         validity_stop_date=PreciseDateTime.from_numeric_datetime(3000),
+        rcs_hh_dB=convert_to_db(np.abs(rcs_hh)),
+        rcs_hv_dB=convert_to_db(np.abs(rcs_hv)),
+        rcs_vh_dB=convert_to_db(np.abs(rcs_vh)),
+        rcs_vv_dB=convert_to_db(np.abs(rcs_vv)),
     )
     return df
 

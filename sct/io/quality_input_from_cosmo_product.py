@@ -128,8 +128,6 @@ class COSMOChannelManager:
 
         Parameters
         ----------
-        channel_metadata : COSMOChannelMetadata
-            channel metadata dataclass for the current channel
         product_path : int
             Path to the product
         channel_name : int
@@ -167,15 +165,6 @@ class COSMOChannelManager:
                 azimuth_time=self._az_time_half_swath, ground_range=np.floor(rng_time_half_swath)
             )
         self._rng_time_half_swath = rng_time_half_swath
-
-        # lines per burst array
-        if self._channel.burst_info.num > 0:
-            self._lines_per_burst_array = np.repeat(
-                self._channel.burst_info.lines_per_burst, self._channel.burst_info.num
-            )
-        else:
-            # should be a 1D array
-            self._lines_per_burst_array = np.repeat(self._channel.raster_info.lines, 1)
 
         # lines per burst array
         if self._channel.burst_info.num > 0:

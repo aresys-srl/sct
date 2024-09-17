@@ -17,6 +17,7 @@ from arepyextras.eo_products.cosmo.l1_products.utilities import is_cosmo_product
 from arepyextras.eo_products.eos.l1_products.utilities import is_eos04_product
 from arepyextras.eo_products.iceye.l1_products.utilities import is_iceye_product
 from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_product
+from arepyextras.eo_products.radarsat.l1_products.utilities import is_radarsat_product
 from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
 from arepyextras.eo_products.saocom.l1_products.utilities import is_saocom_product
 from arepyextras.quality.io.quality_input_from_product_folder import ProductFolderManager
@@ -28,6 +29,7 @@ from sct.io.quality_input_from_cosmo_product import COSMOProductManager
 from sct.io.quality_input_from_eos04_product import EOS04ProductManager
 from sct.io.quality_input_from_iceye_product import ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
+from sct.io.quality_input_from_radarsat2_product import RADARSAT2ProductManager
 from sct.io.quality_input_from_saocom_product import SAOCOMProductManager
 from sct.io.quality_input_from_sentinel1_product import Sentinel1ProductManager
 
@@ -49,6 +51,7 @@ class SupportedInputProductType(Enum):
     SAOCOM = auto()
     EOS04 = auto()
     COSMO = auto()
+    RADARSAT2 = auto()
     UNKNOWN = auto()
 
 
@@ -96,6 +99,9 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
 
     if is_cosmo_product(product):
         return SupportedInputProductType.COSMO
+
+    if is_radarsat_product(product):
+        return SupportedInputProductType.RADARSAT2
 
     return SupportedInputProductType.UNKNOWN
 
@@ -166,6 +172,9 @@ def product_loader(
         case SupportedInputProductType.COSMO:
             log.info("Product type: COSMO SkyMed")
             product = COSMOProductManager(product_path)
+        case SupportedInputProductType.RADARSAT2:
+            log.info("Product type: RADARSAT-2")
+            product = RADARSAT2ProductManager(product_path)
         case _:
             raise InvalidProductType(f"Unknown product type for product {str(product_path)}")
 
