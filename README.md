@@ -11,6 +11,7 @@ Supported products:
 - NovaSAR-1
 - EOS-04
 - COSMO SkyMed
+- RADARSAT-2
 
 Supported analyses:
 
