@@ -133,8 +133,8 @@ build_package:
   artifacts:
     expire_in: 2 weeks
     paths:
-      - ${SUBPROJECT}/dist/*.tar.gz
-      - ${SUBPROJECT}/dist/*.whl
+      - dist/*.tar.gz
+      - dist/*.whl
 
 conda_pkg:
   stage: build
@@ -195,12 +195,12 @@ deploy_doc:
   script:
     - eval "$(ssh-agent)"
     - cat "$DASHBOARD_PRIVATE_KEY" | base64 -d | ssh-add -
-    - for file in ${SUBPROJECT}/docs/build/*.zip; do
+    - for file in docs/build/*.zip; do
       eo_pgp-signme ${file} > ${file}.asc &&
       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
-    - unzip ${SUBPROJECT}/docs/build/*.zip
-    - mv *${SUBPROJECT}*-html-doc ${PACKAGE_VERSION}
+    - unzip docs/build/*.zip
+    - mv *-html-doc ${PACKAGE_VERSION}
     - rsync --stats -r ${PACKAGE_VERSION} sardashboard@intranet.aresys.it:develop/sct/docs
     - ssh sardashboard@intranet.aresys.it "cd develop/sct/docs && rm latest && ln -s ${PACKAGE_VERSION} latest"
