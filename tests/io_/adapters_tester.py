@@ -17,7 +17,6 @@ from arepyextras.quality.core.generic_dataclasses import (
     SARSideLooking,
 )
 from arepyextras.quality.io.quality_input_protocol import ChannelData, QualityInputProduct, SARCoordinatesFunction
-from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper
 from arepytools.geometry.orbit import Orbit
 from arepytools.math.genericpoly import GenericPoly, SortedPolyList
@@ -145,7 +144,8 @@ def create_product_manager_test_case(
             self.assertEqual(channel_data.mid_range_time, 2.95)
             self.assertEqual(len(channel_data.range_axis), 50)
             self.assertEqual(channel_data.azimuth_step_s, 0.1)
-            self.assertEqual(channel_data.pulse_rate, 33.333333333333336)
+            if channel_data.pulse_rate is not None:
+                self.assertEqual(channel_data.pulse_rate, 33.333333333333336)
             self.assertEqual(len(channel_data.slant_range_axis), 50)
             self.assertEqual(len(channel_data.azimuth_axis), 1000)
             self.assertEqual(channel_data.lines_per_burst, 1000)

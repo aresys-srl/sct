@@ -120,7 +120,7 @@ class RADARSAT2ProductManager:
         """
         return RADARSAT2ChannelManager(
             channel_name=channel_id,
-            channel_raster_path=self._product.get_raster_file_from_channel_name(channel_name=channel_id),
+            channel_raster_path=self._product.get_raster_file_from_channel_name(channel_id),
             channel_metadata=self.metadata[channel_id],
         )
 

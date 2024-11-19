@@ -16,10 +16,10 @@ from sct.io.quality_input_from_radarsat2_product import (
 sys.path.append(str(Path(__file__).parent))
 from adapters_tester import create_polynomial_test_case, create_product_manager_test_case
 
-NOVASARDopplerPolynomialTestCase = create_polynomial_test_case(RADARSAT2DopplerPolynomial)
+RADARSATDopplerPolynomialTestCase = create_polynomial_test_case(RADARSAT2DopplerPolynomial)
 
-NOVASARProductManagerTestCase = create_product_manager_test_case(
-    RADARSAT2ProductManager, RADARSAT2ChannelManager, RADARSAT2ProductManager, "quality_input_from_radarsat2_product"
+RADARSATProductManagerTestCase = create_product_manager_test_case(
+    RADARSAT2ProductManager, RADARSAT2ChannelManager, RADARSAT2DopplerPolynomial, "quality_input_from_radarsat2_product"
 )
 
 if __name__ == "__main__":

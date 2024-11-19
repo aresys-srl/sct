@@ -19,6 +19,7 @@ class MockProduct:
     footprint: list
     channels_list: list[str]
     metadata_file = "metadata_file"
+    beta_calibration_lut_file = None
 
     def get_files_from_channel_name(self, channel_name):
         return 3 * [f"file_{channel_name}"]
@@ -52,6 +53,8 @@ class MockChannel:
     """Mock channel"""
 
     image_radiometric_quantity = MockEnum.BETA_NOUGHT
+    samples_ordering = "decreasing"
+    lines_ordering = "decreasing"
 
     class MockGeneralInfo:
         polarization = MockEnum.HH
@@ -88,6 +91,7 @@ class MockChannel:
         azimuth_steering_rate_poly = [0, 0, 0]
         azimuth_steering_rate_pol = [0, 0, 0]
         prf = 1000
+        acquisition_prf = 1000
 
     class MockGSO:
         pass

@@ -24,18 +24,18 @@ if __name__ == "__main__":
     # load custom config
 
     # path_to_config = r"C:\Users\giorgio.parma\Desktop\temporary_outputs\prova.toml"
-    path_to_config = r"C:\ARESYS_PROJ_GITHUB\sct_e2e_tests\dataset\novasar\config.toml"
+    path_to_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\eos04\config.toml"
     config = SCTConfiguration.from_toml(path_to_config)
     # config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.BETA_NOUGHT
     # config.radiometric_analysis.base_config.profile_extraction_parameters.outlier_removal = False
     # config.radiometric_analysis.base_config.profile_extraction_parameters.smoothening_filter = False
     # config = config.radiometric_analysis
 
-    output_dir = r"C:\Users\giorgio.parma\Desktop\temporary_outputs"
+    output_dir = r"C:\Users\giorgio.parma\Desktop\temporary_outputs\eos"
 
-    prod = r"C:\ARESYS_PROJ_GITHUB\sct_e2e_tests\dataset\sentinel\S1A_IW_SLC__1SDH_20230404T184811_20230404T184841_047950_05C340_1EA0.SAFE"
-    output = ra.nesz_analysis(product_path=prod)
-    # output = ra.average_elevation_profile_analysis(product_path=prod, output_quantity=SARRadiometricQuantity.GAMMA_NOUGHT, config=config)
+    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\eos04\L1B_GRD\244711611"
+    output = ra.nesz_analysis(product_path=prod, config=config.radiometric_analysis)
+    # output = ra.average_elevation_profile_analysis(product_path=prod, output_quantity=SARRadiometricQuantity.GAMMA_NOUGHT, config=config.radiometric_analysis)
     tag = "NESZ"
     mode = "min"
 

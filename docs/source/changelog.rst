@@ -7,11 +7,16 @@ v1.0.2
 **Additional Features**
 
 - IO: introduced support for COSMO SkyMed product format
+- IO: introduced support for RADARSAT 2 product format
 
 **Bug Fixing**
 
 - Fixed computation of ground range step and slant range step in meters for GRD products
 - Fixed Point Target Binary reader after Arepytools bugfix
+
+**Other changes**
+
+- Introduced PDM
 
 v1.0.1
 ------
