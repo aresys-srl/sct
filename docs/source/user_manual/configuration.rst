@@ -109,7 +109,7 @@ The following parameters can be configured directly under the `point_target_anal
     evaluate_islr = true            # on/off ISLR computation
     evaluate_sslr = true            # on/off SSLR computation
     evaluate_localization = true    # on/off Localization Errors computation
-    ale_validity_limits = [x, y]    # set Absolute Localization Error validity limits in meters [rng, az]
+    ale_validity_limits = [99, 99]  # set Absolute Localization Error validity limits in meters [rng, az]
 
 .. note::
 
@@ -306,8 +306,8 @@ The following parameters can be configured directly under the `interferometric_a
     [interferometric_analysis]
     enable_coherence_computation = false        # enable/disable coherence computation (to be enabled for interferogram products)
     coherence_kernel = [15, 15]                 # kernel size for coherence computation
-    azimuth_blocks_number = x                   # number of azimuth blocks for computing coherence 2D histogram
-    range_blocks_number = y                     # number of range blocks for computing coherence 2D histogram
+    azimuth_blocks_number = 1                   # number of azimuth blocks for computing coherence 2D histogram
+    range_blocks_number = 1                     # number of range blocks for computing coherence 2D histogram
     coherence_bins_number = 80                  # number of coherence intensity bins
 
 .. admonition:: Validation
