@@ -193,7 +193,7 @@ def radiometric_analysis_average_profiles(
     log.info(f"Selected output quantity is: {output_radiometric_quantity.name}")
 
     click.echo("\n")
-    txt = art.text2art("Radiometric   Profiles   Analysis", font="doom")
+    txt = art.text2art("Radiometric  Analysis", font="doom")
     click.echo(txt + "\n")
 
     start = time.perf_counter_ns()
@@ -273,7 +273,7 @@ def radiometric_analysis_scalloping(config: SCTConfiguration, product: Path, out
     log.info(f"Selected product is: {product}")
 
     click.echo("\n")
-    txt = art.text2art("Scalloping   Profiles   Analysis", font="doom")
+    txt = art.text2art("Scalloping   Profiles", font="doom")
     click.echo(txt + "\n")
 
     start = time.perf_counter_ns()
