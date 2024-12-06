@@ -42,10 +42,6 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-[project.optional-dependencies]
-cli = ["click", "requests"]
-graphs = ["matplotlib >= 3.5", "arepyextras-quality[graphs]"]
-
 [project.scripts]
 sct = "sct.__main__:main"
 sct-rosamond-data-to-csv = "sct.cli.utility_commands_cli:convert_rosamond_csv"
@@ -59,7 +55,9 @@ build-backend = "pdm.backend"
 [tool.pdm]
 distribution = true
 
-[tool.pdm.dev-dependencies]
+[project.optional-dependencies]
+cli = ["click", "requests"]
+graphs = ["matplotlib >= 3.5", "arepyextras-quality[graphs]"]
 dev = [
     "nox",
     "black",
