@@ -28,30 +28,29 @@ variables:
 
 # === analysis ===============================================================
 # ============================================================================
-pylint:
+check_code_compliance_ruff:
   stage: analysis
   extends:
-    - .tags_conda
+    - .tags_manylinux_2_28
   script:
-    - pip install nox
-    - python -m nox -s pylint
+    - python3.12 -m pip install nox
+    - python3.12 -m nox -s check_format
 
-format:
+check_code_compliance_pylint:
   stage: analysis
   extends:
-    - .tags_conda
+    - .tags_manylinux_2_28
   script:
-    - pip install nox
-    - python -m nox -s format_check
+    - python3.12 -m pip install nox
+    - python3.12 -m nox -s pylint
 
 # === test - unittest ========================================================
 # ============================================================================
 unittest_linux:
   stage: test
   script:
-    - pdm use python${PYTHON}
-    - python3 -m pip install nox
-    - python3 -m nox -s unittest -p ${PYTHON}
+    - python3.12 -m pip install nox
+    - python3.12 -m nox -s unittest -p ${PYTHON}
   parallel:
     matrix:
       - PYTHON: ["3.10", "3.11", "3.12"]
@@ -69,8 +68,6 @@ unittest_linux:
 unittest_win:
   stage: test
   script:
-    - $py_vers = ${PYTHON}.replace(".", "")
-    - pdm use python$py_vers
     - python -m pip install nox
     - python -m nox -s unittest -p ${PYTHON}
   parallel:
@@ -92,10 +89,10 @@ unittest_win:
 integration_test_linux:
   stage: test
   script:
-    - pdm use python3
-    - eval $(pdm venv activate)
-    - pdm sync -d -G:all
-    - pdm integration_tests ./tests/integration_tests/config/linux.toml
+    - python${PYTHON} -m venv ./ci_test
+    - source ./ci_test/bin/activate
+    - python -m pip install .[test]
+    - python -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
   parallel:
     matrix:
       - PYTHON: ["3.10", "3.11", "3.12"]
@@ -106,10 +103,8 @@ integration_test_windows:
   stage: test
   script:
     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-    - conda create -y -n test python=${PYTHON}
-    - conda activate test
-    - python -m pip install arepyextras-test
-    - python -m pip install setuptools
+    - conda create -y -n integration_test python=${PYTHON}
+    - conda activate integration_test
     - python -m pip install -e .[test]
     - mkdir -p tdir
     - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run ./tests/integration_tests/suite
@@ -121,19 +116,28 @@ integration_test_windows:
 
 # === build ==================================================================
 # ============================================================================
-build_package:
+sdist:
   stage: build
-  extends: .tags_manylinux_2_28
+  extends:
+    - .tags_manylinux_2_28
   script:
-    - pdm use python3
-    - eval $(pdm venv activate)
-    - pdm sync -d
-    - pdm build
-  needs: []
+    - python3.12 -m pip install nox
+    - python3.12 -m nox -s build_sdist
   artifacts:
     expire_in: 2 weeks
     paths:
       - dist/*.tar.gz
+
+wheel:
+  stage: build
+  extends:
+    - .tags_manylinux_2_28
+  script:
+    - python3.12 -m pip install nox
+    - python3.12 -m nox -s build_wheel
+  artifacts:
+    expire_in: 2 weeks
+    paths:
       - dist/*.whl
 
 conda_pkg:
@@ -155,8 +159,8 @@ doc:
     - .tags_manylinux_2_28
   script:
     - yum install -y pandoc
-    - python3 -m pip install nox
-    - python3 -m nox -s build_doc
+    - python3.12 -m pip install nox
+    - python3.12 -m nox -s build_doc
   needs: []
   artifacts:
     expire_in: 2 weeks

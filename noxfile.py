@@ -11,8 +11,6 @@ from pathlib import Path
 
 import nox
 
-os.environ.update({"PDM_IGNORE_SAVED_PYTHON": "1"})
-
 nox.options.error_on_missing_interpreters = True
 
 _LICENSE_HEADER = """# SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
@@ -25,14 +23,23 @@ PLATFORM = "win" if WIN32 else "linux"
 
 
 @nox.session()
-def format_check(session: nox.Session):
-    """Check formatting of python files"""
-    session.install("isort", "black")
-    session.run("python", "-m", "isort", "--check", ".")
-    session.run("python", "-m", "black", "--check", ".")
+def fix_format(session: nox.Session):
+    """Reformat code base with ruff"""
+    session.install("ruff")
+    session.run("ruff", "check", "--select", "I", "--fix-only")
+    session.run("ruff", "format")
+
+
+@nox.session()
+def check_format(session: nox.Session):
+    """Check proper formatting with ruff. Check presence of license header"""
+    session.install("ruff")
+    session.run("ruff", "--version")
+    session.run("ruff", "format", "--check")
+    session.run("ruff", "check")
 
     def wrong_license_header(file: str) -> bool:
-        with open(file, "r", encoding="UTF-8") as ifile:
+        with open(file, "r", encoding="utf-8") as ifile:
             header = ifile.readline() + ifile.readline() + ifile.readline()
             return header != _LICENSE_HEADER
 
@@ -47,9 +54,52 @@ def format_check(session: nox.Session):
 
 @nox.session()
 def pylint(session: nox.Session):
-    """Linting with pylint"""
+    """Analysis of code-base quality with pylint"""
     session.install("pylint")
     session.run("python", "-m", "pylint", "sct")
+
+
+@nox.session(python=PY_VERSIONS)
+def unittest(session: nox.Session):
+    """Execute unittest"""
+    Path("_build").mkdir(exist_ok=True)
+
+    session.install("-e", ".[cli,test,graph]")
+    session.run(
+        "python",
+        "-m",
+        "coverage",
+        "run",
+        "--source=arepytools",
+        "-m",
+        "xmlrunner",
+        "--output-file",
+        f"_build/unittest-report-{PLATFORM}-py{session.python}.xml",
+        "discover",
+    )
+    session.run("python", "-m", "coverage", "report", "-m")
+    session.run(
+        "python",
+        "-m",
+        "coverage",
+        "xml",
+        "-o",
+        f"_build/unittest-coverage-{PLATFORM}-py{session.python}.xml",
+    )
+
+
+@nox.session()
+def build_sdist(session: nox.Session):
+    """Build source distribution package"""
+    session.install("build")
+    session.run("python", "-m", "build", "--sdist", silent=True)
+
+
+@nox.session()
+def build_wheel(session: nox.Session):
+    """Build wheel distribution package"""
+    session.install("build")
+    session.run("python", "-m", "build", "--wheel", silent=True)
 
 
 def _get_only_file_matching_in_dir(directory: Path, pattern: str):
@@ -91,36 +141,6 @@ def build_conda_pkg(session: nox.Session):
     shutil.copy(str(package), "dist")
 
 
-@nox.session(python=PY_VERSIONS)
-def unittest(session: nox.Session):
-    """Module testing with unittest"""
-    Path("_build").mkdir(exist_ok=True)
-
-    session.run_always("pdm", "sync", "-d", "-G:all", external=True)
-
-    session.run(
-        "python",
-        "-m",
-        "coverage",
-        "run",
-        "--source=sct",
-        "-m",
-        "xmlrunner",
-        "--output-file",
-        f"_build/unittest-report-{PLATFORM}-py{session.python}.xml",
-        "discover",
-    )
-    session.run("python", "-m", "coverage", "report", "-m")
-    session.run(
-        "python",
-        "-m",
-        "coverage",
-        "xml",
-        "-o",
-        f"_build/unittest-coverage-{PLATFORM}-py{session.python}.xml",
-    )
-
-
 @nox.session()
 def build_doc(session: nox.Session):
     """Building documentation"""
@@ -131,10 +151,10 @@ def build_doc(session: nox.Session):
     else:
         build_dir = "docs/build/"
 
-    session.run_always("pdm", "sync", "-d", "-G:all", external=True)
+    session.install("-e", ".[doc]")
 
-    session.run("pdm", "clean_doc", build_dir)
-    session.run("pdm", "build_doc", build_dir)
+    session.run("python", "-m", "sphinx", "-M", "clean", "docs/source", build_dir)
+    session.run("python", "-m", "sphinx", "-b", "html", "docs/source", build_dir)
 
     if os.getenv("CI") == "true":
         session.log(f"compressing '{build_dir}'")
