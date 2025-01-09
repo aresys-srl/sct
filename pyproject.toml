@@ -17,7 +17,7 @@ dependencies = [
     "art",
     "appdirs",
     "arepytools >= 1.7.2",
-    "arepyextras-quality >= 1.2.2",
+    "arepyextras-quality >= 2.0.2",
     "arepyextras-perturbations >= 1.1",
     "arepyextras-eo_products >= 1.1.0",
     "scipy<1.14",
@@ -61,11 +61,7 @@ only-include = ["sct", "tests", "docs"]
 [project.optional-dependencies]
 cli = ["click", "requests"]
 graphs = ["matplotlib >= 3.5", "arepyextras-quality[graphs]"]
-dev = [
-    "nox",
-    "ruff",
-    "pylint",
-]
+dev = ["nox", "ruff", "pylint"]
 test = ["unittest-xml-reporting", "coverage", "arepyextras-test"]
 doc = [
     "ipython",
@@ -79,12 +75,7 @@ doc = [
 [tool.ruff]
 line-length = 120
 output-format = "grouped"
-extend-exclude = [
-    ".venv",
-    "notebooks",
-    "scripts",
-    "docs",
-]
+extend-exclude = [".venv", "notebooks", "scripts", "docs"]
 
 [tool.ruff.format]
 docstring-code-format = true
