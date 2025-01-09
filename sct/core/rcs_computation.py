@@ -14,8 +14,8 @@ from arepytools.geometry.conversions import xyz2llh
 def compute_rcs_trihedral_corner_reflector(
     cr_arm_length_m: float, wavelength_m: float, elevation_rad: npt.ArrayLike, azimuth_rad: npt.ArrayLike
 ) -> npt.ArrayLike:
-    """Computes the Radar Cross Section (RCS) of a trihedral corner reflector (CR) as observed by a radar source emitting
-    at a certain wavelength.
+    """Computes the Radar Cross Section (RCS) of a trihedral corner reflector (CR) as observed by a radar source
+    emitting at a certain wavelength.
     The function requires in input the size (arm length) of the CR, the frequency of the radar source, and the angular
     coordinates of the radar source as see by the corner reflector.
 
@@ -127,7 +127,8 @@ def compute_elevation_azimuth_wrt_enu(pos_cr: np.ndarray, pos_sat: np.ndarray) -
     .. math::
         E=\\arcsin(\\hat {\\boldsymbol \\rho}\\cdot \\hat{\\mathbf u})
 
-        A=\\arctan \\left (\\frac{\\hat {\\boldsymbol \\rho}\\cdot \\hat{\\mathbf e}}{\\hat {\\boldsymbol \\rho}\\cdot \\hat{\\mathbf n}}\\right )
+        A=\\arctan \\left (\\frac{\\hat {\\boldsymbol \\rho}\\cdot \\hat{\\mathbf e}}{\\hat {\\boldsymbol \\rho}\\cdot
+        \\hat{\\mathbf n}}\\right )
 
     N.B. elevation and azimuth here computed are expressed wrt local ENU reference frame, not wrt boresight
 

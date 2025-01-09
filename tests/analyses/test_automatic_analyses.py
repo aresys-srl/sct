@@ -5,6 +5,7 @@
 SCT automatic Unittest module
 -----------------------------------------
 """
+
 import unittest
 from pathlib import Path
 
@@ -14,9 +15,7 @@ from sct.analyses.automatic_analyses import CalibrationSite
 
 
 class CalibrationSiteTestCase(unittest.TestCase):
-
     def test_calibration_site_init(self):
-
         site = CalibrationSite(
             name="NewSite",
             region=[],

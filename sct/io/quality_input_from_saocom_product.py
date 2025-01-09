@@ -215,6 +215,7 @@ class SAOCOMChannelManager:
                 zip(
                     self._channel.acquisition_timeline.swst_changes[1],
                     self._channel.acquisition_timeline.swst_changes[2],
+                    strict=False,
                 )
             )
         else:

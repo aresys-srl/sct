@@ -48,7 +48,8 @@ def compute_geodynamics_corrections(
     solid_tides_input: SolidTidesInput | None,
     plate_tectonics_input: PlateTectonicsInput | None,
 ) -> np.ndarray | None:
-    """Geophysics corrections management: computing solid tides and/or plate tectonic displacements of input coordinates.
+    """Geophysics corrections management: computing solid tides and/or plate tectonic displacements of input
+    coordinates.
 
     Parameters
     ----------

@@ -265,7 +265,7 @@ class SCTConfigurationTest(unittest.TestCase):
     def test_partial_config_reading(self) -> None:
         """Test full configuration reading"""
         partial_toml = """
-        
+
         [point_target_analysis]
         perform_irf = false
         evaluate_islr = true
@@ -347,7 +347,7 @@ class SCTConfigurationTest(unittest.TestCase):
     def test_reading_errors_0(self) -> None:
         """Test reading with errors"""
         partial_toml = """
-        
+
         [point_target_analysis.corrections]
         enable_ionospheric_correction = true
 
@@ -362,7 +362,7 @@ class SCTConfigurationTest(unittest.TestCase):
     def test_reading_errors_1(self) -> None:
         """Test reading with errors"""
         partial_toml = """
-        
+
         [point_target_analysis.corrections]
         enable_tropospheric_correction = true
 
@@ -377,7 +377,7 @@ class SCTConfigurationTest(unittest.TestCase):
     def test_reading_errors_2(self) -> None:
         """Test reading with errors"""
         partial_toml = """
-        
+
         [radiometric_analysis]
         input_quantity = "nought"
 

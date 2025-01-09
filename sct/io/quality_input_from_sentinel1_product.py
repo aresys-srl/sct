@@ -225,7 +225,11 @@ class Sentinel1ChannelManager:
 
         # re-organizing SWST changes
         self._swst_changes = list(
-            zip(self._channel.acquisition_timeline.swst_changes[1], self._channel.acquisition_timeline.swst_changes[2])
+            zip(
+                self._channel.acquisition_timeline.swst_changes[1],
+                self._channel.acquisition_timeline.swst_changes[2],
+                strict=False,
+            )
         )
 
         # get burst boundaries

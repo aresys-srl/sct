@@ -72,7 +72,6 @@ def _compute_theoretical_rcs(
 
     results = []
     for _, row in data_df.iterrows():
-
         curr_point_target = point_targets_df[point_targets_df["target_name"] == row["target_name"]]
 
         cr_arm_length = curr_point_target["target_size_m"].iloc[0]

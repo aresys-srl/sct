@@ -102,10 +102,12 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
         """Error on invalid product"""
         with TemporaryDirectoriesAndConfFile() as (product, output_dir, conf_file):
             self.test_configuration.dump_to_toml(conf_file)
-            command_args = f"--config {conf_file} {self.command} elevation_profile -p {product} -out {output_dir} -r gamma -g".split()
+            command_args = (
+                f"--config {conf_file} {self.command} elevation_profile -p {product} -out {output_dir} " + "-r gamma -g"
+            )
             result = self.cli_runner.invoke(
                 sct_analysis,
-                command_args,
+                command_args.split(),
             )
             self.assertEqual(result.exit_code, 1)
 

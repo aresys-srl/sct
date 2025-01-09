@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 """Integration test script to test the whole application using reference well known data"""
+
 import json
 import sys
 from pathlib import Path
@@ -9,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
-from arepyextras.test import DataRepository, Environment, TestSession, skip, skip_if
+from arepyextras.test import DataRepository, Environment, TestSession, skip_if
 from netCDF4 import Dataset
 
 from sct.analyses.automatic_analyses import sct_automatic_analysis

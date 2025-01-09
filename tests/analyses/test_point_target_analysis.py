@@ -5,6 +5,7 @@
 SCT point target analysis Unittest module
 -----------------------------------------
 """
+
 import unittest
 from unittest import mock
 

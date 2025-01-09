@@ -5,6 +5,7 @@
 RADARSAT-2 format Arepyextras-Quality protocol-compliant wrapper
 ----------------------------------------------------------------
 """
+
 from __future__ import annotations
 
 from itertools import product

@@ -81,6 +81,8 @@ line-length = 120
 output-format = "grouped"
 extend-exclude = [
     ".venv",
+    "notebooks",
+    "scripts",
     "docs",
 ]
 

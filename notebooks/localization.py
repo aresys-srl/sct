@@ -159,7 +159,6 @@ for slant_range, azimuth, sr_label, az_label in (
     ("slant_range_localization_error_[m]", "azimuth_localization_error_[m]", "Slant range ALE [m]", "Azimuth ALE [m]"),
     ("revised_ale_range_[m]", "revised_ale_azimuth_[m]", "Slant range ALE revised [m]", "Azimuth ALE revised [m]"),
 ):
-
     g = sns.JointGrid(height=10)
 
     sns.scatterplot(
@@ -212,9 +211,7 @@ for variable, label in (
     ("azimuth_localization_error_[m]", "Azimuth ALE [m]"),
     ("revised_ale_azimuth_[m]", "Azimuth ALE revised [m]"),
 ):
-
     for x_var, x_label in x_axes:
-
         g = sns.JointGrid(marginal_ticks=True)
         g.fig.set_figwidth(10)
         g.fig.set_figheight(4)

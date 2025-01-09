@@ -82,7 +82,7 @@ def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
     point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = coords
     point_targets_df["target_type"] = "CR"
     point_targets_df["target_name"] = [
-        item + "_" + f"{indx+1:02}" for indx, item in enumerate(point_targets_df["target_type"])
+        item + "_" + f"{indx + 1:02}" for indx, item in enumerate(point_targets_df["target_type"])
     ]
     point_targets_df["plate"] = dummy_data
     point_targets_df["delay_s"] = 0

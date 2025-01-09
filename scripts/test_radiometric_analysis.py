@@ -4,10 +4,8 @@
 """SCT: test radiometric analysis script"""
 
 import logging
-from pathlib import Path
 
 import arepyextras.quality.core.custom_logger as clg
-from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
 from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf
 

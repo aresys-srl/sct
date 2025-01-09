@@ -5,6 +5,7 @@
 SCT: the Python SAR Calibration Tool for quality data analysis
 --------------------------------------------------------------
 """
+
 from importlib import resources as res
 
 from . import resources

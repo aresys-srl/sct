@@ -84,7 +84,6 @@ y_axes = (
 
 for y_var, y_label in y_axes:
     for x_var, x_label in x_axes:
-
         sns.relplot(
             data=df.rename(columns={"swath": "Swath", "target_size_[m]": "Target size [m]"}),
             x=x_var,
@@ -122,7 +121,6 @@ for sr_var, az_var, sr_label, az_label in (
     ("range_islr_[dB]", "azimuth_islr_[dB]", "Range ISLR [dB]", "Azimuth ISLR [dB]"),
     ("range_sslr_[dB]", "azimuth_sslr_[dB]", "Range SSLR [dB]", "Azimuth SSLR [dB]"),
 ):
-
     g = sns.JointGrid(height=10)
 
     sns.scatterplot(

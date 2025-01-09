@@ -44,7 +44,7 @@ def sct_pta_graphs(
             ).to_dict("records")[0]
             label = (
                 f"target_{data_val['target_name']}_{data_val['swath']}_"
-                + f"polarization_{data_val['polarization'].replace('/','')}_"
+                + f"polarization_{data_val['polarization'].replace('/', '')}_"
                 + f"{data_val['product_type']}_b{data_val['burst']}"
             )
             pta_go.irf_graphs(

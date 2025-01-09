@@ -17,7 +17,8 @@ def compute_doppler_shift_correction(
     """Compute doppler shift correction that affects ALE along range direction.
 
     The term doppler_shift_correction should be added to the coordinate found by measurement
-    The negative sign is added so that the function returns a value that can be subtracted from the coordinate found by measurement
+    The negative sign is added so that the function returns a value that can be subtracted from the coordinate found by
+    measurement.
 
     Parameters
     ----------
@@ -134,7 +135,8 @@ def compute_real_bistatic_delay_correction(
         \\frac{\\tau_0 - \\Delta \\tau}{2}
 
     The term bistatic_delay should be added to the coordinate found by measurement
-    The negative sign is added so that the function returns a value that can be subtracted from the coordinate found by measurement
+    The negative sign is added so that the function returns a value that can be subtracted from the coordinate found by
+    measurement.
 
 
     Parameters

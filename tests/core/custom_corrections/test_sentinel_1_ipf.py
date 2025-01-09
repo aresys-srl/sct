@@ -6,10 +6,8 @@ SCT S1 custom corrections
 -------------------------
 """
 
-import sys
 import unittest
 from enum import Enum
-from pathlib import Path
 
 import pandas as pd
 from arepytools.timing.precisedatetime import PreciseDateTime

@@ -49,13 +49,15 @@ class AuxiliaryCLITestCase(unittest.TestCase):
             self.assertEqual(result.exit_code, -1)
 
     def test_rosamond_converter(self):
-        rosamond_out = """ "Corner ID","Latitude (deg)","Longitude (deg)","Height Above Ellipsoid (m)","Azimuth (deg)","Tilt / Elevation angle (deg)","Side Length (m)", "Epoch: 2024-05-24 00:00"
+        rosamond_out_1 = """"Corner ID","Latitude (deg)","Longitude (deg)","Height Above Ellipsoid (m)","""
+        rosamond_out_2 = """"Azimuth (deg)","Tilt / Elevation angle (deg)","Side Length (m)","""
+        rosamond_out = """" "Epoch: 2024-05-24 00:00"
         00,34.79696931,-118.09653087,660.7853,170.50,12.10,2.4384
         01,34.79984857,-118.08698886,661.0342,170.50,8.72,2.4384
         02,34.80523758,-118.08738926,660.7955,170.00,9.30,2.4384"""
         with TemporaryDirectory() as tmp_dir:
             input_csv = Path(tmp_dir).joinpath("rosamond.csv")
-            input_csv.write_text(rosamond_out)
+            input_csv.write_text(rosamond_out_1 + rosamond_out_2 + rosamond_out)
             command = f"-s {input_csv} -d".split() + ["2024-05-24 00:00:00"]
             result = self.cli_runner.invoke(sct_rosamond_dataset_converter, command)
             self.assertEqual(result.exit_code, 0)

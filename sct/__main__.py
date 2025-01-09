@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 """Main CLI script"""
+
 import logging
 import sys
 

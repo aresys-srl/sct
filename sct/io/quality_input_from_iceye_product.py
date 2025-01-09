@@ -5,6 +5,7 @@
 ICEYE format Arepyextras-Quality protocol-compliant wrapper
 -----------------------------------------------------------
 """
+
 from __future__ import annotations
 
 from itertools import product
@@ -208,7 +209,11 @@ class ICEYEChannelManager:
 
         # re-organizing SWST changes
         self._swst_changes = list(
-            zip(self._channel.acquisition_timeline.swst_changes[1], self._channel.acquisition_timeline.swst_changes[2])
+            zip(
+                self._channel.acquisition_timeline.swst_changes[1],
+                self._channel.acquisition_timeline.swst_changes[2],
+                strict=False,
+            )
         )
 
         # get burst boundaries
