@@ -49,19 +49,21 @@ sct-ionospheric-maps-download = "sct.cli.utility_commands_cli:download_ionex_tec
 sct-tropospheric-maps-download = "sct.cli.utility_commands_cli:download_tropospheric_vmf3_maps"
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.pdm]
-distribution = true
+[tool.hatch.version]
+path = "sct/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["sct", "tests", "docs"]
 
 [project.optional-dependencies]
 cli = ["click", "requests"]
 graphs = ["matplotlib >= 3.5", "arepyextras-quality[graphs]"]
 dev = [
     "nox",
-    "black",
-    "isort",
+    "ruff",
     "pylint",
 ]
 test = ["unittest-xml-reporting", "coverage", "arepyextras-test"]
@@ -74,9 +76,19 @@ doc = [
     "pydata-sphinx-theme",
 ]
 
-[tool.pdm.version]
-source = "file"
-path = "sct/__init__.py"
+[tool.ruff]
+line-length = 120
+output-format = "grouped"
+extend-exclude = [
+    ".venv",
+    "docs",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "A", "B", "I"]
 
 [tool.pylint.master]
 fail-under = 8.5
@@ -88,24 +100,19 @@ disable = ["import-error", "logging-fstring-interpolation", "logging-not-lazy"]
 [tool.pylint.format]
 max-line-length = 120
 
-[tool.black]
-line-length = 120
-target-version = ["py310", "py311", "py312"]
-
-[tool.isort]
-profile = "black"
-line_length = 120
+[tool.pdm]
+distribution = true
 
 [tool.pdm.scripts]
-format = "black ."
-format_c = "black --check ."
-sort = "isort ."
-sort_c = "isort --check ."
-lint = "pylint --recursive=y sct"
+format_check = "ruff format --check"
+format = "ruff format"
+sort = "ruff check --select I --fix-only"
+lint_check = "ruff check"
+lint_fix = "ruff check --show-fixes --fix-only"
 test = "python -m unittest discover -s ./tests -p test_*.py"
-integration_tests = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite"
-integration_tests_keep = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite --keep-working-dir"
 clean_doc = "python -m sphinx -M clean docs/source {args}"
 build_doc = "python -m sphinx -b html docs/source {args}"
-check_format = { composite = ["sort_c", "format_c"] }
-fix_format = { composite = ["sort", "format"] }
+integration_tests = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite"
+integration_tests_keep = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite --keep-working-dir"
+check_code = { composite = ["format_check", "lint_check"] }
+fix_format = { composite = ["format", "sort", "lint_fix"] }
