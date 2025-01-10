@@ -132,10 +132,19 @@ def build_conda_recipe(session: nox.Session):
 @nox.session(venv_backend="conda", python="3.11")
 def build_conda_pkg(session: nox.Session):
     """Build a conda package from conda recipe"""
-    build_conda_recipe(session)
+    # build_conda_recipe(session)
+
+    session.install("build")
+    session.run("python", "-m", "build", "--sdist", silent=True)
+
+    session.conda_install(
+        "conda-build",
+        "conda-verify",
+        channel="conda-forge",
+    )
 
     conda_build_dir = Path("conda_build_dir")
-    session.run("conda-build", "sct", "--output-folder", str(conda_build_dir))
+    session.run("conda-build", "conda_recipe", "--output-folder", str(conda_build_dir))
 
     package = _get_only_file_matching_in_dir(conda_build_dir.joinpath("noarch"), "*.tar.bz2").absolute()
     shutil.copy(str(package), "dist")
