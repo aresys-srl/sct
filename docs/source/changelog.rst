@@ -1,6 +1,20 @@
 Changelog
 =========
 
+v1.0.3[Unreleased]
+------------------
+
+**Incompatible Features**
+
+- Plugins mechanism for different product formats and readers introduced
+- Automatic plugins discovery introduced
+- Introduced burst check in ``read_data`` to support latest arepyextras-quality features
+
+**Other changes**
+- added acquisition mode to protocol implementation for each supported external product format
+- IO: introduced specific plugin for Aresys internal Product Folder format
+
+
 v1.0.2
 ------
 

@@ -7,6 +7,8 @@ Input/Output Module
 
 .. automodule:: sct.io.point_target_manager
 
+.. automodule:: sct.io.quality_input_from_aresys_product
+
 .. automodule:: sct.io.quality_input_from_sentinel1_product
 
 .. automodule:: sct.io.quality_input_from_iceye_product
@@ -18,5 +20,7 @@ Input/Output Module
 .. automodule:: sct.io.quality_input_from_eos04_product
 
 .. automodule:: sct.io.quality_input_from_cosmo_product
+
+.. automodule:: sct.io.quality_input_from_radarsat2_product
 
 .. automodule:: sct.io.safe_computing_utilities
