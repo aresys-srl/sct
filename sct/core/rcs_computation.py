@@ -7,13 +7,13 @@ Radar Cross Section computation utilities
 """
 
 import numpy as np
-import numpy.typing as npt
 from arepytools.geometry.conversions import xyz2llh
+from numpy.typing import ArrayLike
 
 
 def compute_rcs_trihedral_corner_reflector(
-    cr_arm_length_m: float, wavelength_m: float, elevation_rad: npt.ArrayLike, azimuth_rad: npt.ArrayLike
-) -> npt.ArrayLike:
+    cr_arm_length_m: float, wavelength_m: float, elevation_rad: ArrayLike, azimuth_rad: ArrayLike
+) -> ArrayLike:
     """Computes the Radar Cross Section (RCS) of a trihedral corner reflector (CR) as observed by a radar source
     emitting at a certain wavelength.
     The function requires in input the size (arm length) of the CR, the frequency of the radar source, and the angular

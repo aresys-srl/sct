@@ -10,10 +10,8 @@ from __future__ import annotations
 
 from itertools import product
 from pathlib import Path
-from typing import Union
 
 import numpy as np
-import numpy.typing as npt
 from arepyextras.eo_products.novasar.l1_products.reader import open_product, read_channel_data, read_product_metadata
 from arepyextras.eo_products.novasar.l1_products.utilities import NovaSAR1ChannelMetadata
 from arepyextras.quality.core.custom_errors import (
@@ -41,6 +39,7 @@ from arepytools.geometry.geometric_functions import (
 from arepytools.geometry.inverse_geocoding import inverse_geocoding_monostatic
 from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
+from numpy.typing import ArrayLike
 from shapely import Polygon
 
 
@@ -71,7 +70,7 @@ class NovaSAR1DopplerPolynomial:
 class NovaSAR1ProductManager:
     """SCTInputProduct protocol compliant NovaSAR-1 wrapper"""
 
-    def __init__(self, path: Union[str, Path]) -> None:
+    def __init__(self, path: str | Path) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
@@ -606,18 +605,18 @@ class NovaSAR1ChannelManager:
 
         return azmth_idx, rng_idx
 
-    def ground_points_to_burst_association(self, coordinates: npt.ArrayLike) -> list[Union[list[int], None]]:
+    def ground_points_to_burst_association(self, coordinates: ArrayLike) -> list[list[int] | None]:
         """Determining the burst (or bursts) where the input coordinates lie. If no association can be found (i.e. the
         point is not visible in the scene), None is returned.
 
         Parameters
         ----------
-        coordinates : npt.ArrayLike
+        coordinates : ArrayLike
             array of coordinates, in the form (N, 3)
 
         Returns
         -------
-        list[Union[list[int], None]]
+        list[list[int] | None]
             list containing the burst association for each input point, None if no association was found
         """
 
@@ -638,14 +637,14 @@ class NovaSAR1ChannelManager:
 
         return bursts
 
-    def times_to_burst_association(self, azimuth_times: npt.ArrayLike) -> list[int]:
+    def times_to_burst_association(self, azimuth_times: ArrayLike) -> list[int]:
         """Associate the right burst to a given input time point. This function returns 1 association for each
         input time.
         Associating time only to the first burst containing it.
 
         Parameters
         ----------
-        azimuth_time : npt.ArrayLike
+        azimuth_time : ArrayLike
             azimuth time array in PreciseDateTime format
 
         Returns
@@ -681,13 +680,13 @@ class NovaSAR1ChannelManager:
 
         return bursts
 
-    def pixel_to_burst_association(self, azimuth_px_indexes: npt.ArrayLike) -> list[int]:
+    def pixel_to_burst_association(self, azimuth_px_indexes: ArrayLike) -> list[int]:
         """Associate the azimuth pixel value to the right burst. This function returns 1 association for each
         input time.
 
         Parameters
         ----------
-        azimuth_px_indexes : npt.ArrayLike
+        azimuth_px_indexes : ArrayLike
             azimuth pixel indexes array
 
         Returns

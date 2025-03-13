@@ -6,11 +6,12 @@ Automatic Rosamond (Calibration Site) coordinates download
 ----------------------------------------------------------
 """
 
+from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Union
 
 import pandas as pd
 from arepytools.timing.precisedatetime import PreciseDateTime
@@ -53,7 +54,7 @@ def _datetime_formatting(acq_date: PreciseDateTime) -> str:
 
 
 def download_rosamond_corner_reflector_data(
-    output_dir: Union[str, Path],
+    output_dir: str | Path,
     acquisition_time: PreciseDateTime,
     coords_type: CornerReflectorCoordinatesType,
     timeout: int = 10,
@@ -62,7 +63,7 @@ def download_rosamond_corner_reflector_data(
 
     Parameters
     ----------
-    output_dir : Union[str, Path]
+    output_dir : str | Path
         path to the download directory
     acquisition_time : PreciseDateTime
         date of interest

@@ -13,7 +13,6 @@ import logging
 from dataclasses import asdict, dataclass, field, fields
 from enum import Enum, auto
 from pathlib import Path
-from typing import Union
 
 import appdirs
 import toml
@@ -235,12 +234,12 @@ class SCTConfiguration:
     interferometric_analysis: SCTInterferometricAnalysisConfig = field(default_factory=SCTInterferometricAnalysisConfig)
 
     @staticmethod
-    def from_toml(file: Union[str, Path]) -> SCTConfiguration:
+    def from_toml(file: str | Path) -> SCTConfiguration:
         """Generating an SCTConfiguration dataclass from a .toml configuration file.
 
         Parameters
         ----------
-        file : Union[str, Path]
+        file : str | Path
             path to the .toml configuration file
 
         Returns

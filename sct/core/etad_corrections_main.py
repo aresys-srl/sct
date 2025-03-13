@@ -6,9 +6,10 @@ Loading of ETAD corrections
 ---------------------------
 """
 
+from __future__ import annotations
+
 import warnings
 from pathlib import Path
-from typing import Union
 
 import pandas as pd
 from s1etad import ECorrectionType, Sentinel1Etad, Sentinel1EtadBurst
@@ -50,12 +51,12 @@ def _extract_etad_correction(burst: Sentinel1EtadBurst, location: Point) -> tupl
     return interpolator_rng(tau0, t0)[0], interpolator_az(tau0, t0)[0]
 
 
-def get_etad_corrections(etad_product_path: Union[str, Path], target_df: pd.DataFrame) -> pd.DataFrame:
+def get_etad_corrections(etad_product_path: str | Path, target_df: pd.DataFrame) -> pd.DataFrame:
     """Retrieving range ALE correction from ETAD product for all point targets.
 
     Parameters
     ----------
-    etad_product_path : Union[str, Path]
+    etad_product_path : str | Path
         path to the ETAD product
     target_df : pd.DataFrame
         point target data frame

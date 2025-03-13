@@ -6,17 +6,18 @@ Web Scraping Base Utilities
 ---------------------------
 """
 
+from __future__ import annotations
+
 import time
 from pathlib import Path
-from typing import Union
 
 
-def download_watchdog(directory: Union[str, Path], n_files: int, timeout: int = 10) -> bool:
+def download_watchdog(directory: str | Path, n_files: int, timeout: int = 10) -> bool:
     """Wait for downloads to finish with a specified timeout.
 
     Parameters
     ----------
-    directory : Union[str, Path]
+    directory : str | Path
         path to the folder where the files will be downloaded
     n_files : int
         wait for the expected number of files

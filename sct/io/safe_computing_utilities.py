@@ -3,17 +3,14 @@
 
 """SAFE product computing support"""
 
-from typing import Union
-
 import numpy as np
 from arepyextras.eo_products.safe.l1_products.utilities import S1AcquisitionMode
 from arepytools.constants import LIGHT_SPEED
 from arepytools.timing.precisedatetime import PreciseDateTime
+from numpy.typing import ArrayLike
 
 
-def compute_doppler_shift_correction(
-    pulse_rate: Union[float, np.ndarray], squint_frequency: Union[float, np.ndarray]
-) -> Union[float, np.ndarray]:
+def compute_doppler_shift_correction(pulse_rate: ArrayLike, squint_frequency: ArrayLike) -> ArrayLike:
     """Compute doppler shift correction that affects ALE along range direction.
 
     The term doppler_shift_correction should be added to the coordinate found by measurement
@@ -22,14 +19,14 @@ def compute_doppler_shift_correction(
 
     Parameters
     ----------
-    pulse_rate : Union[float, np.ndarray]
+    pulse_rate : ArrayLike
         signal pulse rate as signal bandwidth divided by pulse length, float or array
-    squint_frequency : float
+    squint_frequency : ArrayLike
         squint frequency in Hz, float or array
 
     Returns
     -------
-    float
+    ArrayLike
         doppler shift correction in meters
     """
 

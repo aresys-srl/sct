@@ -6,8 +6,9 @@ Point Target and Calibration Sites utilities
 --------------------------------------------
 """
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -24,12 +25,12 @@ class UnsupportedPointTargetSource(RuntimeError):
     """External point target source provided is not supported"""
 
 
-def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFrame:
+def extract_point_target_data_from_source(source: str | Path) -> pd.DataFrame:
     """Managing external point target data source based on its type, unifying the output to the SCT standard.
 
     Parameters
     ----------
-    source : Union[str, Path]
+    source : str | Path
         Path to the external source of point target files
 
     Returns
@@ -61,12 +62,12 @@ def extract_point_target_data_from_source(source: Union[str, Path]) -> pd.DataFr
     return point_targets_df
 
 
-def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
+def convert_point_target_binary_to_df(source: str | Path) -> pd.DataFrame:
     """Convert Aresys Point Target Binary product to SCT internal point target dataframe format.
 
     Parameters
     ----------
-    source : Union[str, Path]
+    source : str | Path
         Path to Point Target Binary product
 
     Returns
@@ -97,12 +98,12 @@ def convert_point_target_binary_to_df(source: Union[str, Path]) -> pd.DataFrame:
     return point_targets_df
 
 
-def convert_point_target_file_xml_to_df(source: Union[str, Path]) -> pd.DataFrame:
+def convert_point_target_file_xml_to_df(source: str | Path) -> pd.DataFrame:
     """Convert Aresys Point Target File XML product to SCT internal point target dataframe format.
 
     Parameters
     ----------
-    source : Union[str, Path]
+    source : str | Path
         Path to Point Target File XML product
 
     Returns
@@ -168,13 +169,13 @@ def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, Nomin
 
 
 def convert_rosamund_file_to_compliant_csv(
-    df: Union[str, Path, pd.DataFrame], measurement_date: PreciseDateTime
+    df: str | Path | pd.DataFrame, measurement_date: PreciseDateTime
 ) -> pd.DataFrame:
     """Formatting downloaded Rosamond Point Target Dataset to be compliant with the SCT input .csv format.
 
     Parameters
     ----------
-    df : Union[str, Path, pd.DataFrame]
+    df : str | Path | pd.DataFrame
         downloaded Rosamond Point Target dataset, can be a path to the .csv file or the corresponding pandas dataframe
     measurement_date : PreciseDateTime
         measurement date of the current dataset

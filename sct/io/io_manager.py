@@ -11,7 +11,6 @@ from __future__ import annotations
 import logging
 from enum import Enum, auto
 from pathlib import Path
-from typing import Union
 
 from arepyextras.eo_products.cosmo.l1_products.utilities import is_cosmo_product
 from arepyextras.eo_products.eos.l1_products.utilities import is_eos04_product
@@ -55,12 +54,12 @@ class SupportedInputProductType(Enum):
     UNKNOWN = auto()
 
 
-def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
+def input_detector(product: str | Path) -> SupportedInputProductType:
     """Detecting the input product type to switch between following processing steps.
 
     Parameters
     ----------
-    product : Union[str, Path]
+    product : str | Path
         Path to the product
 
     Returns
