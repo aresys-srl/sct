@@ -21,6 +21,7 @@ from arepyextras.quality.core.custom_errors import (
 )
 from arepyextras.quality.core.generic_dataclasses import (
     LocationData,
+    SARAcquisitionMode,
     SARImageType,
     SAROrbitDirection,
     SARPolarization,
@@ -340,6 +341,12 @@ class EOS04ChannelManager:
     def polarization(self) -> SARPolarization:
         """Channel data polarization"""
         return self._polarization
+
+    @property
+    def acquisition_mode(self) -> SARAcquisitionMode:
+        """Channel data acquisition mode"""
+        # TODO: implement this feature
+        return ...
 
     @property
     def orbit_direction(self) -> SAROrbitDirection:
