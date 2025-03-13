@@ -40,7 +40,10 @@ def check_format(session: nox.Session):
 
     def wrong_license_header(file: str) -> bool:
         with open(file, "r", encoding="utf-8") as ifile:
-            header = ifile.readline() + ifile.readline() + ifile.readline()
+            first_line = ifile.readline()
+            if "# noqa:" in first_line:
+                first_line = ifile.readline()
+            header = first_line + ifile.readline() + ifile.readline()
             return header != _LICENSE_HEADER
 
     source_files = glob.glob("sct/**/*.py", recursive=True)
