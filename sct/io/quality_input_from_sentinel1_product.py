@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from itertools import product
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 from arepyextras.eo_products.safe.l1_products.reader import (
@@ -18,6 +19,7 @@ from arepyextras.eo_products.safe.l1_products.reader import (
     read_channel_data,
     read_channel_metadata,
 )
+from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
 from arepyextras.quality.core.custom_errors import (
     AzimuthExceedsBoundariesError,
     CoordinatesOutOfBounds,
@@ -45,6 +47,8 @@ from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
 from numpy.typing import ArrayLike
 from shapely import Polygon
+
+from sct.core.custom_corrections.sentinel_1_ipf import compute_azimuth_corrections, compute_range_corrections
 
 
 class Sentinel1DopplerPolynomial:
@@ -74,7 +78,7 @@ class Sentinel1DopplerPolynomial:
 class Sentinel1ProductManager:
     """SCTInputProduct protocol compliant SAFE wrapper"""
 
-    def __init__(self, path: str | Path, external_orbit_path: str | Path | None = None) -> None:
+    def __init__(self, path: str | Path, external_orbit_path: str | Path | None = None, **kwargs) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
@@ -835,3 +839,21 @@ class Sentinel1ChannelManager:
         return read_channel_data(
             raster_file=self._raster_file, block_to_read=target_block, scaling_conversion=self._scaling_factor
         ).T
+
+
+def get_manager() -> type[Sentinel1ProductManager]:
+    """Retrieve manager"""
+    return Sentinel1ProductManager
+
+
+def get_detector() -> Callable[[str | Path], bool]:
+    """Retrieve detector"""
+    return is_s1_safe_product
+
+
+def get_azimuth_corrections():
+    return compute_azimuth_corrections
+
+
+def get_range_corrections():
+    return compute_range_corrections

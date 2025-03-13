@@ -9,28 +9,13 @@ I/O utilities
 from __future__ import annotations
 
 import logging
-from enum import Enum, auto
 from pathlib import Path
+from typing import Optional
 
-from arepyextras.eo_products.cosmo.l1_products.utilities import is_cosmo_product
-from arepyextras.eo_products.eos.l1_products.utilities import is_eos04_product
-from arepyextras.eo_products.iceye.l1_products.utilities import is_iceye_product
-from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_product
-from arepyextras.eo_products.radarsat.l1_products.utilities import is_radarsat_product
-from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
-from arepyextras.eo_products.saocom.l1_products.utilities import is_saocom_product
-from arepyextras.quality.io.quality_input_from_product_folder import ProductFolderManager
-from arepytools.io.productfolder2 import is_product_folder as is_aresys_product
+from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 
-from sct.core.custom_corrections import ALECorrectionFunctionType, sentinel_1_ipf
-from sct.io.extended_protocols import SCTInputProduct
-from sct.io.quality_input_from_cosmo_product import COSMOProductManager
-from sct.io.quality_input_from_eos04_product import EOS04ProductManager
-from sct.io.quality_input_from_iceye_product import ICEYEProductManager
-from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
-from sct.io.quality_input_from_radarsat2_product import RADARSAT2ProductManager
-from sct.io.quality_input_from_saocom_product import SAOCOMProductManager
-from sct.io.quality_input_from_sentinel1_product import Sentinel1ProductManager
+from sct.core.custom_corrections import ALECorrectionFunctionType
+from sct.io.input_product_plugins import import_input_product_plugins
 
 # syncing with logger
 log = logging.getLogger("quality_analysis")
@@ -40,97 +25,10 @@ class InvalidProductType(RuntimeError):
     """Invalid input product type"""
 
 
-class SupportedInputProductType(Enum):
-    """Supported input product types enum"""
-
-    ARESYS = auto()
-    S1_SAFE = auto()
-    NOVASAR1 = auto()
-    ICEYE = auto()
-    SAOCOM = auto()
-    EOS04 = auto()
-    COSMO = auto()
-    RADARSAT2 = auto()
-    UNKNOWN = auto()
-
-
-def input_detector(product: str | Path) -> SupportedInputProductType:
-    """Detecting the input product type to switch between following processing steps.
-
-    Parameters
-    ----------
-    product : str | Path
-        Path to the product
-
-    Returns
-    -------
-    SupportedInputProductType
-        detected type for input product
-
-    Raises
-    ------
-    InvalidProductType
-        if input product is not a directory or does not exist on disk
-    """
-
-    product = Path(product)
-    if not product.exists():
-        log.critical("Input product does not exist on disk")
-        raise InvalidProductType(f"Product {str(product)} is not a directory or does not exist")
-
-    if is_aresys_product(product):
-        return SupportedInputProductType.ARESYS
-
-    if is_s1_safe_product(product):
-        return SupportedInputProductType.S1_SAFE
-
-    if is_novasar_1_product(product):
-        return SupportedInputProductType.NOVASAR1
-
-    if is_iceye_product(product):
-        return SupportedInputProductType.ICEYE
-
-    if is_saocom_product(product):
-        return SupportedInputProductType.SAOCOM
-
-    if is_eos04_product(product):
-        return SupportedInputProductType.EOS04
-
-    if is_cosmo_product(product):
-        return SupportedInputProductType.COSMO
-
-    if is_radarsat_product(product):
-        return SupportedInputProductType.RADARSAT2
-
-    return SupportedInputProductType.UNKNOWN
-
-
-def select_custom_corrections(
-    product_type: SupportedInputProductType,
-) -> tuple[ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
-    """Selecting the proper correction functions based on input product type.
-
-    Parameters
-    ----------
-    product_type : SupportedInputProductType
-        product type
-
-    Returns
-    -------
-    tuple[ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
-        range custom correction function,
-        azimuth custom correction function
-    """
-    if product_type == SupportedInputProductType.S1_SAFE:
-        return sentinel_1_ipf.compute_range_corrections, sentinel_1_ipf.compute_azimuth_corrections
-
-    return None, None
-
-
 def product_loader(
-    product_path: Path, external_orbit: Path | None = None
-) -> tuple[SCTInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
-    """Loading product by it type. Extracting a SCTInputProduct protocol-compliant object.
+    product_path: Path, external_orbit: Path | None = None, plugins: list[str] | None = None
+) -> tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
+    """Load any supported product
 
     Parameters
     ----------
@@ -138,45 +36,30 @@ def product_loader(
         Path to the product to be loaded
     external_orbit : Path | None, optional
         Path to external orbit file, if needed, by default None
+    plugins: list[str] | None, optional
+        list of plugins as strings: either absolute paths or importable python modules
 
     Returns
     -------
-    tuple[SCTInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
-        SCTInputProduct compliant object,
-        range ale correction function or none
-        azimuth ale correction function or none
+    tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
+        QualityInputProduct compliant object
+        range ale correction function (if available)
+        azimuth ale correction function (if available)
     """
-    # DETECTING INPUT PRODUCT TYPE
-    input_type = input_detector(product=product_path)
+    plugins = plugins or []
+    available_plugins = import_input_product_plugins(plugins)
 
-    match input_type:
-        case SupportedInputProductType.ARESYS:
-            log.info("Product type: Product Folder Aresys")
-            product = ProductFolderManager(product_path)
-        case SupportedInputProductType.S1_SAFE:
-            log.info("Product type: Sentinel-1 SAFE")
-            product = Sentinel1ProductManager(product_path, external_orbit_path=external_orbit)
-        case SupportedInputProductType.NOVASAR1:
-            log.info("Product type: NovaSAR-1")
-            product = NovaSAR1ProductManager(product_path)
-        case SupportedInputProductType.ICEYE:
-            log.info("Product type: ICEYE")
-            product = ICEYEProductManager(product_path)
-        case SupportedInputProductType.SAOCOM:
-            log.info("Product type: SAOCOM")
-            product = SAOCOMProductManager(product_path)
-        case SupportedInputProductType.EOS04:
-            log.info("Product type: EOS-04")
-            product = EOS04ProductManager(product_path)
-        case SupportedInputProductType.COSMO:
-            log.info("Product type: COSMO SkyMed")
-            product = COSMOProductManager(product_path)
-        case SupportedInputProductType.RADARSAT2:
-            log.info("Product type: RADARSAT-2")
-            product = RADARSAT2ProductManager(product_path)
-        case _:
-            raise InvalidProductType(f"Unknown product type for product {str(product_path)}")
+    product: Optional[QualityInputProduct] = None
+    for plugin in available_plugins:
+        if plugin.get_detector()(product_path):
+            manager = plugin.get_manager()
+            log.info(f"Product type: {manager.__name__}")
+            product = manager(product_path, external_orbit_path=external_orbit)
+            rg_corr: ALECorrectionFunctionType | None = plugin.get_range_corrections()
+            az_corr: ALECorrectionFunctionType | None = plugin.get_azimuth_corrections()
+            break
 
-    # CHOOSING RIGHT CORRECTION FUNCTIONS BASED ON PRODUCT TYPE
-    rng_corr_func, az_corr_func = select_custom_corrections(product_type=input_type)
-    return product, rng_corr_func, az_corr_func
+    if product is None:
+        raise InvalidProductType(f"Unknown input product: {product_path}")
+
+    return product, rg_corr, az_corr

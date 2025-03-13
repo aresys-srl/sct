@@ -10,10 +10,11 @@ from __future__ import annotations
 
 from itertools import product
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 from arepyextras.eo_products.eos.l1_products.reader import open_product, read_channel_data, read_product_metadata
-from arepyextras.eo_products.eos.l1_products.utilities import EOS04ChannelMetadata
+from arepyextras.eo_products.eos.l1_products.utilities import EOS04ChannelMetadata, is_eos04_product
 from arepyextras.quality.core.custom_errors import (
     AzimuthExceedsBoundariesError,
     CoordinatesOutOfBounds,
@@ -71,7 +72,7 @@ class EOS04DopplerPolynomial:
 class EOS04ProductManager:
     """SCTInputProduct protocol compliant EOS04 wrapper"""
 
-    def __init__(self, path: str | Path) -> None:
+    def __init__(self, path: str | Path, **kwargs) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
@@ -822,3 +823,21 @@ class EOS04ChannelManager:
             )
 
         return data
+
+
+def get_manager() -> type[EOS04ProductManager]:
+    """Retrieve manager"""
+    return EOS04ProductManager
+
+
+def get_detector() -> Callable[[str | Path], bool]:
+    """Retrieve detector"""
+    return is_eos04_product
+
+
+def get_azimuth_corrections():
+    return None
+
+
+def get_range_corrections():
+    return None

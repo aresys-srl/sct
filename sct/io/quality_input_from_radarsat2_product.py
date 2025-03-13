@@ -10,10 +10,15 @@ from __future__ import annotations
 
 from itertools import product
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 from arepyextras.eo_products.radarsat.l1_products.reader import open_product, read_channel_data, read_product_metadata
-from arepyextras.eo_products.radarsat.l1_products.utilities import RADARSATChannelMetadata, RADARSATTimeOrdering
+from arepyextras.eo_products.radarsat.l1_products.utilities import (
+    RADARSATChannelMetadata,
+    RADARSATTimeOrdering,
+    is_radarsat_product,
+)
 from arepyextras.quality.core.custom_errors import (
     AzimuthExceedsBoundariesError,
     CoordinatesOutOfBounds,
@@ -72,7 +77,7 @@ class RADARSAT2DopplerPolynomial:
 class RADARSAT2ProductManager:
     """SCTInputProduct protocol compliant RADARSAT-2 wrapper"""
 
-    def __init__(self, path: str | Path) -> None:
+    def __init__(self, path: str | Path, **kwargs) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
@@ -850,3 +855,21 @@ class RADARSAT2ChannelManager:
             )
 
         return data
+
+
+def get_manager() -> type[RADARSAT2ProductManager]:
+    """Retrieve manager"""
+    return RADARSAT2ProductManager
+
+
+def get_detector() -> Callable[[str | Path], bool]:
+    """Retrieve detector"""
+    return is_radarsat_product
+
+
+def get_azimuth_corrections():
+    return None
+
+
+def get_range_corrections():
+    return None

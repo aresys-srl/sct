@@ -10,9 +10,11 @@ from __future__ import annotations
 
 from itertools import product
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 from arepyextras.eo_products.saocom.l1_products.reader import open_product, read_channel_data, read_channel_metadata
+from arepyextras.eo_products.saocom.l1_products.utilities import is_saocom_product
 from arepyextras.quality.core.custom_errors import (
     AzimuthExceedsBoundariesError,
     CoordinatesOutOfBounds,
@@ -70,7 +72,7 @@ class SAOCOMDopplerPolynomial:
 class SAOCOMProductManager:
     """SCTInputProduct protocol compliant SAOCOM wrapper"""
 
-    def __init__(self, path: str | Path) -> None:
+    def __init__(self, path: str | Path, **kwargs) -> None:
         self._path = Path(path)
         self._name = self._path.name
         self._product = open_product(path)
@@ -846,3 +848,21 @@ class SAOCOMChannelManager:
             )
 
         return data
+
+
+def get_manager() -> type[SAOCOMProductManager]:
+    """Retrieve manager"""
+    return SAOCOMProductManager
+
+
+def get_detector() -> Callable[[str | Path], bool]:
+    """Retrieve detector"""
+    return is_saocom_product
+
+
+def get_azimuth_corrections():
+    return None
+
+
+def get_range_corrections():
+    return None
