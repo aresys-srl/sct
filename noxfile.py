@@ -149,7 +149,7 @@ def build_conda_pkg(session: nox.Session):
     conda_build_dir = Path("conda_build_dir")
     session.run("conda-build", "conda_recipe", "--output-folder", str(conda_build_dir))
 
-    package = _get_only_file_matching_in_dir(conda_build_dir.joinpath("noarch"), "*.tar.bz2").absolute()
+    package = _get_only_file_matching_in_dir(conda_build_dir.joinpath("noarch"), "*.conda").absolute()
     shutil.copy(str(package), "dist")
 
 

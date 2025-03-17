@@ -1,5 +1,5 @@
 {% set name = "sct" %}
-{% set version = "1.0.2" %}
+{% set version = "1.0.3" %}
 
 package:
   name: {{ name|lower }}
@@ -36,7 +36,7 @@ requirements:
     - ascii-art
     - appdirs
     - arepytools >=1.7.2
-    - arepyextras-quality >=2.0.2
+    - arepyextras-quality >=2.0.4
     - arepyextras-perturbations >=1.1
     - arepyextras-eo_products >=1.1.0
     - scipy <1.14

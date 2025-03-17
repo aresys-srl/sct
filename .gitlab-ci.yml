@@ -151,7 +151,7 @@ conda_pkg:
   artifacts:
     expire_in: 2 weeks
     paths:
-      - dist/*.tar.bz2
+      - dist/*.conda
 
 doc:
   stage: build
@@ -181,7 +181,7 @@ deploy_package:
       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
-    - for file in dist/*.tar.bz2; do
+    - for file in dist/*.conda; do
       eo_pgp-signme ${file} > ${file}.asc &&
       ./.gitlab/ci/dashboard-copy.sh ${file} ${INTERNAL_CONDA_CHANNEL_PATH}/noarch &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc ${INTERNAL_CONDA_CHANNEL_PATH}/noarch;
