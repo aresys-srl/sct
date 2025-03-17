@@ -16,9 +16,7 @@ import numpy as np
 from arepyextras.eo_products.eos.l1_products.reader import open_product, read_channel_data, read_product_metadata
 from arepyextras.eo_products.eos.l1_products.utilities import EOS04ChannelMetadata, is_eos04_product
 from arepyextras.quality.core.custom_errors import (
-    AzimuthExceedsBoundariesError,
     CoordinatesOutOfBounds,
-    RangeExceedsBoundariesError,
 )
 from arepyextras.quality.core.generic_dataclasses import (
     LocationData,
@@ -32,6 +30,7 @@ from arepyextras.quality.core.generic_dataclasses import (
     SARSideLooking,
 )
 from arepyextras.quality.core.signal_processing import radiometric_correction
+from arepyextras.quality.io.protocol_utilities import roi_validation
 from arepytools.constants import LIGHT_SPEED
 from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper, compute_ground_velocity
 from arepytools.geometry.geometric_functions import (
@@ -741,6 +740,7 @@ class EOS04ChannelManager:
         range_index: float,
         cropping_size: tuple[int, int] = (150, 150),
         output_radiometric_quantity: SARRadiometricQuantity = SARRadiometricQuantity.BETA_NOUGHT,
+        burst: int | None = None,
     ) -> np.ndarray:
         """Extracting the swath portion centered to the provided target position and of size cropping_size by
         cropping_size. Target position is provided via its azimuth and range indexes in the swath array.
@@ -756,6 +756,9 @@ class EOS04ChannelManager:
         output_radiometric_quantity : SARRadiometricQuantity, optional
             selected output radiometric quantity to convert the read data to, if needed,
             by default SARRadiometricQuantity.BETA_NOUGHT
+        burst : int, optional
+            if burst is provided, the roi extraction gives error if the boundaries exceed the burst boundaries,
+            by default None
 
         Returns
         -------
@@ -779,25 +782,26 @@ class EOS04ChannelManager:
             cropping_size[1],
             cropping_size[0],
         ]
-        if target_block[0] > self._channel.raster_info.lines or target_block[0] < 0:
-            # starting azimuth line to be read is out of swath boundaries
-            raise AzimuthExceedsBoundariesError(f"First ROI line {target_block[0]} is out of azimuth swath boundaries")
 
-        if target_block[1] > self._channel.raster_info.samples or target_block[1] < 0:
-            # starting range sample to be read is out of swath boundaries
-            raise RangeExceedsBoundariesError(f"First ROI sample {target_block[1]} is out of range swath boundaries")
+        # full raster boundaries and burst boundaries, if applicable
+        raster_boundaries = [0, 0, self._channel.raster_info.lines, self._channel.raster_info.samples]
+        burst_boundaries = None
+        # if burst is provided, it means that the ROI to be read must be inside of this burst, otherwise the extracted
+        # data are not meaningful with respect to times, acquisition consistency and IRF
+        if burst is not None:
+            burst_boundaries = [
+                sum(self.lines_per_burst[:burst]),
+                0,
+                self.lines_per_burst[burst],
+                self._channel.raster_info.samples,
+            ]
 
-        if target_block[0] + target_block[2] > self._channel.raster_info.lines:
-            # last azimuth line to be read is out of swath boundaries
-            raise AzimuthExceedsBoundariesError(
-                f"Last ROI line {target_block[0] + target_block[2]} exceeds azimuth swath boundaries"
-            )
-
-        if target_block[1] + target_block[3] > self._channel.raster_info.samples:
-            # last range sample to be read is out of swath boundaries
-            raise RangeExceedsBoundariesError(
-                f"Last ROI sample {target_block[1] + target_block[3]} exceeds range swath boundaries"
-            )
+        # validating target block extraction with respect to raster boundaries and burst boundaries
+        roi_validation(
+            roi=target_block,
+            raster_boundaries=raster_boundaries,
+            burst_boundaries=burst_boundaries,
+        )
 
         # reading data portion and switching to convention (samples, lines) with transpose
         data = read_channel_data(
