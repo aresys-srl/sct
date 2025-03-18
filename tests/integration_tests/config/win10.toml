@@ -1,5 +1,5 @@
 [data]
-url = "file:///c:/aresys/sct_tds_v1.7"
+url = "file:///c:/aresys/sct_tds_v1.8"
 
 [env]
 root = "tdir"
