@@ -75,7 +75,7 @@ def interf_coherence_analysis(
 
     # saving log file to output folder
     if config.general.save_log:
-        logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_pta_analysis.log"))
+        logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_interf_analysis.log"))
         logging_file_handler.setFormatter(CustomFormatterFileHandler())
         log.addHandler(logging_file_handler)
 

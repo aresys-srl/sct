@@ -176,7 +176,7 @@ def point_target_analysis_with_corrections(
 
     # EXTRACTING PRODUCT ACQUISITION TIME
     first_channel = product.get_channel_data(channel_id=product.channels_list[0])
-    acquisition_time = first_channel.azimuth_axis[0]  # approximating acquisition time with firs value of azimuth axis
+    acquisition_time = first_channel.azimuth_axis[0]  # approximating acquisition time with first value of azimuth axis
 
     # external target source
     point_targets_df = extract_point_target_data_from_source(source=external_target_source)
