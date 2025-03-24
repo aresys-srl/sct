@@ -9,7 +9,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 from arepyextras.test import DataRepository, Environment, TestSession, skip_if
 from netCDF4 import Dataset
 
@@ -369,10 +368,10 @@ def test_rain_forest_novasar1_scd(session: TestSession, env: Environment, data: 
     product_folder = data.pull("input/novasar1/SCD_RF")
     ref = data.pull("output/novasar1/SCD_RF")
     out_file = env.root.joinpath("AVERAGE_GAMMA_NOUGHT_profiles_S_VV.nc")
+    # TODO: check these results for proper radiometric quantity (input is beta now)
 
     config_file = env.root.joinpath("new_config.toml")
     config = SCTConfiguration()
-    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.SIGMA_NOUGHT
     config.radiometric_analysis.base_config.profile_extraction_parameters.outlier_removal = False
     config.radiometric_analysis.base_config.profile_extraction_parameters.smoothening_filter = False
     config.dump_to_toml(out_file=config_file)
@@ -400,10 +399,10 @@ def test_nesz_novasar1_grd(session: TestSession, env: Environment, data: DataRep
     product_folder = data.pull("input/novasar1/GRD_NESZ")
     ref = data.pull("output/novasar1/GRD_NESZ")
     out_file = env.root.joinpath("NESZ_profiles_S1_HH.nc")
+    # TODO: check these results for proper radiometric quantity (input is beta now)
 
     config_file = env.root.joinpath("new_config.toml")
     config = SCTConfiguration()
-    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.SIGMA_NOUGHT
     config.dump_to_toml(out_file=config_file)
     assert config_file.is_file()
 

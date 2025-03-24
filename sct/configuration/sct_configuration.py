@@ -409,7 +409,6 @@ class SCTConfiguration:
             ra_dict = dtc_dict["radiometric_analysis"]["base_config"]
             ra_hist_params = ra_dict.pop("histogram_parameters")
             ra_prof_params = ra_dict.pop("profile_extraction_parameters")
-            ra_dict["input_quantity"] = ra_dict["input_quantity"].name.lower()
             ra_dict["advanced_configuration"] = {}
             ra_dict["advanced_configuration"]["histogram_parameters"] = ra_hist_params
             ra_dict["advanced_configuration"]["profile_extraction_parameters"] = ra_prof_params

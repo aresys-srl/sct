@@ -1,14 +1,15 @@
 Changelog
 =========
 
-v1.0.3[Unreleased]
-------------------
+v1.0.3
+------
 
 **Incompatible Features**
 
 - Plugins mechanism for different product formats and readers introduced
 - Automatic plugins discovery introduced
 - Introduced burst check in ``read_data`` to support latest arepyextras-quality features
+- Removed radiometric ``input_quantity`` option from radiometric analysis configuration: it is now always retrieved from the product itself
 
 **Other changes**
 - added acquisition mode to protocol implementation for each supported external product format

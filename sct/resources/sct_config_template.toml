@@ -42,7 +42,6 @@ calibration_factor = 1.0
 resampling_factor = 1.0
 
 [radiometric_analysis]
-input_quantity = "beta_nought"
 azimuth_block_size = 2000
 range_pixel_margin = 150
 radiometric_correction_exponent = 1.0

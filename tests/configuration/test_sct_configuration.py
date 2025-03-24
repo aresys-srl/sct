@@ -9,7 +9,7 @@ from tempfile import TemporaryDirectory
 
 from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
-from arepyextras.quality.core.generic_dataclasses import MaskingMethod, SARRadiometricQuantity
+from arepyextras.quality.core.generic_dataclasses import MaskingMethod
 from arepyextras.quality.interferometric_analysis.config import InterferometricConfig
 from arepyextras.quality.point_targets_analysis.config import IRFParameters, PointTargetAnalysisConfig, RCSParameters
 from arepyextras.quality.radiometric_analysis.config import (
@@ -73,7 +73,6 @@ resampling_factor = 7.3
 radiometric_analysis_toml = """
 
 [radiometric_analysis]
-input_quantity = "sigma_nought"
 azimuth_block_size = 23
 range_pixel_margin = 800
 radiometric_correction_exponent = 250.3
@@ -169,8 +168,6 @@ def _validate_ra_config(config: SCTRadiometricAnalysisConfig) -> None:
 
     ra_config = config.base_config
     assert isinstance(ra_config, RadiometricProfilesConfig)
-    assert isinstance(ra_config.input_quantity, SARRadiometricQuantity)
-    assert ra_config.input_quantity == SARRadiometricQuantity.SIGMA_NOUGHT
     assert ra_config.azimuth_block_size == 23
     assert ra_config.range_pixel_margin == 800
     assert ra_config.radiometric_correction_exponent == 250.3
@@ -365,21 +362,6 @@ class SCTConfigurationTest(unittest.TestCase):
 
         [point_target_analysis.corrections]
         enable_tropospheric_correction = true
-
-        """
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(partial_toml)
-
-                SCTConfiguration.from_toml(path_to_file)
-
-    def test_reading_errors_2(self) -> None:
-        """Test reading with errors"""
-        partial_toml = """
-
-        [radiometric_analysis]
-        input_quantity = "nought"
 
         """
         with self.assertRaises(ValidationError):

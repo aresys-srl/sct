@@ -92,11 +92,6 @@ Radiometric Analysis
 To perform a Radiometric Analysis using SCT CLI, run the following command in your shell, adapting the input parameters
 to your needs. Passing the input configuration can be avoided if default values are good enough.
 
-.. note::
-
-    Input radiometric quantity of the product is set to be **BETA_NOUGHT** by default. This property can be changed via
-    configuration by adding ``[radiometric_analysis] input_quantity = "sigma_nought"`` inserting the proper radiometric quantity.
-
 .. code-block:: bash
 
     sct --config path_to_config_toml radiometric-analysis [nesz/elevation_profile/scalloping] -p path_to_product -out path_to_output_folder [-g] [-r "output_radiometric_quantity"]
@@ -125,8 +120,7 @@ The exact same thing can be done from a custom script using SCT as a library:
     # adding a configuration is optional
     config_toml_path: str | Path = ...
     config = SCTConfiguration.from_toml(config_toml_path)
-    # specify the input radiometric quantity if different from BETA NOUGHT
-    config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.SIGMA_NOUGHT
+
     product_path: str | Path = ...
     output_directory: str | Path = ...
     output_radiometric_quantity = SARRadiometricQuantity.GAMMA_NOUGHT

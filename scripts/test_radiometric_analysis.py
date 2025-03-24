@@ -24,7 +24,6 @@ if __name__ == "__main__":
     # path_to_config = r"C:\Users\giorgio.parma\Desktop\temporary_outputs\prova.toml"
     path_to_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\eos04\config.toml"
     config = SCTConfiguration.from_toml(path_to_config)
-    # config.radiometric_analysis.base_config.input_quantity = SARRadiometricQuantity.BETA_NOUGHT
     # config.radiometric_analysis.base_config.profile_extraction_parameters.outlier_removal = False
     # config.radiometric_analysis.base_config.profile_extraction_parameters.smoothening_filter = False
     # config = config.radiometric_analysis

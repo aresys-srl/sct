@@ -287,15 +287,6 @@
             "type": "object",
             "description": "Section of configuration file dedicated to NESZ, Average Elevation Profiles and Scalloping",
             "properties": {
-                "input_quantity": {
-                    "type": "string",
-                    "description": "Radiometric type of input data",
-                    "enum": [
-                        "beta_nought",
-                        "sigma_nought",
-                        "gamma_nought"
-                    ]
-                },
                 "azimuth_block_size": {
                     "type": "integer",
                     "description": "Azimuth block size for partitioning the whole scene"
