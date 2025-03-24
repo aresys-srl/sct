@@ -48,6 +48,7 @@ can be listed using the `--help/-h` option.
    | downloaded from the resources folder on GitHub.
    | :ref:`Check the related documentation for further information<sct_pt_file>`.
 
+
 Radiometric Analysis
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -58,5 +59,19 @@ Further information about each of these analysis :ref:`can be found here<sct_ana
 .. code-block:: bash
 
    sct [--config "path_to_config"] radiometric-analysis [nesz/average_profiles/scalloping] -p "product_path" -out "output_dir" -g "graphs_enabled"
+
+To list all the available options use the `--help/-h` argument.
+
+
+Spectral Analysis
+^^^^^^^^^^^^^^^^^
+
+Point Target Spectral Analysis can be performed using the following command just specifying the input product and the
+output directory. Obviously, an external file containing point targets locations and data must be provided in order to
+properly run the analysis.
+
+.. code-block:: bash
+
+   sct [--config "path_to_config"] spectral-analysis -p "product_path" -out "output_dir" -pt "point_target_file_path"
 
 To list all the available options use the `--help/-h` argument.

@@ -64,3 +64,6 @@ range_blocks_number = 100            # this is not the default, default is autom
 enable_coherence_computation = false
 coherence_kernel = [15, 15]
 coherence_bins_number = 80
+
+[spectral_analysis]
+cropping_size = [128, 128]

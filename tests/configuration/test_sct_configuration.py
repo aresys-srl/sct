@@ -24,6 +24,7 @@ from sct.configuration.sct_configuration import (
     SCTInterferometricAnalysisConfig,
     SCTPointTargetAnalysisConfig,
     SCTRadiometricAnalysisConfig,
+    SCTSpectralAnalysisConfig,
 )
 
 point_target_analysis_toml = """
@@ -99,6 +100,13 @@ range_blocks_number = 100
 enable_coherence_computation = true
 coherence_kernel = [28, 15]
 coherence_bins_number = 800
+
+"""
+
+spectral_analysis_toml = """
+
+[spectral_analysis]
+cropping_size = [200, 120]
 
 """
 
@@ -207,11 +215,31 @@ def _validate_inter_config(config: SCTInterferometricAnalysisConfig) -> None:
     assert inter_config.coherence_bins_number == 800
 
 
+def _validate_spectral_config(config: SCTSpectralAnalysisConfig) -> None:
+    """Validating correct reading of spectral analysis configuration from file.
+
+    Parameters
+    ----------
+    config : SCTSpectralAnalysisConfig
+        sct spectral analysis configuration
+    """
+
+    assert isinstance(config, SCTSpectralAnalysisConfig)
+
+    assert isinstance(config.cropping_size, tuple)
+    assert config.cropping_size == (200, 120)
+
+
 class SCTConfigurationTest(unittest.TestCase):
     """Testing sct_configuration.py functionalities"""
 
     def setUp(self) -> None:
-        self.full_toml = point_target_analysis_toml + radiometric_analysis_toml + interferometric_analysis_toml
+        self.full_toml = (
+            point_target_analysis_toml
+            + radiometric_analysis_toml
+            + interferometric_analysis_toml
+            + spectral_analysis_toml
+        )
 
     def test_full_point_target_analysis_reading(self) -> None:
         """Test point_target full configuration reading"""
@@ -246,6 +274,17 @@ class SCTConfigurationTest(unittest.TestCase):
         self.assertIsInstance(config, SCTConfiguration)
         _validate_inter_config(config.interferometric_analysis)
 
+    def test_full_spectral_analysis_reading(self) -> None:
+        """Test spectral_analysis full configuration reading"""
+        with TemporaryDirectory() as temp_dir:
+            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+            path_to_file.write_text(spectral_analysis_toml)
+
+            config = SCTConfiguration.from_toml(path_to_file)
+
+        self.assertIsInstance(config, SCTConfiguration)
+        _validate_spectral_config(config.spectral_analysis)
+
     def test_full_config_reading(self) -> None:
         """Test full configuration reading"""
         with TemporaryDirectory() as temp_dir:
@@ -258,6 +297,7 @@ class SCTConfigurationTest(unittest.TestCase):
         _validate_pta_config(config.point_target_analysis)
         _validate_ra_config(config.radiometric_analysis)
         _validate_inter_config(config.interferometric_analysis)
+        _validate_spectral_config(config.spectral_analysis)
 
     def test_partial_config_reading(self) -> None:
         """Test full configuration reading"""
@@ -320,6 +360,7 @@ class SCTConfigurationTest(unittest.TestCase):
             default_config.interferometric_analysis.base_config.coherence_kernel,
         )
         self.assertEqual(default_config.interferometric_analysis, default_config_read.interferometric_analysis)
+        self.assertEqual(default_config.spectral_analysis, default_config_read.spectral_analysis)
 
     def test_dump_read(self) -> None:
         """Test full configuration dump to toml and reading"""
@@ -340,6 +381,7 @@ class SCTConfigurationTest(unittest.TestCase):
         assert new_config.point_target_analysis == config.point_target_analysis
         assert new_config.radiometric_analysis == config.radiometric_analysis
         assert new_config.interferometric_analysis == config.interferometric_analysis
+        assert new_config.spectral_analysis == config.spectral_analysis
 
     def test_reading_errors_0(self) -> None:
         """Test reading with errors"""

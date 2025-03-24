@@ -45,6 +45,7 @@ class ConfigSupportedAnalyses(Enum):
     INTERFEROMETRY = auto()
     RADIOMETRY = auto()
     POINT_TARGET = auto()
+    SPECTRAL_ANALYSIS = auto()
 
 
 def toml_schema_validation(toml_content: dict):
@@ -225,6 +226,39 @@ class SCTInterferometricAnalysisConfig:
 
 
 @dataclass
+class SCTSpectralAnalysisConfig:
+    """SCT Spectral Analysis configuration"""
+
+    cropping_size: tuple[int, int] = (128, 128)
+
+    @classmethod
+    def from_dict(cls, arg: dict) -> SCTSpectralAnalysisConfig:
+        """Creating a SCTSpectralAnalysisConfig from a dict representing this dataclass.
+        All fields except base_config are set.
+
+        Parameters
+        ----------
+        arg : dict
+            dict representing this dataclass
+
+        Returns
+        -------
+        SCTSpectralAnalysisConfig
+            SCTSpectralAnalysisConfig dataclass initialized from input dictionary
+        """
+        out = cls()
+        valid_fields = [f.name for f in fields(out)]
+
+        for key, value in arg.items():
+            if key not in valid_fields:
+                raise InvalidConfigurationFile(f"SCTSpectralAnalysisConfig: {key} not supported")
+            value = tuple(value) if key == "cropping_size" else value
+            setattr(out, key, value)
+
+        return out
+
+
+@dataclass
 class SCTConfiguration:
     """SCT Tool full Configuration"""
 
@@ -232,6 +266,7 @@ class SCTConfiguration:
     point_target_analysis: SCTPointTargetAnalysisConfig = field(default_factory=SCTPointTargetAnalysisConfig)
     radiometric_analysis: SCTRadiometricAnalysisConfig = field(default_factory=SCTRadiometricAnalysisConfig)
     interferometric_analysis: SCTInterferometricAnalysisConfig = field(default_factory=SCTInterferometricAnalysisConfig)
+    spectral_analysis: SCTSpectralAnalysisConfig = field(default_factory=SCTSpectralAnalysisConfig)
 
     @staticmethod
     def from_toml(file: str | Path) -> SCTConfiguration:
@@ -300,12 +335,18 @@ class SCTConfiguration:
             int_base_config = InterferometricConfig.from_dict(arg=config["interferometric_analysis"])
             int_config.base_config = int_base_config
 
+        # spectral analysis configuration
+        sa_config = SCTSpectralAnalysisConfig()
+        if "spectral_analysis" in config:
+            sa_config = SCTSpectralAnalysisConfig.from_dict(arg=config["spectral_analysis"])
+
         # assembling final configuration
         config = SCTConfiguration()
         config.general = general_config
         config.point_target_analysis = pta_config
         config.radiometric_analysis = ra_config
         config.interferometric_analysis = int_config
+        config.spectral_analysis = sa_config
 
         return config
 
@@ -318,6 +359,7 @@ class SCTConfiguration:
             path to the output .toml file
         selected : str | ConfigSupportedAnalyses | None, optional
             selected analysis to be dumped, it can be "point_target", "radiometry", "interferometry",
+            "spectral_analysis"
             if None the whole configuration is dumped, by default None
         """
 
@@ -331,6 +373,7 @@ class SCTConfiguration:
             "point_target_analysis": None,
             "radiometric_analysis": None,
             "interferometric_analysis": None,
+            "spectral_analysis": None,
         }
 
         if selected in (None, ConfigSupportedAnalyses.POINT_TARGET):
@@ -425,6 +468,12 @@ class SCTConfiguration:
 
             # saving to configuration dict to be dumped
             conf_dict["interferometric_analysis"] = inter_dict
+
+        if selected in (None, ConfigSupportedAnalyses.SPECTRAL_ANALYSIS):
+            sa_dict = dtc_dict["spectral_analysis"]
+
+            # saving to configuration dict to be dumped
+            conf_dict["spectral_analysis"] = sa_dict
 
         with open(out_file, "w", encoding="UTF-8") as f_out:
             toml.dump(conf_dict, f_out)

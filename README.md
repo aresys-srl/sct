@@ -18,6 +18,7 @@ Supported analyses:
 - Point Target Analysis
 - Radiometric Analysis
 - Interferometric Coherence Analysis
+- Point Target Spectral Analysis
 
 SCT package and its dependencies can be installed using ``pip`` tool:
 

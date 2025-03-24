@@ -57,3 +57,15 @@ documentation.
 
    This analysis can be configured through the configuration file and deeply customized. To better understand the
    implications of changing specific parameters, refer to the :ref:`documentation about tool configuration <sct_config>`.
+
+
+Spectral Analysis
+-----------------
+
+This feature let the user compute the spectral analysis on SLC products containing data recorded in correspondence of
+calibration sites hosting passive or active corner reflectors. The spectral analysis is performed at each target location.
+
+.. seealso::
+
+   This analysis can be configured through the configuration file. To better understand the implications of changing
+   specific parameters, refer to the :ref:`documentation about tool configuration <sct_config>`.

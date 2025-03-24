@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.0.4[Unreleased]
+------------------
+
+**Additional Features**
+
+- Added ``Point Target Spectral Analysis`` feature
+
 v1.0.3
 ------
 

@@ -415,6 +415,26 @@
                     "description": "Number of coherence intensity histogram bins"
                 }
             }
+        },
+        "spectral_analysis": {
+            "type": "object",
+            "description": "Section of configuration file dedicated to spectral analysis",
+            "properties": {
+                "cropping_size": {
+                    "type": "array",
+                    "description": "ROI cropping size in pixels (number of samples, number of lines)",
+                    "items": [
+                        {
+                            "type": "integer",
+                            "description": "number of samples"
+                        },
+                        {
+                            "type": "integer",
+                            "description": "number of lines"
+                        }
+                    ]
+                }
+            }
         }
     }
 }
