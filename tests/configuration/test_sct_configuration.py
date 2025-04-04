@@ -25,6 +25,7 @@ from sct.configuration.sct_configuration import (
     SCTPointTargetAnalysisConfig,
     SCTRadiometricAnalysisConfig,
     SCTSpectralAnalysisConfig,
+    SCTTargetAmbiguityRatioConfig,
 )
 
 point_target_analysis_toml = """
@@ -107,6 +108,14 @@ spectral_analysis_toml = """
 
 [spectral_analysis]
 cropping_size = [200, 120]
+
+"""
+
+ambiguity_ratio_analysis_toml = """
+
+[ambiguity_ratio_analysis]
+interpolation_factor = 16
+cropping_size = [150, 120]
 
 """
 
@@ -230,6 +239,23 @@ def _validate_spectral_config(config: SCTSpectralAnalysisConfig) -> None:
     assert config.cropping_size == (200, 120)
 
 
+def _validate_ambiguity_config(config: SCTTargetAmbiguityRatioConfig) -> None:
+    """Validating correct reading of ambiguity ratio analysis configuration from file.
+
+    Parameters
+    ----------
+    config : SCTSpectralAnalysisConfig
+        sct spectral analysis configuration
+    """
+
+    assert isinstance(config, SCTTargetAmbiguityRatioConfig)
+
+    assert isinstance(config.base_config.interpolation_factor, int)
+    assert config.base_config.interpolation_factor == 16
+    assert isinstance(config.base_config.cropping_size, tuple)
+    assert config.base_config.cropping_size == (150, 120)
+
+
 class SCTConfigurationTest(unittest.TestCase):
     """Testing sct_configuration.py functionalities"""
 
@@ -239,6 +265,7 @@ class SCTConfigurationTest(unittest.TestCase):
             + radiometric_analysis_toml
             + interferometric_analysis_toml
             + spectral_analysis_toml
+            + ambiguity_ratio_analysis_toml
         )
 
     def test_full_point_target_analysis_reading(self) -> None:
@@ -284,6 +311,17 @@ class SCTConfigurationTest(unittest.TestCase):
 
         self.assertIsInstance(config, SCTConfiguration)
         _validate_spectral_config(config.spectral_analysis)
+
+    def test_full_ambiguity_ratio_analysis_reading(self) -> None:
+        """Test ambiguity_ratio_analysis full configuration reading"""
+        with TemporaryDirectory() as temp_dir:
+            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+            path_to_file.write_text(ambiguity_ratio_analysis_toml)
+
+            config = SCTConfiguration.from_toml(path_to_file)
+
+        self.assertIsInstance(config, SCTConfiguration)
+        _validate_ambiguity_config(config.target_ambiguity_ratio_analysis)
 
     def test_full_config_reading(self) -> None:
         """Test full configuration reading"""

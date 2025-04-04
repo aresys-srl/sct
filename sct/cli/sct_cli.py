@@ -17,6 +17,7 @@ from sct.cli.int_cli import interf_coherence_analysis
 from sct.cli.pta_cli import target_analysis
 from sct.cli.ra_cli import radiometric_analysis
 from sct.cli.sa_cli import spectral_pt_analysis
+from sct.cli.tar_cli import pt_ambiguity_ratio_analysis
 from sct.configuration.sct_configuration import SCTConfiguration
 
 version_option = click.version_option(VERSION, help="Show CLI version and exit")
@@ -59,3 +60,4 @@ sct_analysis.add_command(target_analysis)
 sct_analysis.add_command(radiometric_analysis)
 sct_analysis.add_command(interf_coherence_analysis)
 sct_analysis.add_command(spectral_pt_analysis)
+sct_analysis.add_command(pt_ambiguity_ratio_analysis)

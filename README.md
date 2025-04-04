@@ -19,6 +19,7 @@ Supported analyses:
 - Radiometric Analysis
 - Interferometric Coherence Analysis
 - Point Target Spectral Analysis
+- Point Target Ambiguity Ratio (PTAR)
 
 SCT package and its dependencies can be installed using ``pip`` tool:
 

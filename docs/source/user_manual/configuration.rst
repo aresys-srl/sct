@@ -58,6 +58,7 @@ The available sections of this configuration file are:
 
 - **spectral_analysis**: section that can be used to access *Spectral Analysis* options and parameters.
 
+- **ambiguity_ratio_analysis**: section that can be used to access *Target Ambiguity Ratio Analysis* options and parameters.
 
 .. seealso::
 
@@ -326,6 +327,20 @@ The following parameters can be configured directly under the `spectral_analysis
     :linenos:
 
     [spectral_analysis]
+    cropping_size = [128, 128]                 # ROI size to be analyzed
+
+:ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.
+
+Ambiguity Ratio Analysis
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following parameters can be configured directly under the `ambiguity_ratio_analysis` section.
+
+.. code-block:: toml
+    :linenos:
+
+    [spectral_analysis]
+    interpolation_factor = 8                       # ROI interpolation factor
     cropping_size = [128, 128]                 # ROI size to be analyzed
 
 :ref:`Check the API documentation<sct_api_ref_index>` to learn more about these values and their meaning.

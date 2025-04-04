@@ -435,6 +435,30 @@
                     ]
                 }
             }
+        },
+        "ambiguity_ratio_analysis": {
+            "type": "object",
+            "description": "Section of configuration file dedicated to ambiguity ratio analysis",
+            "properties": {
+                "cropping_size": {
+                    "type": "array",
+                    "description": "ROI cropping size in pixels (number of samples, number of lines)",
+                    "items": [
+                        {
+                            "type": "integer",
+                            "description": "number of samples"
+                        },
+                        {
+                            "type": "integer",
+                            "description": "number of lines"
+                        }
+                    ]
+                },
+                "interpolation_factor": {
+                    "type": "integer",
+                    "description": "ROI interpolation factor"
+                }
+            }
         }
     }
 }

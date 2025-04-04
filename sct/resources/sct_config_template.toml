@@ -67,3 +67,7 @@ coherence_bins_number = 80
 
 [spectral_analysis]
 cropping_size = [128, 128]
+
+[ambiguity_ratio_analysis]
+interpolation_factor = 8
+cropping_size = [128, 128]

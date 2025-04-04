@@ -17,9 +17,9 @@ dependencies = [
     "art",
     "appdirs",
     "arepytools >= 1.7.2",
-    "arepyextras-quality >= 2.0.4",
+    "arepyextras-quality >= 2.0.6",
+    "arepyextras-eo_products>=1.2.3",
     "arepyextras-perturbations >= 1.1",
-    "arepyextras-eo_products >= 1.1.0",
     "scipy<1.14",
 ]
 dynamic = ["version"]
@@ -57,6 +57,9 @@ path = "sct/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 only-include = ["sct", "tests", "docs"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [project.optional-dependencies]
 cli = ["click", "requests"]

@@ -24,6 +24,7 @@ from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDRe
 from arepyextras.quality.interferometric_analysis.config import InterferometricConfig
 from arepyextras.quality.point_targets_analysis.config import PointTargetAnalysisConfig
 from arepyextras.quality.radiometric_analysis.config import RadiometricProfilesConfig
+from arepyextras.quality.target_ambiguity_ratio_analysis.config import AmbiguityRatioConfig
 from jsonschema import validate
 
 from sct import config_schema
@@ -46,6 +47,7 @@ class ConfigSupportedAnalyses(Enum):
     RADIOMETRY = auto()
     POINT_TARGET = auto()
     SPECTRAL_ANALYSIS = auto()
+    TARGET_AMBIGUITY_RATIO = auto()
 
 
 def toml_schema_validation(toml_content: dict):
@@ -259,6 +261,39 @@ class SCTSpectralAnalysisConfig:
 
 
 @dataclass
+class SCTTargetAmbiguityRatioConfig:
+    """SCT Target Ambiguity Ratio Analysis configuration"""
+
+    base_config: AmbiguityRatioConfig = field(default_factory=AmbiguityRatioConfig)
+
+    @classmethod
+    def from_dict(cls, arg: dict) -> SCTTargetAmbiguityRatioConfig:
+        """Creating a SCTTargetAmbiguityRatioConfig from a dict representing this dataclass.
+        All fields except base_config are set.
+
+        Parameters
+        ----------
+        arg : dict
+            dict representing this dataclass
+
+        Returns
+        -------
+        SCTTargetAmbiguityRatioConfig
+            SCTTargetAmbiguityRatioConfig dataclass initialized from input dictionary
+        """
+        out = cls()
+        valid_fields = [f.name for f in fields(out)]
+
+        for key, value in arg.items():
+            if key not in valid_fields:
+                raise InvalidConfigurationFile(f"SCTTargetAmbiguityRatioConfig: {key} not supported")
+
+            setattr(out, key, value)
+
+        return out
+
+
+@dataclass
 class SCTConfiguration:
     """SCT Tool full Configuration"""
 
@@ -267,6 +302,9 @@ class SCTConfiguration:
     radiometric_analysis: SCTRadiometricAnalysisConfig = field(default_factory=SCTRadiometricAnalysisConfig)
     interferometric_analysis: SCTInterferometricAnalysisConfig = field(default_factory=SCTInterferometricAnalysisConfig)
     spectral_analysis: SCTSpectralAnalysisConfig = field(default_factory=SCTSpectralAnalysisConfig)
+    target_ambiguity_ratio_analysis: SCTTargetAmbiguityRatioConfig = field(
+        default_factory=SCTTargetAmbiguityRatioConfig
+    )
 
     @staticmethod
     def from_toml(file: str | Path) -> SCTConfiguration:
@@ -340,6 +378,12 @@ class SCTConfiguration:
         if "spectral_analysis" in config:
             sa_config = SCTSpectralAnalysisConfig.from_dict(arg=config["spectral_analysis"])
 
+        # target ambiguity ratio analysis configuration
+        tar_config = SCTTargetAmbiguityRatioConfig()
+        if "ambiguity_ratio_analysis" in config:
+            tar_base_config = AmbiguityRatioConfig.from_dict(arg=config["ambiguity_ratio_analysis"])
+            tar_config.base_config = tar_base_config
+
         # assembling final configuration
         config = SCTConfiguration()
         config.general = general_config
@@ -347,6 +391,7 @@ class SCTConfiguration:
         config.radiometric_analysis = ra_config
         config.interferometric_analysis = int_config
         config.spectral_analysis = sa_config
+        config.target_ambiguity_ratio_analysis = tar_config
 
         return config
 
@@ -359,7 +404,7 @@ class SCTConfiguration:
             path to the output .toml file
         selected : str | ConfigSupportedAnalyses | None, optional
             selected analysis to be dumped, it can be "point_target", "radiometry", "interferometry",
-            "spectral_analysis"
+            "spectral_analysis" or "target_ambiguity_ratio"
             if None the whole configuration is dumped, by default None
         """
 
@@ -374,6 +419,7 @@ class SCTConfiguration:
             "radiometric_analysis": None,
             "interferometric_analysis": None,
             "spectral_analysis": None,
+            "target_ambiguity_ratio_analysis": None,
         }
 
         if selected in (None, ConfigSupportedAnalyses.POINT_TARGET):
@@ -474,6 +520,13 @@ class SCTConfiguration:
 
             # saving to configuration dict to be dumped
             conf_dict["spectral_analysis"] = sa_dict
+
+        if selected in (None, ConfigSupportedAnalyses.TARGET_AMBIGUITY_RATIO):
+            # target ambiguity ratio analysis re-ordering
+            tar_dict = dtc_dict["target_ambiguity_ratio_analysis"]["base_config"]
+
+            # saving to configuration dict to be dumped
+            conf_dict["target_ambiguity_ratio_analysis"] = tar_dict
 
         with open(out_file, "w", encoding="UTF-8") as f_out:
             toml.dump(conf_dict, f_out)

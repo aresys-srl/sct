@@ -7,6 +7,7 @@ v1.0.4[Unreleased]
 **Additional Features**
 
 - Added ``Point Target Spectral Analysis`` feature
+- Added ``Point Target Ambiguity Ratio (PTAR)`` feature
 
 v1.0.3
 ------

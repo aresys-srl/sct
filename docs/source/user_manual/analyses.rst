@@ -69,3 +69,11 @@ calibration sites hosting passive or active corner reflectors. The spectral anal
 
    This analysis can be configured through the configuration file. To better understand the implications of changing
    specific parameters, refer to the :ref:`documentation about tool configuration <sct_config>`.
+
+
+Point Target Ambiguity Ratio (PTAR)
+-----------------------------------
+
+This feature let the user compute the ratio between the signal and its left and right ambiguities, if captured by the
+SAR acquisition.
+The point target ambiguity ratio analysis is performed at each target location.

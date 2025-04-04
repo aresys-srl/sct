@@ -75,3 +75,17 @@ properly run the analysis.
    sct [--config "path_to_config"] spectral-analysis -p "product_path" -out "output_dir" -pt "point_target_file_path"
 
 To list all the available options use the `--help/-h` argument.
+
+
+Point Target Ambiguity Ratio (PTAR)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Point Target Ambiguity Ratio Analysis can be performed using the following command just specifying the input product
+and the output directory. Obviously, an external file containing point targets locations and data must be provided in
+order to properly run the analysis.
+
+.. code-block:: bash
+
+   sct [--config "path_to_config"] ptar-analysis -p "product_path" -out "output_dir" -pt "point_target_file_path"
+
+To list all the available options use the `--help/-h` argument.

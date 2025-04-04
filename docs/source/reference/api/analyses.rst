@@ -9,6 +9,8 @@ Analyses Module
 
 .. automodule:: sct.analyses.spectral_analysis
 
+.. automodule:: sct.analyses.ambiguity_ratio_analysis
+
 .. automodule:: sct.analyses.graphical_output
 
 .. automodule:: sct.analyses.automatic_analyses
