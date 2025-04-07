@@ -18,7 +18,7 @@ dependencies = [
     "appdirs",
     "arepytools >= 1.7.2",
     "arepyextras-quality >= 2.0.6",
-    "arepyextras-eo_products>=1.2.4",
+    "arepyextras-eo_products>=1.2.5",
     "arepyextras-perturbations >= 1.1",
     "scipy<1.14",
 ]

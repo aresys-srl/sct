@@ -25,7 +25,7 @@ log.addHandler(logging_file_handler)
 if __name__ == "__main__":
     # products
     # prod = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\SLC"
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\SLC_23.SAFE"
+    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\SLC_19.SAFE"
 
     # external orbits
     ext_orbit = None
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\PointTargetsBinary"
 
     # # test config
-    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\config_etad.toml"
+    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\config_perturbations.toml"
     test_config = SCTConfiguration.from_toml(test_config)
     # test_config = SCTConfiguration()
 

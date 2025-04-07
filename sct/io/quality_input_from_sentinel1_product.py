@@ -36,12 +36,13 @@ from arepyextras.quality.core.generic_dataclasses import (
 )
 from arepyextras.quality.io.protocol_utilities import roi_validation
 from arepytools.constants import LIGHT_SPEED
-from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper, compute_ground_velocity
 from arepytools.geometry.geometric_functions import (
+    compute_ground_velocity_from_trajectory,
     compute_incidence_angles_from_trajectory,
     compute_look_angles_from_trajectory,
 )
-from arepytools.geometry.inverse_geocoding import inverse_geocoding_monostatic
+from arepytools.geometry.inverse_geocoding_core import inverse_geocoding_monostatic_core
+from arepytools.geometry.orbit import Orbit
 from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
 from numpy.typing import ArrayLike
@@ -211,8 +212,8 @@ class Sentinel1ChannelManager:
         # steering rate
         self._steering_rate_poly_coeff = self._channel.swath_info.azimuth_steering_rate_poly
 
-        # generating trajectory from orbit
-        self._trajectory_rx = GSO3DCurveWrapper(orbit=self._channel.general_sar_orbit)
+        # trajectory
+        self._trajectory_rx = self._channel.orbit
         self._trajectory_tx = None
 
         # generating doppler centroid and rate polynomial wrappers
@@ -418,7 +419,7 @@ class Sentinel1ChannelManager:
         return self._az_time_half_swath
 
     @property
-    def trajectory(self) -> GSO3DCurveWrapper:
+    def trajectory(self) -> Orbit:
         """Channel trajectory rx 3D curve"""
         return self._trajectory_rx
 
@@ -552,8 +553,8 @@ class Sentinel1ChannelManager:
             range_times=self.mid_range_time,
             look_direction=self.looking_side.value,
         )
-        v_ground = compute_ground_velocity(
-            orbit=self._channel.general_sar_orbit, time_point=azimuth_time, look_angles=look_angle
+        v_ground = compute_ground_velocity_from_trajectory(
+            trajectory=self.trajectory, azimuth_time=azimuth_time, look_angles_rad=look_angle
         )
         azimuth_step_m = self.azimuth_step_s * v_ground
 
@@ -677,9 +678,10 @@ class Sentinel1ChannelManager:
 
         coordinates = np.atleast_2d(coordinates)
 
-        t_azmth, t_rng = inverse_geocoding_monostatic(
-            orbit=self._channel.general_sar_orbit,
+        t_azmth, t_rng = inverse_geocoding_monostatic_core(
+            trajectory=self.trajectory,
             ground_points=coordinates,
+            initial_guesses=self.mid_azimuth_time,
             wavelength=1,
             frequencies_doppler_centroid=0,
         )

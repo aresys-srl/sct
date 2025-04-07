@@ -93,9 +93,6 @@ class MockChannel:
         prf = 1000
         acquisition_prf = 1000
 
-    class MockGSO:
-        pass
-
     class MockOrbit:
         pass
 
@@ -108,7 +105,6 @@ class MockChannel:
     burst_info = MockBurstInfo()
     pulse = MockPulse()
     swath_info = MockSwathInfo()
-    general_sar_orbit = MockGSO()
     orbit = Orbit(np.array([1, 2]), np.tile([1, 2, 3], (2, 1)), np.tile([1, 2, 3], (2, 1)))
     doppler_centroid_poly = SortedPolyList()
     doppler_rate_poly = SortedPolyList()
