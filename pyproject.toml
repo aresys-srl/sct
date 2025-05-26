@@ -6,7 +6,7 @@ requires-python = ">= 3.10"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 dependencies = [
-    "numpy<2",
+    "numpy",
     "pandas",
     "jsonschema",
     "toml",
@@ -20,7 +20,7 @@ dependencies = [
     "arepyextras-quality >= 2.0.6",
     "arepyextras-eo_products>=1.2.5",
     "arepyextras-perturbations >= 1.1",
-    "scipy<1.14",
+    "scipy",
 ]
 dynamic = ["version"]
 classifiers = [
