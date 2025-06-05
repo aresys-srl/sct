@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pandas as pd
 from s1etad import ECorrectionType, Sentinel1Etad, Sentinel1EtadBurst
-from scipy.interpolate import interp2d
+from scipy.interpolate import RegularGridInterpolator
 from shapely.errors import ShapelyDeprecationWarning
 from shapely.geometry import Point
 
@@ -45,10 +45,14 @@ def _extract_etad_correction(burst: Sentinel1EtadBurst, location: Point) -> tupl
 
     # interpolating values at given target time coordinates
     azimuth_time, range_time = burst.get_burst_grid()
-    interpolator_rng = interp2d(range_time, azimuth_time, rng_corrections)
-    interpolator_az = interp2d(range_time, azimuth_time, az_corrections)
+    interpolator_rng = RegularGridInterpolator(
+        points=(azimuth_time, range_time), method="linear", values=rng_corrections, fill_value=0, bounds_error=False
+    )
+    interpolator_az = RegularGridInterpolator(
+        points=(azimuth_time, range_time), method="linear", values=az_corrections, fill_value=0, bounds_error=False
+    )
 
-    return interpolator_rng(tau0, t0)[0], interpolator_az(tau0, t0)[0]
+    return interpolator_rng((t0, tau0))[0], interpolator_az((t0, tau0))[0]
 
 
 def get_etad_corrections(etad_product_path: str | Path, target_df: pd.DataFrame) -> pd.DataFrame:
