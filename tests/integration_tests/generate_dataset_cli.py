@@ -373,6 +373,48 @@ sct_requests_dataset = [
         overwrite_flag=True,
         readonly_flag=True,
     ),
+    PushRequest(
+        src_rel_path="envisat/ASA_IMS_1PNESA20030124_100448_000000182013_00151_04714_0000.N1",
+        dst_rel_path="input/asar/ASA_IMS_SLC",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="envisat/ASA_WSM_1PNDSI20050314_024431_000000922035_00290_15875_0000.N1",
+        dst_rel_path="input/asar/ASA_WSM_GRD",
+        preserve_filename_flag=True,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="envisat/config.toml",
+        dst_rel_path="input/asar/config",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=False,
+    ),
+    PushRequest(
+        src_rel_path="envisat/PointTargets_File__ASAR.xml",
+        dst_rel_path="input/asar/ASAR_transponders",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="envisat/reports/ASA_IMS_1PNESA20030124_100448_000000182013_00151_04714_0000_pta_report.csv",
+        dst_rel_path="output/asar/ASA_IMS_SLC",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
+    PushRequest(
+        src_rel_path="envisat/reports/ASA_WSM_1PNDSI20050314_024431_000000922035_00290_15875_0000_pta_results.csv",
+        dst_rel_path="output/asar/ASA_WSM_GRD",
+        preserve_filename_flag=False,
+        overwrite_flag=True,
+        readonly_flag=True,
+    ),
 ]
 
 

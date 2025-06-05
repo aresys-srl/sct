@@ -781,6 +781,61 @@ def test_pta_cosmo_grd(session: TestSession, env: Environment, data: DataReposit
     _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
 
 
+def test_pta_asar_slc(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on Envisat ASAR slc product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/asar/config")
+    product_folder = data.pull("input/asar/ASA_IMS_SLC")
+    point_target = data.pull("input/asar/ASAR_transponders")
+    report = data.pull("output/asar/ASA_IMS_SLC")
+    expected_report = pd.read_csv(report)
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
+    )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
+# TODO: check these results
+def test_pta_asar_grd(session: TestSession, env: Environment, data: DataRepository):
+    """Testing sct point target analysis on Envisat ASAR slc product.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    data : DataRepository
+        sct dataset repository manager
+    """
+    config = data.pull("input/asar/config")
+    product_folder = data.pull("input/asar/ASA_WSM_GRD")
+    point_target = data.pull("input/asar/ASAR_transponders")
+    report = data.pull("output/asar/ASA_WSM_GRD")
+    expected_report = pd.read_csv(report)
+
+    # running analysis using CLI
+    current_df = _run_cli_tool_pta(
+        env=env, session=session, config=config, product=product_folder, targets=point_target
+    )
+
+    # comparing dataframes differences to specific tolerances
+    _compare_pta_df_with_tolerances(ref=expected_report.copy(), current=current_df.copy())
+
+
 @skip_if(sys.platform.startswith("linux"))
 def test_interferometry_pf_co_registered(session: TestSession, env: Environment, data: DataRepository):
     """Testing sct interferometric analysis on two co-registered PF products.

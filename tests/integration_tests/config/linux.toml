@@ -1,5 +1,5 @@
 [data]
-url = "file:///opt/aresys/sct_tds_v1.8"
+url = "file:///opt/aresys/sct_tds_v1.9"
 
 [env.variables]
 OMP_NUM_THREADS = {}
