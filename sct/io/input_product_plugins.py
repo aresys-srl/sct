@@ -16,6 +16,7 @@ from typing import Callable, Protocol, runtime_checkable
 from sct.core.custom_corrections import ALECorrectionFunctionType
 from sct.io import (
     quality_input_from_aresys_product,
+    quality_input_from_asar_product,
     quality_input_from_cosmo_product,
     quality_input_from_eos04_product,
     quality_input_from_iceye_product,
@@ -57,6 +58,7 @@ class InputProductPluginProtocol(Protocol):
 # Built-in input products plugins
 INPUT_PRODUCTS_BUILT_IN_PLUGINS = [
     quality_input_from_aresys_product,
+    quality_input_from_asar_product,
     quality_input_from_cosmo_product,
     quality_input_from_eos04_product,
     quality_input_from_iceye_product,
