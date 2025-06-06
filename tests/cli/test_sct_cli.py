@@ -23,7 +23,7 @@ class SCTCLITestCase(unittest.TestCase):
     def test_error_no_args(self):
         """Display help when no arguments are provided"""
         result = self.cli_runner.invoke(sct_analysis)
-        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(result.exit_code, 2)
 
     def test_display_help(self):
         """Display help"""
