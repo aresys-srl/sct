@@ -38,6 +38,7 @@ class MockEnum(Enum):
     SLANT_RANGE = "SLANT RANGE"
     ASCENDING = "ASCENDING"
     RIGHT_LOOKING = "RIGHT"
+    STRIPMAP = "STRIPMAP"
 
 
 class MockProductType(str):
@@ -63,6 +64,7 @@ class MockChannel:
         product_level = "SLC"
         product_type = MockProductType("SLC")
         swath = "S1"
+        acquisition_mode_std = MockEnum.STRIPMAP
 
     class MockRasterInfo:
         samples = 50

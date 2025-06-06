@@ -210,7 +210,7 @@ class ASARChannelManager:
 
         # re-organizing SWST changes
         # TODO: implement acquisition timeline, if needed
-        self._swst_changes = None
+        self._swst_changes = [(0, 0)]
 
         # get burst boundaries
         self._burst_az_boundaries, self._burst_rng_boundaries = self._get_raster_layout()
