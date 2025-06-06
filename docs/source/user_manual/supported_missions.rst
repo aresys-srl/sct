@@ -14,6 +14,7 @@ features is the herein reported:
 * **EOS-04**: official stripmap and topsar products.
 * **COSMO SkyMed**: official stripmap and topsar products.
 * **RADARSAT-2**: official stripmap and scansar products.
+* **ENVISAT/ERS**: official ASAR products.
 
 .. note::
 

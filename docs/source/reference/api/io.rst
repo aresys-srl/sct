@@ -21,6 +21,8 @@ Input/Output Module
 
 .. automodule:: sct.io.quality_input_from_cosmo_product
 
+.. automodule:: sct.io.quality_input_from_asar_product
+
 .. automodule:: sct.io.quality_input_from_radarsat2_product
 
 .. automodule:: sct.io.safe_computing_utilities

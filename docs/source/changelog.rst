@@ -1,13 +1,19 @@
 Changelog
 =========
 
-v1.0.4[Unreleased]
-------------------
+v1.0.4
+------
 
 **Additional Features**
 
 - Added ``Point Target Spectral Analysis`` feature
 - Added ``Point Target Ambiguity Ratio (PTAR)`` feature
+- IO: introduced support for ASAR/Envisat product format
+
+**Other changes**
+
+- Removed pinning from several dependencies
+- Minor fixes
 
 v1.0.3
 ------
@@ -20,6 +26,7 @@ v1.0.3
 - Removed radiometric ``input_quantity`` option from radiometric analysis configuration: it is now always retrieved from the product itself
 
 **Other changes**
+
 - added acquisition mode to protocol implementation for each supported external product format
 - IO: introduced specific plugin for Aresys internal Product Folder format
 

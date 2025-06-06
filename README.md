@@ -12,6 +12,7 @@ Supported products:
 - EOS-04
 - COSMO SkyMed
 - RADARSAT-2
+- Envisat/ERS
 
 Supported analyses:
 
