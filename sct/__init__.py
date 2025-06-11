@@ -13,4 +13,4 @@ config_schema = res.files(resources).joinpath("configuration_schema.json")
 csv_template = res.files(resources).joinpath("calibration_targets_external_source_template.csv")
 calibration_sites_registry_schema = res.files(resources).joinpath("known_calibration_sites_registry_schema.json")
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
