@@ -1,7 +1,7 @@
 FROM python:3.11.7-bookworm
 
 # insert your GitHub token here
-ARG token=
+ARG token="insert_your_github_token_here"
 
 USER root
 RUN apt-get update -y && apt-get upgrade -y && apt-get install libgfortran5 && pip install --upgrade pip
@@ -20,7 +20,7 @@ RUN cd arepyextras-iers_solid_tides && pip install -e . && cd ..
 RUN cd arepyextras-eo_products && pip install -e . && cd ..
 RUN cd arepyextras-perturbations && pip install -e . && cd ..
 RUN cd arepyextras-quality && pip install -e . && cd ..
-RUN cd sct && pip install -e .[cli] && cd .. && cd ..
+RUN cd sct && pip install -e .[cli,graphs] && cd .. && cd ..
 
 WORKDIR /home
 
