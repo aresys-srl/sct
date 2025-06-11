@@ -9,6 +9,7 @@ from enum import Enum
 import numpy as np
 from arepytools.math.genericpoly import SortedPolyList
 from arepytools.timing.precisedatetime import PreciseDateTime
+from arepytools.geometry.generalsarorbit import GSO3DCurveWrapper
 
 
 @dataclass
@@ -36,6 +37,7 @@ class MockEnum(Enum):
     SLANT_RANGE = "SLANT RANGE"
     ASCENDING = "ASCENDING"
     RIGHT_LOOKING = "RIGHT"
+    STRIPMAP = "STRIPMAP"
 
 
 class MockProductType(str):
@@ -56,6 +58,7 @@ class MockChannel:
         polarization = MockEnum.HH
         projection = MockEnum.SLANT_RANGE
         orbit_direction = MockEnum.ASCENDING
+        acquisition_mode_std = MockEnum.STRIPMAP
         product_level = "SLC"
         product_type = MockProductType("SLC")
         swath = "S1"
@@ -86,6 +89,7 @@ class MockChannel:
     class MockSwathInfo:
         azimuth_steering_rate_poly = [0, 0, 0]
         azimuth_steering_rate_pol = [0, 0, 0]
+        prf = 1000
 
     class MockGSO:
         pass
@@ -106,3 +110,4 @@ class MockChannel:
     acquisition_timeline = MockATL()
     sampling_constants = None
     image_calibration_factor = 1
+    orbit = GSO3DCurveWrapper(orbit=None)

@@ -41,7 +41,7 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
     def test_help_on_no_args(self):
         """Display help when no arguments are provided"""
         result = self.cli_runner.invoke(sct_analysis, [self.command])
-        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(result.exit_code, 2)
 
     def test_display_help(self):
         """Display help"""
