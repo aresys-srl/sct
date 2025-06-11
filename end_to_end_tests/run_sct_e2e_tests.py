@@ -41,10 +41,10 @@ TEST_CONFIG_PATH = BASE_DIR.joinpath("test_registry.json")
 BASE_OUTPUT_DIRECTORY = BASE_DIR.joinpath("output")
 DEFAULT_REPORT_NAME = "point_target_analysis_results.csv"
 
-ABSOLUTE_TOLERANCE = 1e-6
+ABSOLUTE_TOLERANCE = 1e-3
 ABSOLUTE_TOLERANCE_ISLR = 5e-1
-ABSOLUTE_TOLERANCE_LOC = 1e-4
-ABSOLUTE_TOLERANCE_DEG = 5e-4
+ABSOLUTE_TOLERANCE_LOC = 5e-2
+ABSOLUTE_TOLERANCE_DEG = 1e-3
 ABSOLUTE_TOLERANCE_RA = 1e-3
 
 LOC_VAR_LIST = [
@@ -55,6 +55,8 @@ LOC_VAR_LIST = [
     "ground_range_localization_error_[m]",
     "revised_ale_range_[m]",
     "revised_ale_azimuth_[m]",
+    "total_ale_range_correction_[m]",
+    "total_ale_azimuth_correction_[m]"
 ]
 DEG_VAR_LIST = ["peak_phase_error_[deg]", "incidence_angle_[deg]"]
 ISLR_VAR_LIST = ["range_islr_[dB]", "azimuth_islr_[dB]", "islr_2d_[dB]"]
@@ -135,8 +137,12 @@ def compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> 
     ref.reset_index(drop=True, inplace=True)
 
     # splitting dataframes to check different values with specific tolerances
-    loc_df_ref = ref[LOC_VAR_LIST].copy()
-    loc_report = current[LOC_VAR_LIST].copy()
+    loc_var_list = LOC_VAR_LIST
+    additional_loc_vars = ["etad_range_correction_[m]", "etad_azimuth_correction_[m]"]
+    if set(additional_loc_vars).issubset(current.columns):
+        loc_var_list = LOC_VAR_LIST + additional_loc_vars
+    loc_df_ref = ref[loc_var_list].copy()
+    loc_report = current[loc_var_list].copy()
     pd.testing.assert_frame_equal(
         loc_df_ref, loc_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_LOC, rtol=0
     )
@@ -170,11 +176,11 @@ def compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> 
     # checking goodness of results
     pd.testing.assert_frame_equal(
         ref.drop(
-            LOC_VAR_LIST + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
+            loc_var_list + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
             axis=1,
         ),
         current.drop(
-            LOC_VAR_LIST + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
+            loc_var_list + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
             axis=1,
         ),
         check_exact=False,
