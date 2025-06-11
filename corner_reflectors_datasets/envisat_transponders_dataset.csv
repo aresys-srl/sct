@@ -1,0 +1,8 @@
+target_name,target_type,plate,description,latitude_deg,longitude_deg,altitude_m,x_coord_m,y_coord_m,z_coord_m,drift_velocity_x_my,drift_velocity_y_my,drift_velocity_z_my,corner_azimuth_deg,corner_elevation_deg,target_shape,target_size_m,rcs_hh_dB,rcs_hv_dB,rcs_vv_dB,rcs_vh_dB,delay_s,measurement_date,validity_start_date,validity_stop_date
+TX_1,TX,EURA,asar transponder,52.524552,5.049333,42.45995209,3873736.308,342269.1735,5038560.999,,,,,,,,1,1,1,1,1.52E-06,01-01-90 0:00,01-01-90 1:00,01-01-20 2:00
+TX_2,TX,EURA,asar transponder,52.551796,6.006086,39.99984798,3865086.443,406652.0471,5040403.004,,,,,,,,1,1,1,1,1.54E-06,01-01-90 0:00,01-01-90 1:00,01-01-20 2:00
+TX_3,TX,EURA,asar transponder,52.199801,4.818415,40.00010654,3903597.749,329057.7681,5016491.584,,,,,,,,1,1,1,1,1.51E-06,01-01-90 0:00,01-01-90 1:00,01-01-20 2:00
+TX_4,TX,EURA,asar transponder,52.55497,5.668955,42.30959413,3867134.638,383875.2321,5040619.59,,,,,,,,1,1,1,1,1.57E-06,01-01-90 0:00,01-01-90 1:00,01-01-20 2:00
+TX_5,TX,NOAM,asar transponder,74.73444,-94.99666,68.03001719,-146724.2146,-1678192.186,6131093.326,,,,,,,,1,1,1,1,1.54E-06,01-01-90 0:00,01-01-90 1:00,01-01-20 2:00
+TX_6,TX,NOAM,asar transponder,45.294402,-75.757953,62.54810083,1105716.594,-4356303.921,4510468.63,,,,,,,,1,1,1,1,1.51E-06,01-01-90 0:00,01-01-90 1:00,01-01-20 2:00
+TX_7,TX,EURA,asar transponder,-1.056519,116.980191,163.6814234,-2893234.246,5683148.442,-116820.354,,,,,,,,1,1,1,1,1.57E-06,01-01-90 0:00,01-01-90 1:00,01-01-20 2:00
