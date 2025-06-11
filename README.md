@@ -11,6 +11,7 @@ Supported product formats:
 - NovaSAR-1
 - EOS-04
 - SAOCOM
+- ENVISAT/ERS
 
 Supported analyses:
 
