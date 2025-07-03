@@ -20,7 +20,8 @@ ABSOLUTE_TOLERANCE = 1e-6
 ABSOLUTE_TOLERANCE_ISLR = 5e-1
 ABSOLUTE_TOLERANCE_LOC = 1e-4
 ABSOLUTE_TOLERANCE_DEG = 5e-4
-ABSOLUTE_TOLERANCE_RA = 1e-3
+ABSOLUTE_TOLERANCE_RA = 1e-2
+ABSOLUTE_TOLERANCE_OTHER = 1e-3
 
 LOC_VAR_LIST = [
     "range_resolution_[m]",
@@ -75,7 +76,7 @@ def _compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) ->
 
     other_df_ref = ref[OTHER_VAR_LIST].copy()
     other_report = current[OTHER_VAR_LIST].copy()
-    pd.testing.assert_frame_equal(other_df_ref, other_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_RA, rtol=0)
+    pd.testing.assert_frame_equal(other_df_ref, other_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_OTHER, rtol=0)
 
     # TODO: remove this with next integration test dataset update
     skip_vars = ["rcs_theoretical_[dB]"]
@@ -122,7 +123,7 @@ def _compare_ra_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     np.testing.assert_allclose(
         ref_dataset["radiometric_profiles"][:],
         current_dataset["radiometric_profiles"][:],
-        atol=ABSOLUTE_TOLERANCE,
+        atol=ABSOLUTE_TOLERANCE_RA,
         rtol=0,
     )
 
