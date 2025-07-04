@@ -11,7 +11,10 @@ Supported product formats:
 - NovaSAR-1
 - EOS-04
 - SAOCOM
-- ENVISAT/ERS
+
+Heritage missions:
+
+- ENVISAT/ERS in ASAR format
 
 Supported analyses:
 
@@ -51,6 +54,15 @@ After all these packages have been installed in the same Python environment, do 
 > [!NOTE]
 > This package comes with Command Line Interface (CLI) functionalities that can be installed specifying the **[cli]** option.\
 > It can also generate graphs for the available analyses by installing the package using the **[graphs]** option.
+
+## Heritage Missions Support
+
+Envisat and ERS heritage missions are supported in ASAR format using third party libraries that are published under the **GPL-3.0 license** requiring a change of the current **MIT license** for SCT software. To avoid unnecessary issues, the installation of heritage support is optional so that, if not needed, the software license remains unaltered.
+
+To install SCT with heritage mission support:
+
+    $ pip install .[heritage]
+
 
 ## E2E Dataset
 

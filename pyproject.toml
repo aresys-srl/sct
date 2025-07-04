@@ -38,6 +38,7 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
+heritage = ["arepyextras-eo_products[heritage]"]
 cli = ["click", "requests"]
 graphs = ["matplotlib", "plotly"]
 dev = ["black", "isort", "pylint"]

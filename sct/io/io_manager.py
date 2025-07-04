@@ -14,7 +14,6 @@ from pathlib import Path
 from typing import Union
 
 from arepyextras.eo_products.eos.l1_products.utilities import is_eos04_product
-from arepyextras.eo_products.asar.l1_products.utilities import is_asar_product
 from arepyextras.eo_products.iceye.l1_products.utilities import is_iceye_product
 from arepyextras.eo_products.novasar.l1_products.utilities import is_novasar_1_product
 from arepyextras.eo_products.safe.l1_products.utilities import is_s1_safe_product
@@ -25,7 +24,6 @@ from arepytools.io.productfolder2 import is_product_folder as is_aresys_product
 from sct.core.custom_corrections import ALECorrectionFunctionType, sentinel_1_ipf
 from sct.io.extended_protocols import SCTInputProduct
 from sct.io.quality_input_from_eos04_product import EOS04ProductManager
-from sct.io.quality_input_from_asar_product import ASARProductManager
 from sct.io.quality_input_from_iceye_product import ICEYEProductManager
 from sct.io.quality_input_from_novasar1_product import NovaSAR1ProductManager
 from sct.io.quality_input_from_saocom_product import SAOCOMProductManager
@@ -85,6 +83,13 @@ def input_detector(product: Union[str, Path]) -> SupportedInputProductType:
 
     if is_eos04_product(product):
         return SupportedInputProductType.EOS04
+
+    try:
+        from arepyextras.eo_products.asar.l1_products.utilities import is_asar_product
+    except ModuleNotFoundError:
+        import sys
+        log.critical("for heritage mission support, pip install sct[heritage]")
+        sys.exit()
 
     if is_asar_product(product):
         return SupportedInputProductType.ASAR
@@ -156,6 +161,12 @@ def product_loader(
             log.info("Product type: EOS-04")
             product = EOS04ProductManager(product_path)
         case SupportedInputProductType.ASAR:
+            try:
+                from sct.io.quality_input_from_asar_product import ASARProductManager
+            except ModuleNotFoundError:
+                import sys
+                log.critical("for heritage mission support, pip install sct[heritage]")
+                sys.exit()
             log.info("Product type: ENVISAT/ERS")
             product = ASARProductManager(product_path)
         case _:
