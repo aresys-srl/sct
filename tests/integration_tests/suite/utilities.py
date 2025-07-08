@@ -1,0 +1,521 @@
+# SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
+# SPDX-License-Identifier: MIT
+
+"""
+SCT Integration Tests - Utilities
+---------------------------------
+"""
+
+from __future__ import annotations
+
+import subprocess
+import sys
+from dataclasses import dataclass
+from enum import Enum
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
+from arepyextras.quality.interferometric_analysis.support import (
+    coherence_histograms_to_netcdf,
+)
+from arepyextras.quality.radiometric_analysis.support import (
+    radiometric_profiles_to_netcdf,
+)
+from netCDF4 import Dataset
+
+from sct.analyses.interferometric_analysis import interferometric_coherence_analysis
+from sct.analyses.point_target_analysis import point_target_analysis_with_corrections
+from sct.analyses.radiometric_analysis import (
+    average_elevation_profile_analysis,
+    nesz_analysis,
+)
+from sct.configuration.sct_configuration import SCTConfiguration
+
+PYTHON_INTERPRETER = sys.executable
+
+# TODO: fix this
+# BASE_DIR = Path(__file__).parent.resolve()
+# TEST_CONFIG_PATH = BASE_DIR.joinpath("test_registry.json")
+# BASE_OUTPUT_DIRECTORY = BASE_DIR.joinpath("output")
+# DEFAULT_REPORT_NAME = "point_target_analysis_results.csv"
+
+
+ABSOLUTE_TOLERANCE = 1e-6
+ABSOLUTE_TOLERANCE_ISLR = 5e-1
+ABSOLUTE_TOLERANCE_LOC = 1e-4
+ABSOLUTE_TOLERANCE_DEG = 5e-4
+ABSOLUTE_TOLERANCE_RA = 1e-2
+ABSOLUTE_TOLERANCE_OTHER = 1e-3
+
+LOC_VAR_LIST = [
+    "range_resolution_[m]",
+    "azimuth_resolution_[m]",
+    "slant_range_localization_error_[m]",
+    "azimuth_localization_error_[m]",
+    "ground_range_localization_error_[m]",
+    "revised_ale_range_[m]",
+    "revised_ale_azimuth_[m]",
+]
+ADDITIONAL_LOC_VAR_LIST = ["etad_range_correction_[m]", "etad_azimuth_correction_[m]"]
+DEG_VAR_LIST = ["peak_phase_error_[deg]", "incidence_angle_[deg]"]
+ISLR_VAR_LIST = ["range_islr_[dB]", "azimuth_islr_[dB]", "islr_2d_[dB]"]
+OTHER_VAR_LIST = [
+    "ground_velocity_[ms]",
+    "doppler_rate_theoretical_[Hzs]",
+    "doppler_rate_real_[Hzs]",
+    "doppler_frequency_[Hz]",
+]
+AZ_TIME_VAR = ["peak_azimuth_time_[UTC]"]
+
+
+class SCTAnalyses(Enum):
+    """Supported analyses"""
+
+    POINT_TARGET = "pta"
+    NESZ = "nesz"
+    RAIN_FOREST = "rf"
+    INTERFEROMETRY = "interf"
+
+
+@dataclass
+class TestParams:
+    """Tests input parameters setup"""
+
+    analysis: SCTAnalyses | None = None
+    product: Path | list[Path] | None = None
+    config: Path | None = None
+    targets: Path | None = None
+    external_orbit: Path | None = None
+    report: Path | None = None
+    etad_product: Path | None = None
+    ionospheric_maps: Path | None = None
+    tropospheric_maps: Path | None = None
+
+    @classmethod
+    def from_dict(cls, arg: dict) -> TestParams:
+        """Composing TestParams dataclass from config dict.
+
+        Parameters
+        ----------
+        arg : dict
+            input dictionary
+
+        Returns
+        -------
+        TestParams
+            dataclass
+        """
+        out = cls()
+        for key, val in arg.items():
+            if key == "analysis":
+                setattr(out, key, SCTAnalyses(val))
+            else:
+                if isinstance(val, list):
+                    setattr(out, key, [Path(v) for v in val])
+                elif val != "":
+                    setattr(out, key, Path(val))
+        return out
+
+
+def compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> None:
+    """Comparing reference dataframe and current one, column by column to assess differences in values.
+    Some values are grouped by theme ad compared with specific tolerances.
+
+    Parameters
+    ----------
+    ref : pd.DataFrame
+        reference dataframe
+    current : pd.DataFrame
+        current evaluated dataframe
+    """
+
+    # filtering only valid rows
+    current = current.loc[~current["incidence_angle_[deg]"].isna()]
+    current.reset_index(drop=True, inplace=True)
+    ref = ref.loc[~ref["incidence_angle_[deg]"].isna()]
+    ref.reset_index(drop=True, inplace=True)
+
+    # splitting dataframes to check different values with specific tolerances
+    loc_var_list = LOC_VAR_LIST
+    if set(ADDITIONAL_LOC_VAR_LIST).issubset(current.columns):
+        loc_var_list = LOC_VAR_LIST + ADDITIONAL_LOC_VAR_LIST
+    loc_df_ref = ref[loc_var_list].copy()
+    loc_report = current[loc_var_list].copy()
+    pd.testing.assert_frame_equal(loc_df_ref, loc_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_LOC, rtol=0)
+
+    deg_df_ref = ref[DEG_VAR_LIST].copy()
+    deg_report = current[DEG_VAR_LIST].copy()
+    pd.testing.assert_frame_equal(deg_df_ref, deg_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_DEG, rtol=0)
+
+    islr_df_ref = ref[ISLR_VAR_LIST].copy()
+    islr_report = current[ISLR_VAR_LIST].copy()
+    pd.testing.assert_frame_equal(
+        islr_df_ref,
+        islr_report,
+        check_exact=False,
+        atol=ABSOLUTE_TOLERANCE_ISLR,
+        rtol=0,
+    )
+
+    other_df_ref = ref[OTHER_VAR_LIST].copy()
+    other_report = current[OTHER_VAR_LIST].copy()
+    pd.testing.assert_frame_equal(
+        other_df_ref,
+        other_report,
+        check_exact=False,
+        atol=ABSOLUTE_TOLERANCE_RA,
+        rtol=0,
+    )
+
+    # checking goodness of results
+    pd.testing.assert_frame_equal(
+        ref.drop(
+            loc_var_list + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
+            axis=1,
+        ),
+        current.drop(
+            loc_var_list + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
+            axis=1,
+        ),
+        check_exact=False,
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+
+
+def compare_ra_netcdf_with_tolerances(ref: Path, current: Path) -> None:
+    """Compare radiometric netCDF output results with tolerances.
+
+    Parameters
+    ----------
+    ref : Path
+        Path to the reference netCDF4 file
+    current : Path
+        Path to the current run netCDF4 file
+    """
+
+    ref_dataset = Dataset(ref, "r", format="NETCDF4")
+    current_dataset = Dataset(current, "r", format="NETCDF4")
+
+    assert ref_dataset.swath == current_dataset.swath
+    assert ref_dataset.channel == current_dataset.channel
+    assert ref_dataset.polarization == current_dataset.polarization
+    assert ref_dataset.direction == current_dataset.direction
+    assert ref_dataset.output_radiometric_quantity == current_dataset.output_radiometric_quantity
+    assert ref_dataset.azimuth_blocks_num == current_dataset.azimuth_blocks_num
+    assert ref_dataset.azimuth_block_centers == current_dataset.azimuth_block_centers
+
+    np.testing.assert_allclose(
+        ref_dataset.range_block_centers,
+        current_dataset.range_block_centers,
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+
+    np.testing.assert_allclose(
+        ref_dataset["look_angles"][:],
+        current_dataset["look_angles"][:],
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+    np.testing.assert_allclose(
+        ref_dataset["radiometric_profiles"][:],
+        current_dataset["radiometric_profiles"][:],
+        atol=ABSOLUTE_TOLERANCE_RA,
+        rtol=0,
+    )
+
+    ref_dataset.close()
+    current_dataset.close()
+
+
+def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
+    """Compare interferometric netCDF output results with tolerances.
+
+    Parameters
+    ----------
+    ref : Path
+        Path to the reference netCDF4 file
+    current : Path
+        Path to the current run netCDF4 file
+    """
+
+    ref_dataset = Dataset(ref, "r", format="NETCDF4")
+    current_dataset = Dataset(current, "r", format="NETCDF4")
+
+    assert ref_dataset.swath == current_dataset.swath
+    assert ref_dataset.channel == current_dataset.channel
+    assert ref_dataset.polarization == current_dataset.polarization
+    assert ref_dataset.burst == current_dataset.burst
+
+    np.testing.assert_allclose(
+        ref_dataset["coherence_bins"][:],
+        current_dataset["coherence_bins"][:],
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+    np.testing.assert_allclose(
+        ref_dataset["azimuth_histogram"][:],
+        current_dataset["azimuth_histogram"][:],
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+    np.testing.assert_allclose(
+        ref_dataset["range_histogram"][:],
+        current_dataset["range_histogram"][:],
+        atol=ABSOLUTE_TOLERANCE,
+        rtol=0,
+    )
+
+    ref_dataset.close()
+    current_dataset.close()
+
+
+def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> pd.DataFrame:
+    """Running SCT Point Target Analysis from API forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : SCTConfiguration | None
+        configuration
+
+    Returns
+    -------
+    pd.DataFrame
+        results dataframe
+    """
+
+    config = SCTConfiguration.from_toml(params.config)
+    if params.etad_product is not None:
+        config.point_target_analysis.enable_etad_corrections = True
+        config.point_target_analysis.etad_product_path = params.etad_product
+    if params.ionospheric_maps is not None:
+        config.point_target_analysis.enable_ionospheric_correction = True
+        config.point_target_analysis.ionospheric_maps_directory = params.ionospheric_maps
+    if params.tropospheric_maps is not None:
+        config.point_target_analysis.enable_tropospheric_correction = True
+        config.point_target_analysis.tropospheric_maps_directory = params.tropospheric_maps
+    results_df, _ = point_target_analysis_with_corrections(
+        product_path=params.product,
+        external_target_source=params.targets,
+        external_orbit_path=params.external_orbit,
+        config=config.point_target_analysis,
+    )
+    out_file = output_dir.joinpath("pta_results.csv")
+    results_df.to_csv(out_file, index=False)
+    return pd.read_csv(out_file)
+
+
+def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+    """Running SCT NESZ Analysis from API forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : SCTConfiguration | None
+        configuration
+
+    Returns
+    -------
+    Path
+        path to output netcdf file
+    """
+
+    profiles = nesz_analysis(product_path=params.product, config=config)
+    tag = "NESZ"
+    for item in profiles:
+        radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
+    if isinstance(params.report, list):
+        return [output_dir.joinpath(p.name) for p in params.report]
+    return output_dir.joinpath(params.report.name)
+
+
+def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+    """Running SCT Average Radiometric Profiles Analysis from API forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : SCTConfiguration | None
+        configuration
+
+    Returns
+    -------
+    Path
+        path to output netcdf file
+    """
+
+    profiles = average_elevation_profile_analysis(
+        product_path=params.product,
+        output_quantity=SARRadiometricQuantity.GAMMA_NOUGHT,
+        config=config,
+    )
+    tag = "RAIN_FOREST"
+    for item in profiles:
+        radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
+    if isinstance(params.report, list):
+        return [output_dir.joinpath(p.name) for p in params.report]
+    return output_dir.joinpath(params.report.name)
+
+
+def run_interferometry_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+    """Running SCT Interferometric Analysis from API forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : SCTConfiguration | None
+        configuration
+
+    Returns
+    -------
+    Path
+        path to output netcdf file
+    """
+
+    first_prod = params.product if isinstance(params.product, Path) else params.product[0]
+    second_prod = params.product[1] if isinstance(params.product, list) else None
+    coherence_res = interferometric_coherence_analysis(
+        product_path=first_prod, second_product_path=second_prod, config=config
+    )
+    for res in coherence_res:
+        # saving 2D histograms to netcdf
+        coherence_histograms_to_netcdf(data=res, output_dir=output_dir)
+    return [output_dir.joinpath(p.name) for p in params.report]
+
+
+def run_cli_tool_pta(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> list[Path]:
+    """Running SCT Point Target Analysis from CLI tool forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : SCTConfiguration | None
+        configuration
+
+    Returns
+    -------
+    pd.DataFrame
+        results dataframe
+    """
+
+    config_path = output_dir.joinpath("input_config.json")
+    dump_sct_config(config=config, out_path=config_path)
+    executable_call = [
+        "sct",
+        "--config",
+        config_path,
+        "target-analysis",
+        "-p",
+        params.product,
+        "-out",
+        output_dir,
+        "-pt",
+        params.targets,
+    ]
+    if params.external_orbit is not None:
+        executable_call.extend(["-eo", params.external_orbit])
+    result = subprocess.run(
+        executable_call,
+        capture_output=True,
+        text=True,
+    )
+    print("")
+    print("output: ", result.stdout)
+    print("")
+
+    # checking successful run
+    output_files = list(output_dir.glob("*.csv"))
+    if result.returncode != 0:
+        print("error: ", result.stderr)
+    assert len(output_files) == 1
+
+    return list(output_dir.glob("*.csv"))
+
+
+def run_cli_tool_rf(params: TestParams, output_dir: Path, config: SCTConfiguration | None, analysis: str):
+    """Running SCT Radiometric Analysis from CLI tool forwarding the inputs.
+
+    Parameters
+    ----------
+    session : TestSession
+        sct test session
+    env : Environment
+        sct test environment
+    config : Path
+        path to the toml config file
+    product : Path
+        path to the product to be analyzed
+    analysis : str
+        analysis to be performed, [NESZ, RF]
+    """
+
+    config_path = output_dir.joinpath("input_config.json")
+    dump_sct_config(config=config, out_path=config_path)
+
+    command = "elevation_profile" if analysis == "RF" else "nesz"
+    executable_call = [
+        "sct",
+        "--config",
+        config_path,
+        "radiometric-analysis",
+        command,
+        "-p",
+        params.product,
+        "-out",
+        output_dir,
+    ]
+    if analysis == "RF":
+        executable_call.extend(
+            [
+                "-r",
+                "gamma",
+            ]
+        )
+    result = subprocess.run(
+        executable_call,
+        capture_output=True,
+        text=True,
+    )
+    print("")
+    print("output: ", result.stdout)
+    print("")
+
+    # checking successful run
+    output_files = list(output_dir.glob("*.nc"))
+    if result.returncode != 0:
+        print("error: ", result.stderr)
+    assert len(output_files) > 0
+
+
+def dump_sct_config(config: SCTConfiguration | None, out_path: Path) -> None:
+    """Saving input config to disk.
+
+    Parameters
+    ----------
+    config : SCTConfiguration | None
+        input config, if any
+    out_path : Path
+        path to the file on disk where to save the config
+    """
+    assert str(out_path).endswith(".json")
+    out_config = config or SCTConfiguration()
+    out_config.dump_to_toml(out_file=out_path)
