@@ -65,7 +65,7 @@ allow-direct-references = true
 cli = ["click", "requests"]
 graphs = ["matplotlib >= 3.5", "arepyextras-quality[graphs]"]
 dev = ["nox", "ruff", "pylint"]
-test = ["unittest-xml-reporting", "coverage", "arepyextras-test"]
+test = ["unittest-xml-reporting", "coverage"]
 doc = [
     "ipython",
     "nbsphinx",

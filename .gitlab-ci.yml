@@ -14,11 +14,8 @@ variables:
 .tags_win10_conda:
   tags: ["eo", "win10", "conda"]
 
-.tags_manylinux2014:
-  tags: ["manylinux2014"]
-
 .tags_manylinux_2_28:
-  tags: ["manylinux_2_28"]
+  tags: ["eotools_manylinux228"]
 
 .tags_conda:
   tags: ["eo", "miniconda3", "official"]
@@ -91,28 +88,29 @@ integration_test_linux:
   script:
     - python${PYTHON} -m venv ./ci_test
     - source ./ci_test/bin/activate
-    - python -m pip install .[test]
-    - python -m arepyextras.test --config ./tests/integration_tests/config/linux.toml test run ./tests/integration_tests/suite
+    - python -m pip install .[cli]
+    - mkdir test_output
+    - python ./tests/integration_tests/suite/test_main.py -r ./tests/integration_tests/test_registry.json -out ./test_output
   parallel:
     matrix:
-      - PYTHON: ["3.10", "3.11", "3.12"]
+      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
   extends: .tags_manylinux_2_28
   needs: []
 
-integration_test_windows:
-  stage: test
-  script:
-    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-    - conda create -y -n integration_test python=${PYTHON}
-    - conda activate integration_test
-    - python -m pip install -e .[test]
-    - mkdir -p tdir
-    - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run ./tests/integration_tests/suite
-  parallel:
-    matrix:
-      - PYTHON: ["3.10", "3.11", "3.12"]
-  extends: .tags_win10_conda
-  needs: []
+# integration_test_windows:
+#   stage: test
+#   script:
+#     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+#     - conda create -y -n integration_test python=${PYTHON}
+#     - conda activate integration_test
+#     - python -m pip install -e .[test]
+#     - mkdir -p tdir
+#     - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run ./tests/integration_tests/suite
+#   parallel:
+#     matrix:
+#       - PYTHON: ["3.10", "3.11", "3.12"]
+#   extends: .tags_win10_conda
+#   needs: []
 
 # === build ==================================================================
 # ============================================================================

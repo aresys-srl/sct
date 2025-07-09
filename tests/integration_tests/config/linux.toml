@@ -1,7 +1,0 @@
-[data]
-url = "file:///opt/aresys/sct_tds_v1.9"
-
-[env.variables]
-OMP_NUM_THREADS = {}
-LD_LIBRARY_PATH = { is_list = true }
-PATH = { is_list = true }

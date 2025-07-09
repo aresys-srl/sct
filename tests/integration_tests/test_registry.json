@@ -41,7 +41,7 @@
             "product": "/data/reference_dataset/sentinel1a/products/GRD_24_RF.SAFE",
             "config": "",
             "targets": "",
-            "report": [
+            "reference_output": [
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VH.nc",
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VV.nc"
             ]
@@ -51,7 +51,7 @@
             "product": "/data/reference_dataset/sentinel1a/products/GRD_23_NESZ.SAFE",
             "config": "",
             "targets": "",
-            "report": [
+            "reference_output": [
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VH.nc",
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VV.nc"
             ]
@@ -84,14 +84,14 @@
             "product": "/data/reference_dataset/novasar1/products/NovaSAR_01_40720_scd_20_221231_214639_VV",
             "config": "",
             "targets": "",
-            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/scd-rain-forest/NovaSAR_01_40720_scd_20_221231_214639_VV_RAIN_FOREST.nc"
+            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/scd-rain-forest/RAIN_FOREST_profiles_S_VV.nc"
         },
         "grd-nesz": {
             "analysis": "nesz",
             "product": "/data/reference_dataset/novasar1/products/NovaSAR_01_29655_grd_211218_150627_HH",
             "config": "",
             "targets": "",
-            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/grd-nesz/NovaSAR_01_29655_grd_211218_150627_HH_NESZ.nc"
+            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/grd-nesz/NESZ_profiles_S1_HH.nc"
         }
     },
     "iceye": {

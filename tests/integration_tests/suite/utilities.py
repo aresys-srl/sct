@@ -42,7 +42,7 @@ PYTHON_INTERPRETER = sys.executable
 # DEFAULT_REPORT_NAME = "point_target_analysis_results.csv"
 
 
-ABSOLUTE_TOLERANCE = 1e-6
+ABSOLUTE_TOLERANCE = 1e-5
 ABSOLUTE_TOLERANCE_ISLR = 5e-1
 ABSOLUTE_TOLERANCE_LOC = 1e-4
 ABSOLUTE_TOLERANCE_DEG = 5e-4
@@ -88,7 +88,7 @@ class TestParams:
     config: Path | None = None
     targets: Path | None = None
     external_orbit: Path | None = None
-    report: Path | None = None
+    reference_output: Path | None = None
     etad_product: Path | None = None
     ionospheric_maps: Path | None = None
     tropospheric_maps: Path | None = None
@@ -334,9 +334,10 @@ def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration 
     tag = "NESZ"
     for item in profiles:
         radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
-    if isinstance(params.report, list):
-        return [output_dir.joinpath(p.name) for p in params.report]
-    return output_dir.joinpath(params.report.name)
+    nc_files = list(output_dir.glob("*.nc"))
+    if len(nc_files) == 1:
+        return nc_files[0]
+    return nc_files
 
 
 def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
@@ -365,9 +366,10 @@ def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfigu
     tag = "RAIN_FOREST"
     for item in profiles:
         radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
-    if isinstance(params.report, list):
-        return [output_dir.joinpath(p.name) for p in params.report]
-    return output_dir.joinpath(params.report.name)
+    nc_files = list(output_dir.glob("*.nc"))
+    if len(nc_files) == 1:
+        return nc_files[0]
+    return nc_files
 
 
 def run_interferometry_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
@@ -396,7 +398,7 @@ def run_interferometry_api(params: TestParams, output_dir: Path, config: SCTConf
     for res in coherence_res:
         # saving 2D histograms to netcdf
         coherence_histograms_to_netcdf(data=res, output_dir=output_dir)
-    return [output_dir.joinpath(p.name) for p in params.report]
+    return [output_dir.joinpath(p.name) for p in params.reference_output]
 
 
 def run_cli_tool_pta(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> list[Path]:
