@@ -137,6 +137,7 @@ def run(registry_path: str, output_dir: str) -> None:
                 log.info(f"Elapsed: {np.round(time_spent)} seconds")
             else:
                 log.info(f"Elapsed: {np.round(time_spent / 60, 2)} minutes")
+            print("")
 
     print("\n\n\n")
     print(art.text2art("Summary", font="doom"))

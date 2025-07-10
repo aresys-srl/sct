@@ -20,6 +20,9 @@ variables:
 .tags_conda:
   tags: ["eo", "miniconda3", "official"]
 
+.tags_win10_new:
+  tags: ["eotools_win10"]
+
 .tags_deploy:
   tags: ["eo", "deploy"]
 
@@ -50,7 +53,7 @@ unittest_linux:
     - python3.12 -m nox -s unittest -p ${PYTHON}
   parallel:
     matrix:
-      - PYTHON: ["3.10", "3.11", "3.12"]
+      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
   extends: .tags_manylinux_2_28
   needs: []
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
@@ -65,14 +68,17 @@ unittest_linux:
 unittest_win:
   stage: test
   script:
+    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+    - conda create -y -n testing python=${PYTHON}
+    - conda activate testing
     - python -m pip install nox
     - python -m nox -s unittest -p ${PYTHON}
   parallel:
     matrix:
-      - PYTHON: ["3.10", "3.11", "3.12"]
+      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
   needs: []
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-  extends: .tags_win10
+  extends: .tags_win10_new
   artifacts:
     reports:
       junit:
@@ -90,27 +96,27 @@ integration_test_linux:
     - source ./ci_test/bin/activate
     - python -m pip install .[cli]
     - mkdir test_output
-    - python ./tests/integration_tests/suite/test_main.py -r ./tests/integration_tests/test_registry.json -out ./test_output
+    - python ./tests/integration_tests/suite/test_main.py -r ./tests/integration_tests/test_registry_linux.json -out ./test_output
   parallel:
     matrix:
       - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
   extends: .tags_manylinux_2_28
   needs: []
 
-# integration_test_windows:
-#   stage: test
-#   script:
-#     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-#     - conda create -y -n integration_test python=${PYTHON}
-#     - conda activate integration_test
-#     - python -m pip install -e .[test]
-#     - mkdir -p tdir
-#     - python -m arepyextras.test --config ./tests/integration_tests/config/win10.toml test run ./tests/integration_tests/suite
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.10", "3.11", "3.12"]
-#   extends: .tags_win10_conda
-#   needs: []
+integration_test_windows:
+  stage: test
+  script:
+    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+    - conda create -y -n integration_test python=${PYTHON}
+    - conda activate integration_test
+    - python -m pip install -e .[cli]
+    - mkdir -p test_output
+    - python ./tests/integration_tests/suite/test_main.py -r ./tests/integration_tests/test_registry_windows.json -out ./test_output
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
+  extends: .tags_win10_new
+  needs: []
 
 # === build ==================================================================
 # ============================================================================

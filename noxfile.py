@@ -17,7 +17,7 @@ _LICENSE_HEADER = """# SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
 """
-PY_VERSIONS = ["3.10", "3.11", "3.12"]
+PY_VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
 WIN32 = sys.platform == "win32"
 PLATFORM = "win" if WIN32 else "linux"
 
