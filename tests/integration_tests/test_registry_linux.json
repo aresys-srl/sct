@@ -141,5 +141,46 @@
             "targets": "/data/reference_dataset/cosmo/auxiliaries/neusterlitz_corner_reflectors_data.csv",
             "reference_output": "/data/integration_tests/sct/reference_results/cosmo/grd-pta/pta_res.csv"
         }
+    },
+    "aresys-product-folder": {
+        "interf-coregistered": {
+            "analysis": "interf",
+            "product": [
+                "/data/reference_dataset/aresysPF/products/interferometry/PF",
+                "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor"
+            ],
+            "config": "/data/integration_tests/sct/configurations/test_dc014546_config.toml",
+            "targets": "",
+            "reference_output": [
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VV.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VV.nc"
+            ]
+        },
+        "interf-interferogram": {
+            "analysis": "interf",
+            "product": "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor_SCI",
+            "config": "/data/integration_tests/sct/configurations/test_dc014546_config.toml",
+            "targets": "",
+            "reference_output": [
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VV.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VV.nc"
+            ]
+        },
+        "interf-coherence": {
+            "analysis": "interf",
+            "product": "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor_SCI_CM",
+            "config": "",
+            "targets": "",
+            "reference_output": [
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VV.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VV.nc"
+            ]
+        }
     }
 }
