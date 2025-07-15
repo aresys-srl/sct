@@ -14,7 +14,7 @@ from typing import Optional
 
 from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 
-from sct.core.custom_corrections import ALECorrectionFunctionType
+from sct.io.extended_protocols import ALECorrectionFunctionType
 from sct.io.input_product_plugins import import_input_product_plugins
 
 # syncing with logger
@@ -41,9 +41,11 @@ def product_loader(
 
     Returns
     -------
-    tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]
+    QualityInputProduct
         QualityInputProduct compliant object
+    ALECorrectionFunctionType | None
         range ale correction function (if available)
+    ALECorrectionFunctionType | None
         azimuth ale correction function (if available)
     """
     plugins = plugins or []
@@ -53,6 +55,7 @@ def product_loader(
     for plugin in available_plugins:
         if plugin.get_detector()(product_path):
             manager = plugin.get_manager()
+            log.info(f"Using plugin {plugin.__name__}, version {plugin.__version__}")
             log.info(f"Product type: {manager.__name__}")
             product = manager(product_path, external_orbit_path=external_orbit)
             rg_corr: ALECorrectionFunctionType | None = plugin.get_range_corrections()

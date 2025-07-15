@@ -33,7 +33,7 @@ to the :ref:`related section <sct_supported_missions>`.
 A detailed list of currently supported analyses can be found :ref:`here <sct_analyses>`. 
 
 
-.. grid:: 3
+.. grid:: 4
 
     .. grid-item-card::
         :img-top: _static/icons/api_icon.svg
@@ -89,3 +89,23 @@ A detailed list of currently supported analyses can be found :ref:`here <sct_ana
             :click-parent:
 
             Getting started
+
+    .. grid-item-card::
+        :img-top: _static/icons/plugins_icon.svg
+
+        **Product Format Plugins**
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+        Documentation on how to install, use and create dedicated
+        plugins for reading specific SAR product formats in order to
+        process these products using the core analyses and functionalities
+        of SCT.
+
+        +++
+
+        .. button-ref:: user_manual/supported_missions
+            :expand:
+            :color: secondary
+            :click-parent:
+
+            Supported Formats

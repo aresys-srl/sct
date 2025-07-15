@@ -22,7 +22,6 @@ from arepytools.io.io_support import NominalPointTarget
 from scipy.constants import speed_of_light as LIGHT_SPEED
 
 from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
-from sct.core import custom_corrections
 from sct.core.atmospheric_corrections_main import (
     AtmosphericDelaysAcquisitionInfo,
     convert_atmospheric_delays_to_df,
@@ -31,7 +30,7 @@ from sct.core.atmospheric_corrections_main import (
 from sct.core.etad_corrections_main import get_etad_corrections
 from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
 from sct.core.rcs_computation import compute_elevation_azimuth_wrt_enu, compute_rcs_trihedral_corner_reflector
-from sct.io.extended_protocols import SCTInputProduct
+from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
 from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
@@ -138,8 +137,9 @@ def point_target_analysis_with_corrections(
 
     Returns
     -------
-    tuple[pd.DataFrame, list[PointTargetGraphicalData]]
-        pandas data frame containing all the computed features for each point target,
+    pd.DataFrame
+        pandas data frame containing all the computed features for each point target
+    list[PointTargetGraphicalData]
         dict of data stored for graphical output needs
     """
 
@@ -268,8 +268,8 @@ def sct_point_target_analysis(
     product: SCTInputProduct,
     point_targets_data: dict[str, NominalPointTarget],
     config: SCTPointTargetAnalysisConfig,
-    azimuth_corrections_func: custom_corrections.ALECorrectionFunctionType | None = None,
-    range_corrections_func: custom_corrections.ALECorrectionFunctionType | None = None,
+    azimuth_corrections_func: ALECorrectionFunctionType | None = None,
+    range_corrections_func: ALECorrectionFunctionType | None = None,
 ) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
     """Point target analysis wrapper customized for SCT workflow.
 
@@ -281,15 +281,16 @@ def sct_point_target_analysis(
         point target data
     config : SCTPointTargetAnalysisConfig
         analysis configuration
-    azimuth_corrections_func : custom_corrections.ALECorrectionFunctionType | None, optional
+    azimuth_corrections_func : ALECorrectionFunctionType | None, optional
         function selected for sensor specific azimuth corrections, by default None
-    range_corrections_func : custom_corrections.ALECorrectionFunctionType | None, optional
+    range_corrections_func : ALECorrectionFunctionType | None, optional
         function selected for sensor specific range corrections, by default None
 
     Returns
     -------
-    tuple[pd.DataFrame, list[PointTargetGraphicalData]]
-        results dataframe,
+    pd.DataFrame
+        results dataframe
+    list[PointTargetGraphicalData]
         graphs data
     """
     data, graph_data = point_target_analysis(

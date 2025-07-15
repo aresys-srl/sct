@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.1.0
+------
+
+- Product Format python plugins supported with autodiscovery
+
 v1.0.5
 ------
 

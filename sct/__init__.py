@@ -6,12 +6,16 @@ SCT: the Python SAR Calibration Tool for quality data analysis
 --------------------------------------------------------------
 """
 
+import pkgutil
+from importlib import import_module
 from importlib import resources as res
 
-from . import resources
+import sct.resources as res_folder
 
-config_schema = res.files(resources).joinpath("configuration_schema.json")
-csv_template = res.files(resources).joinpath("calibration_targets_external_source_template.csv")
-calibration_sites_registry_schema = res.files(resources).joinpath("known_calibration_sites_registry_schema.json")
+config_schema = res.files(res_folder).joinpath("configuration_schema.json")
+csv_template = res.files(res_folder).joinpath("calibration_targets_external_source_template.csv")
+calibration_sites_registry_schema = res.files(res_folder).joinpath("known_calibration_sites_registry_schema.json")
 
-__version__ = "1.0.5"
+sct_discovered_plugins = {name: import_module(name) for _, name, _ in pkgutil.iter_modules() if name.startswith("sct_")}
+
+__version__ = "1.1.0"

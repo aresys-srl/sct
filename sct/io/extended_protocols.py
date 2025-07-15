@@ -6,8 +6,10 @@ I/O Extended Protocols
 ----------------------
 """
 
+from collections.abc import Callable
 from typing import Protocol, runtime_checkable
 
+import pandas as pd
 from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 from shapely import Polygon
 
@@ -19,3 +21,7 @@ class SCTInputProduct(QualityInputProduct, Protocol):
     @property
     def footprint(self) -> Polygon | None:
         """Get product scene footprint as a Shapely Polygon"""
+
+
+# custom correction function type to be matched
+ALECorrectionFunctionType = Callable[[SCTInputProduct, pd.DataFrame], pd.DataFrame]
