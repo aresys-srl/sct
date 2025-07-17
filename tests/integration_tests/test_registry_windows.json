@@ -3,38 +3,38 @@
         "slc-etad-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/sentinel1a/products/SLC_23.SAFE",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_c6359f5a_config.toml",
+            "config": "C:/test_out_reference/configurations/test_c6359f5a_config.toml",
             "targets": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
-            "etad_product": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/ETAD_23.SAFE",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1A/slc-etad-pta/pta_res.csv"
+            "etad_product": "C:/test_inputs_copy/ETAD_23.SAFE",
+            "reference_output": "C:/test_out_reference/reference_results/sentinel1A/slc-etad-pta/pta_res.csv"
         },
         "slc-perturb-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/sentinel1a/products/SLC_19.SAFE",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_ed18cc99_config.toml",
+            "config": "C:/test_out_reference/configurations/test_ed18cc99_config.toml",
             "targets": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
             "ionospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/ionosphere_maps",
             "tropospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/troposphere_maps",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1A/slc-perturb-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/sentinel1A/slc-perturb-pta/pta_res.csv"
         },
         "slc-perturb-eof-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/sentinel1a/products/SLC_19.SAFE",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_ed18cc99_config.toml",
+            "config": "C:/test_out_reference/configurations/test_ed18cc99_config.toml",
             "targets": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
             "ionospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/ionosphere_maps",
             "tropospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/troposphere_maps",
             "external_orbit": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/RESORB_19.EOF",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1A/slc-perturb-eof-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/sentinel1A/slc-perturb-eof-pta/pta_res.csv"
         },
         "grd-perturb-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/sentinel1a/products/GRD_19.SAFE",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_ed18cc99_config.toml",
+            "config": "C:/test_out_reference/configurations/test_ed18cc99_config.toml",
             "targets": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
             "ionospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/ionosphere_maps",
             "tropospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/troposphere_maps",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-perturb-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/sentinel1A/grd-perturb-pta/pta_res.csv"
         },
         "grd-rain-forest": {
             "analysis": "rf",
@@ -42,8 +42,8 @@
             "config": "",
             "targets": "",
             "reference_output": [
-                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VV.nc"
+                "C:/test_out_reference/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VH.nc",
+                "C:/test_out_reference/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VV.nc"
             ]
         },
         "grd-nesz": {
@@ -52,8 +52,8 @@
             "config": "",
             "targets": "",
             "reference_output": [
-                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VV.nc"
+                "C:/test_out_reference/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VH.nc",
+                "C:/test_out_reference/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VV.nc"
             ]
         }
     },
@@ -61,85 +61,85 @@
         "slc-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/novasar1/products/NovaSAR_01_38993_slc_11_221103_004941_HH",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "config": "C:/test_out_reference/configurations/test_906f38dc_config.toml",
             "targets": "C:/chopper/reference_dataset/novasar1/auxiliaries/novasar_surat_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/novasar1/slc-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/novasar1/slc-pta/pta_res.csv"
         },
         "grd-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/novasar1/products/NovaSAR_01_38993_grd_13_221103_004941_HH",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "config": "C:/test_out_reference/configurations/test_906f38dc_config.toml",
             "targets": "C:/chopper/reference_dataset/novasar1/auxiliaries/novasar_surat_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/novasar1/grd-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/novasar1/grd-pta/pta_res.csv"
         },
         "scd-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/novasar1/products/NovaSAR_01_41461_scd_23_230126_005204_VV_HH",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "config": "C:/test_out_reference/configurations/test_906f38dc_config.toml",
             "targets": "C:/chopper/reference_dataset/novasar1/auxiliaries/novasar_surat_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/novasar1/scd-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/novasar1/scd-pta/pta_res.csv"
         },
         "scd-rain-forest": {
             "analysis": "rf",
             "product": "C:/chopper/reference_dataset/novasar1/products/NovaSAR_01_40720_scd_20_221231_214639_VV",
             "config": "",
             "targets": "",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/novasar1/scd-rain-forest/RAIN_FOREST_profiles_S_VV.nc"
+            "reference_output": "C:/test_out_reference/reference_results/novasar1/scd-rain-forest/RAIN_FOREST_profiles_S_VV.nc"
         },
         "grd-nesz": {
             "analysis": "nesz",
             "product": "C:/chopper/reference_dataset/novasar1/products/NovaSAR_01_29655_grd_211218_150627_HH",
             "config": "",
             "targets": "",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/novasar1/grd-nesz/NESZ_profiles_S1_HH.nc"
+            "reference_output": "C:/test_out_reference/reference_results/novasar1/grd-nesz/NESZ_profiles_S1_HH.nc"
         }
     },
     "iceye": {
         "stripmap-pta": {
             "analysis": "pta",
-            "product": "C:/chopper/reference_dataset/iceye/products/SM_1899652_93266",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_ae30371d_config.toml",
+            "product": "C:/test_inputs_copy/SM_1899652_93266",
+            "config": "C:/test_out_reference/configurations/test_ae30371d_config.toml",
             "targets": "C:/chopper/reference_dataset/iceye/auxiliaries/rosamond_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/iceye/stripmap-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/iceye/stripmap-pta/pta_res.csv"
         },
         "spotlight-pta": {
             "analysis": "pta",
-            "product": "C:/chopper/reference_dataset/iceye/products/SLH_1835029_91260",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_ae30371d_config.toml",
+            "product": "C:/test_inputs_copy/SLH_1835029_91260",
+            "config": "C:/test_out_reference/configurations/test_ae30371d_config.toml",
             "targets": "C:/chopper/reference_dataset/iceye/auxiliaries/rosamond_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/iceye/spotlight-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/iceye/spotlight-pta/pta_res.csv"
         },
         "topsar-pta": {
             "analysis": "pta",
-            "product": "C:/chopper/reference_dataset/iceye/products/SC_2391740_117355",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_ae30371d_config.toml",
+            "product": "C:/test_inputs_copy/SC_2391740_117355",
+            "config": "C:/test_out_reference/configurations/test_ae30371d_config.toml",
             "targets": "C:/chopper/reference_dataset/iceye/auxiliaries/rosamond_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/iceye/topsar-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/iceye/topsar-pta/pta_res.csv"
         }
     },
     "saocom": {
         "sm-slc-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/saocom/products/L1A_SLC_SM",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "config": "C:/test_out_reference/configurations/test_906f38dc_config.toml",
             "targets": "C:/chopper/reference_dataset/saocom/auxiliaries/saocom_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/saocom/sm-slc-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/saocom/sm-slc-pta/pta_res.csv"
         },
         "sm-grd-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/saocom/products/L1B_RGC_SM",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "config": "C:/test_out_reference/configurations/test_906f38dc_config.toml",
             "targets": "C:/chopper/reference_dataset/saocom/auxiliaries/saocom_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/saocom/sm-grd-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/saocom/sm-grd-pta/pta_res.csv"
         }
     },
     "cosmo": {
         "grd-pta": {
             "analysis": "pta",
-            "product": "C:/chopper/reference_dataset/cosmo/products/CSKS1_DGM_B_WR_00_HH_RA_FF_20240107043057_20240107043111.h5",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_d347c358_config.toml",
+            "product": "C:/test_inputs_copy/CSKS1_DGM_B_WR_00_HH_RA_FF_20240107043057_20240107043111.h5",
+            "config": "C:/test_out_reference/configurations/test_d347c358_config.toml",
             "targets": "C:/chopper/reference_dataset/cosmo/auxiliaries/neusterlitz_corner_reflectors_data.csv",
-            "reference_output": "C:/chopper/integration_tests/sct/reference_results/cosmo/grd-pta/pta_res.csv"
+            "reference_output": "C:/test_out_reference/reference_results/cosmo/grd-pta/pta_res.csv"
         }
     },
     "aresys-product-folder": {
@@ -149,25 +149,25 @@
                 "C:/chopper/reference_dataset/aresysPF/products/interferometry/PF",
                 "C:/chopper/reference_dataset/aresysPF/products/interferometry/PF_Cor"
             ],
-            "config": "C:/chopper/integration_tests/sct/configurations/test_dc014546_config.toml",
+            "config": "C:/test_out_reference/configurations/test_dc014546_config.toml",
             "targets": "",
             "reference_output": [
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VV.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VV.nc"
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VH.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VH.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VV.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VV.nc"
             ]
         },
         "interf-interferogram": {
             "analysis": "interf",
             "product": "C:/chopper/reference_dataset/aresysPF/products/interferometry/PF_Cor_SCI",
-            "config": "C:/chopper/integration_tests/sct/configurations/test_dc014546_config.toml",
+            "config": "C:/test_out_reference/configurations/test_dc014546_config.toml",
             "targets": "",
             "reference_output": [
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VV.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VV.nc"
+                "C:/test_out_reference/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VH.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VH.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VV.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VV.nc"
             ]
         },
         "interf-coherence": {
@@ -176,10 +176,10 @@
             "config": "",
             "targets": "",
             "reference_output": [
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VV.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VV.nc"
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VH.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VH.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VV.nc",
+                "C:/test_out_reference/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VV.nc"
             ]
         }
     }
