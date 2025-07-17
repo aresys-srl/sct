@@ -29,3 +29,11 @@ Download of Tropospheric VMF3 Products
 .. code-block:: bash
 
    sct-tropospheric-maps-download -d "date" -r "grid_resolution" -out "output_dir"
+
+
+Launch integration tests from registry
+--------------------------------------
+
+.. code-block:: bash
+
+   sct-testing -r "path_to_test_registry" -out "output_dir"

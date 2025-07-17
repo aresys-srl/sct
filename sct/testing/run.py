@@ -3,27 +3,21 @@
 
 """
 SCT Integration Tests - Main
------------------------------
+----------------------------
 """
+
+from __future__ import annotations
 
 import json
 import logging
-import os
-import sys
 import time
 from pathlib import Path
 
-import arepyextras.quality.core.custom_logger as clg
-import art
 import numpy as np
 import pandas as pd
 
 from sct.configuration.sct_configuration import SCTConfiguration
-
-current_dir_name = os.path.dirname((os.path.realpath(__file__)))
-sys.path.append(current_dir_name)
-
-from utilities import (  # noqa: E402
+from sct.testing.utilities import (
     SCTAnalyses,
     TestParams,
     compare_interf_netcdf_with_tolerances,
@@ -35,9 +29,8 @@ from utilities import (  # noqa: E402
     run_rain_forest_api,
 )
 
+# syncing with logger
 log = logging.getLogger("quality_analysis")
-log.setLevel("INFO")
-log.addHandler(clg.MyHandler())
 
 
 def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Path) -> bool:
@@ -53,6 +46,11 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
         name of the test
     output_dir : Path
         output directory where to save the results
+
+    Returns
+    -------
+    bool
+        True if passed, else False
     """
     out_dir = output_dir.joinpath(sensor, test_name)
     out_dir.mkdir(exist_ok=True, parents=True)
@@ -98,35 +96,39 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
     except Exception as err:
         log.info("")
         log.critical(f"Test {test_name} ERROR")
-        print(err)
+        log.error(err)
         return False
 
 
-def run(registry_path: str, output_dir: str) -> None:
+def run_tests(registry_path: str | Path, output_dir: str | Path) -> dict:
     """Running all the SCT Integration Tests from input registry
 
     Parameters
     ----------
-    registry_path : str
+    registry_path : str | Path
         Path to the integration tests registry .json
-    output_dir : str
+    output_dir : str | Path
         Path to the output directory where to save results
     """
 
     registry_path = Path(registry_path)
     output_dir = Path(output_dir)
 
+    log.info("Loading tests parameters from registry...")
     with open(registry_path, "r", encoding="UTF-8") as f_in:
         test_config = json.load(f_in)
-    print("")
-    print(art.text2art("SCT Integration Tests", font="doom"))
-    print("")
+
     results = {}
     for sensor, parameters in test_config.items():
-        print(f"\nTests for Sensor {sensor.upper()}\n")
+        log.info("")
+        log.info("")
+        log.info(f"\nTests for Sensor {sensor.upper()}\n")
+        log.info("")
+        log.info("")
         results[sensor] = {}
         for test_name, test_params in parameters.items():
-            print(f"\nTest {test_name.upper()}\n")
+            log.info(f"Test {test_name.upper()}")
+            log.info("")
             start_time = time.perf_counter()
             params = TestParams.from_dict(test_params)
             results[sensor][test_name] = test_session(
@@ -137,33 +139,36 @@ def run(registry_path: str, output_dir: str) -> None:
                 log.info(f"Elapsed: {np.round(time_spent)} seconds")
             else:
                 log.info(f"Elapsed: {np.round(time_spent / 60, 2)} minutes")
-            print("")
+            log.info("")
 
-    print("\n\n\n")
-    print(art.text2art("Summary", font="doom"))
-    print("")
+    return results
+
+
+def summary_results(results: dict) -> bool:
+    """Summary of tests results.
+
+    Parameters
+    ----------
+    results : dict
+        results coming from run_test function
+
+    Returns
+    -------
+    bool
+        True if all tests are passed, else False
+    """
+
     tests_num = sum([len(c.keys()) for c in results.values()])
     passed_tests = sum([sum(c.values()) for c in results.values()])
     log.info(f"PASSED: {passed_tests}/{tests_num} tests")
     if passed_tests == tests_num:
         log.info("No FAILED tests")
+        outcome = True
     else:
         log.critical(f"FAILED: {tests_num - passed_tests}")
+        outcome = False
     for sensor_name in results:
-        print("")
+        log.info("")
         print(pd.DataFrame({sensor_name: results[sensor_name]}))
-    else:
-        sys.exit(0)
 
-
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-r", "--registry")
-    parser.add_argument("-out", "--output_dir")
-    args = parser.parse_args()
-    registry = args.registry
-    out_dir = args.output_dir
-
-    run(registry_path=registry, output_dir=out_dir)
+    return outcome

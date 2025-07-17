@@ -6,23 +6,33 @@ CLI Utility Commands
 --------------------
 """
 
+from __future__ import annotations
+
 import datetime
+import logging
 import sys
 from pathlib import Path
 
+import arepyextras.quality.core.custom_logger as clg
+import art
 from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.io.point_target_manager import convert_rosamund_file_to_compliant_csv
+from sct.testing.run import run_tests, summary_results
 from sct.web_scraping.cddis_downloader import InvalidCDDISRequest
 from sct.web_scraping.ionosphere_tec_map_downloader import download_ionospheric_tec_maps
 from sct.web_scraping.troposphere_maps_downloader import download_tropospheric_products
 
+log = logging.getLogger("quality_analysis")
+log.setLevel("INFO")
+log.addHandler(clg.MyHandler())
+
 try:
     import click
 except ImportError:
-    print('Install cli requirements "pip install sct[cli]"')
+    log.critical('Install cli requirements "pip install sct[cli]"')
     sys.exit(1)
 
 
@@ -39,6 +49,11 @@ def download_ionex_tec_maps():
 def download_tropospheric_vmf3_maps():
     """Entry point for downloading Tropospheric Products for VMF3 Perturbation computation"""
     sct_tropospheric_map_downloader()
+
+
+def integration_testing():
+    """Entry point for sct integration testing module using test registry"""
+    sct_integration_testing_run()
 
 
 # ROSAMOND DATA CONVERTER
@@ -205,3 +220,45 @@ def sct_tropospheric_map_downloader(
     click.echo("Output files can be found here:")
     for file in outfiles:
         click.echo(str(file))
+
+
+# INTEGRATIONS TESTING
+@click.command(
+    name="sct-testing",
+    context_settings=dict(
+        help_option_names=["-h", "--help"],
+    ),
+)
+@click.option(
+    "--registry",
+    "-r",
+    required=True,
+    type=click.Path(path_type=Path, exists=True, file_okay=True, dir_okay=False),
+    help="Path to the testing registry containing the tests to be run",
+)
+@click.option(
+    "--output_directory",
+    "-out",
+    required=True,
+    type=click.Path(path_type=Path, exists=True, dir_okay=True),
+    help="Path to the folder where to save output data",
+)
+def sct_integration_testing_run(registry: Path, output_directory: Path) -> None:
+    """Run SCT integration tests procedure from registry"""
+
+    click.echo("\n")
+    txt = art.text2art("SCT Integration Tests", font="doom")
+    click.echo(txt + "\n")
+
+    results = run_tests(registry_path=registry, output_dir=output_directory)
+
+    click.echo("\n")
+    txt = art.text2art("Summary", font="doom")
+    click.echo(txt + "\n")
+
+    outcome = summary_results(results=results)
+
+    if outcome:
+        sys.exit(0)
+    else:
+        sys.exit(-1)

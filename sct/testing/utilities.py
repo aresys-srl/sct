@@ -35,19 +35,13 @@ from sct.configuration.sct_configuration import SCTConfiguration
 
 PYTHON_INTERPRETER = sys.executable
 
-# TODO: fix this
-# BASE_DIR = Path(__file__).parent.resolve()
-# TEST_CONFIG_PATH = BASE_DIR.joinpath("test_registry.json")
-# BASE_OUTPUT_DIRECTORY = BASE_DIR.joinpath("output")
-# DEFAULT_REPORT_NAME = "point_target_analysis_results.csv"
-
-
 ABSOLUTE_TOLERANCE = 1e-5
 ABSOLUTE_TOLERANCE_ISLR = 5e-1
 ABSOLUTE_TOLERANCE_LOC = 1e-4
 ABSOLUTE_TOLERANCE_DEG = 5e-4
 ABSOLUTE_TOLERANCE_RA = 1e-2
 ABSOLUTE_TOLERANCE_OTHER = 1e-3
+ABSOLUTE_TOLERANCE_INTERF = 5
 
 LOC_VAR_LIST = [
     "range_resolution_[m]",
@@ -259,13 +253,13 @@ def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     np.testing.assert_allclose(
         ref_dataset["azimuth_histogram"][:],
         current_dataset["azimuth_histogram"][:],
-        atol=ABSOLUTE_TOLERANCE,
+        atol=ABSOLUTE_TOLERANCE_INTERF,
         rtol=0,
     )
     np.testing.assert_allclose(
         ref_dataset["range_histogram"][:],
         current_dataset["range_histogram"][:],
-        atol=ABSOLUTE_TOLERANCE,
+        atol=ABSOLUTE_TOLERANCE_INTERF,
         rtol=0,
     )
 

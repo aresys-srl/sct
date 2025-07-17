@@ -2,6 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 """
-SCT Integration Tests - Suite
------------------------------
+SCT: testing module
+-------------------
 """
