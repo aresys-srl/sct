@@ -1,6 +1,19 @@
 Changelog
 =========
 
+v1.0.5
+------
+
+**Additional Features**
+
+- IO: introduced support for ENVISAT/ERS ASAR product format
+- Adding SCt testing module and secondary CLI tool to perform integration tests from tests .json registry
+
+**Other changes**
+
+- Changed integration tests structure, removed Arepyextras Tests dependency
+- Pinned Arepyextras EO Products due to bug in version 1.2.11 [to be removed]
+
 v1.0.4
 ------
 
