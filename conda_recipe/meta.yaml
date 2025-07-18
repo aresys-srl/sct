@@ -1,5 +1,5 @@
 {% set name = "sct" %}
-{% set version = "1.0.5" %}
+{% set version = "1.1.0.dev0" %}
 
 package:
   name: {{ name|lower }}
@@ -31,7 +31,6 @@ requirements:
     - toml
     - pyproj
     - shapely
-    - h5py
     - s1etad
     - ascii-art
     - appdirs
@@ -40,7 +39,6 @@ requirements:
     - arepyextras-perturbations >=1.1
     - arepyextras-eo_products ==1.2.10
     - scipy
-    - zarr
 
 test:
   imports:

@@ -25,18 +25,18 @@ log.addHandler(logging_file_handler)
 if __name__ == "__main__":
     # products
     # prod = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\SLC"
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\envisat\ASA_IMS_1PNESA20030124_100448_000000182013_00151_04714_0000.N1"
+    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\SLC_23.SAFE"
 
     # external orbits
     ext_orbit = None
     # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
-    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\envisat\PointTargets_File__ASAR.xml"
+    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\surat_basin_data.csv"
     # ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\PointTargetsBinary"
 
     # # test config
-    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\envisat\config.toml"
+    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\config_etad.toml"
     test_config = SCTConfiguration.from_toml(test_config)
     # test_config = SCTConfiguration()
 
