@@ -122,7 +122,7 @@ def run_tests(registry_path: str | Path, output_dir: str | Path) -> dict:
     for sensor, parameters in test_config.items():
         log.info("")
         log.info("")
-        log.info(f"\nTests for Sensor {sensor.upper()}\n")
+        log.info(f"Tests for Sensor {sensor.upper()}")
         log.info("")
         log.info("")
         results[sensor] = {}
