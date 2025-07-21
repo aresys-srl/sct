@@ -18,4 +18,4 @@ calibration_sites_registry_schema = res.files(res_folder).joinpath("known_calibr
 
 sct_discovered_plugins = {name: import_module(name) for _, name, _ in pkgutil.iter_modules() if name.startswith("sct_")}
 
-__version__ = "1.1.0"
+__version__ = "1.1.0.dev0"

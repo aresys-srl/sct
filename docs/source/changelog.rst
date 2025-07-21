@@ -1,10 +1,12 @@
 Changelog
 =========
 
-v1.1.0
-------
+v1.1.0.dev0
+-----------
 
-- Product Format python plugins supported with autodiscovery
+**Incompatible Features**
+
+- Product Format python plugins supported with autodiscovery, removed all custom products implementations from IO module
 
 v1.0.5
 ------
