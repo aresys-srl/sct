@@ -19,6 +19,7 @@ from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysis
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from arepytools.timing.precisedatetime import PreciseDateTime
 
+from sct import sct_discovered_plugins
 from sct.io.point_target_manager import convert_rosamund_file_to_compliant_csv
 from sct.testing.run import run_tests, summary_results
 from sct.web_scraping.cddis_downloader import InvalidCDDISRequest
@@ -249,6 +250,13 @@ def sct_integration_testing_run(registry: Path, output_directory: Path) -> None:
     click.echo("\n")
     txt = art.text2art("SCT Integration Tests", font="doom")
     click.echo(txt + "\n")
+
+    click.echo("Installed plugins detected:\n")
+
+    for p, pp in sct_discovered_plugins.items():
+        click.echo(p)
+        click.echo(pp)
+        click.echo()
 
     results = run_tests(registry_path=registry, output_dir=output_directory)
 
