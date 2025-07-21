@@ -58,6 +58,20 @@
             "config": "C:/test_out_reference/configurations/test_906f38dc_config.toml",
             "targets": "C:/chopper/reference_dataset/novasar1/auxiliaries/novasar_surat_data.csv",
             "reference_output": "C:/test_out_reference/reference_results/novasar1/scd-pta/pta_res.csv"
+        },
+        "scd-rain-forest": {
+            "analysis": "rf",
+            "product": "C:/chopper/reference_dataset/novasar1/products/NovaSAR_01_40720_scd_20_221231_214639_VV",
+            "config": "",
+            "targets": "",
+            "reference_output": "C:/test_out_reference/reference_result/novasar1/scd-rain-forest/RAIN_FOREST_profiles_S_VV.nc"
+        },
+        "grd-nesz": {
+            "analysis": "nesz",
+            "product": "C:/chopper/reference_dataset/novasar1/products/NovaSAR_01_29655_grd_211218_150627_HH",
+            "config": "",
+            "targets": "",
+            "reference_output": "C:/test_out_reference/reference_result/novasar1/grd-nesz/NESZ_profiles_S1_HH.nc"
         }
     },
     "iceye": {
