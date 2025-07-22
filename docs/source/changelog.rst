@@ -1,12 +1,18 @@
 Changelog
 =========
 
-v1.1.0.dev0
------------
+v1.1.0
+------
 
 **Incompatible Features**
 
 - Product Format python plugins supported with autodiscovery, removed all custom products implementations from IO module
+- Removed automatic analysis, moved to SCAT
+
+**Other changes**
+
+- Added log of detected plugins into testing module CLI
+- Disabled integration tests, moved to dedicated plugins' CI
 
 v1.0.5
 ------
