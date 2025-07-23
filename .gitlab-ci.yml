@@ -87,46 +87,6 @@ unittest_win:
         coverage_format: cobertura
         path: _build/unittest-coverage-*.xml
 
-# === test - integration =====================================================
-# ============================================================================
-# integration_test_linux:
-#   stage: test
-#   script:
-#     - python${PYTHON} -m venv ./ci_test
-#     - source ./ci_test/bin/activate
-#     - python -m pip install .[cli]
-#     - mkdir test_output
-#     - sct-testing -r ./tests/integration_tests/test_registry_linux.json -out ./test_output
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
-#   extends: .tags_manylinux_2_28
-#   needs: []
-
-# integration_test_windows:
-#   stage: test
-#   script:
-#     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-#     - conda create -y -n integration_test python=${PYTHON}
-#     - conda activate integration_test
-#     - python -m pip install -e .[cli]
-#     - mkdir -p ./test_output
-#     - mkdir -p C:/test_out_reference
-#     - mkdir -p C:/test_inputs_copy
-#     - echo "Copying NetCDF test resources to disk..."
-#     - cp -r C:/chopper/integration_tests/sct/* c:/test_out_reference
-#     - cp -r C:/chopper/reference_dataset/sentinel1a/auxiliaries/ETAD_23.SAFE C:/test_inputs_copy/
-#     - cp -r C:/chopper/reference_dataset/iceye/products/SM_1899652_93266 C:/test_inputs_copy/
-#     - cp -r C:/chopper/reference_dataset/iceye/products/SLH_1835029_91260 C:/test_inputs_copy/
-#     - cp -r C:/chopper/reference_dataset/iceye/products/SC_2391740_117355 C:/test_inputs_copy/
-#     - cp -r C:/chopper/reference_dataset/cosmo/products/CSKS1_DGM_B_WR_00_HH_RA_FF_20240107043057_20240107043111.h5 C:/test_inputs_copy/
-#     - sct-testing -r ./tests/integration_tests/test_registry_windows.json -out ./test_output
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
-#   extends: .tags_win10_new
-#   needs: []
-
 # === build ==================================================================
 # ============================================================================
 sdist:
@@ -136,6 +96,7 @@ sdist:
   script:
     - python3.12 -m pip install nox
     - python3.12 -m nox -s build_sdist
+  needs: []
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -148,6 +109,7 @@ wheel:
   script:
     - python3.12 -m pip install nox
     - python3.12 -m nox -s build_wheel
+  needs: []
   artifacts:
     expire_in: 2 weeks
     paths:
