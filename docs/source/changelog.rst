@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.1.1
+------
+
+**Other changes**
+
+- Changed tolerances and validation variables grouping in testing module
+
 v1.1.0
 ------
 

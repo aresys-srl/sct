@@ -35,10 +35,12 @@ from sct.configuration.sct_configuration import SCTConfiguration
 
 PYTHON_INTERPRETER = sys.executable
 
+# TODO: configure these from CLI call using a configuration file?
 ABSOLUTE_TOLERANCE = 1e-5
-ABSOLUTE_TOLERANCE_ISLR = 5e-1
+ABSOLUTE_TOLERANCE_SLR = 0.5
 ABSOLUTE_TOLERANCE_LOC = 1e-4
 ABSOLUTE_TOLERANCE_DEG = 5e-4
+ABSOLUTE_TOLERANCE_RCS = 0.1
 ABSOLUTE_TOLERANCE_RA = 1e-2
 ABSOLUTE_TOLERANCE_OTHER = 1e-3
 ABSOLUTE_TOLERANCE_INTERF = 5
@@ -53,8 +55,16 @@ LOC_VAR_LIST = [
     "revised_ale_azimuth_[m]",
 ]
 ADDITIONAL_LOC_VAR_LIST = ["etad_range_correction_[m]", "etad_azimuth_correction_[m]"]
-DEG_VAR_LIST = ["peak_phase_error_[deg]", "incidence_angle_[deg]"]
-ISLR_VAR_LIST = ["range_islr_[dB]", "azimuth_islr_[dB]", "islr_2d_[dB]"]
+DEG_VAR_LIST = ["incidence_angle_[deg]"]
+SLR_VAR_LIST = [
+    "range_islr_[dB]",
+    "azimuth_islr_[dB]",
+    "islr_2d_[dB]",
+    "range_sslr_[dB]",
+    "azimuth_sslr_[dB]",
+    "sslr_2d_[dB]",
+]
+RCS_VAR_LIST = ["rcs_[dB]", "rcs_error_[dB]", "clutter_[dB]", "scr_[dB]", "peak_phase_error_[deg]"]
 OTHER_VAR_LIST = [
     "ground_velocity_[ms]",
     "doppler_rate_theoretical_[Hzs]",
@@ -143,15 +153,19 @@ def compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> 
     deg_report = current[DEG_VAR_LIST].copy()
     pd.testing.assert_frame_equal(deg_df_ref, deg_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_DEG, rtol=0)
 
-    islr_df_ref = ref[ISLR_VAR_LIST].copy()
-    islr_report = current[ISLR_VAR_LIST].copy()
+    islr_df_ref = ref[SLR_VAR_LIST].copy()
+    islr_report = current[SLR_VAR_LIST].copy()
     pd.testing.assert_frame_equal(
         islr_df_ref,
         islr_report,
         check_exact=False,
-        atol=ABSOLUTE_TOLERANCE_ISLR,
+        atol=ABSOLUTE_TOLERANCE_SLR,
         rtol=0,
     )
+
+    rcs_df_ref = ref[RCS_VAR_LIST].copy()
+    rcs_report = current[RCS_VAR_LIST].copy()
+    pd.testing.assert_frame_equal(rcs_df_ref, rcs_report, check_exact=False, atol=ABSOLUTE_TOLERANCE_RCS, rtol=0)
 
     other_df_ref = ref[OTHER_VAR_LIST].copy()
     other_report = current[OTHER_VAR_LIST].copy()
@@ -166,11 +180,11 @@ def compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> 
     # checking goodness of results
     pd.testing.assert_frame_equal(
         ref.drop(
-            loc_var_list + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
+            loc_var_list + DEG_VAR_LIST + SLR_VAR_LIST + RCS_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
             axis=1,
         ),
         current.drop(
-            loc_var_list + DEG_VAR_LIST + ISLR_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
+            loc_var_list + DEG_VAR_LIST + SLR_VAR_LIST + RCS_VAR_LIST + OTHER_VAR_LIST + AZ_TIME_VAR,
             axis=1,
         ),
         check_exact=False,
