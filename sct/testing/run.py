@@ -33,7 +33,7 @@ from sct.testing.utilities import (
 log = logging.getLogger("quality_analysis")
 
 
-def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Path) -> bool:
+def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
     """Testing sct point target analysis on input product.
 
     Parameters
@@ -46,25 +46,28 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
         name of the test
     output_dir : Path
         output directory where to save the results
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
     bool
         True if passed, else False
     """
+
     out_dir = output_dir.joinpath(sensor, test_name)
     out_dir.mkdir(exist_ok=True, parents=True)
     config = SCTConfiguration.from_toml(params.config) if params.config is not None else None
     try:
         if params.analysis == SCTAnalyses.POINT_TARGET:
             config = config.point_target_analysis if config is not None else None
-            results = run_pta_api(params=params, output_dir=out_dir, config=config)
+            results = run_pta_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
             # comparing dataframes differences to specific tolerances
             log.info("Validating results...")
             compare_pta_df_with_tolerances(ref=pd.read_csv(params.reference_output), current=results.copy())
         elif params.analysis == SCTAnalyses.NESZ:
             config = config.radiometric_analysis if config is not None else None
-            results = run_nesz_api(params=params, output_dir=out_dir, config=config)
+            results = run_nesz_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
             log.info("Validating results...")
             if isinstance(params.reference_output, list):
                 for report in params.reference_output:
@@ -74,7 +77,7 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
                 compare_ra_netcdf_with_tolerances(ref=params.reference_output, current=results)
         elif params.analysis == SCTAnalyses.RAIN_FOREST:
             config = config.radiometric_analysis if config is not None else None
-            results = run_rain_forest_api(params=params, output_dir=out_dir, config=config)
+            results = run_rain_forest_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
             log.info("Validating results...")
             if isinstance(params.reference_output, list):
                 for report in params.reference_output:
@@ -100,7 +103,7 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
         return False
 
 
-def run_tests(registry_path: str | Path, output_dir: str | Path) -> dict:
+def run_tests(registry_path: str | Path, output_dir: str | Path, graphs: bool) -> dict:
     """Running all the SCT Integration Tests from input registry
 
     Parameters
@@ -109,6 +112,8 @@ def run_tests(registry_path: str | Path, output_dir: str | Path) -> dict:
         Path to the integration tests registry .json
     output_dir : str | Path
         Path to the output directory where to save results
+    graphs : bool
+        flag to enable graphs generation
     """
 
     registry_path = Path(registry_path)
@@ -132,7 +137,7 @@ def run_tests(registry_path: str | Path, output_dir: str | Path) -> dict:
             start_time = time.perf_counter()
             params = TestParams.from_dict(test_params)
             results[sensor][test_name] = test_session(
-                params=params, sensor=sensor, test_name=test_name, output_dir=output_dir
+                params=params, sensor=sensor, test_name=test_name, output_dir=output_dir, graphs=graphs
             )
             time_spent = time.perf_counter() - start_time
             if time_spent < 60:

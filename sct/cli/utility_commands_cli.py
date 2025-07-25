@@ -244,7 +244,15 @@ def sct_tropospheric_map_downloader(
     type=click.Path(path_type=Path, exists=True, dir_okay=True),
     help="Path to the folder where to save output data",
 )
-def sct_integration_testing_run(registry: Path, output_directory: Path) -> None:
+@click.option(
+    "--graphs",
+    "-g",
+    default=False,
+    is_flag=True,
+    type=bool,
+    help="Flag to generate graphical output at the end of each analysis",
+)
+def sct_integration_testing_run(registry: Path, output_directory: Path, graphs: bool) -> None:
     """Run SCT integration tests procedure from registry"""
 
     click.echo("\n")
@@ -260,7 +268,7 @@ def sct_integration_testing_run(registry: Path, output_directory: Path) -> None:
         click.echo(pp)
         click.echo()
 
-    results = run_tests(registry_path=registry, output_dir=output_directory)
+    results = run_tests(registry_path=registry, output_dir=output_directory, graphs=graphs)
 
     click.echo("\n")
     txt = art.text2art("Summary", font="doom")

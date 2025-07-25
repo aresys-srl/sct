@@ -8,6 +8,7 @@ SCT Integration Tests - Utilities
 
 from __future__ import annotations
 
+import logging
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -32,6 +33,9 @@ from sct.analyses.radiometric_analysis import (
     nesz_analysis,
 )
 from sct.configuration.sct_configuration import SCTConfiguration
+
+# syncing with logger
+log = logging.getLogger("quality_analysis")
 
 PYTHON_INTERPRETER = sys.executable
 
@@ -281,7 +285,7 @@ def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     current_dataset.close()
 
 
-def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> pd.DataFrame:
+def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None, graphs: bool) -> pd.DataFrame:
     """Running SCT Point Target Analysis from API forwarding the inputs.
 
     Parameters
@@ -292,6 +296,8 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
         output directory
     config : SCTConfiguration | None
         configuration
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
@@ -309,7 +315,7 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
     if params.tropospheric_maps is not None:
         config.point_target_analysis.enable_tropospheric_correction = True
         config.point_target_analysis.tropospheric_maps_directory = params.tropospheric_maps
-    results_df, _ = point_target_analysis_with_corrections(
+    results_df, graphs_data = point_target_analysis_with_corrections(
         product_path=params.product,
         external_target_source=params.targets,
         external_orbit_path=params.external_orbit,
@@ -317,10 +323,20 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
     )
     out_file = output_dir.joinpath("pta_results.csv")
     results_df.to_csv(out_file, index=False)
+    if graphs:
+        try:
+            from sct.analyses.graphical_output import sct_pta_graphs
+
+            log.info("Plotting graphs...")
+            graphs_out_dir = output_dir.joinpath("graphs")
+            graphs_out_dir.mkdir(exist_ok=True)
+            sct_pta_graphs(graphs_data=graphs_data, results_df=results_df, output_dir=graphs_out_dir)
+        except ImportError:
+            log.critical('Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"')
     return pd.read_csv(out_file)
 
 
-def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None, graphs: bool) -> Path:
     """Running SCT NESZ Analysis from API forwarding the inputs.
 
     Parameters
@@ -331,6 +347,8 @@ def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration 
         output directory
     config : SCTConfiguration | None
         configuration
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
@@ -340,15 +358,28 @@ def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration 
 
     profiles = nesz_analysis(product_path=params.product, config=config)
     tag = "NESZ"
+    if graphs:
+        try:
+            from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
+        except ImportError:
+            log.critical('Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"')
+            graphs = False
     for item in profiles:
         radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
+        if graphs:
+            radiometric_2D_hist_plot(
+                data=item,
+                out_dir=output_dir,
+                title=f"{tag.upper()} Profiles {item.channel}",
+                plot_mode="min",
+            )
     nc_files = list(output_dir.glob("*.nc"))
     if len(nc_files) == 1:
         return nc_files[0]
     return nc_files
 
 
-def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None, graphs: bool) -> Path:
     """Running SCT Average Radiometric Profiles Analysis from API forwarding the inputs.
 
     Parameters
@@ -359,6 +390,8 @@ def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfigu
         output directory
     config : SCTConfiguration | None
         configuration
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
@@ -372,8 +405,21 @@ def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfigu
         config=config,
     )
     tag = "RAIN_FOREST"
+    if graphs:
+        try:
+            from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
+        except ImportError:
+            log.critical('Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"')
+            graphs = False
     for item in profiles:
         radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
+        if graphs:
+            radiometric_2D_hist_plot(
+                data=item,
+                out_dir=output_dir,
+                title=f"{tag.upper()} Profiles {item.channel}",
+                plot_mode="mean",
+            )
     nc_files = list(output_dir.glob("*.nc"))
     if len(nc_files) == 1:
         return nc_files[0]

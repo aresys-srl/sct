@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.1.2
+------
+
+**Other changes**
+
+- introduced graphs plotting option into testing module CLI/API
+
 v1.1.1
 ------
 
