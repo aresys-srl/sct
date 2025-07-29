@@ -6,20 +6,16 @@ CLI Point Target Analysis commands
 ----------------------------------
 """
 
-import logging
 import sys
 import time
 from pathlib import Path
 
 import art
 import click
-from arepyextras.quality.core.custom_logger import CustomFormatterFileHandler
 
 import sct.analyses.point_target_analysis as pta
+from sct.configuration.logger import SCTFileHandler, enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 # creating a decorator to pass a SCTConfiguration dataclass object between commands
 share_config = click.make_pass_decorator(SCTConfiguration)
@@ -78,9 +74,11 @@ def target_analysis(
 
     # saving log file to output folder
     if config.general.save_log:
-        logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_pta_analysis.log"))
-        logging_file_handler.setFormatter(CustomFormatterFileHandler())
-        log.addHandler(logging_file_handler)
+        logging_file_handler = SCTFileHandler(filename=output_directory.joinpath("sct_pta_analysis.log"))
+        enable_quality_logger(file_handler=logging_file_handler)
+        sct_logger.addHandler(logging_file_handler)
+    else:
+        enable_quality_logger()
 
     # inheriting configuration settings from group command in CLI main
     config_pta = config.point_target_analysis
@@ -90,14 +88,14 @@ def target_analysis(
             from sct.analyses.graphical_output import sct_pta_graphs
 
         except ImportError:
-            log.critical('Install graphs requirements "pip install sct[graphs]"')
+            sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
             sys.exit(1)
 
-    log.info(f"Output folder is: {output_directory}")
+    sct_logger.info(f"Output folder is: {output_directory}")
 
-    log.info(f"External point target source provided: {point_target_source}")
+    sct_logger.info(f"External point target source provided: {point_target_source}")
 
-    log.info(f"Selected product is: {product}")
+    sct_logger.info(f"Selected product is: {product}")
 
     click.echo("\n")
     txt = art.text2art("Point  Target  Analysis", font="doom")
@@ -120,10 +118,10 @@ def target_analysis(
 
     # graphical output management
     if graphs:
-        log.info("Plotting graphs...")
+        sct_logger.info("Plotting graphs...")
         graphs_out_dir = output_directory.joinpath("graphs")
         graphs_out_dir.mkdir(exist_ok=True)
         sct_pta_graphs(graphs_data=graphs_data, results_df=results_df, output_dir=graphs_out_dir)
 
     elapsed = (time.perf_counter_ns() - start) / 1e9
-    log.info(f"Point Target Analysis completed in {elapsed} s.")
+    sct_logger.info(f"Point Target Analysis completed in {elapsed} s.")

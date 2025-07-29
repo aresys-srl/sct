@@ -8,18 +8,15 @@ Spectral Analysis
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 
 from arepyextras.quality.spectral_analysis.analysis import point_target_spectral_analysis
 from arepyextras.quality.spectral_analysis.custom_dataclasses import SpectraDataOutput
 
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTSpectralAnalysisConfig
 from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 def sct_point_target_spectral_analysis(
@@ -43,10 +40,10 @@ def sct_point_target_spectral_analysis(
     """
     # Input parameters analysis
     product_path = Path(product_path)
-    log.info(f"Input product: {product_path}")
+    sct_logger.info(f"Input product: {product_path}")
 
     external_target_source = Path(external_target_source)
-    log.info(f"Using external target source provided: {external_target_source}")
+    sct_logger.info(f"Using external target source provided: {external_target_source}")
 
     config = config or SCTSpectralAnalysisConfig()
 

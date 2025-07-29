@@ -8,12 +8,10 @@ Plugins utilities
 
 import importlib
 import importlib.util
-import logging
 from pathlib import Path
 from types import ModuleType
 
-# syncing with logger
-log = logging.getLogger("quality_analysis")
+from sct.configuration.logger import sct_logger
 
 
 def _core_load_from_path(plugin: str) -> ModuleType:
@@ -36,9 +34,9 @@ def load_plugin(plugin: str) -> ModuleType | None:
         else:
             module = importlib.import_module(plugin)
     except (ModuleNotFoundError, RuntimeError, FileNotFoundError) as exc:
-        log.warning(f"Loading of {plugin} failed: {exc}")
+        sct_logger.warning(f"Loading of {plugin} failed: {exc}")
     else:
-        log.info(f"Loading of {plugin} successful")
+        sct_logger.info(f"Loading of {plugin} successful")
         return module
     return None
 
@@ -47,7 +45,7 @@ def get_list_of_valid_plugins(plugins: list, plugin_protocol: type) -> list:
     """Filter out invalid plugins"""
     invalid_plugins = filter(lambda plugin: not isinstance(plugin, plugin_protocol), plugins)
     for plugin in invalid_plugins:
-        log.warning(
+        sct_logger.warning(
             f"{plugin.__name__} plugin removed from plugin list: "
             + f"does not satisfy the plugin interface: {plugin_protocol}"
         )
@@ -60,15 +58,15 @@ def import_plugins(plugins: list[str], plugin_protocol: type, built_in_plugins: 
     if not plugins:
         return built_in_plugins
 
-    log.info("Plugin discovery started")
+    sct_logger.info("Plugin discovery started")
     discovered_plugins: list[ModuleType | None] = [load_plugin(plugin) for plugin in plugins]
     valid_discovered_plugins = get_list_of_valid_plugins(
         [plugin for plugin in discovered_plugins if plugin is not None], plugin_protocol
     )
 
     available_plugins = built_in_plugins + valid_discovered_plugins
-    log.info("Plugin discovery completed")
-    log.info("Available plugins:")
+    sct_logger.info("Plugin discovery completed")
+    sct_logger.info("Available plugins:")
     for plugin in available_plugins:
-        log.info(f" - {plugin.__name__}")
+        sct_logger.info(f" - {plugin.__name__}")
     return available_plugins

@@ -9,31 +9,31 @@ CLI Utility Commands
 from __future__ import annotations
 
 import datetime
-import logging
 import sys
 from pathlib import Path
 
-import arepyextras.quality.core.custom_logger as clg
 import art
 from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct import __version__, sct_discovered_plugins
+from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
 from sct.io.point_target_manager import convert_rosamund_file_to_compliant_csv
 from sct.testing.run import run_tests, summary_results
 from sct.web_scraping.cddis_downloader import InvalidCDDISRequest
 from sct.web_scraping.ionosphere_tec_map_downloader import download_ionospheric_tec_maps
 from sct.web_scraping.troposphere_maps_downloader import download_tropospheric_products
 
-log = logging.getLogger("quality_analysis")
-log.setLevel("INFO")
-log.addHandler(clg.MyHandler())
+# setup custom logger
+enable_quality_logger()
+sct_logger.addHandler(ConsoleHandler())
+sct_logger.setLevel("INFO")
 
 try:
     import click
 except ImportError:
-    log.critical('Install cli requirements "pip install sct[cli]"')
+    sct_logger.critical('Install cli requirements "pip install sct[cli]"')
     sys.exit(1)
 
 

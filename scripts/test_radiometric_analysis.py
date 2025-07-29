@@ -3,19 +3,18 @@
 
 """SCT: test radiometric analysis script"""
 
-import logging
-
-import arepyextras.quality.core.custom_logger as clg
 from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
 from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf
 
 from sct.analyses import radiometric_analysis as ra
+from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
 
 # setup custom logger
-log = logging.getLogger("quality_analysis")
-log.setLevel("INFO")
-log.addHandler(clg.MyHandler())
+enable_quality_logger()
+sct_logger.addHandler(ConsoleHandler())
+sct_logger.setLevel("INFO")
+
 
 
 if __name__ == "__main__":
@@ -36,6 +35,7 @@ if __name__ == "__main__":
     tag = "NESZ"
     mode = "min"
 
+    sct_logger.info("Plotting Graphs...")
     for item in output:
         radiometric_2D_hist_plot(item, output_dir, plot_mode=mode)
         radiometric_profiles_to_netcdf(item, output_dir, tag)

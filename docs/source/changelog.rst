@@ -6,7 +6,8 @@ v1.1.2
 
 **Other changes**
 
-- introduced graphs plotting option into testing module CLI/API
+- Introduced graphs plotting option into testing module CLI/API
+- Adding dedicated logging module
 
 v1.1.1
 ------

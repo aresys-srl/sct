@@ -8,7 +8,6 @@ Interferometric Analysis
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 
 from arepyextras.quality.interferometric_analysis.analysis import interferometric_analysis
@@ -16,9 +15,6 @@ from arepyextras.quality.interferometric_analysis.custom_dataclasses import Inte
 
 from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig
 from sct.io.io_manager import product_loader
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 def interferometric_coherence_analysis(

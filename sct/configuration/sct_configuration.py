@@ -9,7 +9,6 @@ Tool and analyses configuration options
 from __future__ import annotations
 
 import json
-import logging
 from dataclasses import asdict, dataclass, field, fields
 from enum import Enum, auto
 from pathlib import Path
@@ -31,9 +30,6 @@ from sct import config_schema
 
 USER_SCT_CONFIG_FILE = Path(appdirs.user_config_dir(), "SCT_TOOL", "sct_tool_default_config.toml")
 ENVIRONMENT_VARIABLE = "SCT_CONFIG_FILE"
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 class InvalidConfigurationFile(RuntimeError):

@@ -3,42 +3,42 @@
 
 """SCT: test point target analysis script"""
 
-import logging
 from pathlib import Path
 
-import arepyextras.quality.core.custom_logger as clg
 import arepyextras.quality.point_targets_analysis.graphical_output as ptgpo
 
 from sct.analyses import point_target_analysis as pta
+from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger, SCTFileHandler
 from sct.configuration.sct_configuration import SCTConfiguration
 
-# setup custom logger
-log = logging.getLogger("quality_analysis")
-log.setLevel("INFO")
-log.addHandler(clg.MyHandler())
-
 out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs")
-logging_file_handler = logging.FileHandler(out_fldr.joinpath("sct_pta_analysis.log"))
-logging_file_handler.setFormatter(clg.CustomFormatterFileHandler())
-log.addHandler(logging_file_handler)
+
+# setup custom logger
+sct_logger.addHandler(ConsoleHandler())
+file_handler = SCTFileHandler(out_fldr.joinpath("sct_pta_analysis.log"))
+sct_logger.addHandler(file_handler)
+enable_quality_logger(file_handler=file_handler)
+sct_logger.setLevel("INFO")
 
 if __name__ == "__main__":
     # products
     # prod = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\SLC"
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\SLC_23.SAFE"
+    prod = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\SLC"
 
     # external orbits
     ext_orbit = None
     # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
-    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\surat_basin_data.csv"
+    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\demo_topsar_point_targets_binary"
     # ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\PointTargetsBinary"
 
     # # test config
-    test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\config_etad.toml"
-    test_config = SCTConfiguration.from_toml(test_config)
-    # test_config = SCTConfiguration()
+    # test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\config_etad.toml"
+    # test_config = SCTConfiguration.from_toml(test_config)
+    test_config = SCTConfiguration()
+    test_config.point_target_analysis.enable_plate_tectonics_correction = False
+    test_config.point_target_analysis.enable_solid_tides_correction = False
 
     # executing point target analysis
     out, out_graph = pta.point_target_analysis_with_corrections(
@@ -51,6 +51,7 @@ if __name__ == "__main__":
     # saving results
     out.to_csv(Path(out_fldr).joinpath("point_target_analysis_results.csv"), index=False)
 
+    sct_logger.info("Plotting Graphs...")
     out_graph_fldr = out_fldr.joinpath("pta_graphs")
     out_graph_fldr.mkdir(exist_ok=True)
     for item in out_graph:

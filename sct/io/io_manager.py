@@ -8,17 +8,14 @@ I/O utilities
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Optional
 
 from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
 
+from sct.configuration.logger import sct_logger
 from sct.io.extended_protocols import ALECorrectionFunctionType
 from sct.io.input_product_plugins import import_input_product_plugins
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 class InvalidProductType(RuntimeError):
@@ -55,8 +52,8 @@ def product_loader(
     for plugin in available_plugins:
         if plugin.get_detector()(product_path):
             manager = plugin.get_manager()
-            log.info(f"Using plugin {plugin.__name__}, version {plugin.__version__}")
-            log.info(f"Product type: {manager.__name__}")
+            sct_logger.info(f"Using plugin {plugin.__name__}, version {plugin.__version__}")
+            sct_logger.info(f"Product type: {manager.__name__}")
             product = manager(product_path, external_orbit_path=external_orbit)
             rg_corr: ALECorrectionFunctionType | None = plugin.get_range_corrections()
             az_corr: ALECorrectionFunctionType | None = plugin.get_azimuth_corrections()

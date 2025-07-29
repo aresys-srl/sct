@@ -8,17 +8,15 @@ Geodynamics corrections core functions
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 
 import numpy as np
 from arepyextras.perturbations.geodynamics import plate_tectonics, solid_tides
 from arepytools.timing.precisedatetime import PreciseDateTime
 
-SECONDS_IN_A_YEAR = 3.154e7
+from sct.configuration.logger import sct_logger
 
-# syncing with logger
-log = logging.getLogger("quality_analysis")
+SECONDS_IN_A_YEAR = 3.154e7
 
 
 @dataclass
@@ -70,7 +68,7 @@ def compute_geodynamics_corrections(
 
     tides_displacement = None
     if solid_tides_input:
-        log.info("Computing Solid Tides displacement correction for calibration site coordinates")
+        sct_logger.info("Computing Solid Tides displacement correction for calibration site coordinates")
         tides_displacement = solid_tides.compute_displacement(
             target_xyz_coords=target_coords,
             acquisition_time=solid_tides_input.time,
@@ -78,7 +76,7 @@ def compute_geodynamics_corrections(
 
     tectonics_displacement = None
     if plate_tectonics_input:
-        log.info("Computing Plate Tectonics displacement correction for calibration site coordinates")
+        sct_logger.info("Computing Plate Tectonics displacement correction for calibration site coordinates")
 
         # velocities are expressed in meters per year, so the time_delta should be computed in terms of years
         time_delta_y = plate_tectonics_input.time_delta_s / SECONDS_IN_A_YEAR
@@ -92,8 +90,8 @@ def compute_geodynamics_corrections(
         if drift_velocities_available:
             drift_velocities = plate_tectonics_input.drift_velocities
         else:
-            log.info("Drift velocities not provided for the selected calibration site")
-            log.info("Computing Plate Tectonics displacement correction using average plate drift velocities")
+            sct_logger.info("Drift velocities not provided for the selected calibration site")
+            sct_logger.info("Computing Plate Tectonics displacement correction using average plate drift velocities")
             drift_velocities = None
 
         tectonics_displacement = plate_tectonics.compute_displacement(

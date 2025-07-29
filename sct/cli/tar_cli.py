@@ -6,7 +6,6 @@ CLI Target Ambiguity Ratio Analysis commands
 --------------------------------------------
 """
 
-import logging
 import sys
 import time
 from pathlib import Path
@@ -14,13 +13,10 @@ from pathlib import Path
 import art
 import click
 import numpy as np
-from arepyextras.quality.core.custom_logger import CustomFormatterFileHandler
 
 from sct.analyses.ambiguity_ratio_analysis import sct_point_target_ambiguity_ratio_analysis
+from sct.configuration.logger import SCTFileHandler, enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 # creating a decorator to pass a SCTConfiguration dataclass object between commands
 share_config = click.make_pass_decorator(SCTConfiguration)
@@ -59,9 +55,11 @@ def pt_ambiguity_ratio_analysis(
 ) -> None:
     # saving log file to output folder
     if config.general.save_log:
-        logging_file_handler = logging.FileHandler(output_directory.joinpath("sct_tar_analysis.log"))
-        logging_file_handler.setFormatter(CustomFormatterFileHandler())
-        log.addHandler(logging_file_handler)
+        logging_file_handler = SCTFileHandler(filename=output_directory.joinpath("sct_tar_analysis.log"))
+        enable_quality_logger(file_handler=logging_file_handler)
+        sct_logger.addHandler(logging_file_handler)
+    else:
+        enable_quality_logger()
 
     # inheriting configuration settings from group command in CLI main
     config_tar = config.target_ambiguity_ratio_analysis
@@ -70,14 +68,14 @@ def pt_ambiguity_ratio_analysis(
         from arepyextras.quality.target_ambiguity_ratio_analysis.graphical_output import ambiguities_graphs
 
     except ImportError:
-        log.critical('Install graphs requirements "pip install sct[graphs]"')
+        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)
 
-    log.info(f"Output folder is: {output_directory}")
+    sct_logger.info(f"Output folder is: {output_directory}")
 
-    log.info(f"External point target source provided: {point_target_source}")
+    sct_logger.info(f"External point target source provided: {point_target_source}")
 
-    log.info(f"Selected product is: {product}")
+    sct_logger.info(f"Selected product is: {product}")
 
     click.echo("\n")
     txt = art.text2art("Ambiguity  Ratio  Analysis", font="doom")
@@ -88,8 +86,8 @@ def pt_ambiguity_ratio_analysis(
         product_path=product, external_target_source=point_target_source, config=config_tar
     )
 
-    log.info("Generating graphs...")
+    sct_logger.info("Generating graphs...")
     ambiguities_graphs(data=output, output_dir=output_directory, graph_type="PTAR")
 
     elapsed = np.round(time.perf_counter() - start, 2)
-    log.info(f"Point Target Ambiguity Ratio Analysis completed in {elapsed} s.")
+    sct_logger.info(f"Point Target Ambiguity Ratio Analysis completed in {elapsed} s.")

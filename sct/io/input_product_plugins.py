@@ -8,7 +8,6 @@ Input product loading plugins
 
 from __future__ import annotations
 
-import logging
 from functools import partial
 from pathlib import Path
 from typing import Callable, Protocol, runtime_checkable
@@ -16,9 +15,6 @@ from typing import Callable, Protocol, runtime_checkable
 from sct import sct_discovered_plugins
 from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
 from sct.io.plugins_utils import import_plugins
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 Detector = Callable[[str | Path], bool]
 

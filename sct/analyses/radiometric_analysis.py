@@ -8,7 +8,6 @@ Radiometric Profiles Analysis
 
 from __future__ import annotations
 
-import logging
 from enum import Enum
 from pathlib import Path
 
@@ -23,9 +22,6 @@ from arepyextras.quality.radiometric_analysis.custom_dataclasses import Radiomet
 
 from sct.configuration.sct_configuration import SCTRadiometricAnalysisConfig
 from sct.io.io_manager import product_loader
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 class SupportedRadiometricProfiles(Enum):

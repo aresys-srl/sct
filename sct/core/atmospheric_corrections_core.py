@@ -8,7 +8,6 @@ Atmospheric corrections core functions
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,9 +16,6 @@ from arepyextras.perturbations.atmospheric import ionosphere, troposphere
 from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.geometry.inverse_geocoding_core import inverse_geocoding_monostatic_core
 from arepytools.timing.precisedatetime import PreciseDateTime
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 @dataclass

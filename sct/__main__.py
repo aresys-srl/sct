@@ -3,18 +3,16 @@
 
 """Main CLI script"""
 
-import logging
 import sys
 
-import arepyextras.quality.core.custom_logger as clg
+from sct.configuration.logger import ConsoleHandler, sct_logger
 
 
 def main():
     """Main function to launch the python SQT CLI program"""
     # setup custom logger
-    log = logging.getLogger("quality_analysis")
-    log.setLevel("INFO")
-    log.addHandler(clg.MyHandler())
+    sct_logger.addHandler(ConsoleHandler())
+    sct_logger.setLevel("INFO")
 
     try:
         from sct.cli.sct_cli import sct_analysis

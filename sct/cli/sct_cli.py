@@ -6,7 +6,6 @@ SCT CLI Tool
 ------------
 """
 
-import logging
 from pathlib import Path
 from typing import Optional
 
@@ -18,15 +17,13 @@ from sct.cli.pta_cli import target_analysis
 from sct.cli.ra_cli import radiometric_analysis
 from sct.cli.sa_cli import spectral_pt_analysis
 from sct.cli.tar_cli import pt_ambiguity_ratio_analysis
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
 
 version_option = click.version_option(VERSION, help="Show CLI version and exit")
 
 # creating a decorator to pass a SCTConfiguration dataclass object between commands
 share_config = click.make_pass_decorator(SCTConfiguration)
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 @click.group(
@@ -46,11 +43,11 @@ def sct_analysis(ctx: click.Context, config: Optional[Path]):
     """SCT tool for SAR products quality analysis"""
     click.echo("Starting application...\n")
     if config is None:
-        log.info("Configuration not provided. Using default one.")
+        sct_logger.info("Configuration not provided. Using default one.")
         ctx.ensure_object(SCTConfiguration)
         ctx.obj = SCTConfiguration()
     else:
-        log.info("Using the custom configuration file provided.")
+        sct_logger.info("Using the custom configuration file provided.")
         ctx.ensure_object(SCTConfiguration)
         ctx.obj = SCTConfiguration.from_toml(config)
     click.echo("\n")

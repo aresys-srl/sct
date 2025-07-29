@@ -8,7 +8,6 @@ Point Target Analysis
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from uuid import uuid4
 
@@ -21,6 +20,7 @@ from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.io.io_support import NominalPointTarget
 from scipy.constants import speed_of_light as LIGHT_SPEED
 
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core.atmospheric_corrections_main import (
     AtmosphericDelaysAcquisitionInfo,
@@ -33,9 +33,6 @@ from sct.core.rcs_computation import compute_elevation_azimuth_wrt_enu, compute_
 from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
 from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 AZIMUTH_BORE_CR = np.pi / 4
 ELEV_BORE_CR = np.deg2rad(35.2644)
@@ -145,14 +142,14 @@ def point_target_analysis_with_corrections(
 
     # Input parameters analysis
     product_path = Path(product_path)
-    log.info(f"Input product: {product_path}")
+    sct_logger.info(f"Input product: {product_path}")
 
     external_target_source = Path(external_target_source)
-    log.info(f"Using external target source provided: {external_target_source}")
+    sct_logger.info(f"Using external target source provided: {external_target_source}")
 
     external_orbit_path = Path(external_orbit_path) if external_orbit_path is not None else None
     if external_orbit_path is not None:
-        log.info(f"Using external orbit {external_orbit_path}")
+        sct_logger.info(f"Using external orbit {external_orbit_path}")
 
     config = config or SCTPointTargetAnalysisConfig()
 
@@ -162,10 +159,10 @@ def point_target_analysis_with_corrections(
         config.enable_ionospheric_correction = False
         config.enable_tropospheric_correction = False
         config.enable_sensor_specific_processing_corrections = False
-        log.debug("ETAD corrections enabled: forced disabling of other correction")
+        sct_logger.debug("ETAD corrections enabled: forced disabling of other correction")
 
         if config.etad_product_path is None:
-            log.critical("ETAD corrections requested but the ETAD product path is not valid")
+            sct_logger.critical("ETAD corrections requested but the ETAD product path is not valid")
             raise RuntimeError("Invalid ETAD Product path")
 
     # LOADING PRODUCT
@@ -221,7 +218,7 @@ def point_target_analysis_with_corrections(
     )
 
     if all(x in point_targets_df for x in ["target_size_m", "corner_elevation_deg", "corner_azimuth_deg"]):
-        log.info("Computing theoretical RCS...")
+        sct_logger.info("Computing theoretical RCS...")
         theoretical_rcs = _compute_theoretical_rcs(
             data_df=data_df.copy(),
             point_targets_df=point_targets_df.copy(),
@@ -234,7 +231,7 @@ def point_target_analysis_with_corrections(
 
     # retrieving ETAD corrections
     if config.enable_etad_corrections:
-        log.info("Extracting ALE range corrections from ETAD product...")
+        sct_logger.info("Extracting ALE range corrections from ETAD product...")
         if config.etad_product_path is None:
             raise RuntimeError("Cannot perform ETAD corrections: missing input etad product")
         etad_corrections = get_etad_corrections(etad_product_path=config.etad_product_path, target_df=point_targets_df)
@@ -259,7 +256,7 @@ def point_target_analysis_with_corrections(
         data_df["azimuth_localization_error_[m]"] + data_df["total_ale_azimuth_correction_[m]"]
     )
 
-    log.info("Analysis completed.")
+    sct_logger.info("Analysis completed.")
 
     return data_df, graph_data
 
@@ -300,7 +297,7 @@ def sct_point_target_analysis(
     )
 
     if len(data) == 0:
-        log.critical("Point target analysis results is empty: no visible targets detected")
+        sct_logger.critical("Point target analysis results is empty: no visible targets detected")
         raise ValueError("No visible point targets")
 
     data.reset_index(drop=True, inplace=True)
@@ -316,15 +313,15 @@ def sct_point_target_analysis(
         # ale: slant_range_localization_error and azimuth_localization_error
         # atmospheric corrections
         if range_corrections_func is not None:
-            log.info("Computing sensor specific range corrections...")
+            sct_logger.info("Computing sensor specific range corrections...")
             range_corrections_df = range_corrections_func(product, data.copy())
         else:
-            log.info("Sensor specific range corrections function has not been selected")
+            sct_logger.info("Sensor specific range corrections function has not been selected")
         if azimuth_corrections_func is not None:
-            log.info("Computing sensor specific azimuth corrections...")
+            sct_logger.info("Computing sensor specific azimuth corrections...")
             azimuth_corrections_df = azimuth_corrections_func(product, data.copy())
         else:
-            log.info("Sensor specific azimuth corrections function has not been selected")
+            sct_logger.info("Sensor specific azimuth corrections function has not been selected")
 
     # ADDING CORRECTIONS TO RESULTS
     data["solid_tides_correction"] = config.enable_solid_tides_correction

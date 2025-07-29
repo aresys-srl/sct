@@ -6,7 +6,6 @@ Main entry point for atmospheric corrections
 --------------------------------------------
 """
 
-import logging
 from dataclasses import dataclass
 
 import numpy as np
@@ -14,11 +13,9 @@ import pandas as pd
 from arepyextras.quality.io.quality_input_protocol import TwiceDifferentiable3DCurve
 from arepytools.timing.precisedatetime import PreciseDateTime
 
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core.atmospheric_corrections_core import IonosphericInput, TroposphereInput, compute_atmospheric_delays
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 @dataclass
@@ -37,11 +34,11 @@ def run_compute_atmospheric_delays(
 ) -> tuple[np.ndarray | None, tuple[np.ndarray, np.ndarray] | None]:
     """Compute atmospheric delays"""
     if config.enable_ionospheric_correction and config.ionospheric_maps_directory is None:
-        log.critical("Ionospheric perturbation computation requested but the maps directory is not valid")
+        sct_logger.critical("Ionospheric perturbation computation requested but the maps directory is not valid")
         raise RuntimeError("Invalid ionospheric maps directory")
 
     if config.enable_tropospheric_correction and config.tropospheric_maps_directory is None:
-        log.critical("Tropospheric perturbation computation requested but the maps directory is not valid")
+        sct_logger.critical("Tropospheric perturbation computation requested but the maps directory is not valid")
         raise RuntimeError("Invalid tropospheric maps directory")
 
     ionosphere_input = None

@@ -9,13 +9,13 @@ SCT Integration Tests - Main
 from __future__ import annotations
 
 import json
-import logging
 import time
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
 from sct.testing.utilities import (
     SCTAnalyses,
@@ -28,9 +28,6 @@ from sct.testing.utilities import (
     run_pta_api,
     run_rain_forest_api,
 )
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
@@ -63,12 +60,12 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
             config = config.point_target_analysis if config is not None else None
             results = run_pta_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
             # comparing dataframes differences to specific tolerances
-            log.info("Validating results...")
+            sct_logger.info("Validating results...")
             compare_pta_df_with_tolerances(ref=pd.read_csv(params.reference_output), current=results.copy())
         elif params.analysis == SCTAnalyses.NESZ:
             config = config.radiometric_analysis if config is not None else None
             results = run_nesz_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
-            log.info("Validating results...")
+            sct_logger.info("Validating results...")
             if isinstance(params.reference_output, list):
                 for report in params.reference_output:
                     result = [r for r in results if report.name == r.name]
@@ -78,7 +75,7 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
         elif params.analysis == SCTAnalyses.RAIN_FOREST:
             config = config.radiometric_analysis if config is not None else None
             results = run_rain_forest_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
-            log.info("Validating results...")
+            sct_logger.info("Validating results...")
             if isinstance(params.reference_output, list):
                 for report in params.reference_output:
                     result = [r for r in results if report.name == r.name]
@@ -88,18 +85,18 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
         elif params.analysis == SCTAnalyses.INTERFEROMETRY:
             config = config.interferometric_analysis if config is not None else None
             results = run_interferometry_api(params=params, output_dir=out_dir, config=config)
-            log.info("Validating results...")
+            sct_logger.info("Validating results...")
             for report in params.reference_output:
                 result = [r for r in results if report.name == r.name]
                 compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
-        log.info("")
-        log.info(f"Test {test_name} - SUCCESS")
-        log.info("")
+        sct_logger.info("")
+        sct_logger.info(f"Test {test_name} - SUCCESS")
+        sct_logger.info("")
         return True
     except Exception as err:
-        log.info("")
-        log.critical(f"Test {test_name} ERROR")
-        log.error(err)
+        sct_logger.info("")
+        sct_logger.critical(f"Test {test_name} ERROR")
+        sct_logger.error(err)
         return False
 
 
@@ -119,21 +116,21 @@ def run_tests(registry_path: str | Path, output_dir: str | Path, graphs: bool) -
     registry_path = Path(registry_path)
     output_dir = Path(output_dir)
 
-    log.info("Loading tests parameters from registry...")
+    sct_logger.info("Loading tests parameters from registry...")
     with open(registry_path, "r", encoding="UTF-8") as f_in:
         test_config = json.load(f_in)
 
     results = {}
     for sensor, parameters in test_config.items():
-        log.info("")
-        log.info("")
-        log.info(f"Tests for Sensor {sensor.upper()}")
-        log.info("")
-        log.info("")
+        sct_logger.info("")
+        sct_logger.info("")
+        sct_logger.info(f"Tests for Sensor {sensor.upper()}")
+        sct_logger.info("")
+        sct_logger.info("")
         results[sensor] = {}
         for test_name, test_params in parameters.items():
-            log.info(f"Test {test_name.upper()}")
-            log.info("")
+            sct_logger.info(f"Test {test_name.upper()}")
+            sct_logger.info("")
             start_time = time.perf_counter()
             params = TestParams.from_dict(test_params)
             results[sensor][test_name] = test_session(
@@ -141,10 +138,10 @@ def run_tests(registry_path: str | Path, output_dir: str | Path, graphs: bool) -
             )
             time_spent = time.perf_counter() - start_time
             if time_spent < 60:
-                log.info(f"Elapsed: {np.round(time_spent)} seconds")
+                sct_logger.info(f"Elapsed: {np.round(time_spent)} seconds")
             else:
-                log.info(f"Elapsed: {np.round(time_spent / 60, 2)} minutes")
-            log.info("")
+                sct_logger.info(f"Elapsed: {np.round(time_spent / 60, 2)} minutes")
+            sct_logger.info("")
 
     return results
 
@@ -165,15 +162,15 @@ def summary_results(results: dict) -> bool:
 
     tests_num = sum([len(c.keys()) for c in results.values()])
     passed_tests = sum([sum(c.values()) for c in results.values()])
-    log.info(f"PASSED: {passed_tests}/{tests_num} tests")
+    sct_logger.info(f"PASSED: {passed_tests}/{tests_num} tests")
     if passed_tests == tests_num:
-        log.info("No FAILED tests")
+        sct_logger.info("No FAILED tests")
         outcome = True
     else:
-        log.critical(f"FAILED: {tests_num - passed_tests}")
+        sct_logger.critical(f"FAILED: {tests_num - passed_tests}")
         outcome = False
     for sensor_name in results:
-        log.info("")
+        sct_logger.info("")
         print(pd.DataFrame({sensor_name: results[sensor_name]}))
 
     return outcome

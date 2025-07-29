@@ -8,15 +8,13 @@ Graphical output for implemented analyses
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 
 import arepyextras.quality.point_targets_analysis.graphical_output as pta_go
 import pandas as pd
 from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 
-# syncing with logger
-log = logging.getLogger("quality_analysis")
+from sct.configuration.logger import sct_logger
 
 
 def sct_pta_graphs(
@@ -59,5 +57,5 @@ def sct_pta_graphs(
                 out_dir=output_dir,
             )
         except Exception:
-            log.error(f"Could not create graph for {item.channel}, target {item.target} ...")
+            sct_logger.error(f"Could not create graph for {item.channel}, target {item.target} ...")
             continue

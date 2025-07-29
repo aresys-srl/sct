@@ -8,17 +8,13 @@ Main entry point for geodynamics corrections
 
 from __future__ import annotations
 
-import logging
-
 import numpy as np
 import pandas as pd
 from arepytools.timing.precisedatetime import PreciseDateTime
 
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core.geodynamics_corrections_core import PlateTectonicsInput, SolidTidesInput, compute_geodynamics_corrections
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 
 def run_compute_geodynamics_corrections(
@@ -50,7 +46,7 @@ def run_compute_geodynamics_corrections(
             time_delta_s = acquisition_time - _to_pdt(point_targets_df["measurement_date"])
 
         except KeyError as err:
-            log.critical("Missing time validity required information in input point targets")
+            sct_logger.critical("Missing time validity required information in input point targets")
             raise RuntimeError(
                 "Cannot apply Plate Tectonics correction: disable this feature from configuration or "
                 + "add validity dates to point targets data"

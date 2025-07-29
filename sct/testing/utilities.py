@@ -8,7 +8,6 @@ SCT Integration Tests - Utilities
 
 from __future__ import annotations
 
-import logging
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -32,10 +31,8 @@ from sct.analyses.radiometric_analysis import (
     average_elevation_profile_analysis,
     nesz_analysis,
 )
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-
-# syncing with logger
-log = logging.getLogger("quality_analysis")
 
 PYTHON_INTERPRETER = sys.executable
 
@@ -327,12 +324,14 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
         try:
             from sct.analyses.graphical_output import sct_pta_graphs
 
-            log.info("Plotting graphs...")
+            sct_logger.info("Plotting graphs...")
             graphs_out_dir = output_dir.joinpath("graphs")
             graphs_out_dir.mkdir(exist_ok=True)
             sct_pta_graphs(graphs_data=graphs_data, results_df=results_df, output_dir=graphs_out_dir)
         except ImportError:
-            log.critical('Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"')
+            sct_logger.critical(
+                'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'
+            )
     return pd.read_csv(out_file)
 
 
@@ -362,7 +361,9 @@ def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration 
         try:
             from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
         except ImportError:
-            log.critical('Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"')
+            sct_logger.critical(
+                'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'
+            )
             graphs = False
     for item in profiles:
         radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
@@ -409,7 +410,9 @@ def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfigu
         try:
             from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
         except ImportError:
-            log.critical('Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"')
+            sct_logger.critical(
+                'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'
+            )
             graphs = False
     for item in profiles:
         radiometric_profiles_to_netcdf(data=item, out_path=output_dir, tag=tag)
