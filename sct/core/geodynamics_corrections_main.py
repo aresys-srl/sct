@@ -13,7 +13,6 @@ import pandas as pd
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.configuration.logger import sct_logger
-from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
 from sct.core.geodynamics_corrections_core import PlateTectonicsInput, SolidTidesInput, compute_geodynamics_corrections
 
 
@@ -21,15 +20,14 @@ def run_compute_geodynamics_corrections(
     nominal_target_coords: np.ndarray,
     acquisition_time: PreciseDateTime,
     point_targets_df: pd.DataFrame,
-    config: SCTPointTargetAnalysisConfig,
+    enable_plate_tectonics_correction: bool,
+    enable_solid_tides_correction: bool,
 ) -> np.ndarray | None:
     """Compute geodynamics corrections"""
-    # checking if acquisition time lies within point target data time validity boundaries
-
     plate_tectonics_input = None
-    if config.enable_plate_tectonics_correction:
+    if enable_plate_tectonics_correction:
         try:
-
+            # checking if acquisition time lies within point target data time validity boundaries
             def _to_pdt(date: pd.Series) -> PreciseDateTime:
                 return PreciseDateTime.fromisoformat(date.mode()[0].isoformat())
 
@@ -61,7 +59,7 @@ def run_compute_geodynamics_corrections(
             time_delta_s=time_delta_s, drift_velocities=drift_velocities, plate_ref=point_targets_df.plate[0]
         )
 
-    solid_tides_input = SolidTidesInput(time=acquisition_time) if config.enable_solid_tides_correction else None
+    solid_tides_input = SolidTidesInput(time=acquisition_time) if enable_solid_tides_correction else None
 
     return compute_geodynamics_corrections(
         target_coords=nominal_target_coords,

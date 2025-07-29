@@ -32,8 +32,13 @@ class GeoCorrMainTestCase(unittest.TestCase):
             ]
         ]
         pt_df = pd.DataFrame(values, columns=columns)
+        default_conf = SCTPointTargetAnalysisConfig()
         run_compute_geodynamics_corrections(
-            nominal_target_coords, acquisition_time, pt_df, SCTPointTargetAnalysisConfig()
+            nominal_target_coords,
+            acquisition_time,
+            pt_df,
+            default_conf.enable_plate_tectonics_correction,
+            default_conf.enable_solid_tides_correction,
         )
 
 
