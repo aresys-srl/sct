@@ -15,7 +15,7 @@ from typing import Any, Generator
 from click.testing import CliRunner
 
 from sct.cli.sct_cli import sct_analysis
-from sct.configuration.sct_configuration import DefaultConfiguration, SCTConfiguration
+from sct.configuration.sct_configuration import GeneralConfiguration, SCTConfiguration
 
 
 @contextmanager
@@ -37,7 +37,7 @@ class PointTargetAnalysisCLITestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.cli_runner = CliRunner()
         self.command = "target-analysis"
-        self.test_configuration = SCTConfiguration(general=DefaultConfiguration(save_log=False))
+        self.test_configuration = SCTConfiguration(general=GeneralConfiguration(save_log=False))
 
     def test_error_no_args(self):
         """Error when no arguments are provided"""

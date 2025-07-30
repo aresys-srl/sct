@@ -14,7 +14,7 @@ from arepyextras.quality.io.quality_input_protocol import TwiceDifferentiable3DC
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.configuration.logger import sct_logger
-from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.point_target_analysis_configuration import SCTPointTargetAnalysisCorrectionsConf
 from sct.core.atmospheric_corrections_core import IonosphericInput, TroposphereInput, compute_atmospheric_delays
 
 
@@ -30,33 +30,36 @@ class AtmosphericDelaysAcquisitionInfo:
 def run_compute_atmospheric_delays(
     target_coords: np.ndarray,
     acquisition_info: AtmosphericDelaysAcquisitionInfo,
-    config: SCTPointTargetAnalysisConfig,
+    config: SCTPointTargetAnalysisCorrectionsConf,
 ) -> tuple[np.ndarray | None, tuple[np.ndarray, np.ndarray] | None]:
     """Compute atmospheric delays"""
-    if config.enable_ionospheric_correction and config.ionospheric_maps_directory is None:
-        sct_logger.critical("Ionospheric perturbation computation requested but the maps directory is not valid")
-        raise RuntimeError("Invalid ionospheric maps directory")
+    if config.enable_ionospheric_correction and config.ionosphere is None:
+        sct_logger.critical(
+            "Ionospheric perturbation computation requested but the ionosphere configuration is missing"
+        )
+        raise RuntimeError("Invalid ionospheric configuration")
 
-    if config.enable_tropospheric_correction and config.tropospheric_maps_directory is None:
-        sct_logger.critical("Tropospheric perturbation computation requested but the maps directory is not valid")
-        raise RuntimeError("Invalid tropospheric maps directory")
+    if config.enable_tropospheric_correction and config.troposphere is None:
+        sct_logger.critical(
+            "Tropospheric perturbation computation requested but the troposhere configuration is missing"
+        )
+        raise RuntimeError("Invalid tropospheric configuration")
 
     ionosphere_input = None
     if config.enable_ionospheric_correction:
-        assert config.ionospheric_analysis_center is not None
-        assert config.ionospheric_maps_directory is not None
+        assert config.ionosphere is not None
         ionosphere_input = IonosphericInput(
-            analysis_center=config.ionospheric_analysis_center,
-            incidence_angle_method=config.ionospheric_tec_inc_angle_method,
-            map_dir=config.ionospheric_maps_directory,
+            analysis_center=config.ionosphere.analysis_center,
+            incidence_angle_method=config.ionosphere.tec_incidence_angle_method,
+            map_dir=config.ionosphere.maps_directory,
         )
 
     troposphere_input = None
     if config.enable_tropospheric_correction:
-        assert config.tropospheric_maps_directory
-        assert config.tropospheric_map_grid_resolution
+        assert config.troposphere
         troposphere_input = TroposphereInput(
-            maps_directory=config.tropospheric_maps_directory, maps_resolution=config.tropospheric_map_grid_resolution
+            maps_directory=config.troposphere.maps_directory,
+            maps_resolution=config.troposphere.map_grid_resolution,
         )
 
     # atmospheric delays for each point target

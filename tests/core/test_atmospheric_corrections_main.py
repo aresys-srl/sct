@@ -11,7 +11,11 @@ import numpy as np
 import pandas as pd
 from arepytools.timing.precisedatetime import PreciseDateTime
 
-from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.point_target_analysis_configuration import (
+    IonosphericCorrectionsConf,
+    SCTPointTargetAnalysisCorrectionsConf,
+    TroposphericCorrectionsConf,
+)
 from sct.core.atmospheric_corrections_main import (
     AtmosphericDelaysAcquisitionInfo,
     convert_atmospheric_delays_to_df,
@@ -45,12 +49,11 @@ class AtmCorrMainTestCase(unittest.TestCase):
             trajectory=TestTrajectory(),
         )
 
-        config = SCTPointTargetAnalysisConfig(
+        config = SCTPointTargetAnalysisCorrectionsConf(
             enable_ionospheric_correction=True,
             enable_tropospheric_correction=True,
-            ionospheric_maps_directory=Path("iono"),
-            ionospheric_analysis_center="JPL",
-            tropospheric_maps_directory=Path("tropo"),
+            ionosphere=IonosphericCorrectionsConf(maps_directory=Path("iono"), analysis_center="JPL"),
+            troposphere=TroposphericCorrectionsConf(maps_directory=Path("tropo")),
         )
 
         iono_delay, tropo_delay = run_compute_atmospheric_delays(

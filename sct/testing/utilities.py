@@ -32,6 +32,10 @@ from sct.analyses.radiometric_analysis import (
     nesz_analysis,
 )
 from sct.configuration.logger import sct_logger
+from sct.configuration.point_target_analysis_configuration import (
+    IonosphericCorrectionsConf,
+    TroposphericCorrectionsConf,
+)
 from sct.configuration.sct_configuration import SCTConfiguration
 
 PYTHON_INTERPRETER = sys.executable
@@ -304,14 +308,19 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
 
     config = SCTConfiguration.from_toml(params.config)
     if params.etad_product is not None:
-        config.point_target_analysis.enable_etad_corrections = True
-        config.point_target_analysis.etad_product_path = params.etad_product
+        config.point_target_analysis.corrections.enable_etad_corrections = True
+        config.point_target_analysis.corrections.etad_product_path = params.etad_product
     if params.ionospheric_maps is not None:
-        config.point_target_analysis.enable_ionospheric_correction = True
-        config.point_target_analysis.ionospheric_maps_directory = params.ionospheric_maps
+        config.point_target_analysis.corrections.enable_ionospheric_correction = True
+        config.point_target_analysis.corrections.ionosphere = IonosphericCorrectionsConf(
+            maps_directory=params.ionospheric_maps,
+            analysis_center=config.point_target_analysis.corrections.ionosphere.analysis_center,
+        )
     if params.tropospheric_maps is not None:
-        config.point_target_analysis.enable_tropospheric_correction = True
-        config.point_target_analysis.tropospheric_maps_directory = params.tropospheric_maps
+        config.point_target_analysis.corrections.enable_tropospheric_correction = True
+        config.point_target_analysis.corrections.troposphere = TroposphericCorrectionsConf(
+            maps_directory=params.tropospheric_maps
+        )
     results_df, graphs_data = point_target_analysis_with_corrections(
         product_path=params.product,
         external_target_source=params.targets,

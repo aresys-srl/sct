@@ -12,7 +12,6 @@ from importlib import resources as res
 
 import sct.resources as res_folder
 
-config_schema = res.files(res_folder).joinpath("configuration_schema.json")
 csv_template = res.files(res_folder).joinpath("calibration_targets_external_source_template.csv")
 
 sct_discovered_plugins = {name: import_module(name) for _, name, _ in pkgutil.iter_modules() if name.startswith("sct_")}

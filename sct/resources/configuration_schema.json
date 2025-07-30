@@ -4,53 +4,53 @@
     "properties": {
         "general": {
             "type": "object",
-            "description": "Section of configuration file dedicated to general configuration properties",
+            "description": "High level configuration",
             "properties": {
                 "save_log": {
                     "type": "boolean",
-                    "description": "Enabling log saving to output folder"
+                    "description": "Enable/disable log saving to output folder"
                 },
                 "save_config_copy": {
                     "type": "boolean",
-                    "description": "Enabling input configuration saving as file to output folder"
+                    "description": "Enable/disable configuration saving to output folder"
                 }
             }
         },
         "point_target_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to Point Target Analysis",
+            "description": "Point Target Analysis configuration",
             "properties": {
                 "perform_irf": {
                     "type": "boolean",
-                    "description": "Enabling flag to perform IRF analysis"
+                    "description": "Enable/disable IRF analysis"
                 },
                 "perform_rcs": {
                     "type": "boolean",
-                    "description": "Enabling flag to perform RCS analysis"
+                    "description": "Enable/disable RCS analysis"
                 },
                 "evaluate_pslr": {
                     "type": "boolean",
-                    "description": "Enabling flag to perform PSLR calculation as part of IRF analysis"
+                    "description": "Enable/disable PSLR calculation as part of IRF analysis"
                 },
                 "evaluate_islr": {
                     "type": "boolean",
-                    "description": "Enabling flag to perform SSLR calculation as part of IRF analysis"
+                    "description": "Enable/disable SSLR calculation as part of IRF analysis"
                 },
                 "evaluate_sslr": {
                     "type": "boolean",
-                    "description": "Enabling flag to perform SSLR calculation as part of IRF analysis"
+                    "description": "Enable/disable SSLR calculation as part of IRF analysis"
                 },
                 "evaluate_localization": {
                     "type": "boolean",
-                    "description": "Enabling flag to perform localization errors calculation"
+                    "description": "Enable/disable localization errors analysis"
                 },
                 "check_targets_in_scene": {
                     "type": "boolean",
-                    "description": "Enabling flag to check if and which point targets appears in the recorded scene"
+                    "description": "Enable/disable point targets visibility check"
                 },
                 "ale_validity_limits": {
                     "type": "array",
-                    "description": "Absolute localization error limits that can be set as boundaries for the point target analysis in meters [rng, az]",
+                    "description": "Localization errors limits for point target search in meters [rng, az]",
                     "items": [
                         {
                             "type": "number"
@@ -67,65 +67,74 @@
                     "properties": {
                         "enable_etad_corrections": {
                             "type": "boolean",
-                            "description": "Enabling flag to perform full range and azimuth corrections using ETAD products"
+                            "description": "Enable/disable full range and azimuth corrections using ETAD products"
                         },
                         "enable_solid_tides_correction": {
                             "type": "boolean",
-                            "description": "Enabling flag to perform solid tides corrections on calibration target coordinates"
+                            "description": "Enable/disable solid tides corrections on calibration target coordinates"
                         },
                         "enable_plate_tectonics_correction": {
                             "type": "boolean",
-                            "description": "Enabling flag to perform plate tectonics corrections on calibration target coordinates"
+                            "description": "Enable/disable plate tectonics corrections on calibration target coordinates"
                         },
                         "enable_sensor_specific_processing_corrections": {
                             "type": "boolean",
-                            "description": "Enabling flag to perform sensor specific corrections on SAR measurements"
+                            "description": "Enable/disable sensor specific corrections on SAR measurements"
                         },
                         "enable_ionospheric_correction": {
                             "type": "boolean",
-                            "description": "Enabling flag to perform ionospheric corrections on SAR measurements"
+                            "description": "Enable/disable ionospheric corrections on SAR measurements"
                         },
                         "enable_tropospheric_correction": {
                             "type": "boolean",
-                            "description": "Enabling flag to perform tropospheric corrections on SAR measurements"
+                            "description": "Enable/disable tropospheric corrections on SAR measurements"
                         },
                         "etad_product_path": {
                             "type": "string",
-                            "description": "Path to the ETAD product to be used for corrections"
+                            "description": "Path to the ETAD product"
                         },
                         "ionosphere": {
                             "type": "object",
                             "properties": {
-                                "ionospheric_maps_directory": {
+                                "maps_directory": {
                                     "type": "string",
-                                    "description": "Path to the ionospheric maps to be used for corrections"
+                                    "description": "Path to the ionospheric maps folder"
                                 },
-                                "ionospheric_analysis_center": {
+                                "analysis_center": {
                                     "type": "string",
-                                    "description": "Ionospheric data maps analysis center",
+                                    "description": "Ionospheric maps analysis center",
                                     "enum": [
                                         "cod",
                                         "cor",
                                         "esa",
                                         "esr"
                                     ]
+                                },
+                                "tec_incidence_angle_method": {
+                                    "type": "string",
+                                    "description": "Compute TEC incidence angle method",
+                                    "enum": [
+                                        "ipp",
+                                        "ground",
+                                        "ground_converted"
+                                    ]
                                 }
                             },
                             "required": [
-                                "ionospheric_maps_directory",
-                                "ionospheric_analysis_center"
+                                "maps_directory",
+                                "analysis_center"
                             ]
                         },
                         "troposphere": {
                             "type": "object",
                             "properties": {
-                                "tropospheric_maps_directory": {
+                                "maps_directory": {
                                     "type": "string",
-                                    "description": "Path to the tropospheric maps to be used for corrections"
+                                    "description": "Path to the tropospheric maps"
                                 },
-                                "tropospheric_map_grid_resolution": {
+                                "map_grid_resolution": {
                                     "type": "string",
-                                    "description": "Tropospheric map data grid resolution",
+                                    "description": "Tropospheric map resolution",
                                     "enum": [
                                         "fine",
                                         "coarse"
@@ -133,7 +142,7 @@
                                 }
                             },
                             "required": [
-                                "tropospheric_maps_directory"
+                                "maps_directory"
                             ]
                         }
                     },
@@ -205,7 +214,7 @@
                     "properties": {
                         "irf_parameters": {
                             "type": "object",
-                            "description": "Parameters to customize IRF analysis",
+                            "description": "IRF analysis low level parameters",
                             "properties": {
                                 "peak_finding_roi_size": {
                                     "type": "array",
@@ -259,7 +268,7 @@
                         },
                         "rcs_parameters": {
                             "type": "object",
-                            "description": "Parameters to customize RCS analysis",
+                            "description": "RCS error low level parameters",
                             "properties": {
                                 "calibration_factor": {
                                     "type": "number",
@@ -275,7 +284,7 @@
                                 },
                                 "roi_dimension": {
                                     "type": "integer",
-                                    "description": "Target area for RCS analysis, it will be a square of this side"
+                                    "description": "Square size of target area for RCS analysis"
                                 }
                             }
                         }
@@ -285,15 +294,15 @@
         },
         "radiometric_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to NESZ, Average Elevation Profiles and Scalloping",
+            "description": "Radiometric analysis (NESZ, Average Elevation Profiles and Scalloping) configuration",
             "properties": {
                 "azimuth_block_size": {
                     "type": "integer",
-                    "description": "Azimuth block size for partitioning the whole scene"
+                    "description": "Azimuth block size for whole scene partitioning"
                 },
                 "range_pixel_margin": {
                     "type": "integer",
-                    "description": "Pixel margin to remove near and far range values"
+                    "description": "Pixel margin to remove near and far range"
                 },
                 "radiometric_correction_exponent": {
                     "type": "number",
@@ -304,7 +313,7 @@
                     "properties": {
                         "histogram_parameters": {
                             "type": "object",
-                            "description": "Parameters to customize 2D histogram",
+                            "description": "2D histogram parameters",
                             "properties": {
                                 "x_bins_step": {
                                     "type": "integer",
@@ -322,19 +331,19 @@
                         },
                         "profile_extraction_parameters": {
                             "type": "object",
-                            "description": "Parameters to customize profile extraction",
+                            "description": "Profile extraction parameters",
                             "properties": {
                                 "outlier_removal": {
                                     "type": "boolean",
-                                    "description": "Boolean flag to enable/disable outlier removal"
+                                    "description": "Enable/disable outlier removal"
                                 },
                                 "smoothening_filter": {
                                     "type": "boolean",
-                                    "description": "Boolean flag to enable/disable smoothening filter"
+                                    "description": "Enable/disable smoothening filter"
                                 },
                                 "filtering_kernel_size": {
                                     "type": "array",
-                                    "description": "Size of the smoothening kernel",
+                                    "description": "Smoothening kernel size",
                                     "items": [
                                         {
                                             "type": "integer"
@@ -348,7 +357,7 @@
                                 },
                                 "outliers_kernel_size": {
                                     "type": "array",
-                                    "description": "Size of outlier removal kernel",
+                                    "description": "Outlier removal kernel size",
                                     "items": [
                                         {
                                             "type": "integer"
@@ -362,7 +371,7 @@
                                 },
                                 "outliers_percentile_boundaries": {
                                     "type": "array",
-                                    "description": "Boundaries of removal of outliers, values are kept within this interval",
+                                    "description": "Outliers removal percentile interval",
                                     "items": [
                                         {
                                             "type": "integer"
@@ -382,11 +391,11 @@
         },
         "interferometric_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to interferometric analysis",
+            "description": "Interferometric analysis configuration",
             "properties": {
                 "enable_coherence_computation": {
                     "type": "boolean",
-                    "description": "Enabling computation of coherence for interferogram products"
+                    "description": "Enable/disable computation of coherence for interferogram products"
                 },
                 "azimuth_blocks_number": {
                     "type": "integer",
@@ -418,11 +427,11 @@
         },
         "spectral_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to spectral analysis",
+            "description": "Spectral analysis configuration",
             "properties": {
                 "cropping_size": {
                     "type": "array",
-                    "description": "ROI cropping size in pixels (number of samples, number of lines)",
+                    "description": "ROI cropping size in pixel",
                     "items": [
                         {
                             "type": "integer",
@@ -438,11 +447,11 @@
         },
         "ambiguity_ratio_analysis": {
             "type": "object",
-            "description": "Section of configuration file dedicated to ambiguity ratio analysis",
+            "description": "Ambiguity ratio analysis configuration",
             "properties": {
                 "cropping_size": {
                     "type": "array",
-                    "description": "ROI cropping size in pixels (number of samples, number of lines)",
+                    "description": "ROI cropping size in pixels",
                     "items": [
                         {
                             "type": "integer",

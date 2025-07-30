@@ -175,14 +175,14 @@ def point_target_analysis_with_corrections(
     if external_orbit_path is not None:
         sct_logger.info(f"Using external orbit {external_orbit_path}")
 
-    if config.enable_etad_corrections:
-        config.enable_solid_tides_correction = False
-        config.enable_ionospheric_correction = False
-        config.enable_tropospheric_correction = False
-        config.enable_sensor_specific_processing_corrections = False
+    if config.corrections.enable_etad_corrections:
+        config.corrections.enable_solid_tides_correction = False
+        config.corrections.enable_ionospheric_correction = False
+        config.corrections.enable_tropospheric_correction = False
+        config.corrections.enable_sensor_specific_processing_corrections = False
         sct_logger.debug("ETAD corrections enabled: forced disabling of other correction")
 
-        if config.etad_product_path is None:
+        if config.corrections.etad_product_path is None:
             sct_logger.critical("ETAD corrections requested but the ETAD product path is not valid")
             msg = "Invalid ETAD Product path"
             raise RuntimeError(msg)
@@ -196,7 +196,7 @@ def point_target_analysis_with_corrections(
     point_targets_df = extract_point_target_data_from_source(source=external_target_source)
     nominal_target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()
 
-    if config.enable_solid_tides_correction or config.enable_plate_tectonics_correction:
+    if config.corrections.enable_solid_tides_correction or config.corrections.enable_plate_tectonics_correction:
         update_targets_with_geodynamics_corrections(first_channel, point_targets_df, nominal_target_coords, config)
 
     results, graph_results = point_target_analysis(
@@ -212,7 +212,14 @@ def point_target_analysis_with_corrections(
     results.reset_index(drop=True, inplace=True)
     results.rename(columns={"target": "target_name"}, inplace=True)
 
-    if config.enable_sensor_specific_processing_corrections:
+    results["total_doppler_frequency_[Hz]"] = (
+        results["doppler_frequency_[Hz]"] + results["steering_doppler_frequency_[Hz]"]
+    )
+
+    results["solid_tides_correction"] = config.corrections.enable_solid_tides_correction
+    results["plate_tectonics_correction"] = config.corrections.enable_plate_tectonics_correction
+
+    if config.corrections.enable_sensor_specific_processing_corrections:
         results = update_results_with_sensor_specific_ale_corrections(
             results,
             product,
@@ -220,24 +227,23 @@ def point_target_analysis_with_corrections(
             az_corr_func,
         )
 
-    results["solid_tides_correction"] = config.enable_solid_tides_correction
-    results["plate_tectonics_correction"] = config.enable_plate_tectonics_correction
-
     update_results_with_theoretical_rcs(
         results=results,
         point_targets_df=point_targets_df,
         first_channel=first_channel,
     )
 
-    if config.enable_etad_corrections:
+    if config.corrections.enable_etad_corrections:
         sct_logger.info("Extracting ALE range corrections from ETAD product...")
-        if config.etad_product_path is None:
+        if config.corrections.etad_product_path is None:
             msg = "Cannot perform ETAD corrections: missing input etad product"
             raise RuntimeError(msg)
-        etad_corrections = get_etad_corrections(etad_product_path=config.etad_product_path, target_df=point_targets_df)
+        etad_corrections = get_etad_corrections(
+            etad_product_path=config.corrections.etad_product_path, target_df=point_targets_df
+        )
         results = results.merge(etad_corrections, on=["target_name"])
 
-    if config.enable_ionospheric_correction or config.enable_tropospheric_correction:
+    if config.corrections.enable_ionospheric_correction or config.corrections.enable_tropospheric_correction:
         results = update_results_with_atmospheric_corrections(
             results=results,
             first_channel=first_channel,
@@ -246,7 +252,7 @@ def point_target_analysis_with_corrections(
             config=config,
         )
 
-    update_results_with_derived_quantities(results=results)
+    results = update_results_with_derived_quantities(results=results)
 
     sct_logger.info("Analysis completed.")
 
@@ -267,8 +273,8 @@ def update_targets_with_geodynamics_corrections(
         nominal_target_coords=nominal_target_coords,
         acquisition_time=acquisition_time,
         point_targets_df=point_targets_df,
-        enable_plate_tectonics_correction=config.enable_plate_tectonics_correction,
-        enable_solid_tides_correction=config.enable_solid_tides_correction,
+        enable_plate_tectonics_correction=config.corrections.enable_plate_tectonics_correction,
+        enable_solid_tides_correction=config.corrections.enable_solid_tides_correction,
     )
 
     assert coords_displacements is not None
@@ -305,12 +311,8 @@ def update_results_with_sensor_specific_ale_corrections(
     return results
 
 
-def update_results_with_derived_quantities(results: pd.DataFrame) -> None:
+def update_results_with_derived_quantities(results: pd.DataFrame) -> pd.DataFrame:
     """Update results with derived quantities."""
-    results["total_doppler_frequency_[Hz]"] = (
-        results["doppler_frequency_[Hz]"] + results["steering_doppler_frequency_[Hz]"]
-    )
-
     # sum all corrections along a specific direction
     results["total_ale_range_correction_[m]"] = results[
         [c for c in results.columns if "_range_correction_[m]" in c]
@@ -326,6 +328,8 @@ def update_results_with_derived_quantities(results: pd.DataFrame) -> None:
     results["revised_ale_azimuth_[m]"] = (
         results["azimuth_localization_error_[m]"] + results["total_ale_azimuth_correction_[m]"]
     )
+
+    return results
 
 
 def update_results_with_atmospheric_corrections(
@@ -344,7 +348,7 @@ def update_results_with_atmospheric_corrections(
     atmospheric_delays = run_compute_atmospheric_delays(
         target_coords=nominal_target_coords,
         acquisition_info=acquisition_info,
-        config=config,
+        config=config.corrections,
     )
     atmospheric_delays_df = convert_atmospheric_delays_to_df(
         target_names=point_targets_df["target_name"].copy(),

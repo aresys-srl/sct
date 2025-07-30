@@ -172,6 +172,5 @@ def enable_quality_logger(file_handler: logging.FileHandler | None = None):
         log.addHandler(file_handler)
 
 
-# sct_logger.addHandler(ConsoleHandler())
 sct_logger.addHandler(logging.NullHandler())
 sct_logger.setLevel(logging.DEBUG)

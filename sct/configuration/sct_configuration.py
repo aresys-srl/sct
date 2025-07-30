@@ -2,159 +2,58 @@
 # SPDX-License-Identifier: MIT
 
 """
-Tool and analyses configuration options
----------------------------------------
+SCT configurations
+------------------
 """
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict, dataclass, field, fields
-from enum import Enum, auto
 from pathlib import Path
+from typing import Literal
 
-import appdirs
 import toml
-from arepyextras.perturbations.atmospheric.ionosphere import (
-    IonosphericAnalysisCenters,
-    TECMappingFunctionIncidenceAngleMethod,
-)
-from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from arepyextras.quality.interferometric_analysis.config import InterferometricConfig
-from arepyextras.quality.point_targets_analysis.config import PointTargetAnalysisConfig
 from arepyextras.quality.radiometric_analysis.config import RadiometricProfilesConfig
 from arepyextras.quality.target_ambiguity_ratio_analysis.config import AmbiguityRatioConfig
-from jsonschema import validate
 
-from sct import config_schema
+from sct.configuration.common import InvalidConfigurationFile
+from sct.configuration.point_target_analysis_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.toml_validation import toml_schema_validation
 
-USER_SCT_CONFIG_FILE = Path(appdirs.user_config_dir(), "SCT_TOOL", "sct_tool_default_config.toml")
-ENVIRONMENT_VARIABLE = "SCT_CONFIG_FILE"
-
-
-class InvalidConfigurationFile(RuntimeError):
-    """Invalid SCT .toml configuration file"""
-
-
-class ConfigSupportedAnalyses(Enum):
-    """Configuration supported analyses"""
-
-    INTERFEROMETRY = auto()
-    RADIOMETRY = auto()
-    POINT_TARGET = auto()
-    SPECTRAL_ANALYSIS = auto()
-    TARGET_AMBIGUITY_RATIO = auto()
-
-
-def toml_schema_validation(toml_content: dict):
-    """Validation of input configuration file for SCT tool.
-
-    Parameters
-    ----------
-    toml_content : dict
-        dictionary containing the parsed toml content
-    """
-
-    with open(config_schema, "r", encoding="utf-8") as f:
-        json_schema = json.load(f)
-
-    validate(toml_content, json_schema)
+ConfigSupportedAnalyses = Literal[
+    "interferometric_analysis",
+    "radiometric_analysis",
+    "point_target_analysis",
+    "spectral_analysis",
+    "target_ambiguity_ratio_analysis",
+]
 
 
 @dataclass
-class DefaultConfiguration:
-    """SCT Default configuration"""
+class GeneralConfiguration:
+    """SCT general configuration"""
 
     save_log: bool = True
     save_config_copy: bool = True
 
     @classmethod
-    def from_dict(cls, arg: dict) -> DefaultConfiguration:
-        """Creating a DefaultConfiguration from a dict representing this dataclass.
-
-        Parameters
-        ----------
-        arg : dict
-            dict representing this dataclass
-
-        Returns
-        -------
-        DefaultConfiguration
-            DefaultConfiguration dataclass initialized from input dictionary
-        """
+    def from_dict(cls, arg: dict) -> GeneralConfiguration:
+        """Convert from dict"""
         out = cls()
         valid_fields = [f.name for f in fields(out)]
 
         for key, value in arg.items():
             if key not in valid_fields:
-                raise InvalidConfigurationFile(f"DefaultConfiguration: {key} not supported")
+                raise InvalidConfigurationFile(f"GeneralConfiguration: {key} not supported")
 
             setattr(out, key, value)
 
         return out
 
-
-@dataclass
-class SCTPointTargetAnalysisConfig:
-    """SCT Point Target Analysis configuration"""
-
-    base_config: PointTargetAnalysisConfig = field(default_factory=PointTargetAnalysisConfig)
-    enable_etad_corrections: bool = False
-    enable_solid_tides_correction: bool = True
-    enable_plate_tectonics_correction: bool = True
-    enable_sensor_specific_processing_corrections: bool = True
-    enable_ionospheric_correction: bool = False
-    enable_tropospheric_correction: bool = False
-    ionospheric_maps_directory: Path | None = None
-    ionospheric_analysis_center: IonosphericAnalysisCenters | None = None
-    ionospheric_tec_inc_angle_method: TECMappingFunctionIncidenceAngleMethod = (
-        TECMappingFunctionIncidenceAngleMethod.GROUND_CONVERTED
-    )
-    tropospheric_maps_directory: Path | None = None
-    tropospheric_map_grid_resolution: TroposphericGRIDResolution = TroposphericGRIDResolution.FINE
-    etad_product_path: Path | None = None
-
-    @classmethod
-    def from_dict(cls, arg: dict) -> SCTPointTargetAnalysisConfig:
-        """Creating a SCTPointTargetAnalysisConfig from a dict representing this dataclass.
-        All fields except base_config are set.
-
-        Parameters
-        ----------
-        arg : dict
-            dict representing this dataclass
-
-        Returns
-        -------
-        SCTPointTargetAnalysisConfig
-            SCTPointTargetAnalysisConfig dataclass initialized from input dictionary
-        """
-        out = cls()
-        valid_fields = [f.name for f in fields(out)]
-
-        for key, value in arg.items():
-            if key not in valid_fields:
-                raise InvalidConfigurationFile(f"SCTPointTargetAnalysisConfig: {key} not supported")
-
-            if key == "tropospheric_maps_directory":
-                if value:
-                    setattr(out, key, Path(value))
-            elif key == "ionospheric_maps_directory":
-                if value:
-                    setattr(out, key, Path(value))
-            elif key == "etad_product_path":
-                if value:
-                    setattr(out, key, Path(value))
-            elif key == "ale_validity_limits":
-                setattr(out, key, tuple(value))
-            elif key == "ionospheric_analysis_center":
-                setattr(out, key, IonosphericAnalysisCenters[value.upper()])
-            elif key == "tropospheric_map_grid_resolution":
-                setattr(out, key, TroposphericGRIDResolution[value.upper()])
-            else:
-                setattr(out, key, value)
-
-        return out
+    def to_dict(self) -> dict:
+        """Convert to dict"""
+        return asdict(self)
 
 
 @dataclass
@@ -165,29 +64,20 @@ class SCTRadiometricAnalysisConfig:
 
     @classmethod
     def from_dict(cls, arg: dict) -> SCTRadiometricAnalysisConfig:
-        """Creating an SCTRadiometricAnalysisConfig form a dict representing this dataclass.
-        All fields except base_config are set.
+        """Convert from dict"""
+        arg.update(arg.pop("advanced_configuration", {}))
+        return cls(base_config=RadiometricProfilesConfig.from_dict(arg))
 
-        Parameters
-        ----------
-        arg : dict
-            dict representing this dataclass
+    def to_dict(self) -> dict:
+        """Convert to dict"""
 
-        Returns
-        -------
-        SCTRadiometricAnalysisConfig
-            SCTRadiometricAnalysisConfig dataclass initialized from input dictionary
-        """
-        out = cls()
-        valid_fields = [f.name for f in fields(out)]
+        ra_dict = asdict(self.base_config)
+        ra_dict["advanced_configuration"] = {
+            "histogram_parameters": ra_dict.pop("histogram_parameters"),
+            "profile_extraction_parameters": ra_dict.pop("profile_extraction_parameters"),
+        }
 
-        for key, value in arg.items():
-            if key not in valid_fields:
-                raise InvalidConfigurationFile(f"SCTRadiometricAnalysisConfig: {key} not supported")
-
-            setattr(out, key, value)
-
-        return out
+        return ra_dict
 
 
 @dataclass
@@ -198,27 +88,15 @@ class SCTInterferometricAnalysisConfig:
 
     @classmethod
     def from_dict(cls, arg: dict) -> SCTInterferometricAnalysisConfig:
-        """Creating a SCTInterferometricAnalysisConfig from a dict representing this dataclass.
-        All fields except base_config are set.
+        """Convert from dict"""
+        return cls(base_config=InterferometricConfig.from_dict(arg=arg))
 
-        Parameters
-        ----------
-        arg : dict
-            dict representing this dataclass
+    def to_dict(self):
+        """Convert to dict"""
+        out = asdict(self.base_config)
 
-        Returns
-        -------
-        SCTInterferometricAnalysisConfig
-            SCTInterferometricAnalysisConfig dataclass initialized from input dictionary
-        """
-        out = cls()
-        valid_fields = [f.name for f in fields(out)]
-
-        for key, value in arg.items():
-            if key not in valid_fields:
-                raise InvalidConfigurationFile(f"SCTInterferometricAnalysisConfig: {key} not supported")
-
-            setattr(out, key, value)
+        if not isinstance(self.base_config.coherence_kernel, (tuple, list)):
+            out["coherence_kernel"] = (out["coherence_kernel"], out["coherence_kernel"])
 
         return out
 
@@ -231,19 +109,7 @@ class SCTSpectralAnalysisConfig:
 
     @classmethod
     def from_dict(cls, arg: dict) -> SCTSpectralAnalysisConfig:
-        """Creating a SCTSpectralAnalysisConfig from a dict representing this dataclass.
-        All fields except base_config are set.
-
-        Parameters
-        ----------
-        arg : dict
-            dict representing this dataclass
-
-        Returns
-        -------
-        SCTSpectralAnalysisConfig
-            SCTSpectralAnalysisConfig dataclass initialized from input dictionary
-        """
+        """Convert from dict"""
         out = cls()
         valid_fields = [f.name for f in fields(out)]
 
@@ -255,6 +121,10 @@ class SCTSpectralAnalysisConfig:
 
         return out
 
+    def to_dict(self):
+        """Convert to dict"""
+        return asdict(self)
+
 
 @dataclass
 class SCTTargetAmbiguityRatioConfig:
@@ -264,36 +134,19 @@ class SCTTargetAmbiguityRatioConfig:
 
     @classmethod
     def from_dict(cls, arg: dict) -> SCTTargetAmbiguityRatioConfig:
-        """Creating a SCTTargetAmbiguityRatioConfig from a dict representing this dataclass.
-        All fields except base_config are set.
+        """Convert from dict"""
+        return cls(base_config=AmbiguityRatioConfig.from_dict(arg))
 
-        Parameters
-        ----------
-        arg : dict
-            dict representing this dataclass
-
-        Returns
-        -------
-        SCTTargetAmbiguityRatioConfig
-            SCTTargetAmbiguityRatioConfig dataclass initialized from input dictionary
-        """
-        out = cls()
-        valid_fields = [f.name for f in fields(out)]
-
-        for key, value in arg.items():
-            if key not in valid_fields:
-                raise InvalidConfigurationFile(f"SCTTargetAmbiguityRatioConfig: {key} not supported")
-
-            setattr(out, key, value)
-
-        return out
+    def to_dict(self):
+        """Convert to dict"""
+        return asdict(self.base_config)
 
 
 @dataclass
 class SCTConfiguration:
     """SCT Tool full Configuration"""
 
-    general: DefaultConfiguration = field(default_factory=DefaultConfiguration)
+    general: GeneralConfiguration = field(default_factory=GeneralConfiguration)
     point_target_analysis: SCTPointTargetAnalysisConfig = field(default_factory=SCTPointTargetAnalysisConfig)
     radiometric_analysis: SCTRadiometricAnalysisConfig = field(default_factory=SCTRadiometricAnalysisConfig)
     interferometric_analysis: SCTInterferometricAnalysisConfig = field(default_factory=SCTInterferometricAnalysisConfig)
@@ -302,8 +155,48 @@ class SCTConfiguration:
         default_factory=SCTTargetAmbiguityRatioConfig
     )
 
-    @staticmethod
-    def from_toml(file: str | Path) -> SCTConfiguration:
+    @classmethod
+    def from_dict(cls, config) -> SCTConfiguration:
+        """Convert from dict"""
+        sct_conf = cls()
+
+        if "general" in config:
+            sct_conf.general = GeneralConfiguration.from_dict(config["general"])
+
+        if "point_target_analysis" in config:
+            sct_conf.point_target_analysis = SCTPointTargetAnalysisConfig.from_dict(arg=config["point_target_analysis"])
+
+        if "radiometric_analysis" in config:
+            sct_conf.radiometric_analysis = SCTRadiometricAnalysisConfig.from_dict(arg=config["radiometric_analysis"])
+
+        if "interferometric_analysis" in config:
+            sct_conf.interferometric_analysis = SCTInterferometricAnalysisConfig.from_dict(
+                arg=config["interferometric_analysis"]
+            )
+
+        if "spectral_analysis" in config:
+            sct_conf.spectral_analysis = SCTSpectralAnalysisConfig.from_dict(arg=config["spectral_analysis"])
+
+        if "ambiguity_ratio_analysis" in config:
+            sct_conf.target_ambiguity_ratio_analysis = SCTTargetAmbiguityRatioConfig.from_dict(
+                arg=config["ambiguity_ratio_analysis"]
+            )
+
+        return sct_conf
+
+    def to_dict(self) -> dict:
+        """Convert to dict"""
+        return {
+            "general": self.general.to_dict(),
+            "point_target_analysis": self.point_target_analysis.to_dict(),
+            "radiometric_analysis": self.radiometric_analysis.to_dict(),
+            "interferometric_analysis": self.interferometric_analysis.to_dict(),
+            "spectral_analysis": self.spectral_analysis.to_dict(),
+            "target_ambiguity_ratio_analysis": self.target_ambiguity_ratio_analysis.to_dict(),
+        }
+
+    @classmethod
+    def from_toml(cls, file: str | Path) -> SCTConfiguration:
         """Generating an SCTConfiguration dataclass from a .toml configuration file.
 
         Parameters
@@ -321,208 +214,34 @@ class SCTConfiguration:
             raise InvalidConfigurationFile(f"Input file {file} does not exist")
 
         if file.suffix != ".toml":
-            raise InvalidConfigurationFile(f"Input file {file} is not a valid .toml configuration file")
+            raise InvalidConfigurationFile(f"Input file {file} is not a .toml configuration file")
 
         with open(file, "r", encoding="UTF-8") as f:
             config = toml.load(f)
 
-        # validating toml
         toml_schema_validation(config)
 
-        # general configuration
-        general_config = DefaultConfiguration()
-        if "general" in config:
-            general_config = DefaultConfiguration.from_dict(config["general"])
+        return cls.from_dict(config)
 
-        # point target analysis configuration
-        pta_config = SCTPointTargetAnalysisConfig()
-        if "point_target_analysis" in config:
-            if "corrections" in config["point_target_analysis"]:
-                pta_dict = config["point_target_analysis"].pop("corrections")
-                if "ionosphere" in pta_dict:
-                    pta_dict.update(pta_dict.pop("ionosphere"))
-                if "troposphere" in pta_dict:
-                    pta_dict.update(pta_dict.pop("troposphere"))
-                pta_config = SCTPointTargetAnalysisConfig.from_dict(arg=pta_dict)
-            if "advanced_configuration" in config["point_target_analysis"]:
-                pta_advanced_config = config["point_target_analysis"].pop("advanced_configuration")
-                config["point_target_analysis"].update(pta_advanced_config)
-            if "ale_validity_limits" in config["point_target_analysis"]:
-                config["point_target_analysis"]["ale_limits"] = config["point_target_analysis"].pop(
-                    "ale_validity_limits"
-                )
-            pta_base_config = PointTargetAnalysisConfig.from_dict(arg=config["point_target_analysis"])
-            pta_config.base_config = pta_base_config
-
-        # radiometric analysis configuration
-        ra_config = SCTRadiometricAnalysisConfig()
-        if "radiometric_analysis" in config:
-            if "advanced_configuration" in config["radiometric_analysis"]:
-                ra_advanced_config = config["radiometric_analysis"].pop("advanced_configuration")
-                config["radiometric_analysis"].update(ra_advanced_config)
-            ra_base_config = RadiometricProfilesConfig.from_dict(arg=config["radiometric_analysis"])
-            ra_config.base_config = ra_base_config
-
-        # interferometric analysis configuration
-        int_config = SCTInterferometricAnalysisConfig()
-        if "interferometric_analysis" in config:
-            int_base_config = InterferometricConfig.from_dict(arg=config["interferometric_analysis"])
-            int_config.base_config = int_base_config
-
-        # spectral analysis configuration
-        sa_config = SCTSpectralAnalysisConfig()
-        if "spectral_analysis" in config:
-            sa_config = SCTSpectralAnalysisConfig.from_dict(arg=config["spectral_analysis"])
-
-        # target ambiguity ratio analysis configuration
-        tar_config = SCTTargetAmbiguityRatioConfig()
-        if "ambiguity_ratio_analysis" in config:
-            tar_base_config = AmbiguityRatioConfig.from_dict(arg=config["ambiguity_ratio_analysis"])
-            tar_config.base_config = tar_base_config
-
-        # assembling final configuration
-        config = SCTConfiguration()
-        config.general = general_config
-        config.point_target_analysis = pta_config
-        config.radiometric_analysis = ra_config
-        config.interferometric_analysis = int_config
-        config.spectral_analysis = sa_config
-        config.target_ambiguity_ratio_analysis = tar_config
-
-        return config
-
-    def dump_to_toml(self, out_file: Path, selected: str | ConfigSupportedAnalyses | None = None) -> None:
+    def dump_to_toml(self, out_file: Path, selected: ConfigSupportedAnalyses | None = None) -> None:
         """Dumping to disk a .toml file from the dataclass instance.
 
         Parameters
         ----------
         out_file : Path
             path to the output .toml file
-        selected : str | ConfigSupportedAnalyses | None, optional
+        selected : ConfigSupportedAnalyses | None, optional
             selected analysis to be dumped, it can be "point_target", "radiometry", "interferometry",
             "spectral_analysis" or "target_ambiguity_ratio"
             if None the whole configuration is dumped, by default None
         """
 
-        dtc_dict = asdict(self)
+        def select_sections(data: dict, selected: ConfigSupportedAnalyses | None):
+            if selected is None:
+                return data
+            return {"general": data["general"], selected: data[selected]}
 
-        selected = ConfigSupportedAnalyses[selected.upper()] if selected is not None else None
-
-        # assembling final dict
-        conf_dict = {
-            "general": dtc_dict["general"],
-            "point_target_analysis": None,
-            "radiometric_analysis": None,
-            "interferometric_analysis": None,
-            "spectral_analysis": None,
-            "target_ambiguity_ratio_analysis": None,
-        }
-
-        if selected in (None, ConfigSupportedAnalyses.POINT_TARGET):
-            # point target analysis re-ordering
-            pta_dict = dtc_dict["point_target_analysis"]
-            pta_base = pta_dict.pop("base_config")
-            pta_ale = pta_base.pop("ale_limits")
-            pta_corr = dict(
-                (k, pta_dict[k])
-                for k in (
-                    "enable_etad_corrections",
-                    "enable_solid_tides_correction",
-                    "enable_plate_tectonics_correction",
-                    "enable_sensor_specific_processing_corrections",
-                    "enable_ionospheric_correction",
-                    "enable_tropospheric_correction",
-                    "etad_product_path",
-                )
-            )
-            if pta_corr["etad_product_path"] is not None:
-                pta_corr["etad_product_path"] = str(pta_corr["etad_product_path"])
-            pta_iono = dict(
-                (k, pta_dict[k])
-                for k in (
-                    "ionospheric_maps_directory",
-                    "ionospheric_analysis_center",
-                )
-            )
-            if pta_iono["ionospheric_analysis_center"] is not None:
-                pta_iono["ionospheric_analysis_center"] = pta_iono["ionospheric_analysis_center"].name.lower()
-            if pta_iono["ionospheric_maps_directory"] is not None:
-                pta_iono["ionospheric_maps_directory"] = str(pta_iono["ionospheric_maps_directory"])
-            pta_tropo = dict(
-                (k, pta_dict[k])
-                for k in (
-                    "tropospheric_maps_directory",
-                    "tropospheric_map_grid_resolution",
-                )
-            )
-            if pta_tropo["tropospheric_map_grid_resolution"] is not None:
-                pta_tropo["tropospheric_map_grid_resolution"] = pta_tropo[
-                    "tropospheric_map_grid_resolution"
-                ].name.lower()
-            if pta_tropo["tropospheric_maps_directory"] is not None:
-                pta_tropo["tropospheric_maps_directory"] = str(pta_tropo["tropospheric_maps_directory"])
-            pta_irf = pta_base.pop("irf_parameters")
-            if pta_irf["masking_method"] is not None:
-                pta_irf["masking_method"] = pta_irf["masking_method"].name.lower()
-            pta_rcs = pta_base.pop("rcs_parameters")
-            pta_base = dict(
-                (k, pta_base[k])
-                for k in (
-                    "perform_irf",
-                    "perform_rcs",
-                    "evaluate_pslr",
-                    "evaluate_islr",
-                    "evaluate_sslr",
-                    "evaluate_localization",
-                )
-            )
-            pta_base["ale_validity_limits"] = pta_ale
-            pta_base["corrections"] = pta_corr
-            if any([v is not None for v in pta_iono.values()]):
-                pta_base["corrections"]["ionosphere"] = pta_iono
-            if pta_tropo["tropospheric_maps_directory"] is not None:
-                pta_base["corrections"]["troposphere"] = pta_tropo
-            pta_base["advanced_configuration"] = {}
-            pta_base["advanced_configuration"]["irf_parameters"] = pta_irf
-            pta_base["advanced_configuration"]["rcs_parameters"] = pta_rcs
-
-            # saving to configuration dict to be dumped
-            conf_dict["point_target_analysis"] = pta_base
-
-        if selected in (None, ConfigSupportedAnalyses.RADIOMETRY):
-            # radiometric analysis re-ordering
-            ra_dict = dtc_dict["radiometric_analysis"]["base_config"]
-            ra_hist_params = ra_dict.pop("histogram_parameters")
-            ra_prof_params = ra_dict.pop("profile_extraction_parameters")
-            ra_dict["advanced_configuration"] = {}
-            ra_dict["advanced_configuration"]["histogram_parameters"] = ra_hist_params
-            ra_dict["advanced_configuration"]["profile_extraction_parameters"] = ra_prof_params
-
-            # saving to configuration dict to be dumped
-            conf_dict["radiometric_analysis"] = ra_dict
-
-        if selected in (None, ConfigSupportedAnalyses.INTERFEROMETRY):
-            # interferometric analysis re-ordering
-            inter_dict = dtc_dict["interferometric_analysis"]["base_config"]
-
-            if not isinstance(inter_dict["coherence_kernel"], (tuple, list)):
-                inter_dict["coherence_kernel"] = (inter_dict["coherence_kernel"], inter_dict["coherence_kernel"])
-
-            # saving to configuration dict to be dumped
-            conf_dict["interferometric_analysis"] = inter_dict
-
-        if selected in (None, ConfigSupportedAnalyses.SPECTRAL_ANALYSIS):
-            sa_dict = dtc_dict["spectral_analysis"]
-
-            # saving to configuration dict to be dumped
-            conf_dict["spectral_analysis"] = sa_dict
-
-        if selected in (None, ConfigSupportedAnalyses.TARGET_AMBIGUITY_RATIO):
-            # target ambiguity ratio analysis re-ordering
-            tar_dict = dtc_dict["target_ambiguity_ratio_analysis"]["base_config"]
-
-            # saving to configuration dict to be dumped
-            conf_dict["target_ambiguity_ratio_analysis"] = tar_dict
+        configuration_dict = select_sections(self.to_dict(), selected)
 
         with open(out_file, "w", encoding="UTF-8") as f_out:
-            toml.dump(conf_dict, f_out)
+            toml.dump(configuration_dict, f_out)

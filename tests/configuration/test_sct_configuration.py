@@ -49,12 +49,12 @@ enable_tropospheric_correction = true
 etad_product_path = "aaa"
 
 [point_target_analysis.corrections.ionosphere]
-ionospheric_maps_directory = "bbb"
-ionospheric_analysis_center = "cor"
+maps_directory = "bbb"
+analysis_center = "cor"
 
 [point_target_analysis.corrections.troposphere]
-tropospheric_maps_directory = "ccc"
-tropospheric_map_grid_resolution = "fine"
+maps_directory = "ccc"
+map_grid_resolution = "fine"
 
 [point_target_analysis.advanced_configuration.irf_parameters]
 peak_finding_roi_size = [1, 1]
@@ -130,19 +130,19 @@ def _validate_pta_config(config: SCTPointTargetAnalysisConfig) -> None:
     """
 
     assert isinstance(config, SCTPointTargetAnalysisConfig)
-    assert config.enable_etad_corrections is False
-    assert config.enable_solid_tides_correction is True
-    assert config.enable_plate_tectonics_correction is False
-    assert config.enable_sensor_specific_processing_corrections is True
-    assert config.enable_ionospheric_correction is True
-    assert config.enable_tropospheric_correction is True
-    assert config.etad_product_path == Path("aaa")
-    assert config.ionospheric_maps_directory == Path("bbb")
-    assert config.tropospheric_maps_directory == Path("ccc")
-    assert isinstance(config.ionospheric_analysis_center, IonosphericAnalysisCenters)
-    assert config.ionospheric_analysis_center == IonosphericAnalysisCenters.COR
-    assert isinstance(config.tropospheric_map_grid_resolution, TroposphericGRIDResolution)
-    assert config.tropospheric_map_grid_resolution == TroposphericGRIDResolution.FINE
+    assert config.corrections.enable_etad_corrections is False
+    assert config.corrections.enable_solid_tides_correction is True
+    assert config.corrections.enable_plate_tectonics_correction is False
+    assert config.corrections.enable_sensor_specific_processing_corrections is True
+    assert config.corrections.enable_ionospheric_correction is True
+    assert config.corrections.enable_tropospheric_correction is True
+    assert config.corrections.etad_product_path == Path("aaa")
+    assert config.corrections.ionosphere.maps_directory == Path("bbb")
+    assert isinstance(config.corrections.ionosphere.analysis_center, IonosphericAnalysisCenters)
+    assert config.corrections.ionosphere.analysis_center == IonosphericAnalysisCenters.COR
+    assert config.corrections.troposphere.maps_directory == Path("ccc")
+    assert isinstance(config.corrections.troposphere.map_grid_resolution, TroposphericGRIDResolution)
+    assert config.corrections.troposphere.map_grid_resolution == TroposphericGRIDResolution.FINE
 
     pta_config = config.base_config
     assert isinstance(pta_config, PointTargetAnalysisConfig)

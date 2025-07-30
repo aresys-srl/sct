@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from arepytools.timing.precisedatetime import PreciseDateTime
 
-from sct.configuration.sct_configuration import SCTPointTargetAnalysisConfig
+from sct.configuration.point_target_analysis_configuration import SCTPointTargetAnalysisConfig
 from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
 
 
@@ -37,8 +37,8 @@ class GeoCorrMainTestCase(unittest.TestCase):
             nominal_target_coords,
             acquisition_time,
             pt_df,
-            default_conf.enable_plate_tectonics_correction,
-            default_conf.enable_solid_tides_correction,
+            default_conf.corrections.enable_plate_tectonics_correction,
+            default_conf.corrections.enable_solid_tides_correction,
         )
 
 
