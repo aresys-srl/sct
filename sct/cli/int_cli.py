@@ -2,24 +2,20 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Interferometric Analysis commands
--------------------------------------
+CLI Interferometric Analysis commands.
+--------------------------------------
 """
 
 import sys
-import time
 from pathlib import Path
 
-import art
 import click
 from arepyextras.quality.interferometric_analysis.support import coherence_histograms_to_netcdf
 
 import sct.analyses.interferometric_analysis as intf
-from sct.configuration.logger import SCTFileHandler, enable_quality_logger, sct_logger
+from sct.cli import common
+from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-
-# creating a decorator to pass a SCTConfiguration dataclass object between commands
-share_config = click.make_pass_decorator(SCTConfiguration)
 
 
 @click.command(name="interferometric-analysis")
@@ -30,14 +26,7 @@ share_config = click.make_pass_decorator(SCTConfiguration)
     type=click.Path(path_type=Path, exists=True, dir_okay=True),
     help="Path to the interferogram product or to the co-registered product to be analyzed",
 )
-@click.option(
-    "--output_directory",
-    "-out",
-    required=True,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the folder where to save output data",
-)
+@common.output_directory_option
 @click.option(
     "--product_2",
     "-pp",
@@ -46,40 +35,56 @@ share_config = click.make_pass_decorator(SCTConfiguration)
     type=click.Path(path_type=Path, exists=True, dir_okay=True),
     help="Second co-registered product, must be provided if the first product is not an interferogram",
 )
-@click.option(
-    "--graphs",
-    "-g",
-    default=False,
-    is_flag=True,
-    type=bool,
-    help="Flag to generate graphical output at the end of the analysis",
-)
-@share_config
+@common.generate_graph_option
+@common.share_config
 def interf_coherence_analysis(
     config: SCTConfiguration,
     product: Path,
     output_directory: Path,
     product_2: Path | None = None,
     graphs: bool = False,
-):
-    """Interferometric Analysis (Coherence and Coherence intensity 2D histograms)
+) -> None:
+    """Interferometric Analysis (Coherence and Coherence intensity 2D histograms).
 
     \b
     It can be performed using a single interferogram product, provided via -p/--product argument or by using two
     co-registered products, provided respectively with -p/--product and -pp/--product_2
     """
+    file_handler = (
+        common.add_logging_file(output_directory.joinpath("sct_interf_analysis.log"))
+        if config.general.save_log
+        else None
+    )
+    enable_quality_logger(file_handler)
 
-    # saving log file to output folder
-    if config.general.save_log:
-        logging_file_handler = SCTFileHandler(filename=output_directory.joinpath("sct_interf_analysis.log"))
-        enable_quality_logger(file_handler=logging_file_handler)
-        sct_logger.addHandler(logging_file_handler)
+    if product_2:
+        sct_logger.info(f"First co-registered product: {product}")
+        sct_logger.info(f"Second co-registered product: {product_2}")
     else:
-        enable_quality_logger()
+        sct_logger.info(f"Interferogram product: {product}")
+    sct_logger.info(f"Output folder is: {output_directory}")
+    sct_logger.info(f"Graphs generation {'enabled' if graphs else 'disabled'}")
 
-    # inheriting configuration settings from group command in CLI main
-    config_interferometry = config.interferometric_analysis
+    common.display_title("Interferometric Analysis")
 
+    interf_coherence_analysis_implementation(
+        product=product,
+        product_2=product_2,
+        config=config,
+        output_directory=output_directory,
+        graphs=graphs,
+    )
+
+
+@common.log_elapsed_time("Interferometric Analysis")
+def interf_coherence_analysis_implementation(
+    product: Path,
+    product_2: Path | None,
+    config: SCTConfiguration,
+    output_directory: Path,
+    graphs: bool,
+) -> None:
+    """Implement of the interferometric analysis command."""
     if graphs:
         try:
             from arepyextras.quality.interferometric_analysis.graphical_output import generate_coherence_graphs
@@ -88,38 +93,30 @@ def interf_coherence_analysis(
             sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
             sys.exit(1)
 
-    sct_logger.info(f"Output folder is: {output_directory}")
-    sct_logger.info(f"Selected product is: {product}")
-
-    click.echo("\n")
-    txt = art.text2art("Interferometric  Analysis", font="doom")
-    click.echo(txt + "\n")
-
-    start = time.perf_counter_ns()
     coherence_res = intf.interferometric_coherence_analysis(
         product_path=product,
         second_product_path=product_2,
-        config=config_interferometry,
+        config=config.interferometric_analysis,
     )
 
-    # saving configuration used to output folder as .toml file
     if config.general.save_config_copy:
         config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="interferometry")
 
     for res in coherence_res:
-        # saving 2D histograms to netcdf
         coherence_histograms_to_netcdf(data=res, output_dir=output_directory)
 
-    # graphical output management
     if graphs:
         sct_logger.info("Plotting graphs...")
         for res in coherence_res:
             generate_coherence_graphs(
-                data=res, output_dir=output_directory, mode="magnitude", config=config_interferometry.base_config
+                data=res,
+                output_dir=output_directory,
+                mode="magnitude",
+                config=config.interferometric_analysis.base_config,
             )
             generate_coherence_graphs(
-                data=res, output_dir=output_directory, mode="phase", config=config_interferometry.base_config
+                data=res,
+                output_dir=output_directory,
+                mode="phase",
+                config=config.interferometric_analysis.base_config,
             )
-
-    elapsed = (time.perf_counter_ns() - start) / 1e9
-    sct_logger.info(f"Interferometric Analysis completed in {elapsed} s.")

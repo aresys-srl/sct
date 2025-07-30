@@ -2,12 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """
-SCT CLI Tool
-------------
+SCT CLI Tool.
+-------------
 """
 
 from pathlib import Path
-from typing import Optional
 
 import click
 
@@ -22,15 +21,8 @@ from sct.configuration.sct_configuration import SCTConfiguration
 
 version_option = click.version_option(VERSION, help="Show CLI version and exit")
 
-# creating a decorator to pass a SCTConfiguration dataclass object between commands
-share_config = click.make_pass_decorator(SCTConfiguration)
 
-
-@click.group(
-    context_settings=dict(
-        help_option_names=["-h", "--help"],
-    )
-)
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @version_option
 @click.pass_context
 @click.option(
@@ -39,15 +31,15 @@ share_config = click.make_pass_decorator(SCTConfiguration)
     type=click.Path(path_type=Path, exists=True, dir_okay=False),
     help="Path to the configuration file with settings.",
 )
-def sct_analysis(ctx: click.Context, config: Optional[Path]):
-    """SCT tool for SAR products quality analysis"""
+def sct_analysis(ctx: click.Context, config: Path | None) -> None:
+    """SCT tool for SAR products quality analysis."""
     click.echo("Starting application...\n")
     if config is None:
-        sct_logger.info("Configuration not provided. Using default one.")
+        sct_logger.info("Configuration not provided. Using default configuration.")
         ctx.ensure_object(SCTConfiguration)
         ctx.obj = SCTConfiguration()
     else:
-        sct_logger.info("Using the custom configuration file provided.")
+        sct_logger.info(f"Using configuration file: {config}.")
         ctx.ensure_object(SCTConfiguration)
         ctx.obj = SCTConfiguration.from_toml(config)
     click.echo("\n")

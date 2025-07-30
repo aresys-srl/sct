@@ -168,7 +168,7 @@ def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, Nomin
     return data_dict
 
 
-def convert_rosamund_file_to_compliant_csv(
+def convert_rosamond_file_to_compliant_csv(
     df: str | Path | pd.DataFrame, measurement_date: PreciseDateTime
 ) -> pd.DataFrame:
     """Formatting downloaded Rosamond Point Target Dataset to be compliant with the SCT input .csv format.

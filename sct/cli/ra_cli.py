@@ -2,150 +2,73 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Radiometric Analysis commands
----------------------------------
+CLI Radiometric Analysis commands.
+----------------------------------
 """
 
 import sys
-import time
+from collections.abc import Callable
 from pathlib import Path
 
-import art
 import click
 from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
+from arepyextras.quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf
 
 import sct.analyses.radiometric_analysis as ra
-from sct.configuration.logger import SCTFileHandler, enable_quality_logger, sct_logger
+from sct.cli import common
+from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-
-# creating a decorator to pass a SCTConfiguration dataclass object between commands
-share_config = click.make_pass_decorator(SCTConfiguration)
 
 
 class RadiometricQuantity(click.ParamType):
-    """Custom click type to manage radiometric quantities from string"""
+    """Custom click type to manage radiometric quantities from string."""
 
     name = "radiometric_quantity"
 
-    def convert(self, value, param, ctx):
+    def convert(self, value, param, ctx) -> SARRadiometricQuantity:
+        """Convert the input value to SARRadiometricQuantity."""
         try:
-            str_in = SARRadiometricQuantity[value.upper() + "_NOUGHT"]
-
-            return str_in
-
+            return SARRadiometricQuantity[value.upper() + "_NOUGHT"]
         except ValueError:
             self.fail(f"{value!r} wrong input format", param, ctx)
 
 
-@click.group(
-    context_settings=dict(
-        help_option_names=["-h", "--help"],
-    )
-)
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.pass_context
-def radiometric_analysis(config):
-    """Block-wise Radiometric Analysis"""
-    pass
+def radiometric_analysis(config) -> None:
+    """Block-wise Radiometric Analysis."""
 
 
 @radiometric_analysis.command("nesz")
-@click.option(
-    "--product",
-    "-p",
-    required=True,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the product to be analyzed",
-)
-@click.option(
-    "--output_directory",
-    "-out",
-    required=True,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the folder where to save output data",
-)
-@click.option(
-    "--graphs",
-    "-g",
-    default=False,
-    is_flag=True,
-    type=bool,
-    help="Flag to generate graphical output at the end of the analysis",
-)
-@share_config
-def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_directory: Path, graphs: bool):
-    """Noise Equivalent Sigma-Zero radiometric analysis"""
+@common.input_product_option
+@common.output_directory_option
+@common.generate_graph_option
+@common.share_config
+def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_directory: Path, graphs: bool) -> None:
+    """Noise Equivalent Sigma-Zero radiometric analysis."""
+    file_handler = (
+        common.add_logging_file(output_directory.joinpath("sct_ra_analysis.log")) if config.general.save_log else None
+    )
+    enable_quality_logger(file_handler)
 
-    # saving log file to output folder
-    if config.general.save_log:
-        logging_file_handler = SCTFileHandler(filename=output_directory.joinpath("sct_ra_analysis.log"))
-        enable_quality_logger(file_handler=logging_file_handler)
-        sct_logger.addHandler(logging_file_handler)
-    else:
-        enable_quality_logger()
+    sct_logger.info(f"Product: {product}")
+    sct_logger.info(f"Output folder is: {output_directory}")
+    sct_logger.info(f"Graphs generation {'enabled' if graphs else 'disabled'}")
 
-    config_ra = config.radiometric_analysis
+    common.display_title("NESZ   Analysis")
 
-    if graphs:
-        try:
-            from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
-
-        except ImportError:
-            sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
-            sys.exit(1)
-
-    sct_logger.info(f"Selected product is: {product}")
-
-    click.echo("\n")
-    txt = art.text2art("NESZ   Analysis", font="doom")
-    click.echo(txt + "\n")
-
-    start = time.perf_counter_ns()
-    output = ra.nesz_analysis(product_path=product, config=config_ra)
-
-    # saving configuration used to output folder as .toml file
-    if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
-
-    if graphs:
-        sct_logger.info("Saving results to netCDF and plotting graphs...")
-    else:
-        sct_logger.info("Saving results to netCDF format...")
-
-    tag = "NESZ"
-    for item in output:
-        radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)
-
-        # graphical output management
-        if graphs:
-            radiometric_2D_hist_plot(
-                data=item,
-                out_dir=output_directory,
-                title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
-                plot_mode="min",
-            )
-
-    elapsed = (time.perf_counter_ns() - start) / 1e9
-    sct_logger.info(f"NESZ Analysis completed in {elapsed} s.")
+    radiometric_analysis_nesz_implementation(
+        product=product,
+        output_directory=output_directory,
+        config=config,
+        graphs=graphs,
+    )
 
 
 @radiometric_analysis.command("elevation_profile")
-@click.option(
-    "--product",
-    "-p",
-    required=True,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the product to be analyzed",
-)
-@click.option(
-    "--output_directory",
-    "-out",
-    required=True,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the folder where to save output data",
-)
+@common.input_product_option
+@common.output_directory_option
 @click.option(
     "--output_radiometric_quantity",
     "-r",
@@ -154,154 +77,178 @@ def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_di
     type=RadiometricQuantity(),
     help="Output radiometric quantity. It can be set to: beta, gamma, sigma",
 )
-@click.option(
-    "--graphs",
-    "-g",
-    default=False,
-    is_flag=True,
-    type=bool,
-    help="Flag to generate graphical output at the end of the analysis",
-)
-@share_config
+@common.generate_graph_option
+@common.share_config
 def radiometric_analysis_average_profiles(
     config: SCTConfiguration,
     product: Path,
     output_radiometric_quantity: SARRadiometricQuantity,
     output_directory: Path,
     graphs: bool,
-):
-    """Average Elevation Profiles radiometric analysis"""
-
-    # saving log file to output folder
-    if config.general.save_log:
-        logging_file_handler = SCTFileHandler(filename=output_directory.joinpath("sct_ra_analysis.log"))
-        enable_quality_logger(file_handler=logging_file_handler)
-        sct_logger.addHandler(logging_file_handler)
-    else:
-        enable_quality_logger()
-
-    config_ra = config.radiometric_analysis
-
-    if graphs:
-        try:
-            from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
-
-        except ImportError:
-            sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
-            sys.exit(1)
-
-    sct_logger.info(f"Selected product is: {product}")
-    sct_logger.info(f"Selected output quantity is: {output_radiometric_quantity.name}")
-
-    click.echo("\n")
-    txt = art.text2art("Radiometric  Analysis", font="doom")
-    click.echo(txt + "\n")
-
-    start = time.perf_counter_ns()
-    output = ra.average_elevation_profile_analysis(
-        product_path=product, output_quantity=output_radiometric_quantity, config=config_ra
+) -> None:
+    """Average Elevation Profiles radiometric analysis."""
+    file_handler = (
+        common.add_logging_file(output_directory.joinpath("sct_ra_analysis.log")) if config.general.save_log else None
     )
+    enable_quality_logger(file_handler)
 
-    # saving configuration used to output folder as .toml file
-    if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
+    sct_logger.info(f"Product: {product}")
+    sct_logger.info(f"Output radiometric quantity is: {output_radiometric_quantity.name}")
+    sct_logger.info(f"Output folder is: {output_directory}")
+    sct_logger.info(f"Graphs generation {'enabled' if graphs else 'disabled'}")
 
-    if graphs:
-        sct_logger.info("Saving results to netCDF and plotting graphs...")
-    else:
-        sct_logger.info("Saving results to netCDF format...")
+    common.display_title("Radiometric  Analysis")
 
-    tag = f"AVERAGE_{output_radiometric_quantity.name}"
-    for item in output:
-        radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)
-
-        # graphical output management
-        if graphs:
-            radiometric_2D_hist_plot(
-                data=item,
-                out_dir=output_directory,
-                title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
-            )
-
-    elapsed = (time.perf_counter_ns() - start) / 1e9
-    sct_logger.info(f"Average Elevation Profiles Analysis completed in {elapsed} s.")
+    radiometric_analysis_average_profiles_implementation(
+        product=product,
+        output_radiometric_quantity=output_radiometric_quantity,
+        output_directory=output_directory,
+        config=config,
+        graphs=graphs,
+    )
 
 
 @radiometric_analysis.command("scalloping")
-@click.option(
-    "--product",
-    "-p",
-    required=True,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the product to be analyzed",
-)
-@click.option(
-    "--output_directory",
-    "-out",
-    required=True,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the folder where to save output data",
-)
-@click.option(
-    "--graphs",
-    "-g",
-    default=False,
-    is_flag=True,
-    type=bool,
-    help="Flag to generate graphical output at the end of the analysis",
-)
-@share_config
-def radiometric_analysis_scalloping(config: SCTConfiguration, product: Path, output_directory: Path, graphs: bool):
-    """Scalloping Profiles radiometric analysis"""
+@common.input_product_option
+@common.output_directory_option
+@common.generate_graph_option
+@common.share_config
+def radiometric_analysis_scalloping(
+    config: SCTConfiguration,
+    product: Path,
+    output_directory: Path,
+    graphs: bool,
+) -> None:
+    """Scalloping Profiles radiometric analysis."""
+    file_handler = (
+        common.add_logging_file(output_directory.joinpath("sct_ra_analysis.log")) if config.general.save_log else None
+    )
+    enable_quality_logger(file_handler)
 
-    # saving log file to output folder
-    if config.general.save_log:
-        logging_file_handler = SCTFileHandler(filename=output_directory.joinpath("sct_ra_analysis.log"))
-        enable_quality_logger(file_handler=logging_file_handler)
-        sct_logger.addHandler(logging_file_handler)
-    else:
-        enable_quality_logger()
+    sct_logger.info(f"Product: {product}")
+    sct_logger.info(f"Output folder is: {output_directory}")
+    sct_logger.info(f"Graphs generation {'enabled' if graphs else 'disabled'}")
 
-    config_ra = config.radiometric_analysis
+    common.display_title("Scalloping   Profiles")
+    radiometric_analysis_scalloping_implementation(
+        product=product,
+        output_directory=output_directory,
+        config=config,
+        graphs=graphs,
+    )
 
+
+@common.log_elapsed_time("NESZ Analysis")
+def radiometric_analysis_nesz_implementation(
+    product: Path,
+    output_directory: Path,
+    config: SCTConfiguration,
+    graphs: bool,
+) -> None:
+    """Implement the NESZ radiometric analysis command."""
     if graphs:
-        try:
-            from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
+        radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
 
-        except ImportError:
-            sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
-            sys.exit(1)
+    output = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
 
-    sct_logger.info(f"Selected product is: {product}")
-
-    click.echo("\n")
-    txt = art.text2art("Scalloping   Profiles", font="doom")
-    click.echo(txt + "\n")
-
-    start = time.perf_counter_ns()
-    output = ra.scalloping_analysis(product_path=product, config=config_ra)
-
-    # saving configuration used to output folder as .toml file
     if config.general.save_config_copy:
         config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
 
+    save_and_plot_results(
+        output=output,
+        output_directory=output_directory,
+        graphs=graphs,
+        radiometric_2d_hist_plot=radiometric_2d_hist_plot,
+        tag="NESZ",
+    )
+
+
+@common.log_elapsed_time("Average Elevation Profiles Analysis")
+def radiometric_analysis_average_profiles_implementation(
+    product: Path,
+    output_radiometric_quantity: SARRadiometricQuantity,
+    output_directory: Path,
+    config: SCTConfiguration,
+    graphs: bool,
+) -> None:
+    """Implement the average elevation profiles radiometric analysis command."""
+    if graphs:
+        radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
+
+    output = ra.average_elevation_profile_analysis(
+        product_path=product,
+        output_quantity=output_radiometric_quantity,
+        config=config.radiometric_analysis,
+    )
+
+    if config.general.save_config_copy:
+        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
+
+    save_and_plot_results(
+        output=output,
+        output_directory=output_directory,
+        graphs=graphs,
+        radiometric_2d_hist_plot=radiometric_2d_hist_plot,
+        tag=f"AVERAGE_{output_radiometric_quantity.name}",
+    )
+
+
+@common.log_elapsed_time("Scalloping Profiles Analysis")
+def radiometric_analysis_scalloping_implementation(
+    product: Path,
+    output_directory: Path,
+    config: SCTConfiguration,
+    graphs: bool,
+) -> None:
+    """Implement the scalloping profiles radiometric analysis command."""
+    if graphs:
+        radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
+
+    output = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
+
+    if config.general.save_config_copy:
+        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
+
+    save_and_plot_results(
+        output=output,
+        output_directory=output_directory,
+        graphs=graphs,
+        radiometric_2d_hist_plot=radiometric_2d_hist_plot,
+        tag="SCALLOPING",
+    )
+
+
+def save_and_plot_results(
+    output: list[RadiometricProfilesOutput],
+    output_directory: Path,
+    graphs: bool,
+    radiometric_2d_hist_plot: Callable,
+    tag: str,
+) -> None:
+    """Save results to netCDF and plot graphs if required."""
     if graphs:
         sct_logger.info("Saving results to netCDF and plotting graphs...")
     else:
         sct_logger.info("Saving results to netCDF format...")
 
-    tag = "SCALLOPING"
     for item in output:
         radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)
 
-        # graphical output management
         if graphs:
-            radiometric_2D_hist_plot(
+            assert item.polarization is not None
+            radiometric_2d_hist_plot(
                 data=item,
                 out_dir=output_directory,
                 title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
             )
 
-    elapsed = (time.perf_counter_ns() - start) / 1e9
-    sct_logger.info(f"Scalloping Profiles Analysis completed in {elapsed} s.")
+
+def import_radiometric_2d_hist_plot() -> Callable:
+    """Import the radiometric 2D histogram plotting function."""
+    try:
+        from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
+    except ImportError:
+        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
+        sys.exit(1)
+
+    return radiometric_2D_hist_plot

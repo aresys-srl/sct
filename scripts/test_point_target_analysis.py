@@ -79,4 +79,4 @@ if __name__ == "__main__":
             )
         except Exception:
             continue
-    log.info("Graphs done.")
+    sct_logger.info("Graphs done.")
