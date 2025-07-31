@@ -1,4 +1,56 @@
 {
+    "aresys-product-folder": {
+        "slc-topsar-pta": {
+            "analysis": "pta",
+            "product": "/data/reference_dataset/aresysPF/products/demo_topsar/SLC",
+            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "targets": "/data/reference_dataset/aresysPF/auxiliaries/demo_topsar_point_targets_binary",
+            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-topsar-pta/pta_res.csv"
+        },
+        "slc-real-pta": {
+            "analysis": "pta",
+            "product": "/data/reference_dataset/aresysPF/products/real_slc/SLH_45599_SLC",
+            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "targets": "/data/reference_dataset/aresysPF/auxiliaries/real_slc_point_targets.xml",
+            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-real-pta/pta_res.csv"
+        },
+        "slc-squint20deg-pta": {
+            "analysis": "pta",
+            "product": "/data/reference_dataset/aresysPF/products/squinted_data/20deg/SLC",
+            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "targets": "/data/reference_dataset/aresysPF/auxiliaries/squinted_20deg_point_targets_binary",
+            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-squint20deg-pta/pta_res.csv"
+        },
+        "slc-squint40deg-pta": {
+            "analysis": "pta",
+            "product": "/data/reference_dataset/aresysPF/products/squinted_data/40deg/SLC",
+            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "targets": "/data/reference_dataset/aresysPF/auxiliaries/squinted_40deg_point_targets_binary",
+            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-squint40deg-pta/pta_res.csv"
+        },
+        "grd-biomass-pta": {
+            "analysis": "pta",
+            "product": "/data/reference_dataset/aresysPF/products/biomass_multichannel/iGRD",
+            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
+            "targets": "/data/reference_dataset/aresysPF/auxiliaries/biomass_multichannel_point_targets.xml",
+            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/grd-biomass-pta/pta_res.csv"
+        },
+        "interf-coregistered": {
+            "analysis": "interf",
+            "product": [
+                "/data/reference_dataset/aresysPF/products/interferometry/PF",
+                "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor"
+            ],
+            "config": "/data/integration_tests/sct/configurations/test_dc014546_config.toml",
+            "targets": "",
+            "reference_output": [
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VH.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VV.nc",
+                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VV.nc"
+            ]
+        }
+    },
     "sentinel1A": {
         "slc-etad-pta": {
             "analysis": "pta",
@@ -7,15 +59,6 @@
             "targets": "/data/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
             "etad_product": "/data/reference_dataset/sentinel1a/auxiliaries/ETAD_23.SAFE",
             "reference_output": "/data/integration_tests/sct/reference_results/sentinel1A/slc-etad-pta/pta_res.csv"
-        },
-        "slc-perturb-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/sentinel1a/products/SLC_19.SAFE",
-            "config": "/data/integration_tests/sct/configurations/test_ed18cc99_config.toml",
-            "targets": "/data/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
-            "ionospheric_maps": "/data/reference_dataset/sentinel1a/auxiliaries/maps/ionosphere_maps",
-            "tropospheric_maps": "/data/reference_dataset/sentinel1a/auxiliaries/maps/troposphere_maps",
-            "reference_output": "/data/integration_tests/sct/reference_results/sentinel1A/slc-perturb-pta/pta_res.csv"
         },
         "slc-perturb-eof-pta": {
             "analysis": "pta",
@@ -26,15 +69,6 @@
             "tropospheric_maps": "/data/reference_dataset/sentinel1a/auxiliaries/maps/troposphere_maps",
             "external_orbit": "/data/reference_dataset/sentinel1a/auxiliaries/RESORB_19.EOF",
             "reference_output": "/data/integration_tests/sct/reference_results/sentinel1A/slc-perturb-eof-pta/pta_res.csv"
-        },
-        "grd-perturb-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/sentinel1a/products/GRD_19.SAFE",
-            "config": "/data/integration_tests/sct/configurations/test_ed18cc99_config.toml",
-            "targets": "/data/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
-            "ionospheric_maps": "/data/reference_dataset/sentinel1a/auxiliaries/maps/ionosphere_maps",
-            "tropospheric_maps": "/data/reference_dataset/sentinel1a/auxiliaries/maps/troposphere_maps",
-            "reference_output": "/data/integration_tests/sct/reference_results/sentinel1A/grd-perturb-pta/pta_res.csv"
         },
         "grd-rain-forest": {
             "analysis": "rf",
@@ -54,132 +88,6 @@
             "reference_output": [
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VH.nc",
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VV.nc"
-            ]
-        }
-    },
-    "novasar1": {
-        "slc-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/novasar1/products/NovaSAR_01_38993_slc_11_221103_004941_HH",
-            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "/data/reference_dataset/novasar1/auxiliaries/novasar_surat_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/slc-pta/pta_res.csv"
-        },
-        "grd-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/novasar1/products/NovaSAR_01_38993_grd_13_221103_004941_HH",
-            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "/data/reference_dataset/novasar1/auxiliaries/novasar_surat_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/grd-pta/pta_res.csv"
-        },
-        "scd-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/novasar1/products/NovaSAR_01_41461_scd_23_230126_005204_VV_HH",
-            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "/data/reference_dataset/novasar1/auxiliaries/novasar_surat_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/scd-pta/pta_res.csv"
-        },
-        "scd-rain-forest": {
-            "analysis": "rf",
-            "product": "/data/reference_dataset/novasar1/products/NovaSAR_01_40720_scd_20_221231_214639_VV",
-            "config": "",
-            "targets": "",
-            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/scd-rain-forest/RAIN_FOREST_profiles_S_VV.nc"
-        },
-        "grd-nesz": {
-            "analysis": "nesz",
-            "product": "/data/reference_dataset/novasar1/products/NovaSAR_01_29655_grd_211218_150627_HH",
-            "config": "",
-            "targets": "",
-            "reference_output": "/data/integration_tests/sct/reference_results/novasar1/grd-nesz/NESZ_profiles_S1_HH.nc"
-        }
-    },
-    "iceye": {
-        "stripmap-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/iceye/products/SM_1899652_93266",
-            "config": "/data/integration_tests/sct/configurations/test_ae30371d_config.toml",
-            "targets": "/data/reference_dataset/iceye/auxiliaries/rosamond_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/iceye/stripmap-pta/pta_res.csv"
-        },
-        "spotlight-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/iceye/products/SLH_1835029_91260",
-            "config": "/data/integration_tests/sct/configurations/test_ae30371d_config.toml",
-            "targets": "/data/reference_dataset/iceye/auxiliaries/rosamond_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/iceye/spotlight-pta/pta_res.csv"
-        },
-        "topsar-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/iceye/products/SC_2391740_117355",
-            "config": "/data/integration_tests/sct/configurations/test_ae30371d_config.toml",
-            "targets": "/data/reference_dataset/iceye/auxiliaries/rosamond_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/iceye/topsar-pta/pta_res.csv"
-        }
-    },
-    "saocom": {
-        "sm-slc-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/saocom/products/L1A_SLC_SM",
-            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "/data/reference_dataset/saocom/auxiliaries/saocom_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/saocom/sm-slc-pta/pta_res.csv"
-        },
-        "sm-grd-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/saocom/products/L1B_RGC_SM",
-            "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "/data/reference_dataset/saocom/auxiliaries/saocom_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/saocom/sm-grd-pta/pta_res.csv"
-        }
-    },
-    "cosmo": {
-        "grd-pta": {
-            "analysis": "pta",
-            "product": "/data/reference_dataset/cosmo/products/CSKS1_DGM_B_WR_00_HH_RA_FF_20240107043057_20240107043111.h5",
-            "config": "/data/integration_tests/sct/configurations/test_d347c358_config.toml",
-            "targets": "/data/reference_dataset/cosmo/auxiliaries/neusterlitz_corner_reflectors_data.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/cosmo/grd-pta/pta_res.csv"
-        }
-    },
-    "aresys-product-folder": {
-        "interf-coregistered": {
-            "analysis": "interf",
-            "product": [
-                "/data/reference_dataset/aresysPF/products/interferometry/PF",
-                "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor"
-            ],
-            "config": "/data/integration_tests/sct/configurations/test_dc014546_config.toml",
-            "targets": "",
-            "reference_output": [
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VH.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VH.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VV.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VV.nc"
-            ]
-        },
-        "interf-interferogram": {
-            "analysis": "interf",
-            "product": "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor_SCI",
-            "config": "/data/integration_tests/sct/configurations/test_dc014546_config.toml",
-            "targets": "",
-            "reference_output": [
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VH.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VH.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b0_VV.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-interferogram/coherence_histograms_IW1_b1_VV.nc"
-            ]
-        },
-        "interf-coherence": {
-            "analysis": "interf",
-            "product": "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor_SCI_CM",
-            "config": "",
-            "targets": "",
-            "reference_output": [
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VH.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VH.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b0_VV.nc",
-                "/data/integration_tests/sct/reference_results/aresys_pf/interf-coherence/coherence_histograms_IW1_b1_VV.nc"
             ]
         }
     }
