@@ -15,14 +15,16 @@ Here is a description of the columns of this file and an example of point target
 
 - ``target_name``: name of the target, i.e. "CR_1" (do not use spaces)
 - ``target_type``: type of target, it can be a corner reflector "CR" or an active transponder "TX"
-- ``plate``: tectonic plate of reference, information used to compute tectonic displacement if needed
+- ``plate``: tectonic plate of reference, information used to compute tectonic displacement if needed.
+  Possible values are: **ANTA, ARAB, AUST, EURA, INDI, NAZC, NOAM, NUBI, PCFC, SOAM, SOMA**
+  (ref. `https://academic.oup.com/gji/article/209/3/1906/3095992 <https://academic.oup.com/gji/article/209/3/1906/3095992>`_)
 - ``description``: string description of the target, if needed
 - ``latitude_deg``: point target location, latitude coordinate in degrees
 - ``longitude_deg``: point target location, longitude coordinate in degrees
 - ``altitude_m``: point target location, height in meters
 - ``x_coord_m``, ``y_coord_m``, ``z_coord_m``: point target location, XYZ coordinates in meters (ECEF system)
 - ``drift_velocity_x_my``, ``drift_velocity_y_my``, ``drift_velocity_z_my``: point target measured drift velocities components in meters per year
-  these data are used to compute the calibration target displacement with a more accurate estimate
+  these data are used to compute the calibration target displacement with a more accurate estimate (ECEF system)
 - ``corner_azimuth_deg``, ``corner_elevation_deg``: corner reflector orientation parameters needed for proper RCS computation
 - ``target_shape``, ``target_size_m``: corner reflector shape and size needed for proper RCS computation
 - ``rcs_hh_dB``, ``rcs_hv_dB``, ``rcs_vv_dB``, ``rcs_vh_dB``: corner reflector RCS magnitude in dB, used to computed RCS error
@@ -55,7 +57,7 @@ is needed in this case) or by using the user defined drift velocities fro a more
 
 In these cases, if the plate drift is to be evaluated, ``measurement_date``, ``validity_start_date`` and ``validity_stop_date``
 must be populated with UTC dates in order to compute the time interval between the registering of the coordinates provided and
-the actual sensor acquisition date.
+the actual sensor acquisition date. Time format: "yyyy-MM-dd HH:mm:ss"
 
 
 Dataset Example
