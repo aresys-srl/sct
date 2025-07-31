@@ -19,6 +19,7 @@ dependencies = [
     "arepyextras-quality >= 2.0.6",
     "arepyextras-perturbations >= 1.1",
     "scipy",
+    "requests"
 ]
 dynamic = ["version"]
 classifiers = [
