@@ -8,7 +8,7 @@ from pathlib import Path
 import arepyextras.quality.point_targets_analysis.graphical_output as ptgpo
 
 from sct.analyses import point_target_analysis as pta
-from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger, SCTFileHandler
+from sct.configuration.logger import ConsoleHandler, SCTFileHandler, enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
 
 out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs")
@@ -64,7 +64,7 @@ if __name__ == "__main__":
             ).to_dict("records")[0]
             label = (
                 f"target_{data_val['target_name']}_{data_val['swath']}_"
-                + f"polarization_{data_val['polarization'].replace('/','')}_"
+                + f"polarization_{data_val['polarization'].replace('/', '')}_"
                 + f"{data_val['product_type']}_b{data_val['burst']}"
             )
             ptgpo.irf_graphs(

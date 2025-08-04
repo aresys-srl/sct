@@ -3,15 +3,13 @@
 
 """SCT: test radiometric analysis script"""
 
-import logging
 
 from arepyextras.quality.interferometric_analysis.graphical_output import generate_coherence_graphs
 from arepyextras.quality.interferometric_analysis.support import coherence_histograms_to_netcdf
 
 from sct.analyses import interferometric_analysis as interf
+from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig
-
-from sct.configuration.logger import sct_logger, ConsoleHandler, enable_quality_logger
 
 # setup custom logger
 enable_quality_logger()

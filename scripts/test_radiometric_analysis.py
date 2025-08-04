@@ -16,7 +16,6 @@ sct_logger.addHandler(ConsoleHandler())
 sct_logger.setLevel("INFO")
 
 
-
 if __name__ == "__main__":
     # load custom config
 
