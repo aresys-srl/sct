@@ -22,9 +22,9 @@ Here is a description of the columns of this file and an example of point target
 - ``latitude_deg``: point target location, latitude coordinate in degrees
 - ``longitude_deg``: point target location, longitude coordinate in degrees
 - ``altitude_m``: point target location, height in meters
-- ``x_coord_m``, ``y_coord_m``, ``z_coord_m``: point target location, XYZ coordinates in meters (ECEF system)
+- ``x_coord_m``, ``y_coord_m``, ``z_coord_m``: point target location, XYZ coordinates in meters (ECEF system [EPSG:4978])
 - ``drift_velocity_x_my``, ``drift_velocity_y_my``, ``drift_velocity_z_my``: point target measured drift velocities components in meters per year
-  these data are used to compute the calibration target displacement with a more accurate estimate (ECEF system)
+  these data are used to compute the calibration target displacement with a more accurate estimate (ECEF system [EPSG:4978])
 - ``corner_azimuth_deg``, ``corner_elevation_deg``: corner reflector orientation parameters needed for proper RCS computation
 - ``target_shape``, ``target_size_m``: corner reflector shape and size needed for proper RCS computation
 - ``rcs_hh_dB``, ``rcs_hv_dB``, ``rcs_vv_dB``, ``rcs_vh_dB``: corner reflector RCS magnitude in dB, used to computed RCS error

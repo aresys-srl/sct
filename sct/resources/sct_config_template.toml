@@ -12,21 +12,19 @@ evaluate_localization = true
 ale_validity_limits = [99, 99]
 
 [point_target_analysis.corrections]
-enable_etad_corrections = true
 enable_solid_tides_correction = true
 enable_plate_tectonics_correction = true
 enable_sensor_specific_processing_corrections = true
 enable_ionospheric_correction = false
 enable_tropospheric_correction = false
-etad_product_path = ""
 
 [point_target_analysis.corrections.ionosphere]
-ionospheric_maps_directory = ""
-ionospheric_analysis_center = "cor"
+maps_directory = ""
+analysis_center = "cor"
 
 [point_target_analysis.corrections.troposphere]
-tropospheric_maps_directory = ""
-tropospheric_map_grid_resolution = "fine"
+maps_directory = ""
+map_grid_resolution = "fine"
 
 [point_target_analysis.advanced_configuration.irf_parameters]
 peak_finding_roi_size = [33, 33]

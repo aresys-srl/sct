@@ -65,10 +65,6 @@
                 "corrections": {
                     "type": "object",
                     "properties": {
-                        "enable_etad_corrections": {
-                            "type": "boolean",
-                            "description": "Enable/disable full range and azimuth corrections using ETAD products"
-                        },
                         "enable_solid_tides_correction": {
                             "type": "boolean",
                             "description": "Enable/disable solid tides corrections on calibration target coordinates"
@@ -88,10 +84,6 @@
                         "enable_tropospheric_correction": {
                             "type": "boolean",
                             "description": "Enable/disable tropospheric corrections on SAR measurements"
-                        },
-                        "etad_product_path": {
-                            "type": "string",
-                            "description": "Path to the ETAD product"
                         },
                         "ionosphere": {
                             "type": "object",
@@ -147,26 +139,6 @@
                         }
                     },
                     "allOf": [
-                        {
-                            "if": {
-                                "properties": {
-                                    "enable_etad_corrections": {
-                                        "type": "boolean",
-                                        "enum": [
-                                            true
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "enable_etad_corrections"
-                                ]
-                            },
-                            "then": {
-                                "required": [
-                                    "etad_product_path"
-                                ]
-                            }
-                        },
                         {
                             "if": {
                                 "properties": {

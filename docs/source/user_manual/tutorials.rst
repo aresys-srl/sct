@@ -14,10 +14,14 @@ to your needs. Passing the input configuration can be avoided if default values 
 
 .. code-block:: bash
 
-    sct --config path_to_config_toml target-analysis -p path_to_product -out path_to_output_folder -pt path_to_target_csv_file [-eo path_to_external_orbit] [-g]
+    sct --config path_to_config_toml target-analysis -p path_to_product -out path_to_output_folder -pt path_to_target_csv_file [-eo path_to_external_orbit] [-ec path_to_external_corrections] [-g]
 
 If an external orbit must be used for a Sentinel-1 product, it can be passed as input to the CLI tool using the `--external-orbit/-eo` option.
 Graphical output for point target analysis can be enabled using the `--graphs/-g` option for the CLI tool.
+
+Auxiliary external products containing the corrections to be applied to the SAR Product quality analysis, such as ETAD
+products for Sentinel-1, can be provided as input for both the CLI and the API main Point Target Analysis function, using
+respectively the `--external-corrections/-ec` option or the ``external_corrections_product`` optional input argument.
 
 The exact same thing can be done from a custom script using SCT as a library:
 
@@ -32,6 +36,7 @@ The exact same thing can be done from a custom script using SCT as a library:
     config = SCTConfiguration.from_toml(config_toml_path)
     # adding an external orbit for Sentinel 1 products is optional
     path_to_external_orbit = ...
+    path_to_external_correction_product = ...  # i.e. ETAD product for Sentinel-1
     product_path = ...
     targets_csv_file_path = ...
     output_results_csv_file = ...
@@ -41,6 +46,7 @@ The exact same thing can be done from a custom script using SCT as a library:
         product_path=prod,
         external_target_source=targets_csv_file_path,
         external_orbit_path=path_to_external_orbit,  # optional
+        external_corrections_product=path_to_external_correction_product,  # optional
         config=config.point_target_analysis,  # optional
     )
     results_df.to_csv(output_results_csv_file, index=False)
@@ -74,17 +80,6 @@ atmospheric perturbations from external maps.
     tropospheric_maps_directory = "path/to/tropospheric/maps/directory"
     tropospheric_map_grid_resolution = "fine"
 
-Using ETAD products for Sentinel-1 data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Input configuration file must contain the following lines to be able to perform a Point Target Analysis taking into account
-an external ETAD products to compute perturbations.
-
-.. code-block:: toml
-
-    [point_target_analysis.corrections]
-    enable_etad_corrections = true
-    etad_product_path = "path/to/etad/product"
 
 Radiometric Analysis
 --------------------

@@ -8,5 +8,3 @@ Core Computation Module
 .. automodule:: sct.core.geodynamics_corrections_main
 
 .. automodule:: sct.core.geodynamics_corrections_core
-
-.. automodule:: sct.core.etad_corrections_main

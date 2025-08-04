@@ -40,13 +40,11 @@ evaluate_localization = true
 ale_validity_limits = [99, 99]
 
 [point_target_analysis.corrections]
-enable_etad_corrections = false
 enable_solid_tides_correction = true
 enable_plate_tectonics_correction = false
 enable_sensor_specific_processing_corrections = true
 enable_ionospheric_correction = true
 enable_tropospheric_correction = true
-etad_product_path = "aaa"
 
 [point_target_analysis.corrections.ionosphere]
 maps_directory = "bbb"
@@ -130,13 +128,11 @@ def _validate_pta_config(config: SCTPointTargetAnalysisConfig) -> None:
     """
 
     assert isinstance(config, SCTPointTargetAnalysisConfig)
-    assert config.corrections.enable_etad_corrections is False
     assert config.corrections.enable_solid_tides_correction is True
     assert config.corrections.enable_plate_tectonics_correction is False
     assert config.corrections.enable_sensor_specific_processing_corrections is True
     assert config.corrections.enable_ionospheric_correction is True
     assert config.corrections.enable_tropospheric_correction is True
-    assert config.corrections.etad_product_path == Path("aaa")
     assert config.corrections.ionosphere.maps_directory == Path("bbb")
     assert isinstance(config.corrections.ionosphere.analysis_center, IonosphericAnalysisCenters)
     assert config.corrections.ionosphere.analysis_center == IonosphericAnalysisCenters.COR

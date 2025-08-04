@@ -14,7 +14,7 @@ flow. Here are the available options that the user can access:
 - **Ionospheric Delay**: computing signal delay due to ionospheric effects from external TEC maps
 - **Tropospheric Delay**: computing signal delay due to tropospheric effects from external maps
 - **Sensor specific processing corrections**: some sensors need specific corrections, i.e. Sentinel-1
-- **ETAD Range and Azimuth corrections**: if an ETAD product is provided, range and azimuth corrections can be applied
+- **External ALE Range and Azimuth corrections**: if an external ALE corrections product is provided (i.e. ETAD), range and azimuth corrections can be applied
 
 In the following sections, each correction is described for further clarifications.
 
@@ -100,13 +100,15 @@ Data maps must be of the **Operational (OP)** type.
 
 This correction is **disabled by default**.
 
-ETAD Products Corrections
-^^^^^^^^^^^^^^^^^^^^^^^^^
+External Products with ALE Corrections
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If an ETAD product is provided for the SAR acquisition to be analyzed, the range and azimuth corrections contained in this
-product are extracted and added to the output.
+If an External Product containing ALE corrections is provided for the SAR acquisition to be analyzed, the range and
+azimuth corrections contained in this product are extracted and added to the output.
 
 The corrections applied correspond to the merged ones both for azimuth and range directions.
+
+The **Extended Time Annotation Products (ETAD)** is supported for Sentinel-1 acquisitions.
 
 
 Sensor-specific Processing Corrections

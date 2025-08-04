@@ -23,28 +23,29 @@ sct_logger.setLevel("INFO")
 if __name__ == "__main__":
     # products
     # prod = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\SLC"
-    prod = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\SLC"
+    prod = r"C:/Users/giorgio.parma/Aresys_DATA/sct_data/sentinel1/SLC_23.SAFE"
 
     # external orbits
     ext_orbit = None
     # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
-    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\demo_topsar_point_targets_binary"
+    ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\surat_basin_data.csv"
     # ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\quality_data\demo_topsar\PointTargetsBinary"
 
     # # test config
     # test_config = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\config_etad.toml"
     # test_config = SCTConfiguration.from_toml(test_config)
     test_config = SCTConfiguration()
-    test_config.point_target_analysis.enable_plate_tectonics_correction = False
-    test_config.point_target_analysis.enable_solid_tides_correction = False
+    # test_config.point_target_analysis.enable_plate_tectonics_correction = False
+    # test_config.point_target_analysis.enable_solid_tides_correction = False
 
     # executing point target analysis
     out, out_graph = pta.point_target_analysis_with_corrections(
         product_path=prod,
         external_orbit_path=ext_orbit,
         external_target_source=ext_target,
+        external_corrections_product=r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\ETAD_23.SAFE",  # ETAD product here
         config=test_config.point_target_analysis,
     )
 

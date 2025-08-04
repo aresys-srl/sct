@@ -130,13 +130,11 @@ The following parameters can be configured directly under the `point_target_anal
     :emphasize-lines: 2,8
 
     [point_target_analysis.corrections]
-    enable_etad_corrections = true                       # on/off ETAD corr.
     enable_solid_tides_correction = true                 # on/off Solid Earth Tides corr.
     enable_plate_tectonics_correction = true             # on/off Plate Tectonics corr.
     enable_sensor_specific_processing_corrections = true # on/off Sensor specific corr.
     enable_ionospheric_correction = false                # on/off Ionospheric corr.
     enable_tropospheric_correction = false               # on/off Tropospheric corr.
-    etad_product_path = ""                               # path to the ETAD product
 
 Ionosphere
 **********

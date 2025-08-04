@@ -10,15 +10,12 @@ dependencies = [
     "pandas",
     "jsonschema",
     "toml",
-    "pyproj",
     "shapely",
-    "s1etad",
     "art",
     "arepytools >= 1.7.2",
     "arepyextras-quality >= 2.0.6",
     "arepyextras-perturbations >= 1.1",
     "scipy",
-    "requests"
 ]
 dynamic = ["version"]
 classifiers = [

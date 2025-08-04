@@ -105,7 +105,6 @@ class TroposphericCorrectionsConf:
 class SCTPointTargetAnalysisCorrectionsConf:
     """SCT Point Target Analysis corrections configuration"""
 
-    enable_etad_corrections: bool = False
     enable_solid_tides_correction: bool = True
     enable_plate_tectonics_correction: bool = True
     enable_sensor_specific_processing_corrections: bool = True
@@ -113,7 +112,6 @@ class SCTPointTargetAnalysisCorrectionsConf:
     enable_tropospheric_correction: bool = False
     ionosphere: IonosphericCorrectionsConf | None = None
     troposphere: TroposphericCorrectionsConf | None = None
-    etad_product_path: Path | None = None
 
     @classmethod
     def from_dict(cls, arg: dict) -> SCTPointTargetAnalysisCorrectionsConf:
@@ -129,8 +127,6 @@ class SCTPointTargetAnalysisCorrectionsConf:
                 out.ionosphere = IonosphericCorrectionsConf.from_dict(value)
             elif key == "troposphere":
                 out.troposphere = TroposphericCorrectionsConf.from_dict(value)
-            elif key == "etad_product_path" and value is not None:
-                setattr(out, key, Path(value))
             else:
                 setattr(out, key, value)
 
@@ -144,11 +140,6 @@ class SCTPointTargetAnalysisCorrectionsConf:
             out["ionosphere"] = self.ionosphere.to_dict()
         if self.troposphere is not None:
             out["troposphere"] = self.troposphere.to_dict()
-
-        if self.etad_product_path is not None:
-            out["etad_product_path"] = str(self.etad_product_path)
-        else:
-            out.pop("etad_product_path", None)
 
         return out
 
