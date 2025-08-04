@@ -57,7 +57,7 @@
             "product": "/data/reference_dataset/sentinel1a/products/SLC_23.SAFE",
             "config": "/data/integration_tests/sct/configurations/test_c6359f5a_config.toml",
             "targets": "/data/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
-            "etad_product": "/data/reference_dataset/sentinel1a/auxiliaries/ETAD_23.SAFE",
+            "external_corrections_product": "/data/reference_dataset/sentinel1a/auxiliaries/ETAD_23.SAFE",
             "reference_output": "/data/integration_tests/sct/reference_results/sentinel1A/slc-etad-pta/pta_res.csv"
         },
         "slc-perturb-eof-pta": {

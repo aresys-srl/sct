@@ -54,7 +54,7 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
 
     out_dir = output_dir.joinpath(sensor, test_name)
     out_dir.mkdir(exist_ok=True, parents=True)
-    config = SCTConfiguration.from_toml(params.config) if params.config is not None else None
+    config = SCTConfiguration.from_toml(params.config) if params.config is not None else SCTConfiguration()
     try:
         if params.analysis == SCTAnalyses.POINT_TARGET:
             config = config.point_target_analysis if config is not None else None
@@ -90,12 +90,13 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
                 result = [r for r in results if report.name == r.name]
                 compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
         sct_logger.info("")
-        sct_logger.info(f"Test {test_name} - SUCCESS")
+        sct_logger.success(f"Test {test_name} - SUCCESS")
         sct_logger.info("")
         return True
     except Exception as err:
         sct_logger.info("")
-        sct_logger.critical(f"Test {test_name} ERROR")
+        sct_logger.fail(f"Test {test_name} - FAIL")
+        sct_logger.info("")
         sct_logger.error(err)
         return False
 
@@ -172,5 +173,10 @@ def summary_results(results: dict) -> bool:
     for sensor_name in results:
         sct_logger.info("")
         print(pd.DataFrame({sensor_name: results[sensor_name]}))
+
+    if outcome:
+        sct_logger.success("INTEGRATION TESTS: PASS")
+    else:
+        sct_logger.fail("INTEGRATION TESTS: FAIL")
 
     return outcome

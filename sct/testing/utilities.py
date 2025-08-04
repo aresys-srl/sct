@@ -36,7 +36,12 @@ from sct.configuration.point_target_analysis_configuration import (
     IonosphericCorrectionsConf,
     TroposphericCorrectionsConf,
 )
-from sct.configuration.sct_configuration import SCTConfiguration
+from sct.configuration.sct_configuration import (
+    SCTConfiguration,
+    SCTInterferometricAnalysisConfig,
+    SCTPointTargetAnalysisConfig,
+    SCTRadiometricAnalysisConfig,
+)
 
 PYTHON_INTERPRETER = sys.executable
 
@@ -59,7 +64,7 @@ LOC_VAR_LIST = [
     "revised_ale_range_[m]",
     "revised_ale_azimuth_[m]",
 ]
-ADDITIONAL_LOC_VAR_LIST = ["etad_range_correction_[m]", "etad_azimuth_correction_[m]"]
+ADDITIONAL_LOC_VAR_LIST = ["ext_ale_range_correction_[m]", "ext_ale_azimuth_correction_[m]"]
 DEG_VAR_LIST = ["incidence_angle_[deg]"]
 SLR_VAR_LIST = [
     "range_islr_[dB]",
@@ -98,7 +103,7 @@ class TestParams:
     targets: Path | None = None
     external_orbit: Path | None = None
     reference_output: Path | None = None
-    etad_product: Path | None = None
+    external_corrections_product: Path | None = None
     ionospheric_maps: Path | None = None
     tropospheric_maps: Path | None = None
 
@@ -286,7 +291,9 @@ def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     current_dataset.close()
 
 
-def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None, graphs: bool) -> pd.DataFrame:
+def run_pta_api(
+    params: TestParams, output_dir: Path, config: SCTPointTargetAnalysisConfig | None, graphs: bool
+) -> pd.DataFrame:
     """Running SCT Point Target Analysis from API forwarding the inputs.
 
     Parameters
@@ -295,7 +302,7 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
         test parameters
     output_dir : Path
         output directory
-    config : SCTConfiguration | None
+    config : SCTPointTargetAnalysisConfig | None
         configuration
     graphs : bool
         flag to enable graphs generation
@@ -306,26 +313,23 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
         results dataframe
     """
 
-    config = SCTConfiguration.from_toml(params.config)
-    if params.etad_product is not None:
-        config.point_target_analysis.corrections.enable_etad_corrections = True
-        config.point_target_analysis.corrections.etad_product_path = params.etad_product
     if params.ionospheric_maps is not None:
-        config.point_target_analysis.corrections.enable_ionospheric_correction = True
-        config.point_target_analysis.corrections.ionosphere = IonosphericCorrectionsConf(
+        config.corrections.enable_ionospheric_correction = True
+        config.corrections.ionosphere = IonosphericCorrectionsConf(
             maps_directory=params.ionospheric_maps,
-            analysis_center=config.point_target_analysis.corrections.ionosphere.analysis_center,
+            analysis_center=config.corrections.ionosphere.analysis_center,
         )
     if params.tropospheric_maps is not None:
-        config.point_target_analysis.corrections.enable_tropospheric_correction = True
-        config.point_target_analysis.corrections.troposphere = TroposphericCorrectionsConf(
-            maps_directory=params.tropospheric_maps
-        )
+        config.corrections.enable_tropospheric_correction = True
+        config.corrections.troposphere = TroposphericCorrectionsConf(maps_directory=params.tropospheric_maps)
     results_df, graphs_data = point_target_analysis_with_corrections(
         product_path=params.product,
         external_target_source=params.targets,
         external_orbit_path=params.external_orbit,
-        config=config.point_target_analysis,
+        external_corrections_product=params.external_corrections_product
+        if params.external_corrections_product is not None
+        else None,
+        config=config,
     )
     out_file = output_dir.joinpath("pta_results.csv")
     results_df.to_csv(out_file, index=False)
@@ -344,7 +348,9 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
     return pd.read_csv(out_file)
 
 
-def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None, graphs: bool) -> Path:
+def run_nesz_api(
+    params: TestParams, output_dir: Path, config: SCTRadiometricAnalysisConfig | None, graphs: bool
+) -> Path:
     """Running SCT NESZ Analysis from API forwarding the inputs.
 
     Parameters
@@ -353,7 +359,7 @@ def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration 
         test parameters
     output_dir : Path
         output directory
-    config : SCTConfiguration | None
+    config : SCTRadiometricAnalysisConfig | None
         configuration
     graphs : bool
         flag to enable graphs generation
@@ -389,7 +395,9 @@ def run_nesz_api(params: TestParams, output_dir: Path, config: SCTConfiguration 
     return nc_files
 
 
-def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None, graphs: bool) -> Path:
+def run_rain_forest_api(
+    params: TestParams, output_dir: Path, config: SCTRadiometricAnalysisConfig | None, graphs: bool
+) -> Path:
     """Running SCT Average Radiometric Profiles Analysis from API forwarding the inputs.
 
     Parameters
@@ -398,7 +406,7 @@ def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfigu
         test parameters
     output_dir : Path
         output directory
-    config : SCTConfiguration | None
+    config : SCTRadiometricAnalysisConfig | None
         configuration
     graphs : bool
         flag to enable graphs generation
@@ -438,7 +446,9 @@ def run_rain_forest_api(params: TestParams, output_dir: Path, config: SCTConfigu
     return nc_files
 
 
-def run_interferometry_api(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> Path:
+def run_interferometry_api(
+    params: TestParams, output_dir: Path, config: SCTInterferometricAnalysisConfig | None
+) -> Path:
     """Running SCT Interferometric Analysis from API forwarding the inputs.
 
     Parameters
@@ -447,7 +457,7 @@ def run_interferometry_api(params: TestParams, output_dir: Path, config: SCTConf
         test parameters
     output_dir : Path
         output directory
-    config : SCTConfiguration | None
+    config : SCTInterferometricAnalysisConfig | None
         configuration
 
     Returns
