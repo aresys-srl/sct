@@ -4,9 +4,14 @@ Changelog
 v1.1.2
 ------
 
+**Incompatible Changes**
+
+- Changed plugin interface for ALE corrections
+- Removed ETAD support, moved to dedicated Sentinel-1 plugin
+
 **Other changes**
 
-- Introduced graphs plotting option into testing module CLI/API
+- Introduced graphs plotting option into testing module CLI/API and general improvement
 - Adding dedicated logging module
 
 v1.1.1
