@@ -11,10 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
-
 from sct.configuration.logger import sct_logger
-from sct.io.extended_protocols import ALECorrectionFunctionType
+from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
 from sct.io.input_product_plugins import import_input_product_plugins
 
 
@@ -23,8 +21,11 @@ class InvalidProductType(RuntimeError):
 
 
 def product_loader(
-    product_path: Path, external_orbit: Path | None = None, plugins: list[str] | None = None
-) -> tuple[QualityInputProduct, ALECorrectionFunctionType | None, ALECorrectionFunctionType | None]:
+    product_path: Path,
+    external_orbit: Path | None = None,
+    external_corrections_product: Path | None = None,
+    plugins: list[str] | None = None,
+) -> tuple[SCTInputProduct, ALECorrectionFunctionType | None]:
     """Load any supported product
 
     Parameters
@@ -33,33 +34,33 @@ def product_loader(
         Path to the product to be loaded
     external_orbit : Path | None, optional
         Path to external orbit file, if needed, by default None
+    external_corrections_product : Path | None, optional
+        Path to external ALE corrections product, if needed, by default None
     plugins: list[str] | None, optional
         list of plugins as strings: either absolute paths or importable python modules
 
     Returns
     -------
-    QualityInputProduct
-        QualityInputProduct compliant object
+    SCTInputProduct
+        SCTInputProduct compliant object
     ALECorrectionFunctionType | None
-        range ale correction function (if available)
-    ALECorrectionFunctionType | None
-        azimuth ale correction function (if available)
+        range and azimuth ale corrections function (if available)
     """
     plugins = plugins or []
     available_plugins = import_input_product_plugins(plugins)
 
-    product: Optional[QualityInputProduct] = None
+    product: Optional[SCTInputProduct] = None
     for plugin in available_plugins:
         if plugin.get_detector()(product_path):
             manager = plugin.get_manager()
+            ale_corrector = plugin.get_ale_corrector()
             sct_logger.info(f"Using plugin {plugin.__name__}, version {plugin.__version__}")
             sct_logger.info(f"Product type: {manager.__name__}")
             product = manager(product_path, external_orbit_path=external_orbit)
-            rg_corr: ALECorrectionFunctionType | None = plugin.get_range_corrections()
-            az_corr: ALECorrectionFunctionType | None = plugin.get_azimuth_corrections()
+            ale_corr = ale_corrector(external_corrections_product) if ale_corrector is not None else None
             break
 
     if product is None:
         raise InvalidProductType(f"Unknown input product: {product_path}")
 
-    return product, rg_corr, az_corr
+    return product, ale_corr

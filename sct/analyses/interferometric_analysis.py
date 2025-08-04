@@ -73,9 +73,9 @@ def sct_interferometric_coherence_analysis(
     list[InterferometricCoherenceOutput]
         an InterferometricCoherenceOutput dataclass for each channel
     """
-    product, _, _ = product_loader(product_path=product_path)
+    product, _ = product_loader(product_path=product_path)
     second_product = None
     if second_product_path is not None:
-        second_product, _, _ = product_loader(product_path=second_product_path)
+        second_product, _ = product_loader(product_path=second_product_path)
 
     return interferometric_analysis(product=product, second_product=second_product, config=config.base_config)

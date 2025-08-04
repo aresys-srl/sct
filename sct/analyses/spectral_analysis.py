@@ -48,7 +48,7 @@ def sct_point_target_spectral_analysis(
     config = config or SCTSpectralAnalysisConfig()
 
     # LOADING PRODUCT
-    product, _, _ = product_loader(
+    product, _ = product_loader(
         product_path=product_path,
     )
 

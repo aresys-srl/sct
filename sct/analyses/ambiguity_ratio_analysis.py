@@ -32,7 +32,7 @@ def sct_point_target_ambiguity_ratio_analysis(
     config = config or SCTTargetAmbiguityRatioConfig()
 
     # LOADING PRODUCT
-    product, _, _ = product_loader(
+    product, _ = product_loader(
         product_path=product_path,
     )
 

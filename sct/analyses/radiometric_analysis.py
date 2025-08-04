@@ -60,7 +60,7 @@ def sct_radiometric_profiles(
     product_path = Path(product_path)
 
     # LOADING PRODUCT
-    product, _, _ = product_loader(product_path=product_path)
+    product, _ = product_loader(product_path=product_path)
 
     if analysis_type == SupportedRadiometricProfiles.NESZ:
         results = nesz_profiles(product=product, config=config)
