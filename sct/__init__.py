@@ -16,4 +16,4 @@ csv_template = res.files(res_folder).joinpath("calibration_targets_external_sour
 
 sct_discovered_plugins = {name: import_module(name) for _, name, _ in pkgutil.iter_modules() if name.startswith("sct_")}
 
-__version__ = "1.1.2"
+__version__ = "1.1.3"

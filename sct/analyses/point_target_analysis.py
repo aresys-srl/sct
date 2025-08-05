@@ -186,7 +186,8 @@ def point_target_analysis_with_corrections(
     )
     first_channel = product.get_channel_data(channel_id=product.channels_list[0])
 
-    config.corrections = ale_corrector.update_corrections_config(config.corrections)
+    if ale_corrector is not None:
+        config.corrections = ale_corrector.update_corrections_config(config.corrections)
 
     point_targets_df = extract_point_target_data_from_source(source=external_target_source)
     nominal_target_coords = point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy()

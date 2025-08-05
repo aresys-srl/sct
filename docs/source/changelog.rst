@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.1.3
+------
+
+**Bug Fixing**
+
+- Point Target Analysis: fixing bug in updating corrections config based on ALE corrections
+
 v1.1.2
 ------
 
