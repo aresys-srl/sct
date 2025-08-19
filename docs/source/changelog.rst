@@ -7,6 +7,7 @@ v1.1.3
 **Bug Fixing**
 
 - Point Target Analysis: fixing bug in updating corrections config based on ALE corrections
+- fixing PointTargetXML and PointTargetBinary conversion to unified default point target dataframe structure
 
 v1.1.2
 ------

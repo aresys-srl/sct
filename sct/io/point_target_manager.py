@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from arepyextras.quality.core.signal_processing import convert_to_db
-from arepytools.geometry.conversions import llh2xyz
+from arepytools.geometry.conversions import llh2xyz, xyz2llh
 from arepytools.io import PointSetProduct, read_point_targets_file
 from arepytools.io.io_support import NominalPointTarget
 from arepytools.timing.precisedatetime import PreciseDateTime
@@ -78,8 +78,12 @@ def convert_point_target_binary_to_df(source: str | Path) -> pd.DataFrame:
     coords, rcs = PointSetProduct(path=source).read_data()
     num = len(coords)
     dummy_data = [None] * len(coords)
+    llh_coords = xyz2llh(coords.T).T
     point_targets_df = pd.read_csv(csv_template)
     point_targets_df = point_targets_df.loc[point_targets_df.index.repeat(num)]
+    point_targets_df["latitude_deg"] = np.rad2deg(llh_coords[:, 0])
+    point_targets_df["longitude_deg"] = np.rad2deg(llh_coords[:, 1])
+    point_targets_df["altitude_m"] = llh_coords[:, 2]
     point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = coords
     point_targets_df["target_type"] = "CR"
     point_targets_df["target_name"] = [
@@ -118,10 +122,15 @@ def convert_point_target_file_xml_to_df(source: str | Path) -> pd.DataFrame:
     rcs_vh = np.array([c.rcs_vh for c in point_targets.values()])
     rcs_vv = np.array([c.rcs_vv for c in point_targets.values()])
     delays = [c.delay for c in point_targets.values()]
+    llh_coords = xyz2llh(coords.T).T
     df = pd.DataFrame(["cr_" + f"{int(k):02}" for k in list(point_targets.keys())], columns=["target_name"])
     df = df.assign(
         target_type="CR",
         plate="NONE",
+        description="None",
+        latitude_deg=np.rad2deg(llh_coords[:, 0]),
+        longitude_deg=np.rad2deg(llh_coords[:, 1]),
+        altitude_m=llh_coords[:, 2],
         x_coord_m=coords[:, 0],
         y_coord_m=coords[:, 1],
         z_coord_m=coords[:, 2],
