@@ -219,11 +219,6 @@ def point_target_analysis_with_corrections(
 
     results = update_results_with_ale_corrections(results=results, product=product, ale_corrector=ale_corrector)
 
-    # TODO: remove this later, these info must be saved to the output .csv
-    results.drop(
-        ["target_type", "plate", "description", "latitude_deg", "longitude_deg", "altitude_m"], axis=1, inplace=True
-    )
-
     update_results_with_theoretical_rcs(
         results=results,
         point_targets_df=point_targets_df,
@@ -433,9 +428,9 @@ def update_df_with_llh(
     pd.DataFrame
         updated point target analysis results
     """
-    general_info_df = results.loc[:, :"polarization"].copy()
+    general_info_df = results.loc[:, :"acquisition_mode"].copy()
     pt_coords_df = point_targets_df.loc[:, :"altitude_m"].copy()
     merged = general_info_df.merge(pt_coords_df, on=["target_name"])
-    addition = results.loc[:, "polarization":].copy()
-    addition.drop("polarization", axis=1, inplace=True)
+    addition = results.loc[:, "acquisition_mode":].copy()
+    addition.drop("acquisition_mode", axis=1, inplace=True)
     return pd.concat([merged, addition], axis=1)

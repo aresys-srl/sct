@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.1.4
+------
+
+**Other changes**
+
+- Saving additional Corner Reflector info in Point Target Analysis output results .csv
+
 v1.1.3
 ------
 
