@@ -92,34 +92,34 @@ unittest_win:
 
 # === test - integration =====================================================
 # ============================================================================
-# integration_test_linux:
-#   stage: test
-#   script:
-#     - python${PYTHON} -m venv ./ci_test
-#     - source ./ci_test/bin/activate
-#     - python -m pip install .[test,cli,graphs]
-#     - python -m pip install sct_aresys_reader sct_sentinel1_reader
-#     - sct-testing -r ./tests/integration_tests/test_registry_linux.json -out ./test_output
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
-#   extends: .tags_manylinux_2_28
-#   needs: []
+integration_test_linux:
+  stage: test
+  script:
+    - python${PYTHON} -m venv ./ci_test
+    - source ./ci_test/bin/activate
+    - python -m pip install .[test,cli,graphs]
+    - python -m pip install sct_aresys_reader sct_sentinel1_reader
+    - sct-testing -r ./tests/integration_tests/test_registry_linux.json -out ./test_output
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
+  extends: .tags_manylinux_2_28
+  needs: []
 
-# integration_test_windows:
-#   stage: test
-#   script:
-#     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-#     - conda create -y -n integration_test python=${PYTHON}
-#     - conda activate integration_test
-#     - python -m pip install -e .[test,cli,graphs]
-#     - python -m pip install sct_aresys_reader sct_sentinel1_reader
-#     - sct-testing -r ./tests/integration_tests/test_registry_windows.json -out ./test_output
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
-#   extends: .tags_win10_new
-#   needs: []
+integration_test_windows:
+  stage: test
+  script:
+    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+    - conda create -y -n integration_test python=${PYTHON}
+    - conda activate integration_test
+    - python -m pip install -e .[test,cli,graphs]
+    - python -m pip install sct_aresys_reader sct_sentinel1_reader
+    - sct-testing -r ./tests/integration_tests/test_registry_windows.json -out ./test_output
+  parallel:
+    matrix:
+      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
+  extends: .tags_win10_new
+  needs: []
 
 # === build ==================================================================
 # ============================================================================
