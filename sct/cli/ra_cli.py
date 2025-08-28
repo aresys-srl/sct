@@ -13,7 +13,10 @@ from pathlib import Path
 import click
 from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
 from arepyextras.quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
-from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf
+from arepyextras.quality.radiometric_analysis.support import (
+    radiometric_profiles_to_netcdf,
+    radiometric_statistical_analysis_to_df,
+)
 
 import sct.analyses.radiometric_analysis as ra
 from sct.cli import common
@@ -230,6 +233,9 @@ def save_and_plot_results(
         sct_logger.info("Saving results to netCDF and plotting graphs...")
     else:
         sct_logger.info("Saving results to netCDF format...")
+
+    stats_df = radiometric_statistical_analysis_to_df(data=output)
+    stats_df.to_csv(output_directory.joinpath("radiometry_statistics.csv"), index=False)
 
     for item in output:
         radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)

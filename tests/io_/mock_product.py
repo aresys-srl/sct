@@ -87,7 +87,6 @@ class MockChannel:
         bandwidth = 1000
         pulse_length = 30
         length = 30
-        tx_pulse_latch_time = None
 
     class MockSwathInfo:
         azimuth_steering_rate_poly = [0, 0, 0]
@@ -97,9 +96,6 @@ class MockChannel:
 
     class MockOrbit:
         pass
-
-    class MockATL:
-        swst_changes = [0, [0], [0]]
 
     general_info = MockGeneralInfo()
     raster_info = MockRasterInfo()
@@ -111,6 +107,5 @@ class MockChannel:
     doppler_centroid_poly = SortedPolyList()
     doppler_rate_poly = SortedPolyList()
     doppler_rate_vector = SortedPolyList()
-    acquisition_timeline = MockATL()
     sampling_constants = None
     image_calibration_factor = 1

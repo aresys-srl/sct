@@ -7,6 +7,7 @@ v1.1.4
 **Other changes**
 
 - Saving additional Corner Reflector info in Point Target Analysis output results .csv
+- Saving radiometric statistics .csv when computing radiometric analysis using CLI tool
 
 v1.1.3
 ------

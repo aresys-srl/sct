@@ -148,8 +148,6 @@ def create_product_manager_test_case(
             self.assertEqual(len(channel_data.slant_range_axis), 50)
             self.assertEqual(len(channel_data.azimuth_axis), 1000)
             self.assertEqual(channel_data.lines_per_burst, 1000)
-            self.assertEqual(channel_data.pulse_latch_time, None)
-            self.assertEqual(channel_data.swst_changes, [(0, 0)])
             self.assertEqual(
                 channel_data.get_mid_burst_times(0),
                 (PreciseDateTime.from_utc_string("01-JAN-2000 00:00:50.000000000000"), 3),
