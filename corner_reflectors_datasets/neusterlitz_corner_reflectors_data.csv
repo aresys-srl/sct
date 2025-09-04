@@ -1,0 +1,5 @@
+target_name,target_type,plate,description,latitude_deg,longitude_deg,altitude_m,x_coord_m,y_coord_m,z_coord_m,drift_velocity_x_my,drift_velocity_y_my,drift_velocity_z_my,corner_azimuth_deg,corner_elevation_deg,target_shape,target_size_m,rcs_hh_dB,rcs_hv_dB,rcs_vv_dB,rcs_vh_dB,delay_s,measurement_date,validity_start_date,validity_stop_date
+D33,CR,EURA,"Neustrelitz, Germany (DLR site)",53.32945,13.06939,104.5,3718515.095,863231.6503,5092608.131,,,,0,0,trihedral,1.5,0,0,0,0,0,2020-01-01 00:00:00.000,2020-01-01 00:00:00.000,2099-01-01 00:00:00.000
+D34,CR,EURA,"Neustrelitz, Germany (DLR site)",53.33008,13.06963,107.69,3718458.553,863234.9397,5092652.563,,,,0,0,trihedral,1.5,0,0,0,0,0,2020-01-01 00:00:00.000,2020-01-01 00:00:00.000,2099-01-01 00:00:00.000
+D35,CR,EURA,"Neustrelitz, Germany (DLR site)",53.3302,13.0695,104.91,3718448.46,863223.705,5092658.309,,,,0,0,trihedral,1.5,0,0,0,0,0,2020-01-01 00:00:00.000,2020-01-01 00:00:00.000,2099-01-01 00:00:00.000
+D36,CR,EURA,"Neustrelitz, Germany (DLR site)",53.32938,13.06991,102.99,3718512.469,863266.6076,5092602.267,,,,0,0,trihedral,1.5,0,0,0,0,0,2020-01-01 00:00:00.000,2020-01-01 00:00:00.000,2099-01-01 00:00:00.000
