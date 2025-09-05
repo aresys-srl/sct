@@ -165,7 +165,7 @@ def enable_quality_logger(file_handler: logging.FileHandler | None = None):
     file_handler : logging.FileHandler | None, optional
         if provided, a file handler is added to the logger, by default None
     """
-    log = logging.getLogger("quality_analysis")
+    log = logging.getLogger("perseo-quality")
     log.addHandler(ConsoleHandler())
     log.setLevel("INFO")
     if file_handler is not None:

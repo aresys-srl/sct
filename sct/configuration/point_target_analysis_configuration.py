@@ -17,7 +17,7 @@ from arepyextras.perturbations.atmospheric.ionosphere import (
     TECMappingFunctionIncidenceAngleMethod,
 )
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
-from arepyextras.quality.point_targets_analysis.config import PointTargetAnalysisConfig
+from perseo_quality.point_targets_analysis.config import PointTargetAnalysisConfig
 
 from sct.configuration.common import InvalidConfigurationFile
 

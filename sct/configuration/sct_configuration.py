@@ -13,9 +13,9 @@ from pathlib import Path
 from typing import Literal
 
 import toml
-from arepyextras.quality.interferometric_analysis.config import InterferometricConfig
-from arepyextras.quality.radiometric_analysis.config import RadiometricProfilesConfig
-from arepyextras.quality.target_ambiguity_ratio_analysis.config import AmbiguityRatioConfig
+from perseo_quality.interferometric_analysis.config import InterferometricConfig
+from perseo_quality.radiometric_analysis.block_wise.config import RadiometricProfilesConfig
+from perseo_quality.tar_analysis.config import AmbiguityRatioConfig
 
 from sct.configuration.common import InvalidConfigurationFile
 from sct.configuration.point_target_analysis_configuration import SCTPointTargetAnalysisConfig

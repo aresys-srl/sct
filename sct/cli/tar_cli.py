@@ -57,7 +57,7 @@ def pt_ambiguity_ratio_analysis_implementation(
 ) -> None:
     """Implement the point target ambiguity ratio analysis command."""
     try:
-        from arepyextras.quality.target_ambiguity_ratio_analysis.graphical_output import ambiguities_graphs
+        from perseo_quality.tar_analysis.graphical_output import ambiguities_graphs
 
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')

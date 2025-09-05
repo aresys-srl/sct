@@ -3,8 +3,8 @@
 
 """SCT: test radiometric analysis script"""
 
-from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
-from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf
+from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
+from perseo_quality.radiometric_analysis.block_wise.support import radiometric_profiles_to_netcdf
 
 from sct.analyses import radiometric_analysis as ra
 from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger

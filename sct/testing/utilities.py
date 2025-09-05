@@ -16,14 +16,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
-from arepyextras.quality.interferometric_analysis.support import (
+from netCDF4 import Dataset
+from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
+from perseo_quality.interferometric_analysis.support import (
     coherence_histograms_to_netcdf,
 )
-from arepyextras.quality.radiometric_analysis.support import (
+from perseo_quality.radiometric_analysis.block_wise.support import (
     radiometric_profiles_to_netcdf,
 )
-from netCDF4 import Dataset
 
 from sct.analyses.interferometric_analysis import interferometric_coherence_analysis
 from sct.analyses.point_target_analysis import point_target_analysis_with_corrections
@@ -374,7 +374,7 @@ def run_nesz_api(
     tag = "NESZ"
     if graphs:
         try:
-            from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
+            from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
         except ImportError:
             sct_logger.critical(
                 'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'
@@ -425,7 +425,7 @@ def run_rain_forest_api(
     tag = "RAIN_FOREST"
     if graphs:
         try:
-            from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
+            from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
         except ImportError:
             sct_logger.critical(
                 'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'

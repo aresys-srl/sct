@@ -19,7 +19,7 @@ This feature consists of the following computation steps:
 - `Radar Cross-Section (RCS)`: measuring radar cross-section and its error, peak phase error, clutter and Signal-to-Clutter Ratio (SCR)
 - `Absolute Localization Errors (ALE)`: measuring absolute localization errors both along range and azimuth directions
 
-An in-depth description of the core algorithm used for point target analysis computation can be found in Arepyextras-Quality
+An in-depth description of the core algorithm used for point target analysis computation can be found in PERSEO-Quality
 documentation.
 
 .. seealso::
@@ -34,7 +34,7 @@ Radiometric Profiles
 This feature let the user compute radiometric profiles along range and/or azimuth directions starting from any supported
 SAR product.
 
-An in-depth description of the core algorithm used for radiometric analysis profiles computation can be found in Arepyextras-Quality
+An in-depth description of the core algorithm used for radiometric analysis profiles computation can be found in PERSEO-Quality
 documentation.
 
 .. seealso::
@@ -50,7 +50,7 @@ product can also be provided as input to compute 2D histograms and display graph
 
 The interferometric analysis feature is limited to Aresys internal SAR product format.
 
-An in-depth description of the core algorithm used for interferometric coherence computation can be found in Arepyextras-Quality
+An in-depth description of the core algorithm used for interferometric coherence computation can be found in PERSEO-Quality
 documentation.
 
 .. seealso::

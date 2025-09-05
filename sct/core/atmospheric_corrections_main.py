@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import TwiceDifferentiable3DCurve
+from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.configuration.logger import sct_logger

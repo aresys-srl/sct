@@ -3,7 +3,7 @@
 
 """SCT: test spectral analysis script"""
 
-from arepyextras.quality.spectral_analysis.graphical_output import spectral_graphs
+from perseo_quality.spectral_analysis.graphical_output import spectral_graphs
 
 from sct.analyses.spectral_analysis import sct_point_target_spectral_analysis
 from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger

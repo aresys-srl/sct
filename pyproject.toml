@@ -13,7 +13,7 @@ dependencies = [
     "shapely",
     "art",
     "arepytools >= 1.7.2",
-    "arepyextras-quality >= 2.0.6",
+    "perseo-quality",
     "arepyextras-perturbations >= 1.1",
     "scipy",
 ]
@@ -59,7 +59,7 @@ allow-direct-references = true
 
 [project.optional-dependencies]
 cli = ["click", "requests"]
-graphs = ["matplotlib >= 3.5", "arepyextras-quality[graphs]"]
+graphs = ["matplotlib >= 3.5", "perseo-quality[graphs]"]
 dev = ["nox", "ruff", "pylint"]
 test = ["unittest-xml-reporting", "coverage"]
 doc = [
@@ -104,7 +104,5 @@ lint_fix = "ruff check --show-fixes --fix-only"
 test = "python -m unittest discover -s ./tests -p test_*.py"
 clean_doc = "python -m sphinx -M clean docs/source {args}"
 build_doc = "python -m sphinx -b html docs/source {args}"
-integration_tests = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite"
-integration_tests_keep = "python -m arepyextras.test --config {args} test run ./tests/integration_tests/suite --keep-working-dir"
 check_code = { composite = ["format_check", "lint_check"] }
 fix_format = { composite = ["format", "sort", "lint_fix"] }

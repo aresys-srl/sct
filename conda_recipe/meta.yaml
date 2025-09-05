@@ -32,7 +32,7 @@ requirements:
     - shapely
     - ascii-art
     - arepytools >=1.7.2
-    - arepyextras-quality >=2.0.6
+    - perseo-quality
     - arepyextras-perturbations >=1.1
     - scipy
 

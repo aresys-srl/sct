@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 import click
-from arepyextras.quality.interferometric_analysis.support import coherence_histograms_to_netcdf
+from perseo_quality.interferometric_analysis.support import coherence_histograms_to_netcdf
 
 import sct.analyses.interferometric_analysis as intf
 from sct.cli import common
@@ -87,7 +87,7 @@ def interf_coherence_analysis_implementation(
     """Implement of the interferometric analysis command."""
     if graphs:
         try:
-            from arepyextras.quality.interferometric_analysis.graphical_output import generate_coherence_graphs
+            from perseo_quality.interferometric_analysis.graphical_output import generate_coherence_graphs
 
         except ImportError:
             sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')

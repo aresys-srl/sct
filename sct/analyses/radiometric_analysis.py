@@ -11,14 +11,14 @@ from __future__ import annotations
 from enum import Enum
 from pathlib import Path
 
-from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
-from arepyextras.quality.radiometric_analysis.analysis import (
+from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
+from perseo_quality.radiometric_analysis.block_wise.analysis import (
     average_elevation_profiles,
     nesz_profiles,
     scalloping_profiles,
 )
-from arepyextras.quality.radiometric_analysis.config import RadiometricProfilesConfig
-from arepyextras.quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
+from perseo_quality.radiometric_analysis.block_wise.config import RadiometricProfilesConfig
+from perseo_quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 
 from sct.configuration.sct_configuration import SCTRadiometricAnalysisConfig
 from sct.io.io_manager import product_loader

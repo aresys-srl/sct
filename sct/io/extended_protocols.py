@@ -10,7 +10,7 @@ from collections.abc import Callable
 from typing import Protocol, runtime_checkable
 
 import pandas as pd
-from arepyextras.quality.io.quality_input_protocol import QualityInputProduct
+from perseo_quality.io.quality_input_protocol import QualityInputProduct
 from shapely import Polygon
 
 

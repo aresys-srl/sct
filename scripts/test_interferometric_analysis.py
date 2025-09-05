@@ -3,9 +3,8 @@
 
 """SCT: test radiometric analysis script"""
 
-
-from arepyextras.quality.interferometric_analysis.graphical_output import generate_coherence_graphs
-from arepyextras.quality.interferometric_analysis.support import coherence_histograms_to_netcdf
+from perseo_quality.interferometric_analysis.graphical_output import generate_coherence_graphs
+from perseo_quality.interferometric_analysis.support import coherence_histograms_to_netcdf
 
 from sct.analyses import interferometric_analysis as interf
 from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger

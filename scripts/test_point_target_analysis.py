@@ -5,7 +5,7 @@
 
 from pathlib import Path
 
-import arepyextras.quality.point_targets_analysis.graphical_output as ptgpo
+import perseo_quality.point_targets_analysis.graphical_output as ptgpo
 
 from sct.analyses import point_target_analysis as pta
 from sct.configuration.logger import ConsoleHandler, SCTFileHandler, enable_quality_logger, sct_logger

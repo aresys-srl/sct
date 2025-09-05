@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.0.0
+------
+
+**Other Changes**
+
+- Substituted Arepyextras-Quality dependency with PERSEO-Quality package
+- RCS Theoretical Computation moved to PERSEO-Quality
+
 v1.1.4
 ------
 

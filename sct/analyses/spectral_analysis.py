@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from arepyextras.quality.spectral_analysis.analysis import point_target_spectral_analysis
-from arepyextras.quality.spectral_analysis.custom_dataclasses import SpectraDataOutput
+from perseo_quality.spectral_analysis.analysis import point_target_spectral_analysis
+from perseo_quality.spectral_analysis.custom_dataclasses import SpectraDataOutput
 
 from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTSpectralAnalysisConfig

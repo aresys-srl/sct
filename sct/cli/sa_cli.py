@@ -59,7 +59,7 @@ def spectral_pt_analysis_implementation(
 ) -> None:
     """Implement the point target spectral analysis command."""
     try:
-        from arepyextras.quality.spectral_analysis.graphical_output import spectral_graphs
+        from perseo_quality.spectral_analysis.graphical_output import spectral_graphs
 
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')

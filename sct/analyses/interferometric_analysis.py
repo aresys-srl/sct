@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from arepyextras.quality.interferometric_analysis.analysis import interferometric_analysis
-from arepyextras.quality.interferometric_analysis.custom_dataclasses import InterferometricCoherenceOutput
+from perseo_quality.interferometric_analysis.analysis import interferometric_analysis
+from perseo_quality.interferometric_analysis.custom_dataclasses import InterferometricCoherenceOutput
 
 from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig
 from sct.io.io_manager import product_loader
@@ -55,7 +55,7 @@ def interferometric_coherence_analysis(
 def sct_interferometric_coherence_analysis(
     product_path: Path, config: SCTInterferometricAnalysisConfig, second_product_path: str | Path | None = None
 ) -> list[InterferometricCoherenceOutput]:
-    """Core computation of coherence and coherence histograms is done using interferometric_analysis arepyextras
+    """Core computation of coherence and coherence histograms is done using interferometric_analysis
     function by passing a proper protocol compliant object from the input product path.
 
     Parameters

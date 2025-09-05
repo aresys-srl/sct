@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from arepyextras.quality.target_ambiguity_ratio_analysis.analysis import point_target_ambiguity_ratio_analysis
-from arepyextras.quality.target_ambiguity_ratio_analysis.custom_dataclasses import AmbiguityRatioOutput
+from perseo_quality.tar_analysis.analysis import point_target_ambiguity_ratio_analysis
+from perseo_quality.tar_analysis.custom_dataclasses import AmbiguityRatioOutput
 
 from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTTargetAmbiguityRatioConfig

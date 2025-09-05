@@ -9,15 +9,15 @@ from tempfile import TemporaryDirectory
 
 from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
 from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
-from arepyextras.quality.core.generic_dataclasses import MaskingMethod
-from arepyextras.quality.interferometric_analysis.config import InterferometricConfig
-from arepyextras.quality.point_targets_analysis.config import IRFParameters, PointTargetAnalysisConfig, RCSParameters
-from arepyextras.quality.radiometric_analysis.config import (
+from jsonschema.exceptions import ValidationError
+from perseo_quality.core.generic_dataclasses import MaskingMethod
+from perseo_quality.interferometric_analysis.config import InterferometricConfig
+from perseo_quality.point_targets_analysis.config import IRFParameters, PointTargetAnalysisConfig, RCSParameters
+from perseo_quality.radiometric_analysis.block_wise.config import (
     ProfileExtractionParameters,
     Radiometric2DHistogramParameters,
     RadiometricProfilesConfig,
 )
-from jsonschema.exceptions import ValidationError
 
 from sct.configuration.sct_configuration import (
     SCTConfiguration,

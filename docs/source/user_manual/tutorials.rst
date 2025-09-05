@@ -108,9 +108,9 @@ The exact same thing can be done from a custom script using SCT as a library:
     from pathlib import Path
     from sct.configuration.sct_configuration import SCTConfiguration
     import sct.analyses.radiometric_analysis as ra
-    from arepyextras.quality.radiometric_analysis.support import radiometric_profiles_to_netcdf  # optional, if netCDF saving is needed
-    from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot  # optional, if graphs are needed
-    from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
+    from perseo_quality.radiometric_analysis.block_wise.support import radiometric_profiles_to_netcdf  # optional, if netCDF saving is needed
+    from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot  # optional, if graphs are needed
+    from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
 
     # adding a configuration is optional
     config_toml_path: str | Path = ...
@@ -165,8 +165,8 @@ The exact same thing can be done from a custom script using SCT as a library:
 .. code-block:: python
 
     from pathlib import Path
-    from arepyextras.quality.interferometric_analysis.graphical_output import generate_coherence_graphs
-    from arepyextras.quality.interferometric_analysis.support import coherence_histograms_to_netcdf
+    from perseo_quality.interferometric_analysis.graphical_output import generate_coherence_graphs
+    from perseo_quality.interferometric_analysis.support import coherence_histograms_to_netcdf
 
     from sct.analyses import interferometric_analysis as interf
     from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig

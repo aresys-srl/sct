@@ -11,12 +11,12 @@ from collections.abc import Callable
 from pathlib import Path
 
 import click
-from arepyextras.quality.core.generic_dataclasses import SARRadiometricQuantity
-from arepyextras.quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
-from arepyextras.quality.radiometric_analysis.support import (
+from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
+from perseo_quality.radiometric_analysis.block_wise.support import (
     radiometric_profiles_to_netcdf,
     radiometric_statistical_analysis_to_df,
 )
+from perseo_quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 
 import sct.analyses.radiometric_analysis as ra
 from sct.cli import common
@@ -252,7 +252,7 @@ def save_and_plot_results(
 def import_radiometric_2d_hist_plot() -> Callable:
     """Import the radiometric 2D histogram plotting function."""
     try:
-        from arepyextras.quality.radiometric_analysis.graphical_output import radiometric_2D_hist_plot
+        from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)

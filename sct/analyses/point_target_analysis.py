@@ -13,8 +13,12 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from arepyextras.quality.core.signal_processing import convert_to_db
-from arepyextras.quality.point_targets_analysis.analysis import point_target_analysis
+from perseo_quality.core.signal_processing import convert_to_db
+from perseo_quality.point_targets_analysis.analysis import point_target_analysis
+from perseo_quality.point_targets_analysis.rcs_geometric_computation import (
+    compute_elevation_azimuth_wrt_enu,
+    compute_rcs_trihedral_corner_reflector,
+)
 from scipy.constants import speed_of_light
 
 from sct.configuration.logger import sct_logger
@@ -25,16 +29,15 @@ from sct.core.atmospheric_corrections_main import (
     run_compute_atmospheric_delays,
 )
 from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
-from sct.core.rcs_computation import compute_elevation_azimuth_wrt_enu, compute_rcs_trihedral_corner_reflector
 from sct.io.extended_protocols import SCTInputProduct
 from sct.io.input_product_plugins import AbsoluteLocalizationErrorCorrector
 from sct.io.io_manager import product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
 if TYPE_CHECKING:
-    from arepyextras.quality.io.quality_input_protocol import ChannelData
-    from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
     from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
+    from perseo_quality.io.quality_input_protocol import ChannelData
+    from perseo_quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 
 
 AZIMUTH_BORE_CR = np.pi / 4
@@ -141,7 +144,7 @@ def point_target_analysis_with_corrections(
     external_corrections_product: str | Path | None = None,
     config: SCTPointTargetAnalysisConfig | None = None,
 ) -> tuple[pd.DataFrame, list[PointTargetGraphicalData]]:
-    """Point Target Analysis high-level function that executes the proper wrapper of Arepyextras-Quality
+    """Point Target Analysis high-level function that executes the proper wrapper of PERSEO-Quality
     point_target_analysis function based on input product type.
 
     Parameters

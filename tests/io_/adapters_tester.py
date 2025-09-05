@@ -9,18 +9,18 @@ from types import NoneType
 from unittest import mock
 
 import numpy as np
-from arepyextras.quality.core.generic_dataclasses import (
+from arepytools.geometry.orbit import Orbit
+from arepytools.math.genericpoly import GenericPoly, SortedPolyList
+from arepytools.timing.precisedatetime import PreciseDateTime
+from mock_product import MockChannel, MockProduct
+from perseo_quality.core.generic_dataclasses import (
     SARImageType,
     SAROrbitDirection,
     SARPolarization,
     SARProjection,
     SARSideLooking,
 )
-from arepyextras.quality.io.quality_input_protocol import ChannelData, QualityInputProduct, SARCoordinatesFunction
-from arepytools.geometry.orbit import Orbit
-from arepytools.math.genericpoly import GenericPoly, SortedPolyList
-from arepytools.timing.precisedatetime import PreciseDateTime
-from mock_product import MockChannel, MockProduct
+from perseo_quality.io.quality_input_protocol import ChannelData, QualityInputProduct, SARCoordinatesFunction
 from shapely import Polygon
 
 from sct.io.extended_protocols import SCTInputProduct

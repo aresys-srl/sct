@@ -10,9 +10,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import arepyextras.quality.point_targets_analysis.graphical_output as pta_go
 import pandas as pd
-from arepyextras.quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
+import perseo_quality.point_targets_analysis.graphical_output as pta_go
+from perseo_quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 
 from sct.configuration.logger import sct_logger
 
