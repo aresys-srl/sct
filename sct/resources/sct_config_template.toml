@@ -42,7 +42,6 @@ resampling_factor = 1.0
 [radiometric_analysis]
 azimuth_block_size = 2000
 range_pixel_margin = 150
-radiometric_correction_exponent = 1.0
 
 [radiometric_analysis.advanced_configuration.profile_extraction_parameters]
 outlier_removal = false

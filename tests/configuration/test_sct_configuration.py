@@ -75,7 +75,6 @@ radiometric_analysis_toml = """
 [radiometric_analysis]
 azimuth_block_size = 23
 range_pixel_margin = 800
-radiometric_correction_exponent = 250.3
 
 [radiometric_analysis.advanced_configuration.profile_extraction_parameters]
 outlier_removal = false
@@ -183,7 +182,6 @@ def _validate_ra_config(config: SCTRadiometricAnalysisConfig) -> None:
     assert isinstance(ra_config, RadiometricProfilesConfig)
     assert ra_config.azimuth_block_size == 23
     assert ra_config.range_pixel_margin == 800
-    assert ra_config.radiometric_correction_exponent == 250.3
 
     hist_config = ra_config.histogram_parameters
     assert isinstance(hist_config, Radiometric2DHistogramParameters)

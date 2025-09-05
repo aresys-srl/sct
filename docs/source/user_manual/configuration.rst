@@ -242,7 +242,6 @@ The following parameters can be configured directly under the `radiometric_analy
     input_type = "beta_nought"              # input radiometric quantity
     azimuth_block_size = 2000               # scene partitioning block size in pixel along azimuth
     range_pixel_margin = 150                # margin in pixel to exclude near and far range from profile
-    radiometric_correction_exponent = 1.0   # radiometric correction exponent applied when converting radiometric quantity
 
 .. admonition:: Validation
 

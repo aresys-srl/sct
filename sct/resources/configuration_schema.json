@@ -276,10 +276,6 @@
                     "type": "integer",
                     "description": "Pixel margin to remove near and far range"
                 },
-                "radiometric_correction_exponent": {
-                    "type": "number",
-                    "description": "Radiometric correction exponent to be applied"
-                },
                 "advanced_configuration": {
                     "type": "object",
                     "properties": {
