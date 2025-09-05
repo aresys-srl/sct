@@ -7,6 +7,7 @@ readme = "README.md"
 license = { file = "LICENSE.txt" }
 dependencies = [
     "numpy>2",
+    "scipy",
     "pandas",
     "jsonschema",
     "toml",
@@ -14,8 +15,7 @@ dependencies = [
     "art",
     "arepytools >= 1.7.2",
     "perseo-quality",
-    "arepyextras-perturbations >= 1.1",
-    "scipy",
+    "perseo-perturbations",
 ]
 dynamic = ["version"]
 classifiers = [

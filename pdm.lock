@@ -5,7 +5,7 @@
 groups = ["default", "cli", "dev", "doc", "graphs", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:a029e3b0a067169b8c73b90eda209286a2582e2444f7faeaf4dff3489379d2ce"
+content_hash = "sha256:3b777c74556610ae4af5b37b3e0573c9636899a665cbf73d6c07b6c83e7041d8"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -47,40 +47,6 @@ dependencies = [
 files = [
     {file = "annotated_types-0.7.0-py3-none-any.whl", hash = "sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53"},
     {file = "annotated_types-0.7.0.tar.gz", hash = "sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89"},
-]
-
-[[package]]
-name = "arepyextras-iers-solid-tides"
-version = "1.0.1"
-requires_python = ">=3.9"
-summary = "ArePyExtras IERS Solid Tides is the Aresys Python module for estimating solid earth tides."
-groups = ["default"]
-dependencies = [
-    "numpy>=1.20",
-    "pandas>=1.4.0",
-]
-files = [
-    {file = "arepyextras-iers_solid_tides-1.0.1.tar.gz", hash = "sha256:41934a004a1bca81022bd3e7bcc1b7d2c808cb9a652a16c2fd435ca622c9b9dd"},
-    {file = "arepyextras_iers_solid_tides-1.0.1-py3-none-any.whl", hash = "sha256:fca260d058d799cd68ba8f0a14978d474a01a5b9455fda264773080dd2bd81f0"},
-]
-
-[[package]]
-name = "arepyextras-perturbations"
-version = "1.1.0"
-requires_python = ">=3.9"
-summary = "ArePyExtras Perturbations is the Aresys Python module for estimating atmospheric and geodynamics perturbations"
-groups = ["default"]
-dependencies = [
-    "arepyextras-iers-solid-tides",
-    "arepytools>=1.6.1",
-    "more-itertools",
-    "numpy>=1.20",
-    "pandas>=1.4.0",
-    "scipy",
-]
-files = [
-    {file = "arepyextras-perturbations-1.1.0.tar.gz", hash = "sha256:fe0fd59fccc08ae124cdfac53f0f3155040a6202d676e8d7854ed9e733c6a8ea"},
-    {file = "arepyextras_perturbations-1.1.0-py3-none-any.whl", hash = "sha256:07df0e0a053ca7acc57a8ca0fe3fa17352cce2611214db2aadc5df90b07585a4"},
 ]
 
 [[package]]
@@ -1637,6 +1603,32 @@ groups = ["doc"]
 files = [
     {file = "parso-0.8.5-py2.py3-none-any.whl", hash = "sha256:646204b5ee239c396d040b90f9e272e9a8017c630092bf59980beb62fd033887"},
     {file = "parso-0.8.5.tar.gz", hash = "sha256:034d7354a9a018bdce352f48b2a8a450f05e9d6ee85db84764e9b6bd96dafe5a"},
+]
+
+[[package]]
+name = "perseo-perturbations"
+version = "1.0.0"
+requires_python = ">=3.10"
+summary = "Python Ecosystem for Remote Sensing & Earth Observation: computing geodynamics displacements and atmospheric delays for SAR products."
+groups = ["default"]
+dependencies = [
+    "arepytools>=1.7.6",
+    "more-itertools",
+    "netCDF4",
+    "numpy>2",
+    "pandas>=1.4.0",
+    "scipy>1.13",
+]
+files = [
+    {file = "perseo_perturbations-1.0.0-cp310-cp310-linux_x86_64.whl", hash = "sha256:8c20186ef2c877a87740a96ca46e4a68427d9e064297b729c315ef66490d7e84"},
+    {file = "perseo_perturbations-1.0.0-cp310-cp310-win_amd64.whl", hash = "sha256:fa7117d30433a9cfabb38a446ab4ba776ad17f71cdec0b60f693675d4e1d73aa"},
+    {file = "perseo_perturbations-1.0.0-cp311-cp311-linux_x86_64.whl", hash = "sha256:082f341a09d1a06c5187527473dd0c98d887245fd99a03d208cf88e058801a89"},
+    {file = "perseo_perturbations-1.0.0-cp311-cp311-win_amd64.whl", hash = "sha256:c3811d8c24000d14d9e3a09c3d8c91c4b73b7a4c392c344f624c0893c49f49d3"},
+    {file = "perseo_perturbations-1.0.0-cp312-cp312-linux_x86_64.whl", hash = "sha256:b81cb1be3618475d951a76a4c714649e20f2ae8f793f898a6a69896b3b891b8f"},
+    {file = "perseo_perturbations-1.0.0-cp312-cp312-win_amd64.whl", hash = "sha256:63329fa994afba3f9696cfdc59dd2bc43803b444553b0aed429b495ce8fb5856"},
+    {file = "perseo_perturbations-1.0.0-cp313-cp313-linux_x86_64.whl", hash = "sha256:94e5e4c56c2bde434e85df5ff506b35f75bb544e07bb80588a2dfff3f1ba4b2f"},
+    {file = "perseo_perturbations-1.0.0-cp313-cp313-win_amd64.whl", hash = "sha256:c3f3e229fe39b94114d562ccb9bc4a82bbe6771cc6a3b8a209c575c353a08d6e"},
+    {file = "perseo_perturbations-1.0.0.tar.gz", hash = "sha256:7f37c657fc00947b2060ef881a6ebd56357fcc1c502e65303044b47c36bfca63"},
 ]
 
 [[package]]

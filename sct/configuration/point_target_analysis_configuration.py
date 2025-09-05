@@ -12,11 +12,11 @@ from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 from typing import Any
 
-from arepyextras.perturbations.atmospheric.ionosphere import (
+from perseo_perturbations.atmospheric.ionosphere import (
     IonosphericAnalysisCenters,
-    TECMappingFunctionIncidenceAngleMethod,
+    TECIncidenceAngleMethod,
 )
-from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
+from perseo_perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from perseo_quality.point_targets_analysis.config import PointTargetAnalysisConfig
 
 from sct.configuration.common import InvalidConfigurationFile
@@ -28,9 +28,7 @@ class IonosphericCorrectionsConf:
 
     maps_directory: Path
     analysis_center: IonosphericAnalysisCenters
-    tec_incidence_angle_method: TECMappingFunctionIncidenceAngleMethod = (
-        TECMappingFunctionIncidenceAngleMethod.GROUND_CONVERTED
-    )
+    tec_incidence_angle_method: TECIncidenceAngleMethod = TECIncidenceAngleMethod.GROUND_CONVERTED
 
     @classmethod
     def from_dict(cls, arg: dict) -> IonosphericCorrectionsConf:
@@ -53,7 +51,7 @@ class IonosphericCorrectionsConf:
 
         for key, value in arg.items():
             if key == "tec_incidence_angle_method":
-                out.tec_incidence_angle_method = TECMappingFunctionIncidenceAngleMethod[value.upper()]
+                out.tec_incidence_angle_method = TECIncidenceAngleMethod[value.upper()]
 
         return out
 

@@ -10,13 +10,13 @@ from enum import Enum
 from pathlib import Path
 
 import requests
-from arepyextras.perturbations.atmospheric.troposphere import (
+from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_perturbations.atmospheric.troposphere import (
     TroposphericGRIDResolution,
     TroposphericMapModel,
     TroposphericMapType,
     generate_tropospheric_map_name_for_vmf_data,
 )
-from arepytools.timing.precisedatetime import PreciseDateTime
 
 
 class TroposphericWebArchives(Enum):

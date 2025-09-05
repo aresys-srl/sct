@@ -11,8 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from arepyextras.perturbations.geodynamics import plate_tectonics, solid_tides
 from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_perturbations.geodynamics import plate_tectonics, solid_tides
 
 from sct.configuration.logger import sct_logger
 

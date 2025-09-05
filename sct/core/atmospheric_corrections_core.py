@@ -12,10 +12,10 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-from arepyextras.perturbations.atmospheric import ionosphere, troposphere
 from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
 from arepytools.geometry.inverse_geocoding_core import inverse_geocoding_monostatic_core
 from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_perturbations.atmospheric import ionosphere, troposphere
 
 
 @dataclass
@@ -25,7 +25,7 @@ class IonosphericInput:
     analysis_center: ionosphere.IonosphericAnalysisCenters
     """ionospheric maps analysis center"""
 
-    incidence_angle_method: ionosphere.TECMappingFunctionIncidenceAngleMethod
+    incidence_angle_method: ionosphere.TECIncidenceAngleMethod
     """pierce point incidence angle computing method"""
 
     map_dir: Path

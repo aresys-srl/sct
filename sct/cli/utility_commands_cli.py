@@ -12,9 +12,9 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
-from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
+from perseo_perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 
 from sct import __version__, sct_discovered_plugins
 from sct.cli import common

@@ -8,13 +8,13 @@ Ionosphere TEC maps downloader
 
 from pathlib import Path
 
-from arepyextras.perturbations.atmospheric import GPS_WEEK_REFERENCE
-from arepyextras.perturbations.atmospheric.ionosphere import (
+from arepytools.timing.conversions import date_to_gps_week
+from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_perturbations.atmospheric import GPS_WEEK_REFERENCE
+from perseo_perturbations.atmospheric.ionosphere import (
     IonosphericAnalysisCenters,
     generate_ionospheric_map_filename,
 )
-from arepytools.timing.conversions import date_to_gps_week
-from arepytools.timing.precisedatetime import PreciseDateTime
 
 from sct.web_scraping.cddis_downloader import cddis_ftps_archive_downloader
 

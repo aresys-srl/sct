@@ -26,6 +26,7 @@ requirements:
   run:
     - python >=3.10
     - numpy >2
+    - scipy
     - pandas
     - jsonschema
     - toml
@@ -33,8 +34,7 @@ requirements:
     - ascii-art
     - arepytools >=1.7.2
     - perseo-quality
-    - arepyextras-perturbations >=1.1
-    - scipy
+    - perseo-perturbations
 
 test:
   imports:

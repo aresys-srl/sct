@@ -8,11 +8,12 @@ v2.0.0
 
 - Substituted Arepyextras-Quality dependency with PERSEO-Quality package
 - RCS Theoretical Computation moved to PERSEO-Quality
+- Substituted Arepyextras-Perturbations dependency with newer PERSEO-Perturbations package
 
 v1.1.4
 ------
 
-**Other changes**
+**Other Changes**
 
 - Saving additional Corner Reflector info in Point Target Analysis output results .csv
 - Saving radiometric statistics .csv when computing radiometric analysis using CLI tool
@@ -33,7 +34,7 @@ v1.1.2
 - Changed plugin interface for ALE corrections
 - Removed ETAD support, moved to dedicated Sentinel-1 plugin
 
-**Other changes**
+**Other Changes**
 
 - Introduced graphs plotting option into testing module CLI/API and general improvement
 - Adding dedicated logging module
@@ -41,7 +42,7 @@ v1.1.2
 v1.1.1
 ------
 
-**Other changes**
+**Other Changes**
 
 - Changed tolerances and validation variables grouping in testing module
 
@@ -53,7 +54,7 @@ v1.1.0
 - Product Format python plugins supported with autodiscovery, removed all custom products implementations from IO module
 - Removed automatic analysis, moved to SCAT
 
-**Other changes**
+**Other Changes**
 
 - Added log of detected plugins into testing module CLI
 - Disabled integration tests, moved to dedicated plugins' CI
@@ -66,7 +67,7 @@ v1.0.5
 - IO: introduced support for ENVISAT/ERS ASAR product format
 - Adding SCt testing module and secondary CLI tool to perform integration tests from tests .json registry
 
-**Other changes**
+**Other Changes**
 
 - Changed integration tests structure, removed Arepyextras Tests dependency
 - Pinned Arepyextras EO Products due to bug in version 1.2.11 [to be removed]
@@ -80,7 +81,7 @@ v1.0.4
 - Added ``Point Target Ambiguity Ratio (PTAR)`` feature
 - IO: introduced support for ASAR/Envisat product format
 
-**Other changes**
+**Other Changes**
 
 - Removed pinning from several dependencies
 - Minor fixes
@@ -95,7 +96,7 @@ v1.0.3
 - Introduced burst check in ``read_data`` to support latest arepyextras-quality features
 - Removed radiometric ``input_quantity`` option from radiometric analysis configuration: it is now always retrieved from the product itself
 
-**Other changes**
+**Other Changes**
 
 - added acquisition mode to protocol implementation for each supported external product format
 - IO: introduced specific plugin for Aresys internal Product Folder format
@@ -114,7 +115,7 @@ v1.0.2
 - Fixed computation of ground range step and slant range step in meters for GRD products
 - Fixed Point Target Binary reader after Arepytools bugfix
 
-**Other changes**
+**Other Changes**
 
 - Introduced PDM
 
@@ -136,7 +137,7 @@ v1.0.1
 
 - Removed lines/samples ordering reference from NovaSAR-1 product format implementation
 
-**Other changes**
+**Other Changes**
 
 - Unittest coverage improved
 - Theoretical RCS computation improved
@@ -152,7 +153,7 @@ v1.0.0
 - Added an automatic analyses detection feature based on intersection of product footprint with a registry of supported locations
 - Added an utility to download Ionospheric TEC Maps from NASA/CDDIS archive
 
-**Other changes**
+**Other Changes**
 
 - Improved and extended the .csv template for Point Targets input data
 - Global re-organization of the corrections management inside the library
@@ -173,7 +174,7 @@ v1.0.0.dev2
 - `Interferometric Analysis`: added a new module to perform interferometric coherence analysis
 - IO: introduced support for SAOCOM product format
 
-**Other changes**
+**Other Changes**
 
 - Removed support for SQLite Point Target internal Database: .csv template-compliant file is the only viable input option
 - Minor type hint bugfixing
@@ -201,6 +202,6 @@ v1.0.0.dev0
 - `Point Target Analysis` atmospheric corrections: introduced support for computing ionospheric and tropospheric delays
 - `Point Target Analysis` Sentinel-1 specific corrections: introduced support for computing range and azimuth corrections
 
-**Other changes**
+**Other Changes**
 
 - User manual added to project documentation

@@ -16,7 +16,7 @@ from sct.core.geodynamics_corrections_main import run_compute_geodynamics_correc
 
 class GeoCorrMainTestCase(unittest.TestCase):
     @mock.patch(
-        "arepyextras.perturbations.geodynamics.solid_tides.compute_displacement",
+        "perseo_perturbations.geodynamics.solid_tides.compute_displacement",
         mock.Mock(return_value=np.array([[0.02881661, -0.00969161, -0.12631474]])),
     )
     def test_run_compute_geodynamics_corrections(self):

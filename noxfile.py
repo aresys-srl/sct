@@ -73,7 +73,7 @@ def unittest(session: nox.Session):
         "-m",
         "coverage",
         "run",
-        "--source=arepytools",
+        "--source=sct",
         "-m",
         "xmlrunner",
         "--output-file",

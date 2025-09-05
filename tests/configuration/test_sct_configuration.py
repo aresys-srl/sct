@@ -7,9 +7,9 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from arepyextras.perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
-from arepyextras.perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from jsonschema.exceptions import ValidationError
+from perseo_perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
+from perseo_perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 from perseo_quality.core.generic_dataclasses import MaskingMethod
 from perseo_quality.interferometric_analysis.config import InterferometricConfig
 from perseo_quality.point_targets_analysis.config import IRFParameters, PointTargetAnalysisConfig, RCSParameters
