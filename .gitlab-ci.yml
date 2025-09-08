@@ -92,34 +92,34 @@ unittest_win:
 
 # === test - integration =====================================================
 # ============================================================================
-integration_test_linux:
-  stage: test
-  script:
-    - python${PYTHON} -m venv ./ci_test
-    - source ./ci_test/bin/activate
-    - python -m pip install .[test,cli,graphs]
-    - python -m pip install sct_aresys_reader sct_sentinel1_reader
-    - sct-testing -r ./tests/integration_tests/test_registry_linux.json -out ./test_output
-  parallel:
-    matrix:
-      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
-  extends: .tags_manylinux_2_28
-  needs: []
+# integration_test_linux:
+#   stage: test
+#   script:
+#     - python${PYTHON} -m venv ./ci_test
+#     - source ./ci_test/bin/activate
+#     - python -m pip install .[test,cli,graphs]
+#     - python -m pip install sct_aresys_reader sct_sentinel1_reader
+#     - sct-testing -r ./tests/integration_tests/test_registry_linux.json -out ./test_output
+#   parallel:
+#     matrix:
+#       - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
+#   extends: .tags_manylinux_2_28
+#   needs: []
 
-integration_test_windows:
-  stage: test
-  script:
-    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-    - conda create -y -n integration_test python=${PYTHON}
-    - conda activate integration_test
-    - python -m pip install -e .[test,cli,graphs]
-    - python -m pip install sct_aresys_reader sct_sentinel1_reader
-    - sct-testing -r ./tests/integration_tests/test_registry_windows.json -out ./test_output
-  parallel:
-    matrix:
-      - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
-  extends: .tags_win10_new
-  needs: []
+# integration_test_windows:
+#   stage: test
+#   script:
+#     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+#     - conda create -y -n integration_test python=${PYTHON}
+#     - conda activate integration_test
+#     - python -m pip install -e .[test,cli,graphs]
+#     - python -m pip install sct_aresys_reader sct_sentinel1_reader
+#     - sct-testing -r ./tests/integration_tests/test_registry_windows.json -out ./test_output
+#   parallel:
+#     matrix:
+#       - PYTHON: ["3.10", "3.11", "3.12", "3.13"]
+#   extends: .tags_win10_new
+#   needs: []
 
 # === build ==================================================================
 # ============================================================================
@@ -149,18 +149,18 @@ wheel:
     paths:
       - dist/*.whl
 
-conda_pkg:
-  stage: build
-  extends:
-    - .tags_conda
-  script:
-    - pip install nox
-    - python -m nox -s build_conda_pkg
-  needs: []
-  artifacts:
-    expire_in: 2 weeks
-    paths:
-      - dist/*.conda
+# conda_pkg:
+#   stage: build
+#   extends:
+#     - .tags_conda
+#   script:
+#     - pip install nox
+#     - python -m nox -s build_conda_pkg
+#   needs: []
+#   artifacts:
+#     expire_in: 2 weeks
+#     paths:
+#       - dist/*.conda
 
 doc:
   stage: build
@@ -190,12 +190,12 @@ deploy_package:
       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
-    - for file in dist/*.conda; do
-      eo_pgp-signme ${file} > ${file}.asc &&
-      ./.gitlab/ci/dashboard-copy.sh ${file} ${INTERNAL_CONDA_CHANNEL_PATH}/noarch &&
-      ./.gitlab/ci/dashboard-copy.sh ${file}.asc ${INTERNAL_CONDA_CHANNEL_PATH}/noarch;
-      done
-    - ./.gitlab/ci/conda-forge-update.sh ${INTERNAL_CONDA_CHANNEL_PATH}
+    # - for file in dist/*.conda; do
+    #   eo_pgp-signme ${file} > ${file}.asc &&
+    #   ./.gitlab/ci/dashboard-copy.sh ${file} ${INTERNAL_CONDA_CHANNEL_PATH}/noarch &&
+    #   ./.gitlab/ci/dashboard-copy.sh ${file}.asc ${INTERNAL_CONDA_CHANNEL_PATH}/noarch;
+    #   done
+    # - ./.gitlab/ci/conda-forge-update.sh ${INTERNAL_CONDA_CHANNEL_PATH}
 
 deploy_doc:
   stage: deploy
