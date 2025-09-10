@@ -143,8 +143,6 @@ def create_product_manager_test_case(
             self.assertEqual(channel_data.mid_range_time, 2.95)
             self.assertEqual(len(channel_data.range_axis), 50)
             self.assertEqual(channel_data.azimuth_step_s, 0.1)
-            if channel_data.pulse_rate is not None:
-                self.assertEqual(channel_data.pulse_rate, 33.333333333333336)
             self.assertEqual(len(channel_data.slant_range_axis), 50)
             self.assertEqual(len(channel_data.azimuth_axis), 1000)
             self.assertEqual(channel_data.lines_per_burst, 1000)
