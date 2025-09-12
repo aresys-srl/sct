@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""Automating python testing, formatting and distribution of SCT module"""
+"""Automating python testing, formatting and distribution of SCT"""
 
 import glob
 import os
@@ -46,7 +46,7 @@ def check_format(session: nox.Session):
             header = first_line + ifile.readline() + ifile.readline()
             return header != _LICENSE_HEADER
 
-    source_files = glob.glob("sct/**/*.py", recursive=True)
+    source_files = glob.glob("src/sct/**/*.py", recursive=True)
     no_licensed_files = list(filter(wrong_license_header, source_files))
 
     if len(no_licensed_files) > 0:
@@ -59,7 +59,7 @@ def check_format(session: nox.Session):
 def pylint(session: nox.Session):
     """Analysis of code-base quality with pylint"""
     session.install("pylint")
-    session.run("python", "-m", "pylint", "sct")
+    session.run("python", "-m", "pylint", "src/sct")
 
 
 @nox.session(python=PY_VERSIONS)

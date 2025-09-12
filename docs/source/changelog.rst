@@ -9,6 +9,7 @@ v2.0.1
 - Dropping support for Aresys internal Point Target source (Point Target .xml file, Point Target Binary folder)
 - Adding a dedicated script for converting Aresys internal Point target sources to SCT .csv compliant dataset
 - Substituting Arepytools.io point target dataclass dependency with new PERSEO-Quality internal model
+- Changing package layout to ``src``
 
 v2.0.0
 ------
