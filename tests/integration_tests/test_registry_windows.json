@@ -4,35 +4,35 @@
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/aresysPF/products/demo_topsar/SLC",
             "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/demo_topsar_point_targets_binary",
+            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/sct_pt/demo_topsar_pt_dataset.csv",
             "reference_output": "C:/chopper/integration_tests/sct/reference_results/aresys_pf/slc-topsar-pta/pta_res.csv"
         },
         "slc-real-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/aresysPF/products/real_slc/SLH_45599_SLC",
             "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/real_slc_point_targets.xml",
+            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/sct_pt/real_iceye_pt_dataset.csv",
             "reference_output": "C:/chopper/integration_tests/sct/reference_results/aresys_pf/slc-real-pta/pta_res.csv"
         },
         "slc-squint20deg-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/aresysPF/products/squinted_data/20deg/SLC",
             "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/squinted_20deg_point_targets_binary",
+            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/sct_pt/squinted_20deg_pt_dataset.csv",
             "reference_output": "C:/chopper/integration_tests/sct/reference_results/aresys_pf/slc-squint20deg-pta/pta_res.csv"
         },
         "slc-squint40deg-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/aresysPF/products/squinted_data/40deg/SLC",
             "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/squinted_40deg_point_targets_binary",
+            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/sct_pt/squinted_40deg_pt_dataset.csv",
             "reference_output": "C:/chopper/integration_tests/sct/reference_results/aresys_pf/slc-squint40deg-pta/pta_res.csv"
         },
         "grd-biomass-pta": {
             "analysis": "pta",
             "product": "C:/chopper/reference_dataset/aresysPF/products/biomass_multichannel/iGRD",
             "config": "C:/chopper/integration_tests/sct/configurations/test_906f38dc_config.toml",
-            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/biomass_multichannel_point_targets.xml",
+            "targets": "C:/chopper/reference_dataset/aresysPF/auxiliaries/sct_pt/biomass_multichannel_pt_dataset.csv",
             "reference_output": "C:/chopper/integration_tests/sct/reference_results/aresys_pf/grd-biomass-pta/pta_res.csv"
         },
         "interf-coregistered": {
