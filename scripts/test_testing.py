@@ -10,7 +10,7 @@ if __name__ == "__main__":
     enable_quality_logger()
     sct_logger.addHandler(ConsoleHandler())
     run_tests(
-        registry_path=r"C:\ARESYS_PROJ\sct\test_registry_windows.json",
-        output_dir=r"C:\ARESYS_PROJ\sct\scripts\out",
+        registry_path=r"scripts\local_registry.json",
+        output_dir=r"scripts\out",
         graphs=False,
     )
