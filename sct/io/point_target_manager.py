@@ -13,8 +13,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from arepytools.geometry.conversions import llh2xyz
-from arepytools.io.io_support import NominalPointTarget
 from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_quality.io.point_targets import PointTarget
 
 
 class UnsupportedPointTargetSource(RuntimeError):
@@ -50,7 +50,7 @@ def extract_point_target_data_from_source(source: str | Path) -> pd.DataFrame:
     return point_targets_df
 
 
-def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, NominalPointTarget]:
+def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> list[PointTarget]:
     """Convert dataframe to dictionary of NominalPointTarget values.
 
     Parameters
@@ -60,22 +60,24 @@ def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> dict[str, Nomin
 
     Returns
     -------
-    dict[str, NominalPointTarget]
-        dictionary with keys being point target ids and values being NominalPointTarget dataclasses
+    list[PointTarget]
+        list of Point Target objects
     """
-    data_dict = dict.fromkeys(data_df.target_name)
+    pt_data = []
     for _, row in data_df.iterrows():
-        delay = row["delay_s"] if not np.isnan(row["delay_s"]) else None
-        data_dict[row["target_name"]] = NominalPointTarget(
-            xyz_coordinates=row[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy(dtype=float),
-            delay=delay,
-            rcs_hh=row["rcs_hh_dB"],
-            rcs_hv=row["rcs_hv_dB"],
-            rcs_vh=row["rcs_vh_dB"],
-            rcs_vv=row["rcs_vv_dB"],
+        pt_data.append(
+            PointTarget(
+                name=row["target_name"],
+                xyz_coordinates=row[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy(dtype=float),
+                delay=row["delay_s"] if not np.isnan(row["delay_s"]) else None,
+                rcs_hh=row["rcs_hh_dB"],
+                rcs_hv=row["rcs_hv_dB"],
+                rcs_vh=row["rcs_vh_dB"],
+                rcs_vv=row["rcs_vv_dB"],
+            )
         )
 
-    return data_dict
+    return pt_data
 
 
 def convert_rosamond_file_to_compliant_csv(
