@@ -27,7 +27,6 @@ if __name__ == "__main__":
 
     # external orbits
     ext_orbit = None
-    # ext_orbit = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\S1A_OPER_AUX_RESORB_OPOD_20190108T123406_V20190108T070200_20190108T101930.EOF"
 
     # external target source
     ext_target = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\surat_basin_data.csv"
@@ -45,7 +44,7 @@ if __name__ == "__main__":
         product_path=prod,
         external_orbit_path=ext_orbit,
         external_target_source=ext_target,
-        external_corrections_product=r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\ETAD_23.SAFE",  # ETAD product here
+        external_corrections_product=r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\sentinel1\ETAD_23.SAFE",  # ETAD
         config=test_config.point_target_analysis,
     )
 

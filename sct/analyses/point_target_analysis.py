@@ -105,7 +105,6 @@ def _compute_theoretical_rcs(
     -------
     list
         List of theoretical RCS values
-
     """
     results = []
     for _, row in data_df.iterrows():
@@ -167,7 +166,6 @@ def point_target_analysis_with_corrections(
         pandas data frame containing all the computed features for each point target
     list[PointTargetGraphicalData]
         dict of data stored for graphical output needs
-
     """
     product_path = Path(product_path)
     external_target_source = Path(external_target_source)

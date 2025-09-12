@@ -30,7 +30,9 @@ if __name__ == "__main__":
 
     prod = r"C:\Users\giorgio.parma\Aresys_DATA\sct_data\eos04\L1B_GRD\244711611"
     output = ra.nesz_analysis(product_path=prod, config=config.radiometric_analysis)
-    # output = ra.average_elevation_profile_analysis(product_path=prod, output_quantity=SARRadiometricQuantity.GAMMA_NOUGHT, config=config.radiometric_analysis)
+    # output = ra.average_elevation_profile_analysis(
+    #     product_path=prod, output_quantity=SARRadiometricQuantity.GAMMA_NOUGHT, config=config.radiometric_analysis
+    # )
     tag = "NESZ"
     mode = "min"
 
