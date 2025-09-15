@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.0.2
+------
+
+**Additional Features**
+
+- Adding GeoJSON format support for Point Target input sources
+
 v2.0.1
 ------
 

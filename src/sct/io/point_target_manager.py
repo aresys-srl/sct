@@ -8,6 +8,7 @@ Point Target and Calibration Sites utilities
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -15,6 +16,8 @@ import pandas as pd
 from arepytools.geometry.conversions import llh2xyz
 from arepytools.timing.precisedatetime import PreciseDateTime
 from perseo_quality.io.point_targets import PointTarget
+
+from sct import csv_template
 
 
 class UnsupportedPointTargetSource(RuntimeError):
@@ -35,19 +38,81 @@ def extract_point_target_data_from_source(source: str | Path) -> pd.DataFrame:
         pandas dataframe corresponding to the input point target file
     """
     source = Path(source)
-    if str(source).endswith(".csv"):
+    if source.name.endswith(".csv"):
         # external format, .csv template compliant
-        point_targets_df = pd.read_csv(source)
-        for date_in in ("measurement_date", "validity_start_date", "validity_stop_date"):
-            if not point_targets_df["measurement_date"].isnull().all():
-                point_targets_df[date_in] = pd.to_datetime(point_targets_df[date_in], format="mixed")
-                point_targets_df[date_in] = point_targets_df[date_in].apply(
-                    lambda x: PreciseDateTime.fromisoformat(x.isoformat()) if not pd.isnull(x) else x
-                )
+        point_targets_df = read_csv_point_targets_file(source=source)
+    elif source.name.endswith(".geojson"):
+        ...
     else:
         raise UnsupportedPointTargetSource(source)
 
     return point_targets_df
+
+
+def read_csv_point_targets_file(source: Path) -> pd.DataFrame:
+    """Reading the input .csv file containing Point Target locations and info and converting it to a Pandas DataFrame.
+
+    Parameters
+    ----------
+    source : Path
+        path to the .csv file
+
+    Returns
+    -------
+    pd.DataFrame
+        Point Targets DataFrame
+    """
+    df = pd.read_csv(source)
+    for date_in in ("measurement_date", "validity_start_date", "validity_stop_date"):
+        if not df["measurement_date"].isnull().all():
+            df[date_in] = pd.to_datetime(df[date_in], format="mixed")
+            df[date_in] = df[date_in].apply(
+                lambda x: PreciseDateTime.fromisoformat(x.isoformat()) if not pd.isnull(x) else x
+            )
+    return df
+
+
+def read_geojson_point_targets_file(source: Path) -> pd.DataFrame:
+    """Reading the input .geojson file containing Point Target locations and info and converting it to Pandas DataFrame.
+
+    Parameters
+    ----------
+    source : Path
+        path to the .geojson file
+
+    Returns
+    -------
+    pd.DataFrame
+        Point Targets DataFrame
+    """
+    with open(source, "r") as f_in:
+        data = json.load(f_in)
+    data = data["features"]
+    df = pd.read_csv(csv_template)
+    rows = [dict.fromkeys(df.columns) for _ in range(len(data))]
+    for pt_id, pt in enumerate(data):
+        pt = data[pt_id]
+        rows[pt_id]["longitude_deg"] = pt["geometry"]["coordinates"][0]
+        rows[pt_id]["latitude_deg"] = pt["geometry"]["coordinates"][1]
+        try:
+            rows[pt_id]["altitude_m"] = pt["geometry"]["coordinates"][2]
+        except IndexError:
+            rows[pt_id]["altitude_m"] = 0
+        xyz = llh2xyz(
+            coordinates=np.deg2rad(
+                [rows[pt_id]["latitude_deg"], rows[pt_id]["longitude_deg"], rows[pt_id]["altitude_m"]]
+            )
+        ).squeeze()
+        rows[pt_id]["x_coord_m"], rows[pt_id]["y_coord_m"], rows[pt_id]["z_coord_m"] = xyz
+
+        for prop in pt["properties"]:
+            if prop in df.columns:
+                if "date" in prop:
+                    rows[pt_id][prop] = PreciseDateTime.from_utc_string(pt["properties"][prop])
+                else:
+                    rows[pt_id][prop] = pt["properties"][prop]
+
+    return pd.DataFrame(rows)
 
 
 def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> list[PointTarget]:
@@ -157,3 +222,9 @@ def convert_rosamond_file_to_compliant_csv(
     df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after
 
     return df
+
+
+if __name__ == "__main__":
+    read_geojson_point_targets_file(
+        r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets\surat_basin_corner_reflectors_data.geojson"
+    )

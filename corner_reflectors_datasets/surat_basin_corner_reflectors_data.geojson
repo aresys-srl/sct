@@ -1,0 +1,1285 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.1656039,
+                    -26.83470987,
+                    409.4544
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB01-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0325,
+                "drift_velocity_y_my": -0.0083,
+                "drift_velocity_z_my": 0.0487,
+                "corner_azimuth_deg": 257.1,
+                "corner_elevation_deg": 53.32,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.2376127,
+                    -26.95163312,
+                    432.7094
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB02-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0325,
+                "drift_velocity_y_my": -0.0082,
+                "drift_velocity_z_my": 0.0486,
+                "corner_azimuth_deg": 256.21,
+                "corner_elevation_deg": 53.33,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.2588089,
+                    -27.10073184,
+                    391.8599
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB03-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0326,
+                "drift_velocity_y_my": -0.0081,
+                "drift_velocity_z_my": 0.0485,
+                "corner_azimuth_deg": 258.46,
+                "corner_elevation_deg": 54.34,
+                "target_shape": "trihedral",
+                "target_size_m": 2.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.2719591,
+                    -27.30887139,
+                    385.242
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB04-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0326,
+                "drift_velocity_y_my": -0.0079,
+                "drift_velocity_z_my": 0.0484,
+                "corner_azimuth_deg": 258.51,
+                "corner_elevation_deg": 54.67,
+                "target_shape": "trihedral",
+                "target_size_m": 2.0,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.1908296,
+                    -27.45693025,
+                    403.0057
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB05-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0327,
+                "drift_velocity_y_my": -0.0077,
+                "drift_velocity_z_my": 0.0484,
+                "corner_azimuth_deg": 258.2,
+                "corner_elevation_deg": 55.36,
+                "target_shape": "trihedral",
+                "target_size_m": 2.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.0859229,
+                    -27.37473853,
+                    387.6754
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB06-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0328,
+                "drift_velocity_y_my": -0.0078,
+                "drift_velocity_z_my": 0.0484,
+                "corner_azimuth_deg": 255.28,
+                "corner_elevation_deg": 54.6,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.0167662,
+                    -27.23278969,
+                    373.0977
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB08-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0327,
+                "drift_velocity_y_my": -0.0079,
+                "drift_velocity_z_my": 0.0485,
+                "corner_azimuth_deg": 256.53,
+                "corner_elevation_deg": 56.45,
+                "target_shape": "trihedral",
+                "target_size_m": 2.0,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.1092032,
+                    -27.12599545,
+                    370.6178
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB09-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0326,
+                "drift_velocity_y_my": -0.008,
+                "drift_velocity_z_my": 0.0485,
+                "corner_azimuth_deg": 258.28,
+                "corner_elevation_deg": 55.6,
+                "target_shape": "trihedral",
+                "target_size_m": 2.0,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    151.1438779,
+                    -26.94651144,
+                    390.5168
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB10-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0326,
+                "drift_velocity_y_my": -0.0082,
+                "drift_velocity_z_my": 0.0486,
+                "corner_azimuth_deg": 255.93,
+                "corner_elevation_deg": 53.53,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.9395077,
+                    -26.82268499,
+                    368.4832
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB11-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0326,
+                "drift_velocity_y_my": -0.0083,
+                "drift_velocity_z_my": 0.0487,
+                "corner_azimuth_deg": 257.05,
+                "corner_elevation_deg": 54.23,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.9163773,
+                    -26.92612314,
+                    358.791
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB12-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0327,
+                "drift_velocity_y_my": -0.0082,
+                "drift_velocity_z_my": 0.0487,
+                "corner_azimuth_deg": 256.18,
+                "corner_elevation_deg": 54.59,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.9236201,
+                    -27.09530671,
+                    395.4661
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB13-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0327,
+                "drift_velocity_y_my": -0.008,
+                "drift_velocity_z_my": 0.0486,
+                "corner_azimuth_deg": 256.42,
+                "corner_elevation_deg": 55.11,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.9448228,
+                    -27.39983571,
+                    387.9695
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB14-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0328,
+                "drift_velocity_y_my": -0.0077,
+                "drift_velocity_z_my": 0.0485,
+                "corner_azimuth_deg": 258.58,
+                "corner_elevation_deg": 57.2,
+                "target_shape": "trihedral",
+                "target_size_m": 2.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.8201937,
+                    -27.29907791,
+                    426.7689
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB15-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0329,
+                "drift_velocity_y_my": -0.0078,
+                "drift_velocity_z_my": 0.0486,
+                "corner_azimuth_deg": 255.85,
+                "corner_elevation_deg": 55.84,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.7564152,
+                    -27.07814548,
+                    381.4304
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB16-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0328,
+                "drift_velocity_y_my": -0.008,
+                "drift_velocity_z_my": 0.0487,
+                "corner_azimuth_deg": 256.95,
+                "corner_elevation_deg": 55.98,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.7847203,
+                    -26.91764566,
+                    353.8773
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB17-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0327,
+                "drift_velocity_y_my": -0.0081,
+                "drift_velocity_z_my": 0.0488,
+                "corner_azimuth_deg": 255.78,
+                "corner_elevation_deg": 55.4,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.7730205,
+                    -26.67372716,
+                    361.1622
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB18-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0326,
+                "drift_velocity_y_my": -0.0084,
+                "drift_velocity_z_my": 0.0489,
+                "corner_azimuth_deg": 257.49,
+                "corner_elevation_deg": 54.87,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.6704368,
+                    -26.91487069,
+                    359.7925
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB19-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0328,
+                "drift_velocity_y_my": -0.0081,
+                "drift_velocity_z_my": 0.0488,
+                "corner_azimuth_deg": 256.56,
+                "corner_elevation_deg": 56.07,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.5768339,
+                    -27.02391179,
+                    357.7502
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB20-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0329,
+                "drift_velocity_y_my": -0.008,
+                "drift_velocity_z_my": 0.0488,
+                "corner_azimuth_deg": 256.5,
+                "corner_elevation_deg": 56.93,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.6700324,
+                    -27.23780988,
+                    388.7727
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB21-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0329,
+                "drift_velocity_y_my": -0.0078,
+                "drift_velocity_z_my": 0.0487,
+                "corner_azimuth_deg": 256.61,
+                "corner_elevation_deg": 56.26,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.7462913,
+                    -27.42434824,
+                    413.0829
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB22-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.033,
+                "drift_velocity_y_my": -0.0076,
+                "drift_velocity_z_my": 0.0485,
+                "corner_azimuth_deg": 256.28,
+                "corner_elevation_deg": 56.17,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.8595332,
+                    -27.60335556,
+                    381.6017
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB23-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.033,
+                "drift_velocity_y_my": -0.0075,
+                "drift_velocity_z_my": 0.0484,
+                "corner_azimuth_deg": 256.67,
+                "corner_elevation_deg": 56.44,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.4432145,
+                    -27.5096885,
+                    337.308
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB24-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0331,
+                "drift_velocity_y_my": -0.0075,
+                "drift_velocity_z_my": 0.0486,
+                "corner_azimuth_deg": 257.66,
+                "corner_elevation_deg": 57.02,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.2968277,
+                    -27.61129809,
+                    316.2926
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB25-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0333,
+                "drift_velocity_y_my": -0.0073,
+                "drift_velocity_z_my": 0.0486,
+                "corner_azimuth_deg": 256.52,
+                "corner_elevation_deg": 57.72,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.4851197,
+                    -27.25883102,
+                    355.3122
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB26-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.033,
+                "drift_velocity_y_my": -0.0077,
+                "drift_velocity_z_my": 0.0487,
+                "corner_azimuth_deg": 256.71,
+                "corner_elevation_deg": 56.27,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.6217678,
+                    -26.76676501,
+                    353.2136
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB27-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0327,
+                "drift_velocity_y_my": -0.0082,
+                "drift_velocity_z_my": 0.0489,
+                "corner_azimuth_deg": 256.66,
+                "corner_elevation_deg": 56.25,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.65925,
+                    -26.55989599,
+                    370.9227
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB28-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0326,
+                "drift_velocity_y_my": -0.0085,
+                "drift_velocity_z_my": 0.049,
+                "corner_azimuth_deg": 254.67,
+                "corner_elevation_deg": 55.44,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.4970163,
+                    -26.67052739,
+                    382.358
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB29-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0328,
+                "drift_velocity_y_my": -0.0083,
+                "drift_velocity_z_my": 0.049,
+                "corner_azimuth_deg": 256.63,
+                "corner_elevation_deg": 56.06,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.3884789,
+                    -26.90013055,
+                    338.8747
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB30-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0329,
+                "drift_velocity_y_my": -0.008,
+                "drift_velocity_z_my": 0.0489,
+                "corner_azimuth_deg": 257.64,
+                "corner_elevation_deg": 55.87,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.3315557,
+                    -27.20730069,
+                    333.338
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB31-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0331,
+                "drift_velocity_y_my": -0.0077,
+                "drift_velocity_z_my": 0.0488,
+                "corner_azimuth_deg": 256.97,
+                "corner_elevation_deg": 56.71,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.1946632,
+                    -27.36981842,
+                    322.1841
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB32-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0332,
+                "drift_velocity_y_my": -0.0075,
+                "drift_velocity_z_my": 0.0488,
+                "corner_azimuth_deg": 256.44,
+                "corner_elevation_deg": 58.18,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.1108672,
+                    -27.19426953,
+                    316.9538
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB34-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0332,
+                "drift_velocity_y_my": -0.0077,
+                "drift_velocity_z_my": 0.0489,
+                "corner_azimuth_deg": 256.72,
+                "corner_elevation_deg": 58.01,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.2596331,
+                    -27.08563567,
+                    371.1494
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB35-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0331,
+                "drift_velocity_y_my": -0.0078,
+                "drift_velocity_z_my": 0.0489,
+                "corner_azimuth_deg": 256.92,
+                "corner_elevation_deg": 57.22,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.2176194,
+                    -26.86580688,
+                    337.1187
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB36-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.033,
+                "drift_velocity_y_my": -0.008,
+                "drift_velocity_z_my": 0.049,
+                "corner_azimuth_deg": 257.48,
+                "corner_elevation_deg": 57.09,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.1589325,
+                    -26.81325639,
+                    343.3239
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB37-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.033,
+                "drift_velocity_y_my": -0.0081,
+                "drift_velocity_z_my": 0.049,
+                "corner_azimuth_deg": 256.52,
+                "corner_elevation_deg": 57.43,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.3103225,
+                    -26.64702109,
+                    388.4128
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB38-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0329,
+                "drift_velocity_y_my": -0.0083,
+                "drift_velocity_z_my": 0.049,
+                "corner_azimuth_deg": 256.86,
+                "corner_elevation_deg": 56.27,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.3844873,
+                    -26.46208454,
+                    374.2237
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB39-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0327,
+                "drift_velocity_y_my": -0.0085,
+                "drift_velocity_z_my": 0.0491,
+                "corner_azimuth_deg": 257.38,
+                "corner_elevation_deg": 57.18,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.134805,
+                    -26.56593563,
+                    350.7873
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB40-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0329,
+                "drift_velocity_y_my": -0.0083,
+                "drift_velocity_z_my": 0.0491,
+                "corner_azimuth_deg": 256.13,
+                "corner_elevation_deg": 56.74,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    149.9525254,
+                    -26.7708615,
+                    387.4865
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB41-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0331,
+                "drift_velocity_y_my": -0.008,
+                "drift_velocity_z_my": 0.0491,
+                "corner_azimuth_deg": 256.77,
+                "corner_elevation_deg": 58.68,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "coordinates": [
+                    150.007075,
+                    -26.96678952,
+                    318.3996
+                ],
+                "type": "Point"
+            },
+            "properties": {
+                "target_name": "SB42-CRApex",
+                "target_type": "CR",
+                "plate": "AUST",
+                "description": "Surat Basin, Queensland, Australia",
+                "drift_velocity_x_my": -0.0331,
+                "drift_velocity_y_my": -0.0079,
+                "drift_velocity_z_my": 0.049,
+                "corner_azimuth_deg": 255.85,
+                "corner_elevation_deg": 58.67,
+                "target_shape": "trihedral",
+                "target_size_m": 1.5,
+                "rcs_hh_dB": 0,
+                "rcs_hv_dB": 0,
+                "rcs_vh_dB": 0,
+                "rcs_vv_dB": 0,
+                "delay_s": 0,
+                "measurement_date": "2020-01-01 00:00:00.000000",
+                "validity_start_date": "2020-01-01 00:00:00.000000",
+                "validity_stop_date": "2099-01-01 00:00:00.000000"
+            }
+        }
+    ]
+}

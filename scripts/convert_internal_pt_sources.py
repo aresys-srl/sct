@@ -3,16 +3,18 @@
 
 """Converting Aresys internal Point Target sources (.xml and Binary Folder) to SCT compliant .csv"""
 
+import json
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from arepytools.geometry.conversions import xyz2llh
 from arepytools.io import PointSetProduct, read_point_targets_file
-from arepytools.timing.precisedatetime import PreciseDateTime
 from perseo_quality.core.signal_processing import convert_to_db
 
 from sct import csv_template
+from sct.io.point_target_manager import extract_point_target_data_from_source
 
 
 def convert_point_target_binary_to_df(source: str | Path) -> pd.DataFrame:
@@ -116,8 +118,65 @@ def convert_aresys_point_target_formats(source: str | Path) -> pd.DataFrame:
     return point_targets_df
 
 
+def convert_csv_point_target_to_geojson(source: str | Path, output_dir: str | Path) -> Path:
+    source = Path(source)
+    assert source.name.endswith(".csv")
+    output_dir = Path(output_dir)
+    df = extract_point_target_data_from_source(source=source)
+    out = {"type": "FeatureCollection", "features": []}
+    for _, row in df.iterrows():
+        properties = row[
+            [
+                "target_name",
+                "target_type",
+                "plate",
+                "description",
+                "drift_velocity_x_my",
+                "drift_velocity_y_my",
+                "drift_velocity_z_my",
+                "corner_azimuth_deg",
+                "corner_elevation_deg",
+                "target_shape",
+                "target_size_m",
+                "rcs_hh_dB",
+                "rcs_hv_dB",
+                "rcs_vh_dB",
+                "rcs_vv_dB",
+                "delay_s",
+            ]
+        ].to_dict()
+        properties["measurement_date"] = datetime.fromisoformat(row["measurement_date"].isoformat()).strftime(
+            "%Y-%m-%d %H:%M:%S.%f"
+        )
+        properties["validity_start_date"] = datetime.fromisoformat(row["validity_start_date"].isoformat()).strftime(
+            "%Y-%m-%d %H:%M:%S.%f"
+        )
+        properties["validity_stop_date"] = datetime.fromisoformat(row["validity_stop_date"].isoformat()).strftime(
+            "%Y-%m-%d %H:%M:%S.%f"
+        )
+        out["features"].append(
+            {
+                "type": "Feature",
+                "geometry": {
+                    "coordinates": row[["longitude_deg", "latitude_deg", "altitude_m"]].to_list(),
+                    "type": "Point",
+                },
+                "properties": properties,
+            },
+        )
+    output_file = output_dir.joinpath(source.name.replace(".csv", ".geojson"))
+    with open(output_file, "w") as f_out:
+        json.dump(out, f_out, indent=4)
+    return output_file
+
+
 if __name__ == "__main__":
-    pt_path = r"..."
-    output_csv_folder = r"..."
-    df = convert_aresys_point_target_formats(source=pt_path)
-    df.to_csv(Path(output_csv_folder).joinpath("point_targets_dataset.csv"), index=False)
+    # pt_path = r"..."
+    # output_csv_folder = r"..."
+    # df = convert_aresys_point_target_formats(source=pt_path)
+    # df.to_csv(Path(output_csv_folder).joinpath("point_targets_dataset.csv"), index=False)
+
+    convert_csv_point_target_to_geojson(
+        source=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets\surat_basin_corner_reflectors_data.csv",
+        output_dir=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets",
+    )
