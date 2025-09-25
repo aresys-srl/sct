@@ -23,6 +23,7 @@ from perseo_quality.interferometric_analysis.support import (
 )
 from perseo_quality.radiometric_analysis.block_wise.support import (
     radiometric_profiles_to_netcdf,
+    radiometric_statistical_analysis_to_df,
 )
 
 from sct.analyses.interferometric_analysis import interferometric_coherence_analysis
@@ -54,6 +55,7 @@ ABSOLUTE_TOLERANCE_RCS = 0.1
 ABSOLUTE_TOLERANCE_RA = 1e-2
 ABSOLUTE_TOLERANCE_OTHER = 1e-3
 ABSOLUTE_TOLERANCE_INTERF = 5
+KPI_TOLERANCE = 1e-3
 
 LOC_VAR_LIST = [
     "range_resolution_[m]",
@@ -144,7 +146,6 @@ def compare_pta_df_with_tolerances(ref: pd.DataFrame, current: pd.DataFrame) -> 
     current : pd.DataFrame
         current evaluated dataframe
     """
-
     # filtering only valid rows
     current = current.loc[~current["incidence_angle_[deg]"].isna()]
     current.reset_index(drop=True, inplace=True)
@@ -213,7 +214,6 @@ def compare_ra_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     current : Path
         Path to the current run netCDF4 file
     """
-
     ref_dataset = Dataset(ref, "r", format="NETCDF4")
     current_dataset = Dataset(current, "r", format="NETCDF4")
 
@@ -259,7 +259,6 @@ def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     current : Path
         Path to the current run netCDF4 file
     """
-
     ref_dataset = Dataset(ref, "r", format="NETCDF4")
     current_dataset = Dataset(current, "r", format="NETCDF4")
 
@@ -291,6 +290,19 @@ def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     current_dataset.close()
 
 
+def compare_kpi_stats(ref: pd.DataFrame, current: pd.DataFrame) -> None:
+    """Compare kpi statistics with tolerances.
+
+    Parameters
+    ----------
+    ref : pd.DataFrame
+        reference kpi statistics dataframe
+    current : Path
+        current kpi statistics dataframe
+    """
+    pd.testing.assert_frame_equal(ref, current, check_exact=False, atol=ABSOLUTE_TOLERANCE, rtol=0)
+
+
 def run_pta_api(
     params: TestParams, output_dir: Path, config: SCTPointTargetAnalysisConfig | None, graphs: bool
 ) -> pd.DataFrame:
@@ -312,7 +324,6 @@ def run_pta_api(
     pd.DataFrame
         results dataframe
     """
-
     if params.ionospheric_maps is not None:
         config.corrections.enable_ionospheric_correction = True
         config.corrections.ionosphere = IonosphericCorrectionsConf(
@@ -350,7 +361,7 @@ def run_pta_api(
 
 def run_nesz_api(
     params: TestParams, output_dir: Path, config: SCTRadiometricAnalysisConfig | None, graphs: bool
-) -> Path:
+) -> tuple[Path, Path]:
     """Running SCT NESZ Analysis from API forwarding the inputs.
 
     Parameters
@@ -368,9 +379,13 @@ def run_nesz_api(
     -------
     Path
         path to output netcdf file
+    Path
+        path to the kpi statistics file
     """
-
     profiles = nesz_analysis(product_path=params.product, config=config)
+    stats_df = radiometric_statistical_analysis_to_df(data=profiles)
+    kpi_file = output_dir.joinpath("kpi_stats.csv")
+    stats_df.to_csv(kpi_file, index=False)
     tag = "NESZ"
     if graphs:
         try:
@@ -392,12 +407,12 @@ def run_nesz_api(
     nc_files = list(output_dir.glob("*.nc"))
     if len(nc_files) == 1:
         return nc_files[0]
-    return nc_files
+    return nc_files, kpi_file
 
 
 def run_rain_forest_api(
     params: TestParams, output_dir: Path, config: SCTRadiometricAnalysisConfig | None, graphs: bool
-) -> Path:
+) -> tuple[Path, Path]:
     """Running SCT Average Radiometric Profiles Analysis from API forwarding the inputs.
 
     Parameters
@@ -415,13 +430,17 @@ def run_rain_forest_api(
     -------
     Path
         path to output netcdf file
+    Path
+        path to the kpi statistics file
     """
-
     profiles = average_elevation_profile_analysis(
         product_path=params.product,
         output_quantity=SARRadiometricQuantity.GAMMA_NOUGHT,
         config=config,
     )
+    stats_df = radiometric_statistical_analysis_to_df(data=profiles)
+    kpi_file = output_dir.joinpath("kpi_stats.csv")
+    stats_df.to_csv(kpi_file, index=False)
     tag = "RAIN_FOREST"
     if graphs:
         try:
@@ -443,7 +462,7 @@ def run_rain_forest_api(
     nc_files = list(output_dir.glob("*.nc"))
     if len(nc_files) == 1:
         return nc_files[0]
-    return nc_files
+    return nc_files, kpi_file
 
 
 def run_interferometry_api(
@@ -465,7 +484,6 @@ def run_interferometry_api(
     Path
         path to output netcdf file
     """
-
     first_prod = params.product if isinstance(params.product, Path) else params.product[0]
     second_prod = params.product[1] if isinstance(params.product, list) else None
     coherence_res = interferometric_coherence_analysis(
@@ -494,7 +512,6 @@ def run_cli_tool_pta(params: TestParams, output_dir: Path, config: SCTConfigurat
     pd.DataFrame
         results dataframe
     """
-
     config_path = output_dir.joinpath("input_config.json")
     dump_sct_config(config=config, out_path=config_path)
     executable_call = [
@@ -545,7 +562,6 @@ def run_cli_tool_rf(params: TestParams, output_dir: Path, config: SCTConfigurati
     analysis : str
         analysis to be performed, [NESZ, RF]
     """
-
     config_path = output_dir.joinpath("input_config.json")
     dump_sct_config(config=config, out_path=config_path)
 

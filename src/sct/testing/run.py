@@ -21,6 +21,7 @@ from sct.testing.utilities import (
     SCTAnalyses,
     TestParams,
     compare_interf_netcdf_with_tolerances,
+    compare_kpi_stats,
     compare_pta_df_with_tolerances,
     compare_ra_netcdf_with_tolerances,
     run_interferometry_api,
@@ -64,24 +65,34 @@ def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Pa
             compare_pta_df_with_tolerances(ref=pd.read_csv(params.reference_output), current=results.copy())
         elif params.analysis == SCTAnalyses.NESZ:
             config = config.radiometric_analysis if config is not None else None
-            results = run_nesz_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
+            nc_results, kpi_results = run_nesz_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
             sct_logger.info("Validating results...")
             if isinstance(params.reference_output, list):
                 for report in params.reference_output:
-                    result = [r for r in results if report.name == r.name]
-                    compare_ra_netcdf_with_tolerances(ref=report, current=result[0])
+                    if ".nc" in report.name:
+                        result = [r for r in nc_results if report.name == r.name]
+                        compare_ra_netcdf_with_tolerances(ref=report, current=result[0])
             else:
                 compare_ra_netcdf_with_tolerances(ref=params.reference_output, current=results)
+            kpi_csv_file = [p for p in params.reference_output if ".csv" in p.name]
+            if kpi_csv_file:
+                compare_kpi_stats(ref=pd.read_csv(kpi_csv_file[0]), current=pd.read_csv(kpi_results))
         elif params.analysis == SCTAnalyses.RAIN_FOREST:
             config = config.radiometric_analysis if config is not None else None
-            results = run_rain_forest_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
+            nc_results, kpi_results = run_rain_forest_api(
+                params=params, output_dir=out_dir, config=config, graphs=graphs
+            )
             sct_logger.info("Validating results...")
             if isinstance(params.reference_output, list):
                 for report in params.reference_output:
-                    result = [r for r in results if report.name == r.name]
-                    compare_ra_netcdf_with_tolerances(ref=report, current=result[0])
+                    if ".nc" in report.name:
+                        result = [r for r in nc_results if report.name == r.name]
+                        compare_ra_netcdf_with_tolerances(ref=report, current=result[0])
             else:
-                compare_ra_netcdf_with_tolerances(ref=params.reference_output, current=results)
+                compare_ra_netcdf_with_tolerances(ref=params.reference_output, current=nc_results)
+            kpi_csv_file = [p for p in params.reference_output if ".csv" in p.name]
+            if kpi_csv_file:
+                compare_kpi_stats(ref=pd.read_csv(kpi_csv_file[0]), current=pd.read_csv(kpi_results))
         elif params.analysis == SCTAnalyses.INTERFEROMETRY:
             config = config.interferometric_analysis if config is not None else None
             results = run_interferometry_api(params=params, output_dir=out_dir, config=config)
