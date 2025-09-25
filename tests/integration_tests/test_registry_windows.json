@@ -77,7 +77,8 @@
             "targets": "",
             "reference_output": [
                 "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VV.nc"
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_IW_VV.nc",
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/kpi_stats.csv"
             ]
         },
         "grd-nesz": {
@@ -87,7 +88,8 @@
             "targets": "",
             "reference_output": [
                 "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VV.nc"
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_IW_VV.nc",
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/kpi_stats.csv"
             ]
         }
     }
