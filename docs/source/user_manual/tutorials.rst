@@ -29,7 +29,7 @@ The exact same thing can be done from a custom script using SCT as a library:
 
     from sct.configuration.sct_configuration import SCTConfiguration
     from sct.analyses.point_target_analysis import point_target_analysis_with_corrections
-    from sct.analyses.graphical_output import sct_pta_graphs  # optional, for graphs only
+    from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation  # optional, for graphs only
 
     # adding a configuration is optional
     config_toml_path = ...
@@ -52,7 +52,7 @@ The exact same thing can be done from a custom script using SCT as a library:
     results_df.to_csv(output_results_csv_file, index=False)
 
     # optional, if graphical output is needed
-    sct_pta_graphs(graphs_data=data_for_graphs, results_df=results_df, output_dir=graphs_output_directory)
+    point_target_graphs_generation(graphs_data=data_for_graphs, results_df=results_df, output_dir=graphs_output_directory)
 
 .. seealso::
 

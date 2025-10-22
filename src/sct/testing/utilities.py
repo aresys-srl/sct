@@ -346,12 +346,12 @@ def run_pta_api(
     results_df.to_csv(out_file, index=False)
     if graphs:
         try:
-            from sct.analyses.graphical_output import sct_pta_graphs
+            from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation
 
             sct_logger.info("Plotting graphs...")
             graphs_out_dir = output_dir.joinpath("graphs")
             graphs_out_dir.mkdir(exist_ok=True)
-            sct_pta_graphs(graphs_data=graphs_data, results_df=results_df, output_dir=graphs_out_dir)
+            point_target_graphs_generation(graphs_data=graphs_data, results_df=results_df, output_dir=graphs_out_dir)
         except ImportError:
             sct_logger.critical(
                 'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'

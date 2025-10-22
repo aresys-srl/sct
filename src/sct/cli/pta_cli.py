@@ -93,7 +93,7 @@ def target_analysis_implementation(
     """Implement the point target analysis command."""
     if graphs:
         try:
-            from sct.analyses.graphical_output import sct_pta_graphs
+            from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation
 
         except ImportError:
             sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
@@ -119,4 +119,4 @@ def target_analysis_implementation(
         sct_logger.info("Plotting graphs...")
         graphs_out_dir = output_directory.joinpath("graphs")
         graphs_out_dir.mkdir(exist_ok=True)
-        sct_pta_graphs(graphs_data=graphs_data, results_df=results, output_dir=graphs_out_dir)
+        point_target_graphs_generation(graphs_data=graphs_data, results_df=results, output_dir=graphs_out_dir)
