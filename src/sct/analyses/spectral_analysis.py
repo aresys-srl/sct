@@ -11,7 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from perseo_quality.spectral_analysis.analysis import point_target_spectral_analysis
-from perseo_quality.spectral_analysis.custom_dataclasses import SpectraDataOutput
+from perseo_quality.spectral_analysis.custom_dataclasses import PointTargetSpectraDataOutput
 
 from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTSpectralAnalysisConfig
@@ -21,7 +21,7 @@ from sct.io.point_target_manager import convert_df_to_nominal_point_target, extr
 
 def sct_point_target_spectral_analysis(
     product_path: str | Path, external_target_source: str | Path, config: SCTSpectralAnalysisConfig | None = None
-) -> list[SpectraDataOutput]:
+) -> list[PointTargetSpectraDataOutput]:
     """Spectral Analysis performed at each target position for the input product.
 
     Parameters
@@ -35,8 +35,8 @@ def sct_point_target_spectral_analysis(
 
     Returns
     -------
-    list[SpectraDataOutput]
-        list of SpectraDataOutput analysis output, one for each product channel and each Point Target
+    list[PointTargetSpectraDataOutput]
+        list of PointTargetSpectraDataOutput analysis output, one for each product channel and each Point Target
     """
     # Input parameters analysis
     product_path = Path(product_path)
