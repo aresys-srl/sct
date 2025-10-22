@@ -16,6 +16,7 @@ dependencies = [
     "arepytools >= 1.7.2",
     "perseo-quality>=1.0.5",
     "perseo-perturbations",
+    "numba>=0.61"
 ]
 dynamic = ["version"]
 classifiers = [
