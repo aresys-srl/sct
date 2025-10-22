@@ -8,6 +8,10 @@ v2.0.2
 
 - Adding GeoJSON format support for Point Target input sources
 
+**Incompatible Changes**
+
+- Removing graphical output from Point Target Analysis functions, using those in Perseo Quality directly
+
 v2.0.1
 ------
 
