@@ -64,6 +64,7 @@ cli = ["click", "requests"]
 graphs = ["matplotlib >= 3.5", "perseo-quality[graphs]"]
 dev = ["nox", "ruff", "pylint"]
 test = ["unittest-xml-reporting", "coverage"]
+localtesting = ["sct_aresys_reader"]
 doc = [
     "ipython",
     "nbsphinx",
