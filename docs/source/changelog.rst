@@ -4,8 +4,13 @@ Changelog
 v2.0.3
 ------
 
+**Additional Features**
+
+- Adding Distributed Spectral Analysis and corresponding CLI command
+
 **Other Changes**
 
+- Grouped Point Target and Distributed Spectral Analysis under the main ``spectral-analysis`` command
 - Improved ``InvalidProductType`` exception handling when loading products without having installed their dedicated format plugins
 - Changed ``elevation_profile`` radiometric analysis cli command to ``elevation-profile``
 
