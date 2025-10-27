@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.0.3
+------
+
+**Other Changes**
+
+- Improved ``InvalidProductType`` exception handling when loading products without having installed their dedicated format plugins
+
 v2.0.2
 ------
 

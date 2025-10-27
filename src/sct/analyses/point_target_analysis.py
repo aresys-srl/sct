@@ -8,6 +8,7 @@ Point Target Analysis.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -31,7 +32,7 @@ from sct.core.atmospheric_corrections_main import (
 from sct.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
 from sct.io.extended_protocols import SCTInputProduct
 from sct.io.input_product_plugins import AbsoluteLocalizationErrorCorrector
-from sct.io.io_manager import product_loader
+from sct.io.io_manager import InvalidProductType, product_loader
 from sct.io.point_target_manager import convert_df_to_nominal_point_target, extract_point_target_data_from_source
 
 if TYPE_CHECKING:
@@ -180,12 +181,17 @@ def point_target_analysis_with_corrections(
     if external_corrections_product is not None:
         sct_logger.info(f"Using external corrections product: {external_corrections_product}")
 
-    product, ale_corrector = product_loader(
-        product_path=product_path,
-        external_orbit=external_orbit_path,
-        external_corrections_product=external_corrections_product,
-    )
-    first_channel = product.get_channel_data(channel_id=product.channels_list[0])
+    try:
+        product, ale_corrector = product_loader(
+            product_path=product_path,
+            external_orbit=external_orbit_path,
+            external_corrections_product=external_corrections_product,
+        )
+        first_channel = product.get_channel_data(channel_id=product.channels_list[0])
+    except InvalidProductType:
+        sct_logger.critical(f"Unknown product type {product_path}.")
+        sct_logger.critical("Please check that the dedicated format plugin is installed.")
+        sys.exit(1)
 
     if ale_corrector is not None:
         config.corrections = ale_corrector.update_corrections_config(config.corrections)

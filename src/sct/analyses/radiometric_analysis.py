@@ -8,6 +8,7 @@ Radiometric Profiles Analysis
 
 from __future__ import annotations
 
+import sys
 from enum import Enum
 from pathlib import Path
 
@@ -20,8 +21,9 @@ from perseo_quality.radiometric_analysis.block_wise.analysis import (
 from perseo_quality.radiometric_analysis.block_wise.config import RadiometricProfilesConfig
 from perseo_quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTRadiometricAnalysisConfig
-from sct.io.io_manager import product_loader
+from sct.io.io_manager import InvalidProductType, product_loader
 
 
 class SupportedRadiometricProfiles(Enum):
@@ -60,7 +62,12 @@ def sct_radiometric_profiles(
     product_path = Path(product_path)
 
     # LOADING PRODUCT
-    product, _ = product_loader(product_path=product_path)
+    try:
+        product, _ = product_loader(product_path=product_path)
+    except InvalidProductType:
+        sct_logger.critical(f"Unknown product type {product_path}.")
+        sct_logger.critical("Please check that the dedicated format plugin is installed.")
+        sys.exit(1)
 
     if analysis_type == SupportedRadiometricProfiles.NESZ:
         results = nesz_profiles(product=product, config=config)

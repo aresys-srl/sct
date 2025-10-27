@@ -8,13 +8,15 @@ Interferometric Analysis
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 from perseo_quality.interferometric_analysis.analysis import interferometric_analysis
 from perseo_quality.interferometric_analysis.custom_dataclasses import InterferometricCoherenceOutput
 
+from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig
-from sct.io.io_manager import product_loader
+from sct.io.io_manager import InvalidProductType, product_loader
 
 
 def interferometric_coherence_analysis(
@@ -73,9 +75,19 @@ def sct_interferometric_coherence_analysis(
     list[InterferometricCoherenceOutput]
         an InterferometricCoherenceOutput dataclass for each channel
     """
-    product, _ = product_loader(product_path=product_path)
+    try:
+        product, _ = product_loader(product_path=product_path)
+    except InvalidProductType:
+        sct_logger.critical(f"Unknown product type {product_path}.")
+        sct_logger.critical("Please check that the dedicated format plugin is installed.")
+        sys.exit(1)
     second_product = None
     if second_product_path is not None:
-        second_product, _ = product_loader(product_path=second_product_path)
+        try:
+            second_product, _ = product_loader(product_path=second_product_path)
+        except InvalidProductType:
+            sct_logger.critical(f"Unknown product type {second_product_path}.")
+            sct_logger.critical("Please check that the dedicated format plugin is installed.")
+            sys.exit(1)
 
     return interferometric_analysis(product=product, second_product=second_product, config=config.base_config)
