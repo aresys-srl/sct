@@ -105,6 +105,7 @@ spectral_analysis_toml = """
 
 [spectral_analysis]
 cropping_size = [200, 120]
+azimuth_block_size = 1500
 
 """
 
@@ -231,6 +232,7 @@ def _validate_spectral_config(config: SCTSpectralAnalysisConfig) -> None:
 
     assert isinstance(config.cropping_size, tuple)
     assert config.cropping_size == (200, 120)
+    assert config.azimuth_block_size == 1500
 
 
 def _validate_ambiguity_config(config: SCTTargetAmbiguityRatioConfig) -> None:
@@ -238,8 +240,8 @@ def _validate_ambiguity_config(config: SCTTargetAmbiguityRatioConfig) -> None:
 
     Parameters
     ----------
-    config : SCTSpectralAnalysisConfig
-        sct spectral analysis configuration
+    config : SCTTargetAmbiguityRatioConfig
+        sct ambiguity ratio analysis configuration
     """
 
     assert isinstance(config, SCTTargetAmbiguityRatioConfig)

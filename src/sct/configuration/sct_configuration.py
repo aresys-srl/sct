@@ -106,6 +106,7 @@ class SCTSpectralAnalysisConfig:
     """SCT Spectral Analysis configuration"""
 
     cropping_size: tuple[int, int] = (128, 128)
+    azimuth_block_size: int = 2000
 
     @classmethod
     def from_dict(cls, arg: dict) -> SCTSpectralAnalysisConfig:
