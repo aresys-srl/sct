@@ -7,6 +7,7 @@ v2.0.3
 **Other Changes**
 
 - Improved ``InvalidProductType`` exception handling when loading products without having installed their dedicated format plugins
+- Changed ``elevation_profile`` radiometric analysis cli command to ``elevation-profile``
 
 v2.0.2
 ------

@@ -50,7 +50,7 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
 
     def test_display_help_elevation_profile(self):
         """Display help elevation profile"""
-        result = self.cli_runner.invoke(sct_analysis, [self.command, "elevation_profile", "--help"])
+        result = self.cli_runner.invoke(sct_analysis, [self.command, "elevation-profile", "--help"])
         self.assertEqual(result.exit_code, 0)
 
     def test_display_help_nesz(self):
@@ -68,7 +68,7 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
         with TemporaryDirectoriesAndConfFile() as (product, output_dir, conf_file):
             self.test_configuration.dump_to_toml(conf_file)
             command_args = (
-                f"--config {conf_file} {self.command} elevation_profile -p {product} -out {output_dir} -r gamma".split()
+                f"--config {conf_file} {self.command} elevation-profile -p {product} -out {output_dir} -r gamma".split()
             )
             result = self.cli_runner.invoke(
                 sct_analysis,
@@ -103,7 +103,7 @@ class RadiometricAnalysisCLITestCase(unittest.TestCase):
         with TemporaryDirectoriesAndConfFile() as (product, output_dir, conf_file):
             self.test_configuration.dump_to_toml(conf_file)
             command_args = (
-                f"--config {conf_file} {self.command} elevation_profile -p {product} -out {output_dir} " + "-r gamma -g"
+                f"--config {conf_file} {self.command} elevation-profile -p {product} -out {output_dir} " + "-r gamma -g"
             )
             result = self.cli_runner.invoke(
                 sct_analysis,

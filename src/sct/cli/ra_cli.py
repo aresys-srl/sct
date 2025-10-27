@@ -69,7 +69,7 @@ def radiometric_analysis_nesz(config: SCTConfiguration, product: Path, output_di
     )
 
 
-@radiometric_analysis.command("elevation_profile")
+@radiometric_analysis.command("elevation-profile")
 @common.input_product_option
 @common.output_directory_option
 @click.option(
