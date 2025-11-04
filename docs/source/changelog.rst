@@ -13,6 +13,7 @@ v2.0.3
 - Grouped Point Target and Distributed Spectral Analysis under the main ``spectral-analysis`` command
 - Improved ``InvalidProductType`` exception handling when loading products without having installed their dedicated format plugins
 - Changed ``elevation_profile`` radiometric analysis cli command to ``elevation-profile``
+- Updated radiometric analysis graphs generation inputs to match latest perseo-quality
 
 v2.0.2
 ------

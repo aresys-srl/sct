@@ -401,7 +401,7 @@ def run_nesz_api(
             radiometric_2D_hist_plot(
                 data=item,
                 out_dir=output_dir,
-                title=f"{tag.upper()} Profiles {item.channel}",
+                title=f"{tag.upper()} Profiles {item.general_info.channel}",
                 plot_mode="min",
             )
     nc_files = list(output_dir.glob("*.nc"))
@@ -456,7 +456,7 @@ def run_rain_forest_api(
             radiometric_2D_hist_plot(
                 data=item,
                 out_dir=output_dir,
-                title=f"{tag.upper()} Profiles {item.channel}",
+                title=f"{tag.upper()} Profiles {item.general_info.channel}",
                 plot_mode="mean",
             )
     nc_files = list(output_dir.glob("*.nc"))

@@ -140,7 +140,7 @@ The exact same thing can be done from a custom script using SCT as a library:
         radiometric_2D_hist_plot(
             data=item,
             out_dir=output_directory,
-            title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
+            title=f"{tag.upper()} Profiles {item.general_info.channel}",
         )
 
 Interferometric Analysis

@@ -245,7 +245,7 @@ def save_and_plot_results(
             radiometric_2d_hist_plot(
                 data=item,
                 out_dir=output_directory,
-                title=f"{tag.upper()} Profiles {item.swath} {item.polarization.name}",
+                title=f"{tag.upper()} Profiles {item.general_info.channel}",
             )
 
 
