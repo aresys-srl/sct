@@ -404,10 +404,7 @@ def run_nesz_api(
                 title=f"{tag.upper()} Profiles {item.general_info.channel}",
                 plot_mode="min",
             )
-    nc_files = list(output_dir.glob("*.nc"))
-    if len(nc_files) == 1:
-        return nc_files[0]
-    return nc_files, kpi_file
+    return list(output_dir.glob("*.nc")), kpi_file
 
 
 def run_rain_forest_api(
@@ -459,10 +456,7 @@ def run_rain_forest_api(
                 title=f"{tag.upper()} Profiles {item.general_info.channel}",
                 plot_mode="mean",
             )
-    nc_files = list(output_dir.glob("*.nc"))
-    if len(nc_files) == 1:
-        return nc_files[0]
-    return nc_files, kpi_file
+    return list(output_dir.glob("*.nc")), kpi_file
 
 
 def run_interferometry_api(

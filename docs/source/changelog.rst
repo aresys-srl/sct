@@ -15,6 +15,10 @@ v2.0.3
 - Changed ``elevation_profile`` radiometric analysis cli command to ``elevation-profile``
 - Updated radiometric analysis graphs generation inputs to match latest perseo-quality
 
+**Bug Fixing**
+
+- Fixed bug in `testing` module when performing Rain Forest and NESZ analyses with a single channel
+
 v2.0.2
 ------
 
