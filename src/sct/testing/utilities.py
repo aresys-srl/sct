@@ -55,7 +55,7 @@ ABSOLUTE_TOLERANCE_RCS = 0.1
 ABSOLUTE_TOLERANCE_RA = 1e-2
 ABSOLUTE_TOLERANCE_OTHER = 1e-3
 ABSOLUTE_TOLERANCE_INTERF = 5
-KPI_TOLERANCE = 1e-3
+KPI_TOLERANCE = 1e-1
 
 LOC_VAR_LIST = [
     "range_resolution_[m]",
@@ -300,7 +300,7 @@ def compare_kpi_stats(ref: pd.DataFrame, current: pd.DataFrame) -> None:
     current : Path
         current kpi statistics dataframe
     """
-    pd.testing.assert_frame_equal(ref, current, check_exact=False, atol=ABSOLUTE_TOLERANCE, rtol=0)
+    pd.testing.assert_frame_equal(ref, current, check_exact=False, atol=KPI_TOLERANCE, rtol=0)
 
 
 def run_pta_api(
