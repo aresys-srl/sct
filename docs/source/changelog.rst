@@ -12,6 +12,7 @@ v2.0.4
 
 - Fixed a bug in Radiometric Analysis CLI when saving the config to the output folder
 - Fixed a bug in Interferometric Analysis CLI when saving the config to the output folder
+- Fixed CLI input allowing Point Target source to be a directory
 
 v2.0.3
 ------

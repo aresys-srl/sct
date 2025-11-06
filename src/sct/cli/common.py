@@ -35,7 +35,7 @@ input_point_target_option = click.option(
     "--point-target-source",
     "-pt",
     required=True,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
+    type=click.Path(path_type=Path, exists=True, dir_okay=False),
     help="Path to the external point target source",
 )
 
