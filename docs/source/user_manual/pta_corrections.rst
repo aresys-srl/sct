@@ -69,8 +69,12 @@ Ionospheric Delay
 Signal delay caused by ionosphere crossing is estimated interpolating the VTEC (Vertical Total Electron Content) maps in
 IONEX (*ION* onosphere *EX* change) format generated from NASA GNSS-CDDIS data and analyzed from specific analysis center [#]_.
 This map must be provided as an input when this correction is enabled via the configuration file.
-The analysis center of the maps should be specified too. It's also possible to change the method used to compute the incidence angles
-to detect the pierce point using the configuration file.
+The analysis center of the maps should be specified too. 
+
+.. note::
+
+   The maps must be provided as plain text files, not as a compressed archive. If the downloaded version of the map is
+   compressed (*.Z archive extension*), the user must decompress it before using it.
 
 The map should be the closest to the acquisition time of the product to be analyzed and the exact time is automatically interpolated.
 
