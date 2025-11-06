@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.0.4
+------
+
+**Bug Fixing**
+
+- Fixed a bug in Radiometric Analysis CLI when saving the config to the output folder
+- Fixed a bug in Interferometric Analysis CLI when saving the config to the output folder
+
 v2.0.3
 ------
 

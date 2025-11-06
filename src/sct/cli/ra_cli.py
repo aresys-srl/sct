@@ -155,7 +155,7 @@ def radiometric_analysis_nesz_implementation(
     output = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
 
     if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
+        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometric_analysis")
 
     save_and_plot_results(
         output=output,
@@ -185,7 +185,7 @@ def radiometric_analysis_average_profiles_implementation(
     )
 
     if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
+        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometric_analysis")
 
     save_and_plot_results(
         output=output,
@@ -210,7 +210,7 @@ def radiometric_analysis_scalloping_implementation(
     output = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
 
     if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometry")
+        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometric_analysis")
 
     save_and_plot_results(
         output=output,

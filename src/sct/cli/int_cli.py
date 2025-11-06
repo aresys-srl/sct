@@ -100,7 +100,9 @@ def interf_coherence_analysis_implementation(
     )
 
     if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="interferometry")
+        config.dump_to_toml(
+            out_file=output_directory.joinpath("analysis_config.toml"), selected="interferometric_analysis"
+        )
 
     for res in coherence_res:
         coherence_histograms_to_netcdf(data=res, output_dir=output_directory)
