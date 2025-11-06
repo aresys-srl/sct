@@ -81,6 +81,7 @@ def target_analysis(
 
 
 @common.log_elapsed_time("Point Target Analysis")
+@common.graceful_exit("Point Target Analysis", "point_target_analysis")
 def target_analysis_implementation(
     product: Path,
     external_orbit: Path | None,
@@ -94,7 +95,6 @@ def target_analysis_implementation(
     if graphs:
         try:
             from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation
-
         except ImportError:
             sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
             sys.exit(1)
@@ -108,13 +108,6 @@ def target_analysis_implementation(
     )
 
     results.to_csv(output_directory.joinpath("point_target_analysis_results.csv"), index=False)
-
-    if config.general.save_config_copy:
-        config.dump_to_toml(
-            out_file=output_directory.joinpath("analysis_config.toml"),
-            selected="point_target_analysis",
-        )
-
     if graphs:
         sct_logger.info("Plotting graphs...")
         graphs_out_dir = output_directory.joinpath("graphs")

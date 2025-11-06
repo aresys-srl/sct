@@ -4,6 +4,10 @@ Changelog
 v2.0.4
 ------
 
+**Other Changes**
+
+- Improving CLI graceful exit when an exception is raised
+
 **Bug Fixing**
 
 - Fixed a bug in Radiometric Analysis CLI when saving the config to the output folder

@@ -49,6 +49,7 @@ def pt_ambiguity_ratio_analysis(
 
 
 @common.log_elapsed_time("Point Target Ambiguity Ratio Analysis")
+@common.graceful_exit("Point Target Ambiguity Ratio Analysis", "target_ambiguity_ratio_analysis")
 def pt_ambiguity_ratio_analysis_implementation(
     product: Path,
     point_target_source: Path,
@@ -58,7 +59,6 @@ def pt_ambiguity_ratio_analysis_implementation(
     """Implement the point target ambiguity ratio analysis command."""
     try:
         from perseo_quality.tar_analysis.graphical_output import ambiguities_graphs
-
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)
@@ -68,6 +68,5 @@ def pt_ambiguity_ratio_analysis_implementation(
         external_target_source=point_target_source,
         config=config.target_ambiguity_ratio_analysis,
     )
-
     sct_logger.info("Generating graphs...")
     ambiguities_graphs(data=output, output_dir=output_directory, graph_type="PTAR")

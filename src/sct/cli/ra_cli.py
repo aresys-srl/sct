@@ -142,6 +142,7 @@ def radiometric_analysis_scalloping(
 
 
 @common.log_elapsed_time("NESZ Analysis")
+@common.graceful_exit("NESZ Analysis", "radiometric_analysis")
 def radiometric_analysis_nesz_implementation(
     product: Path,
     output_directory: Path,
@@ -153,10 +154,6 @@ def radiometric_analysis_nesz_implementation(
         radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
 
     output = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
-
-    if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometric_analysis")
-
     save_and_plot_results(
         output=output,
         output_directory=output_directory,
@@ -167,6 +164,7 @@ def radiometric_analysis_nesz_implementation(
 
 
 @common.log_elapsed_time("Average Elevation Profiles Analysis")
+@common.graceful_exit("Average Elevation Profiles Analysis", "radiometric_analysis")
 def radiometric_analysis_average_profiles_implementation(
     product: Path,
     output_radiometric_quantity: SARRadiometricQuantity,
@@ -183,10 +181,6 @@ def radiometric_analysis_average_profiles_implementation(
         output_quantity=output_radiometric_quantity,
         config=config.radiometric_analysis,
     )
-
-    if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometric_analysis")
-
     save_and_plot_results(
         output=output,
         output_directory=output_directory,
@@ -197,6 +191,7 @@ def radiometric_analysis_average_profiles_implementation(
 
 
 @common.log_elapsed_time("Scalloping Profiles Analysis")
+@common.graceful_exit("Scalloping Profiles Analysis", "radiometric_analysis")
 def radiometric_analysis_scalloping_implementation(
     product: Path,
     output_directory: Path,
@@ -208,10 +203,6 @@ def radiometric_analysis_scalloping_implementation(
         radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
 
     output = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
-
-    if config.general.save_config_copy:
-        config.dump_to_toml(out_file=output_directory.joinpath("analysis_config.toml"), selected="radiometric_analysis")
-
     save_and_plot_results(
         output=output,
         output_directory=output_directory,

@@ -6,9 +6,13 @@ CLI common.
 -----------
 """
 
-import functools
+from __future__ import annotations
+
+import sys
 import time
+from functools import wraps
 from pathlib import Path
+from typing import Callable
 
 import art
 import click
@@ -72,8 +76,8 @@ def display_title(title: str) -> None:
 def log_elapsed_time(logged_name: str):
     """Decorate function to log elapsed time with the given name."""
 
-    def decorator(func):
-        @functools.wraps(func)
+    def decorator(func: Callable):
+        @wraps(func)
         def decorated_func(*args, **kwargs):
             start_time = time.perf_counter()
             outputs = func(*args, **kwargs)
@@ -83,5 +87,33 @@ def log_elapsed_time(logged_name: str):
             return outputs
 
         return decorated_func
+
+    return decorator
+
+
+def graceful_exit(name: str, config_key: str):
+    """Decorate function to gracefully log and exit in case of errors."""
+
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            # Extract config & output_directory if present
+            config: SCTConfiguration | None = kwargs.get("config", None)
+            output_directory: Path | None = kwargs.get("output_directory", None)
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                sct_logger.critical(f"{name} failed")
+                sct_logger.critical(e)
+                sys.exit(1)
+            finally:
+                # Save config copy if applicable
+                if config is not None and output_directory is not None:
+                    if config.general.save_config_copy:
+                        config.dump_to_toml(
+                            out_file=output_directory.joinpath("analysis_config.toml"), selected=config_key
+                        )
+
+        return wrapper
 
     return decorator

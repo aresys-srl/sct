@@ -86,6 +86,7 @@ def spectral_analysis_distributed(
 
 
 @common.log_elapsed_time("Point Target Spectral Analysis")
+@common.graceful_exit("Point Target Spectral Analysis", "spectral_analysis")
 def spectral_pt_analysis_implementation(
     product: Path,
     point_target_source: Path,
@@ -95,7 +96,6 @@ def spectral_pt_analysis_implementation(
     """Implement the point target spectral analysis command."""
     try:
         from perseo_quality.spectral_analysis.graphical_output import spectral_graphs
-
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)
@@ -105,12 +105,12 @@ def spectral_pt_analysis_implementation(
         external_target_source=point_target_source,
         config=config.spectral_analysis,
     )
-
     sct_logger.info("Generating graphs...")
     spectral_graphs(data=output, output_dir=output_directory)
 
 
 @common.log_elapsed_time("Distributed Spectral Analysis")
+@common.graceful_exit("Distributed Spectral Analysis", "spectral_analysis")
 def spectral_distributed_analysis_implementation(
     product: Path,
     output_directory: Path,
@@ -119,7 +119,6 @@ def spectral_distributed_analysis_implementation(
     """Implement the distributed spectral analysis command."""
     try:
         from perseo_quality.spectral_analysis.graphical_output import spectral_graphs
-
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)
@@ -128,6 +127,5 @@ def spectral_distributed_analysis_implementation(
         product_path=product,
         config=config.spectral_analysis,
     )
-
     sct_logger.info("Generating graphs...")
     spectral_graphs(data=output, output_dir=output_directory)
