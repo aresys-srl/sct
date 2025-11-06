@@ -38,13 +38,15 @@ def extract_point_target_data_from_source(source: str | Path) -> pd.DataFrame:
         pandas dataframe corresponding to the input point target file
     """
     source = Path(source)
+    if not source.exists():
+        raise FileNotFoundError(f"Input file {source} does not exist")
     if source.name.endswith(".csv"):
         # external format, .csv template compliant
         point_targets_df = read_csv_point_targets_file(source=source)
     elif source.name.endswith(".geojson"):
         ...
     else:
-        raise UnsupportedPointTargetSource(source)
+        raise UnsupportedPointTargetSource(f"Invalid source file: {source}")
 
     return point_targets_df
 

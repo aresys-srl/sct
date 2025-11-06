@@ -7,6 +7,7 @@ v2.0.4
 **Other Changes**
 
 - Improving CLI graceful exit when an exception is raised
+- Improving Point Target Source management error handling
 
 **Bug Fixing**
 
