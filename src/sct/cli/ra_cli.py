@@ -150,6 +150,7 @@ def radiometric_analysis_nesz_implementation(
     graphs: bool,
 ) -> None:
     """Implement the NESZ radiometric analysis command."""
+    radiometric_2d_hist_plot = None
     if graphs:
         radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
 
@@ -173,6 +174,7 @@ def radiometric_analysis_average_profiles_implementation(
     graphs: bool,
 ) -> None:
     """Implement the average elevation profiles radiometric analysis command."""
+    radiometric_2d_hist_plot = None
     if graphs:
         radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
 
@@ -199,6 +201,7 @@ def radiometric_analysis_scalloping_implementation(
     graphs: bool,
 ) -> None:
     """Implement the scalloping profiles radiometric analysis command."""
+    radiometric_2d_hist_plot = None
     if graphs:
         radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
 

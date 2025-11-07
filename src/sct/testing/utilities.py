@@ -303,6 +303,32 @@ def compare_kpi_stats(ref: pd.DataFrame, current: pd.DataFrame) -> None:
     pd.testing.assert_frame_equal(ref, current, check_exact=False, atol=KPI_TOLERANCE, rtol=0)
 
 
+def validate_ra_results(
+    reference_output: Path | list[Path], current_nc_output: list[Path], current_kpi_stats: Path
+) -> None:
+    """Validating radiometric analysis NetCDF and KPI stats results.
+
+    Parameters
+    ----------
+    reference_output : Path | list[Path]
+        reference netCDF or KPI stats files
+    current_nc_output : list[Path]
+        current run netCDF files
+    current_kpi_stats : Path
+        current run KPI stats file
+    """
+    if isinstance(reference_output, list):
+        for report in reference_output:
+            if ".nc" in report.name:
+                result = [r for r in current_nc_output if "_".join(report.name.split("_")[-3:]) in r.name]
+                compare_ra_netcdf_with_tolerances(ref=report, current=result[0])
+    else:
+        compare_ra_netcdf_with_tolerances(ref=reference_output, current=current_nc_output[0])
+    kpi_csv_file = [p for p in reference_output if ".csv" in p.name]
+    if kpi_csv_file:
+        compare_kpi_stats(ref=pd.read_csv(kpi_csv_file[0]), current=pd.read_csv(current_kpi_stats))
+
+
 def run_pta_api(
     params: TestParams, output_dir: Path, config: SCTPointTargetAnalysisConfig | None, graphs: bool
 ) -> pd.DataFrame:
@@ -361,7 +387,7 @@ def run_pta_api(
 
 def run_nesz_api(
     params: TestParams, output_dir: Path, config: SCTRadiometricAnalysisConfig | None, graphs: bool
-) -> tuple[Path, Path]:
+) -> tuple[list[Path], Path]:
     """Running SCT NESZ Analysis from API forwarding the inputs.
 
     Parameters
@@ -377,8 +403,8 @@ def run_nesz_api(
 
     Returns
     -------
-    Path
-        path to output netcdf file
+    list[Path]
+        paths to output netcdf files
     Path
         path to the kpi statistics file
     """
@@ -409,7 +435,7 @@ def run_nesz_api(
 
 def run_rain_forest_api(
     params: TestParams, output_dir: Path, config: SCTRadiometricAnalysisConfig | None, graphs: bool
-) -> tuple[Path, Path]:
+) -> tuple[list[Path], Path]:
     """Running SCT Average Radiometric Profiles Analysis from API forwarding the inputs.
 
     Parameters
@@ -425,8 +451,8 @@ def run_rain_forest_api(
 
     Returns
     -------
-    Path
-        path to output netcdf file
+    list[Path]
+        paths to output netcdf files
     Path
         path to the kpi statistics file
     """
@@ -489,8 +515,8 @@ def run_interferometry_api(
     return [output_dir.joinpath(p.name) for p in params.reference_output]
 
 
-def run_cli_tool_pta(params: TestParams, output_dir: Path, config: SCTConfiguration | None) -> list[Path]:
-    """Running SCT Point Target Analysis from CLI tool forwarding the inputs.
+def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None) -> pd.DataFrame:
+    """Running SCT Point Target Analysis using CLI tool forwarding the inputs.
 
     Parameters
     ----------
@@ -498,30 +524,39 @@ def run_cli_tool_pta(params: TestParams, output_dir: Path, config: SCTConfigurat
         test parameters
     output_dir : Path
         output directory
-    config : SCTConfiguration | None
-        configuration
+    config : Path | None
+        configuration file
 
     Returns
     -------
     pd.DataFrame
         results dataframe
+
+    RuntimeError
+        if missing output configuration file
+    RuntimeError
+        if missing output log file
+    RuntimeError
+        if missing output analysis results csv file
     """
-    config_path = output_dir.joinpath("input_config.json")
-    dump_sct_config(config=config, out_path=config_path)
-    executable_call = [
-        "sct",
-        "--config",
-        config_path,
-        "target-analysis",
-        "-p",
-        params.product,
-        "-out",
-        output_dir,
-        "-pt",
-        params.targets,
-    ]
+    executable_call = ["sct"]
+    if config is not None:
+        executable_call.extend(["--config", config])
+    executable_call.extend(
+        [
+            "target-analysis",
+            "-p",
+            params.product,
+            "-out",
+            output_dir,
+            "-pt",
+            params.targets,
+        ]
+    )
     if params.external_orbit is not None:
         executable_call.extend(["-eo", params.external_orbit])
+    if params.external_corrections_product is not None:
+        executable_call.extend(["-ec", params.external_corrections_product])
     result = subprocess.run(
         executable_call,
         capture_output=True,
@@ -532,45 +567,64 @@ def run_cli_tool_pta(params: TestParams, output_dir: Path, config: SCTConfigurat
     print("")
 
     # checking successful run
-    output_files = list(output_dir.glob("*.csv"))
     if result.returncode != 0:
         print("error: ", result.stderr)
-    assert len(output_files) == 1
+    if not output_dir.joinpath("analysis_config.toml").exists():
+        raise RuntimeError("Missing analysis_config.toml file")
+    if not output_dir.joinpath("sct_pta_analysis.log").exists():
+        raise RuntimeError("Missing sct_pta_analysis.log file")
+    output_files = list(output_dir.glob("*.csv"))
+    if not len(output_files) == 1:
+        raise RuntimeError("No output CSV file found")
 
-    return list(output_dir.glob("*.csv"))
+    return pd.read_csv(output_files[0])
 
 
-def run_cli_tool_rf(params: TestParams, output_dir: Path, config: SCTConfiguration | None, analysis: str):
-    """Running SCT Radiometric Analysis from CLI tool forwarding the inputs.
+def run_ra_cli(params: TestParams, output_dir: Path, config: Path | None, analysis: str) -> tuple[list[Path], Path]:
+    """Running SCT Radiometric Analysis using CLI tool forwarding the inputs.
 
     Parameters
     ----------
-    session : TestSession
-        sct test session
-    env : Environment
-        sct test environment
-    config : Path
-        path to the toml config file
-    product : Path
-        path to the product to be analyzed
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : Path | None
+        configuration file
     analysis : str
         analysis to be performed, [NESZ, RF]
-    """
-    config_path = output_dir.joinpath("input_config.json")
-    dump_sct_config(config=config, out_path=config_path)
 
-    command = "elevation_profile" if analysis == "RF" else "nesz"
-    executable_call = [
-        "sct",
-        "--config",
-        config_path,
-        "radiometric-analysis",
-        command,
-        "-p",
-        params.product,
-        "-out",
-        output_dir,
-    ]
+    Returns
+    -------
+    list[Path]
+        paths to output netcdf files
+    Path
+        path to the kpi statistics file
+
+    Raises
+    ------
+    RuntimeError
+        if missing output configuration file
+    RuntimeError
+        if missing output log file
+    RuntimeError
+        if missing output NetCDF files
+    RuntimeError
+        if missing output KPI statistics file
+    """
+    executable_call = ["sct"]
+    if config is not None:
+        executable_call.extend(["--config", config])
+    executable_call.extend(
+        [
+            "radiometric-analysis",
+            "elevation-profile" if analysis == "RF" else "nesz",
+            "-p",
+            params.product,
+            "-out",
+            output_dir,
+        ]
+    )
     if analysis == "RF":
         executable_call.extend(
             [
@@ -588,10 +642,89 @@ def run_cli_tool_rf(params: TestParams, output_dir: Path, config: SCTConfigurati
     print("")
 
     # checking successful run
-    output_files = list(output_dir.glob("*.nc"))
     if result.returncode != 0:
         print("error: ", result.stderr)
-    assert len(output_files) > 0
+    if not output_dir.joinpath("analysis_config.toml").exists():
+        raise RuntimeError("Missing analysis_config.toml file")
+    if not output_dir.joinpath("sct_ra_analysis.log").exists():
+        raise RuntimeError("Missing sct_ra_analysis.log file")
+    output_files_nc = list(output_dir.glob("*.nc"))
+    kpi_file = output_dir.joinpath("radiometry_statistics.csv")
+    if not len(output_files_nc) > 0:
+        raise RuntimeError("No output NetCDF files found")
+    if not kpi_file.exists():
+        raise RuntimeError("Missing radiometry_statistics.csv file")
+
+    return output_files_nc, kpi_file
+
+
+def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | None) -> list[Path]:
+    """Running SCT interferometric Analysis using CLI tool forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : Path | None
+        configuration file
+
+    Returns
+    -------
+    list[Path]
+        list of paths to output NetCDF files
+
+    Raises
+    ------
+    RuntimeError
+        if missing output configuration file
+    RuntimeError
+        if missing output log file
+    RuntimeError
+        if missing output NetCDF files
+    """
+    first_prod = params.product if isinstance(params.product, Path) else params.product[0]
+    second_prod = params.product[1] if isinstance(params.product, list) else None
+    executable_call = ["sct"]
+    if config is not None:
+        executable_call.extend(["--config", config])
+    executable_call.extend(
+        [
+            "interferometric-analysis",
+            "-p",
+            first_prod,
+        ]
+    )
+    if second_prod is not None:
+        executable_call.extend(["-pp", second_prod])
+    executable_call.extend(
+        [
+            "-out",
+            output_dir,
+        ]
+    )
+    result = subprocess.run(
+        executable_call,
+        capture_output=True,
+        text=True,
+    )
+    print("")
+    print("output: ", result.stdout)
+    print("")
+
+    # checking successful run
+    if result.returncode != 0:
+        print("error: ", result.stderr)
+    if not output_dir.joinpath("analysis_config.toml").exists():
+        raise RuntimeError("Missing analysis_config.toml file")
+    if not output_dir.joinpath("sct_interf_analysis.log").exists():
+        raise RuntimeError("Missing sct_interf_analysis.log file")
+    output_files_nc = list(output_dir.glob("*.nc"))
+    if not len(output_files_nc) > 0:
+        raise RuntimeError("No output NetCDF files found")
+
+    return output_files_nc
 
 
 def dump_sct_config(config: SCTConfiguration | None, out_path: Path) -> None:

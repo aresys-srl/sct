@@ -9,7 +9,7 @@ SCT PTA CLI unittest
 import unittest
 from contextlib import contextmanager
 from pathlib import Path
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import Any, Generator
 
 from click.testing import CliRunner
@@ -23,12 +23,12 @@ def TemporaryDirectoriesAndConfFile() -> Generator[tuple[Path, Path, Path, Path]
     """Create empty existing dirs and an empty conf.toml file"""
     with (
         TemporaryDirectory() as input_product,
-        TemporaryDirectory() as point_target_product,
+        NamedTemporaryFile() as point_target_product,
         TemporaryDirectory() as output_dir,
         TemporaryDirectory() as conf_dir,
     ):
         conf_file = Path(conf_dir).joinpath("conf.toml")
-        yield Path(input_product), Path(point_target_product), Path(output_dir), Path(conf_file)
+        yield Path(input_product), Path(point_target_product.name), Path(output_dir), Path(conf_file)
 
 
 class PointTargetAnalysisCLITestCase(unittest.TestCase):

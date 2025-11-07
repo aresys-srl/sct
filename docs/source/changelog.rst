@@ -8,6 +8,7 @@ v2.0.4
 
 - Improving CLI graceful exit when an exception is raised
 - Improving Point Target Source management error handling
+- Improving SCT Testing module adding analyses testing via SCT CLI tool
 
 **Bug Fixing**
 
