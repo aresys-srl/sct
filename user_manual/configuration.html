@@ -1,0 +1,824 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Configuration file setup for CLI tool &#8212; SAR Calibration Toolbox (SCT)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=0e53188f" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=ad916286"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_manual/configuration';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Calibration Target Data Input File" href="point_target_file.html" />
+    <link rel="prev" title="Supported Missions and Products" href="supported_missions.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SAR Calibration Toolbox (SCT)</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/api/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User Manual
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aresys-srl/sct" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.aresys.it/" title="Aresys" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/icons/aresys_logo.svg" class="icon-link-image" alt="Aresys"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/api/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User Manual
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aresys-srl/sct" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.aresys.it/" title="Aresys" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/icons/aresys_logo.svg" class="icon-link-image" alt="Aresys"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="supported_missions.html">Supported Missions and Products</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Configuration file setup for CLI tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="point_target_file.html">Calibration Target Data Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line_tool.html">Command Line Interface (CLI) tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line_side_utilities.html">Secondary CLI Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analyses.html">Implemented Features and Analyses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automatic_mode.html">Automatic Analyses Detection Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pta_corrections.html">Corrections for Point Target Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Quick Start and Tutorials</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">User Manual</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Configuration file setup for CLI tool</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="configuration-file-setup-for-cli-tool">
+<span id="sct-config"></span><h1>Configuration file setup for CLI tool<a class="headerlink" href="#configuration-file-setup-for-cli-tool" title="Link to this heading">#</a></h1>
+<p>The SCT Command Line Interface (CLI) tool let the user perform quality analyses on input products using the SCT Python
+package as a command line executable software. All the implemented features have a dedicated command that can be specified
+to perform the operation of choice.
+This commands have been developed to be run with a minimal setup and only the essential parameters to be specified, such
+as input and output folders.
+For an in-depth documentation on how to use the command line tool, please refer <a class="reference internal" href="command_line_tool.html#sct-cli"><span class="std std-ref">to this page</span></a>.</p>
+<p>Nevertheless, a configuration file (TOML format) can be provided as input to tweak and tune several options and parameters
+in order to fully customize each analysis.</p>
+<p>This configuration file is designed to work with optional fields that can be specified only if that specific feature should
+be altered with respect to the default behavior. In principle, if all default settings are enough for the user, this
+configuration file is not necessary.</p>
+<div class="admonition-validation admonition">
+<p class="admonition-title">Validation</p>
+<p>Configuration files are validated through a JSON schema when provided as input for the tool to assess compliance.</p>
+</div>
+<section id="configuration-file-structure">
+<h2>Configuration file structure<a class="headerlink" href="#configuration-file-structure" title="Link to this heading">#</a></h2>
+<p>The .toml configuration file is organized in sections and subsections related to specific analyses.
+<em>Every section is optional</em>, except for some fields that are required if certain parameters has been specified.</p>
+<p>The available sections of this configuration file are:</p>
+<ul class="simple">
+<li><p><strong>general</strong>: the highest level of configuration, not related to a specific feature.</p></li>
+<li><p><strong>point_target_analysis</strong>: section that can be used to access <em>Point Target Analysis</em> options and parameters.</p>
+<ul>
+<li><p><strong>corrections</strong>: sub-section that can be used to enable/disable some corrections needed for this analysis.
+Refer <a class="reference internal" href="pta_corrections.html#sct-pta-corrections"><span class="std std-ref">to this page</span></a> for an in-depth documentation of corrections.</p>
+<ul>
+<li><p><strong>ionosphere</strong>: sub-sub-section dedicated to ionosphere correction customization.</p></li>
+<li><p><strong>troposphere</strong>: sub-sub-section dedicated to troposphere correction customization.</p></li>
+</ul>
+</li>
+<li><p><strong>advanced_configuration</strong>: sub-section that can be used to tweak and tune lower level parameters that can heavily
+alter the behavior of the analysis, if not result in an error.</p>
+<ul>
+<li><p><strong>irf_parameters</strong>: sub-sub-section dedicated to IRF analysis parameters.</p></li>
+<li><p><strong>rcs_parameters</strong>: sub-sub-section dedicated to RCS analysis parameters.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>radiometric_analysis</strong>: section that can be used to access <em>Radiometric Analysis</em> options and parameters.</p>
+<ul>
+<li><p><strong>advanced_configuration</strong>: sub-section that can be used to tweak and tune lower level parameters that change the
+computation of the radiometric profiles.</p>
+<ul>
+<li><p><strong>profile_extraction_parameters</strong>: sub-sub-section dedicated to radiometric profiles parameters.</p></li>
+<li><p><strong>histogram_parameters</strong>: sub-sub-section dedicated to radiometric 2D histograms parameters.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>interferometric_analysis</strong>: section that can be used to access <em>Interferometric Analysis</em> options and parameters.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>To better understand the implications of changing specific parameters, refer to the <a class="reference internal" href="analyses.html#sct-analyses"><span class="std std-ref">documentation of the implemented
+analyses</span></a>.</p>
+</div>
+</section>
+<section id="detailed-description-of-each-section">
+<h2>Detailed description of each section<a class="headerlink" href="#detailed-description-of-each-section" title="Link to this heading">#</a></h2>
+<p>A detailed description of each section, sub-section and keywords is herein reported to help the user in setting up a proper
+configuration file.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Highlighted lines in the text blocks below means that there is a dependency relationship between those keywords.
+This means that if a specific keyword is a boolean and is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, <strong>the other keyword is required</strong>.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For each TOML text block defined below, the values associated to the keywords are <em>the defaults</em>.
+This means that <strong>there is no need to specify those values</strong> in the configuration file unless the intention is to explicitly
+change that value.</p>
+</div>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Link to this heading">#</a></h3>
+<p>The following parameters can be configured directly under the <cite>general</cite> section.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[general]</span>
+<span class="linenos">2</span><span class="n">save_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">                 </span><span class="c1"># save analysis log to output folder</span>
+<span class="linenos">3</span><span class="n">save_config_copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">         </span><span class="c1"># save analysis config to output folder</span>
+</pre></div>
+</div>
+</section>
+<section id="point-target-analysis">
+<h3>Point Target Analysis<a class="headerlink" href="#point-target-analysis" title="Link to this heading">#</a></h3>
+<p>The following parameters can be configured directly under the <cite>point_target_analysis</cite> section.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[point_target_analysis]</span>
+<span class="linenos">2</span><span class="n">perform_irf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">              </span><span class="c1"># on/off IRF computation</span>
+<span class="linenos">3</span><span class="n">perform_rcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">              </span><span class="c1"># on/off RCS computation</span>
+<span class="linenos">4</span><span class="n">evaluate_pslr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">            </span><span class="c1"># on/off PSLR computation</span>
+<span class="linenos">5</span><span class="n">evaluate_islr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">            </span><span class="c1"># on/off ISLR computation</span>
+<span class="linenos">6</span><span class="n">evaluate_sslr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">            </span><span class="c1"># on/off SSLR computation</span>
+<span class="linenos">7</span><span class="n">evaluate_localization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">    </span><span class="c1"># on/off Localization Errors computation</span>
+<span class="linenos">8</span><span class="n">ale_validity_limits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">99</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">]</span><span class="w">  </span><span class="c1"># set Absolute Localization Error validity limits in meters [rng, az]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>ale_validity_limits</cite> actual default value is <code class="docutils literal notranslate"><span class="pre">None</span></code> inside the SCT code. It can be specified as an array of two
+<code class="docutils literal notranslate"><span class="pre">float</span></code> values representing the ALE limits in meters along range and azimuth directions.</p>
+</div>
+<section id="corrections">
+<h4>Corrections<a class="headerlink" href="#corrections" title="Link to this heading">#</a></h4>
+<p>The following parameters can be configured directly under the <cite>point_target_analysis.corrections</cite> section.
+<cite>point_target_analysis</cite> <strong>is not required to be defined in the configuration file</strong> for this sub-section to work.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[point_target_analysis.corrections]</span>
+<span class="hll"><span class="linenos">2</span><span class="n">enable_etad_corrections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">                       </span><span class="c1"># on/off ETAD corr.</span>
+</span><span class="linenos">3</span><span class="n">enable_solid_tides_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">                 </span><span class="c1"># on/off Solid Earth Tides corr.</span>
+<span class="linenos">4</span><span class="n">enable_plate_tectonics_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">             </span><span class="c1"># on/off Plate Tectonics corr.</span>
+<span class="linenos">5</span><span class="n">enable_sensor_specific_processing_corrections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="c1"># on/off Sensor specific corr.</span>
+<span class="linenos">6</span><span class="n">enable_ionospheric_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">                </span><span class="c1"># on/off Ionospheric corr.</span>
+<span class="linenos">7</span><span class="n">enable_tropospheric_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">               </span><span class="c1"># on/off Tropospheric corr.</span>
+<span class="hll"><span class="linenos">8</span><span class="n">etad_product_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w">                               </span><span class="c1"># path to the ETAD product</span>
+</span></pre></div>
+</div>
+<section id="ionosphere">
+<h5>Ionosphere<a class="headerlink" href="#ionosphere" title="Link to this heading">#</a></h5>
+<p>This sub-sub-section is used when the <cite>point_target_analysis.corrections</cite> <code class="docutils literal notranslate"><span class="pre">enable_ionospheric_correction</span></code> flag
+is enabled. Just the highlighted rows in the code below <strong>are required</strong> for the code to work.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[point_target_analysis.corrections]</span>
+<span class="hll"><span class="linenos">2</span><span class="n">enable_ionospheric_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">           </span><span class="c1"># on/off Ionospheric corr.</span>
+</span><span class="linenos">3</span><span class="k">[point_target_analysis.corrections.ionosphere]</span>
+<span class="hll"><span class="linenos">4</span><span class="n">ionospheric_maps_directory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w">                </span><span class="c1"># path to the tec map directory</span>
+</span><span class="hll"><span class="linenos">5</span><span class="n">ionospheric_analysis_center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;cor&quot;</span><span class="w">            </span><span class="c1"># analysis center (maps provider)</span>
+</span></pre></div>
+</div>
+<div class="admonition-validation admonition">
+<p class="admonition-title">Validation</p>
+<div class="line-block">
+<div class="line"><cite>ionospheric_analysis_center</cite> and <cite>ionospheric_tec_inc_angle_method</cite> map to internal <em>enum classes</em> and are validated by the schema to match these valid values.</div>
+<div class="line">Here are the possible values:</div>
+<div class="line"><cite>ionospheric_analysis_center</cite>: <code class="docutils literal notranslate"><span class="pre">cor</span></code>, <code class="docutils literal notranslate"><span class="pre">cod</span></code>, <code class="docutils literal notranslate"><span class="pre">esa</span></code>, <code class="docutils literal notranslate"><span class="pre">esr</span></code></div>
+<div class="line"><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</div>
+</div>
+</div>
+</section>
+<section id="troposphere">
+<h5>Troposphere<a class="headerlink" href="#troposphere" title="Link to this heading">#</a></h5>
+<p>This sub-sub-section is used when the <cite>point_target_analysis.corrections</cite> <code class="docutils literal notranslate"><span class="pre">enable_tropospheric_correction</span></code> flag
+is enabled. Just the highlighted rows in the code below <strong>are required</strong> for the code to work.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[point_target_analysis.corrections]</span>
+<span class="hll"><span class="linenos">2</span><span class="n">enable_tropospheric_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="w">           </span><span class="c1"># on/off Tropospheric corr.</span>
+</span><span class="linenos">3</span><span class="k">[point_target_analysis.corrections.troposphere]</span>
+<span class="hll"><span class="linenos">4</span><span class="n">tropospheric_maps_directory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w">                </span><span class="c1"># path to the maps directory</span>
+</span><span class="linenos">5</span><span class="n">tropospheric_map_grid_resolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;fine&quot;</span><span class="w">       </span><span class="c1"># maps grid resolution</span>
+</pre></div>
+</div>
+<div class="admonition-validation admonition">
+<p class="admonition-title">Validation</p>
+<div class="line-block">
+<div class="line"><cite>tropospheric_map_grid_resolution</cite> maps to an internal <em>enum class</em> and is validated by the schema to match the valid values.</div>
+<div class="line">Here are the possible values:</div>
+<div class="line"><cite>tropospheric_map_grid_resolution</cite>: <code class="docutils literal notranslate"><span class="pre">fine</span></code>, <code class="docutils literal notranslate"><span class="pre">coarse</span></code></div>
+<div class="line"><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</div>
+</div>
+</div>
+</section>
+</section>
+<section id="advanced-configuration">
+<h4>Advanced Configuration<a class="headerlink" href="#advanced-configuration" title="Link to this heading">#</a></h4>
+<p>This sub-section cannot be expressed by itself but only through its sub-sections <cite>irf_parameters</cite> and <cite>rcs_parameters</cite>.
+This choice has been done to explicitly separate these two configuration categories from the others because changing these
+parameters heavily affects the results and can also lead to code errors.</p>
+<section id="irf-parameters">
+<h5>IRF Parameters<a class="headerlink" href="#irf-parameters" title="Link to this heading">#</a></h5>
+<p>This sub-sub-section is used when the the user wants to access low level parameters affecting the IRF computation algorithm.
+<em>This operation is not recommended.</em></p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[point_target_analysis.advanced_configuration.irf_parameters]</span>
+<span class="linenos">2</span><span class="n">peak_finding_roi_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">33</span><span class="p">,</span><span class="w"> </span><span class="mi">33</span><span class="p">]</span><span class="w">            </span><span class="c1"># roi in pixel where to find the signal peak</span>
+<span class="linenos">3</span><span class="n">analysis_roi_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">128</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="p">]</span><span class="w">              </span><span class="c1"># roi in pixel for processing oversampled image</span>
+<span class="linenos">4</span><span class="n">oversampling_factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">16</span><span class="w">                    </span><span class="c1"># processing oversampling factor</span>
+<span class="linenos">5</span><span class="n">zero_doppler_abs_squint_threshold_deg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="c1"># squint angle threshold below which not considering this effect</span>
+<span class="linenos">6</span><span class="n">masking_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;peak&quot;</span><span class="w">                     </span><span class="c1"># masking method for computing IRF quantities</span>
+</pre></div>
+</div>
+<div class="admonition-validation admonition">
+<p class="admonition-title">Validation</p>
+<div class="line-block">
+<div class="line"><cite>masking_method</cite> maps to an internal <em>enum class</em> and is validated by the schema to match the valid values.</div>
+<div class="line">Here are the possible values:</div>
+<div class="line"><cite>masking_method</cite>: <code class="docutils literal notranslate"><span class="pre">peak</span></code>, <code class="docutils literal notranslate"><span class="pre">resolution</span></code></div>
+<div class="line"><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</div>
+</div>
+</div>
+</section>
+<section id="rcs-parameters">
+<h5>RCS Parameters<a class="headerlink" href="#rcs-parameters" title="Link to this heading">#</a></h5>
+<p>This sub-sub-section is used when the the user wants to access low level parameters affecting the RCS computation algorithm.
+<em>This operation is not recommended.</em></p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[point_target_analysis.advanced_configuration.rcs_parameters]</span>
+<span class="linenos">2</span><span class="n">interpolation_factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="w">           </span><span class="c1"># processing interpolation factor</span>
+<span class="linenos">3</span><span class="n">roi_dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="w">                </span><span class="c1"># roi (squared) in pixel for processing image</span>
+<span class="linenos">4</span><span class="n">calibration_factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w">           </span><span class="c1"># rcs calibration factor</span>
+<span class="linenos">5</span><span class="n">resampling_factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w">            </span><span class="c1"># rcs resampling factor</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</p>
+</section>
+</section>
+</section>
+<section id="radiometric-analysis">
+<h3>Radiometric Analysis<a class="headerlink" href="#radiometric-analysis" title="Link to this heading">#</a></h3>
+<p>The following parameters can be configured directly under the <cite>radiometric_analysis</cite> section.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[radiometric_analysis]</span>
+<span class="linenos">2</span><span class="n">input_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;beta_nought&quot;</span><span class="w">              </span><span class="c1"># input radiometric quantity</span>
+<span class="linenos">3</span><span class="n">azimuth_block_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="w">               </span><span class="c1"># scene partitioning block size in pixel along azimuth</span>
+<span class="linenos">4</span><span class="n">range_pixel_margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">150</span><span class="w">                </span><span class="c1"># margin in pixel to exclude near and far range from profile</span>
+<span class="linenos">5</span><span class="n">radiometric_correction_exponent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w">   </span><span class="c1"># radiometric correction exponent applied when converting radiometric quantity</span>
+</pre></div>
+</div>
+<div class="admonition-validation admonition">
+<p class="admonition-title">Validation</p>
+<div class="line-block">
+<div class="line"><cite>input_type</cite> maps to an internal <em>enum class</em> and is validated by the schema to match the valid values.</div>
+<div class="line">Here are the possible values:</div>
+<div class="line"><cite>input_type</cite>: <code class="docutils literal notranslate"><span class="pre">beta_nought</span></code>, <code class="docutils literal notranslate"><span class="pre">sigma_nought</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma_nought</span></code></div>
+<div class="line"><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</div>
+</div>
+</div>
+<section id="id1">
+<h4>Advanced Configuration<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<p>This sub-section cannot be expressed by itself but only through its sub-sections <cite>profile_extraction_parameters</cite> and <cite>histogram_parameters</cite>.
+This choice has been done to explicitly separate these two configuration categories from the others because changing these
+parameters heavily affects the results.
+<cite>radiometric_analysis</cite> <strong>is not required to be defined in the configuration file</strong> for this sub-section to work.
+Changing these parameters can heavily affect the analysis.</p>
+<section id="profile-extraction-parameters">
+<h5>Profile Extraction Parameters<a class="headerlink" href="#profile-extraction-parameters" title="Link to this heading">#</a></h5>
+<p>This sub-sub-section is used when the the user wants to access low level parameters affecting the radiometric profiles
+extraction algorithm.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[radiometric_analysis.advanced_configuration.profile_extraction_parameters]</span>
+<span class="linenos">2</span><span class="n">outlier_removal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">                     </span><span class="c1"># enabling/disabling outlier removal filter</span>
+<span class="linenos">3</span><span class="n">smoothening_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">                  </span><span class="c1"># enabling/disabling smoothening filter</span>
+<span class="linenos">4</span><span class="n">filtering_kernel_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">]</span><span class="w">            </span><span class="c1"># size of the smoothening filter kernel</span>
+<span class="linenos">5</span><span class="n">outliers_kernel_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">]</span><span class="w">               </span><span class="c1"># size of the outliers removal kernel</span>
+<span class="linenos">6</span><span class="n">outliers_percentile_boundaries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">90</span><span class="p">]</span><span class="w">   </span><span class="c1"># outliers percentile boundaries to be preserved</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</p>
+</section>
+<section id="d-histograms-parameters">
+<h5>2D Histograms Parameters<a class="headerlink" href="#d-histograms-parameters" title="Link to this heading">#</a></h5>
+<p>This sub-sub-section is used when the the user wants to access low level parameters affecting the computation algorithm
+of the 2D histograms.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[radiometric_analysis.advanced_configuration.histogram_parameters]</span>
+<span class="linenos">2</span><span class="n">x_bins_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="w">            </span><span class="c1"># number of bins along the x axis [look angles/azimuth times]</span>
+<span class="linenos">3</span><span class="n">y_bins_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">101</span><span class="w">            </span><span class="c1"># number of bins along the y axis [intensity (dB)]</span>
+<span class="linenos">4</span><span class="n">y_bins_center_margin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w">    </span><span class="c1"># extent of the intensity graph (in dB) from the central bin</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</p>
+</section>
+</section>
+</section>
+<section id="interferometric-analysis">
+<h3>Interferometric Analysis<a class="headerlink" href="#interferometric-analysis" title="Link to this heading">#</a></h3>
+<p>The following parameters can be configured directly under the <cite>interferometric_analysis</cite> section.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">[interferometric_analysis]</span>
+<span class="linenos">2</span><span class="n">enable_coherence_computation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w">        </span><span class="c1"># enable/disable coherence computation (to be enabled for interferogram products)</span>
+<span class="linenos">3</span><span class="n">coherence_kernel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">]</span><span class="w">                 </span><span class="c1"># kernel size for coherence computation</span>
+<span class="linenos">4</span><span class="n">azimuth_blocks_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">                   </span><span class="c1"># number of azimuth blocks for computing coherence 2D histogram</span>
+<span class="linenos">5</span><span class="n">range_blocks_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">                     </span><span class="c1"># number of range blocks for computing coherence 2D histogram</span>
+<span class="linenos">6</span><span class="n">coherence_bins_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">80</span><span class="w">                  </span><span class="c1"># number of coherence intensity bins</span>
+</pre></div>
+</div>
+<div class="admonition-validation admonition">
+<p class="admonition-title">Validation</p>
+<div class="line-block">
+<div class="line"><cite>azimuth_blocks_number</cite> and <cite>range_blocks_number</cite> are actually automatically computed if not explicitly set from configuration.</div>
+<div class="line"><a class="reference internal" href="../reference/api/index.html#sct-api-ref-index"><span class="std std-ref">Check the API documentation</span></a> to learn more about these values and their meaning.</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="supported_missions.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Supported Missions and Products</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="point_target_file.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Calibration Target Data Input File</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-file-structure">Configuration file structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-description-of-each-section">Detailed description of each section</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generic">Generic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#point-target-analysis">Point Target Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#corrections">Corrections</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#ionosphere">Ionosphere</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#troposphere">Troposphere</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-configuration">Advanced Configuration</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#irf-parameters">IRF Parameters</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#rcs-parameters">RCS Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radiometric-analysis">Radiometric Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Advanced Configuration</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#profile-extraction-parameters">Profile Extraction Parameters</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#d-histograms-parameters">2D Histograms Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interferometric-analysis">Interferometric Analysis</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Aresys S.R.L..
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Corrections for Point Target Analysis &#8212; SAR Calibration Toolbox (SCT)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=0e53188f" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=ad916286"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_manual/pta_corrections';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quick Start and Tutorials" href="tutorials.html" />
+    <link rel="prev" title="Automatic Analyses Detection Mode" href="automatic_mode.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SAR Calibration Toolbox (SCT)</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/api/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User Manual
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aresys-srl/sct" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.aresys.it/" title="Aresys" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/icons/aresys_logo.svg" class="icon-link-image" alt="Aresys"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/api/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User Manual
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aresys-srl/sct" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.aresys.it/" title="Aresys" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/icons/aresys_logo.svg" class="icon-link-image" alt="Aresys"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="supported_missions.html">Supported Missions and Products</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration file setup for CLI tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="point_target_file.html">Calibration Target Data Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line_tool.html">Command Line Interface (CLI) tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line_side_utilities.html">Secondary CLI Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analyses.html">Implemented Features and Analyses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automatic_mode.html">Automatic Analyses Detection Mode</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Corrections for Point Target Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Quick Start and Tutorials</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">User Manual</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Corrections for Point Target Analysis</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="corrections-for-point-target-analysis">
+<span id="sct-pta-corrections"></span><h1>Corrections for Point Target Analysis<a class="headerlink" href="#corrections-for-point-target-analysis" title="Link to this heading">#</a></h1>
+<p>Point Target Analysis can be performed applying several corrections to input data in order to take into account the different
+phenomena that can affect the results, in particular those regarding <strong>Localization Errors</strong>.</p>
+<p>SCT implements optional corrections that can be enabled or disabled from the configuration file to fully customize the analysis
+flow. Here are the available options that the user can access:</p>
+<ul class="simple">
+<li><p><strong>Solid Earth Tides Displacement</strong>: computing solid tides for a specific ground point at a given time</p></li>
+<li><p><strong>Plate Tectonics Displacement</strong>: computing the plate tectonic movement using provided drift velocities or an internal model</p></li>
+<li><p><strong>Ionospheric Delay</strong>: computing signal delay due to ionospheric effects from external TEC maps</p></li>
+<li><p><strong>Tropospheric Delay</strong>: computing signal delay due to tropospheric effects from external maps</p></li>
+<li><p><strong>Sensor specific processing corrections</strong>: some sensors need specific corrections, i.e. Sentinel-1</p></li>
+<li><p><strong>ETAD Range and Azimuth corrections</strong>: if an ETAD product is provided, range and azimuth corrections can be applied</p></li>
+</ul>
+<p>In the following sections, each correction is described for further clarifications.</p>
+<section id="geodynamics-displacements">
+<h2>Geodynamics Displacements<a class="headerlink" href="#geodynamics-displacements" title="Link to this heading">#</a></h2>
+<p>The following corrections are due to geodynamics phenomena and affect the coordinates of the point targets located everywhere
+on Earth. They are applied, if needed, directly on calibration target ECEF coordinates to take into account the position displacement
+at the moment of the SAR acquisition time.
+In particular, solid tides are evaluated at the acquisition mid-swath time while plate tectonics is computed using the
+time delta between the acquisition time and the target coordinates measurement date.</p>
+<section id="solid-earth-tides">
+<h3>Solid Earth Tides<a class="headerlink" href="#solid-earth-tides" title="Link to this heading">#</a></h3>
+<p>Solid Earth Tides (SET) are computed using a wrapper of the Fortran <strong>Solid</strong> program written by Dennis Milbert from source code
+provided by Professor V. Dehant <a class="footnote-reference brackets" href="#id5" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. This correction <em>does not take into account</em> ocean loading, atmospheric loading, or
+deformation due to polar motion.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>SCT uses an internal C++ pre-compiled library wrapping the original Fortran tool. This means that there is no need of
+a any type of compiler or Fortran dependency.</p>
+</div>
+<p>This correction is <strong>enabled by default</strong>.</p>
+</section>
+<section id="plate-tectonics">
+<h3>Plate Tectonics<a class="headerlink" href="#plate-tectonics" title="Link to this heading">#</a></h3>
+<p>Plate tectonics displacements are computed using an internal model based on <em>ITRF2014 plate motion model</em> <a class="footnote-reference brackets" href="#id6" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. For more
+accurate results, drift velocities measured directly during point targets measurement campaigns should be used.</p>
+<p>These velocities can also be provided as inputs when using an external .csv source for point target locations that is compliant
+to the template provided.</p>
+<p>This correction is <strong>enabled by default</strong>.</p>
+</section>
+</section>
+<section id="atmospheric-delays">
+<h2>Atmospheric Delays<a class="headerlink" href="#atmospheric-delays" title="Link to this heading">#</a></h2>
+<p>The following corrections are due to atmospheric phenomena affecting the signal emitted and received from the sensor that
+passes through the ionosphere and troposphere, causing delays in transmission and reception.
+Atmospheric delays are applied to out-of-the-box <strong>Absolute Localization Errors</strong> measurements both along range and azimuth
+directions.</p>
+<p>All the following atmospheric delays corrections affects ALE along <strong>range</strong> direction.</p>
+<section id="ionospheric-delay">
+<h3>Ionospheric Delay<a class="headerlink" href="#ionospheric-delay" title="Link to this heading">#</a></h3>
+<p>Signal delay caused by ionosphere crossing is estimated interpolating the VTEC (Vertical Total Electron Content) maps in
+IONEX (<em>ION</em> onosphere <em>EX</em> change) format generated from NASA GNSS-CDDIS data and analyzed from specific analysis center <a class="footnote-reference brackets" href="#id7" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.
+This map must be provided as an input when this correction is enabled via the configuration file.
+The analysis center of the maps should be specified too. It’s also possible to change the method used to compute the incidence angles
+to detect the pierce point using the configuration file.</p>
+<p>The map should be the closest to the acquisition time of the product to be analyzed and the exact time is automatically interpolated.</p>
+<p>This correction is <strong>disabled by default</strong>.</p>
+</section>
+<section id="tropospheric-delay">
+<h3>Tropospheric Delay<a class="headerlink" href="#tropospheric-delay" title="Link to this heading">#</a></h3>
+<p>Signal delay caused by troposphere crossing is estimated interpolating the tropospheric products maps using Vienna Mapping
+Function 3 (VMF3) model <a class="footnote-reference brackets" href="#id8" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>. Four maps are needed to perform the interpolation at best:</p>
+<ul class="simple">
+<li><p>the main file, the closest to the acquisition time hour (approximated by defect).</p></li>
+<li><p>the previous file (the one 6 hours before the main one).</p></li>
+<li><p>the two files after the main one (6 hours after and 12 hours after).</p></li>
+</ul>
+<figure class="align-center" id="id9">
+<a class="reference internal image-reference" href="../_images/troposphere_data_maps_model.png"><img alt="../_images/troposphere_data_maps_model.png" src="../_images/troposphere_data_maps_model.png" style="width: 650px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Scheme of supported troposphere products.</span><a class="headerlink" href="#id9" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>These maps must be provided as an input when this correction is enabled via the configuration file. Only GRID data for VMF3
+are supported: 1x1 (fine) grid is the default type of data, while 5x5 (coarse) can be provided specifying the change of grid type
+in the configuration file.
+Data maps must be of the <strong>Operational (OP)</strong> type.</p>
+<p>This correction is <strong>disabled by default</strong>.</p>
+</section>
+</section>
+<section id="etad-products-corrections">
+<h2>ETAD Products Corrections<a class="headerlink" href="#etad-products-corrections" title="Link to this heading">#</a></h2>
+<p>If an ETAD product is provided for the SAR acquisition to be analyzed, the range and azimuth corrections contained in this
+product are extracted and added to the output.</p>
+<p>The corrections applied correspond to the merged ones both for azimuth and range directions.</p>
+</section>
+<section id="sensor-specific-processing-corrections">
+<h2>Sensor-specific Processing Corrections<a class="headerlink" href="#sensor-specific-processing-corrections" title="Link to this heading">#</a></h2>
+<p>It might happen that a particular sensor needs specifically designed corrections to be applied at the end of the processing
+phase in order to output the correct results. These corrections are hardcoded and must be implemented and custom designed for each
+sensor type.</p>
+<p>As of now, only the following corrections have been included.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>Sensor</strong>: Sentinel-1</div>
+<div class="line"><strong>Range Corrections</strong>: doppler shift correction</div>
+<div class="line"><strong>Azimuth Corrections</strong>: bistatic delay, instrument timing, FM rate shift</div>
+</div>
+</div></blockquote>
+</section>
+<section id="footnotes">
+<h2>Footnotes<a class="headerlink" href="#footnotes" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id5" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>For more information, check the <a class="reference external" href="https://geodesyworld.github.io/SOFTS/solid.htm">official GitHub page of Solid project.</a></p>
+</aside>
+<aside class="footnote brackets" id="id6" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Zuheir Altamimi et al., <em>“ITRF2014 plate motion model”</em>, Geophysical Journal International, 2017, <a class="reference external" href="https://doi.org/10.1093/gji/ggx136">DOI</a></p>
+</aside>
+<aside class="footnote brackets" id="id7" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>For more information, check the <a class="reference external" href="https://cddis.nasa.gov/Data_and_Derived_Products/GNSS/atmospheric_products.html">official website.</a></p>
+</aside>
+<aside class="footnote brackets" id="id8" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>For more information, check the <a class="reference external" href="https://cddis.nasa.gov/archive/gnss/products/troposphere/zpd">CDDIS site</a> or
+the <a class="reference external" href="https://vmf.geo.tuwien.ac.at/">VMF Data Server</a></p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="automatic_mode.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Automatic Analyses Detection Mode</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="tutorials.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Quick Start and Tutorials</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geodynamics-displacements">Geodynamics Displacements</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solid-earth-tides">Solid Earth Tides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plate-tectonics">Plate Tectonics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atmospheric-delays">Atmospheric Delays</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ionospheric-delay">Ionospheric Delay</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tropospheric-delay">Tropospheric Delay</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#etad-products-corrections">ETAD Products Corrections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensor-specific-processing-corrections">Sensor-specific Processing Corrections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#footnotes">Footnotes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Aresys S.R.L..
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

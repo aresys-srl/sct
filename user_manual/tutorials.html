@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Quick Start and Tutorials &#8212; SAR Calibration Toolbox (SCT)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=0e53188f" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=ad916286"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_manual/tutorials';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Changelog" href="../changelog.html" />
+    <link rel="prev" title="Corrections for Point Target Analysis" href="pta_corrections.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SAR Calibration Toolbox (SCT)</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/api/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User Manual
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aresys-srl/sct" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.aresys.it/" title="Aresys" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/icons/aresys_logo.svg" class="icon-link-image" alt="Aresys"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/api/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User Manual
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aresys-srl/sct" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.aresys.it/" title="Aresys" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/icons/aresys_logo.svg" class="icon-link-image" alt="Aresys"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="supported_missions.html">Supported Missions and Products</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration file setup for CLI tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="point_target_file.html">Calibration Target Data Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line_tool.html">Command Line Interface (CLI) tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line_side_utilities.html">Secondary CLI Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analyses.html">Implemented Features and Analyses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automatic_mode.html">Automatic Analyses Detection Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pta_corrections.html">Corrections for Point Target Analysis</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Quick Start and Tutorials</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">User Manual</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Quick Start and Tutorials</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="quick-start-and-tutorials">
+<span id="sct-tutorials"></span><h1>Quick Start and Tutorials<a class="headerlink" href="#quick-start-and-tutorials" title="Link to this heading">#</a></h1>
+<p>This is a collection of simple examples on how to perform specific tasks using the SCT software, both from the CLI interface
+and as a python library.</p>
+<section id="point-target-analysis">
+<h2>Point Target Analysis<a class="headerlink" href="#point-target-analysis" title="Link to this heading">#</a></h2>
+<p>To perform a Point Target Analysis using SCT CLI, run the following command in your shell, adapting the input parameters
+to your needs. Passing the input configuration can be avoided if default values are good enough.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sct<span class="w"> </span>--config<span class="w"> </span>path_to_config_toml<span class="w"> </span>target-analysis<span class="w"> </span>-p<span class="w"> </span>path_to_product<span class="w"> </span>-out<span class="w"> </span>path_to_output_folder<span class="w"> </span>-pt<span class="w"> </span>path_to_target_csv_file<span class="w"> </span><span class="o">[</span>-eo<span class="w"> </span>path_to_external_orbit<span class="o">]</span><span class="w"> </span><span class="o">[</span>-g<span class="o">]</span>
+</pre></div>
+</div>
+<p>If an external orbit must be used for a Sentinel-1 product, it can be passed as input to the CLI tool using the <cite>–external-orbit/-eo</cite> option.
+Graphical output for point target analysis can be enabled using the <cite>–graphs/-g</cite> option for the CLI tool.</p>
+<p>The exact same thing can be done from a custom script using SCT as a library:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sct.configuration.sct_configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCTConfiguration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sct.analyses.point_target_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">point_target_analysis_with_corrections</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sct.analyses.graphical_output</span><span class="w"> </span><span class="kn">import</span> <span class="n">sct_pta_graphs</span>  <span class="c1"># optional, for graphs only</span>
+
+<span class="c1"># adding a configuration is optional</span>
+<span class="n">config_toml_path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">SCTConfiguration</span><span class="o">.</span><span class="n">from_toml</span><span class="p">(</span><span class="n">config_toml_path</span><span class="p">)</span>
+<span class="c1"># adding an external orbit for Sentinel 1 products is optional</span>
+<span class="n">path_to_external_orbit</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">product_path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">targets_csv_file_path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">output_results_csv_file</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">graphs_output_directory</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="n">results_df</span><span class="p">,</span> <span class="n">data_for_graphs</span> <span class="o">=</span> <span class="n">pta</span><span class="o">.</span><span class="n">point_target_analysis_with_corrections</span><span class="p">(</span>
+    <span class="n">product_path</span><span class="o">=</span><span class="n">prod</span><span class="p">,</span>
+    <span class="n">external_target_source</span><span class="o">=</span><span class="n">targets_csv_file_path</span><span class="p">,</span>
+    <span class="n">external_orbit_path</span><span class="o">=</span><span class="n">path_to_external_orbit</span><span class="p">,</span>  <span class="c1"># optional</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">point_target_analysis</span><span class="p">,</span>  <span class="c1"># optional</span>
+<span class="p">)</span>
+<span class="n">results_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_results_csv_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># optional, if graphical output is needed</span>
+<span class="n">sct_pta_graphs</span><span class="p">(</span><span class="n">graphs_data</span><span class="o">=</span><span class="n">data_for_graphs</span><span class="p">,</span> <span class="n">results_df</span><span class="o">=</span><span class="n">results_df</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">graphs_output_directory</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Any other feature can be enabled using the configuration .toml input file. Please, refer to the <a class="reference internal" href="configuration.html#sct-config"><span class="std std-ref">documentation about tool configuration</span></a>.</p>
+</div>
+<section id="using-external-ionospheric-and-tropospheric-maps-to-compute-perturbations">
+<h3>Using external Ionospheric and Tropospheric Maps to compute perturbations<a class="headerlink" href="#using-external-ionospheric-and-tropospheric-maps-to-compute-perturbations" title="Link to this heading">#</a></h3>
+<p>Input configuration file must contain the following lines to be able to perform a Point Target Analysis taking into account
+atmospheric perturbations from external maps.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="c1"># both or just one of the two perturbations can be selected</span>
+<span class="k">[point_target_analysis.corrections]</span>
+<span class="n">enable_ionospheric_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">enable_tropospheric_correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+
+<span class="k">[point_target_analysis.corrections.ionosphere]</span>
+<span class="n">ionospheric_maps_directory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;path/to/ionospheric/maps/directory&quot;</span>
+<span class="n">ionospheric_analysis_center</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;cor&quot;</span>
+
+<span class="k">[point_target_analysis.corrections.troposphere]</span>
+<span class="n">tropospheric_maps_directory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;path/to/tropospheric/maps/directory&quot;</span>
+<span class="n">tropospheric_map_grid_resolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;fine&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="using-etad-products-for-sentinel-1-data">
+<h3>Using ETAD products for Sentinel-1 data<a class="headerlink" href="#using-etad-products-for-sentinel-1-data" title="Link to this heading">#</a></h3>
+<p>Input configuration file must contain the following lines to be able to perform a Point Target Analysis taking into account
+an external ETAD products to compute perturbations.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[point_target_analysis.corrections]</span>
+<span class="n">enable_etad_corrections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">etad_product_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;path/to/etad/product&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="radiometric-analysis">
+<h2>Radiometric Analysis<a class="headerlink" href="#radiometric-analysis" title="Link to this heading">#</a></h2>
+<p>To perform a Radiometric Analysis using SCT CLI, run the following command in your shell, adapting the input parameters
+to your needs. Passing the input configuration can be avoided if default values are good enough.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Input radiometric quantity of the product is set to be <strong>BETA_NOUGHT</strong> by default. This property can be changed via
+configuration by adding <code class="docutils literal notranslate"><span class="pre">[radiometric_analysis]</span> <span class="pre">input_quantity</span> <span class="pre">=</span> <span class="pre">&quot;sigma_nought&quot;</span></code> inserting the proper radiometric quantity.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sct<span class="w"> </span>--config<span class="w"> </span>path_to_config_toml<span class="w"> </span>radiometric-analysis<span class="w"> </span><span class="o">[</span>nesz/elevation_profile/scalloping<span class="o">]</span><span class="w"> </span>-p<span class="w"> </span>path_to_product<span class="w"> </span>-out<span class="w"> </span>path_to_output_folder<span class="w"> </span><span class="o">[</span>-g<span class="o">]</span><span class="w"> </span><span class="o">[</span>-r<span class="w"> </span><span class="s2">&quot;output_radiometric_quantity&quot;</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>Graphical output for radiometric analysis can be enabled using the <cite>–graphs/-g</cite> option for the CLI tool.</p>
+<p>Average radiometric profiles output radiometric quantity can be setup by using the <cite>–output_radiometric_quantity/-r</cite> option.</p>
+<div class="admonition-validation admonition">
+<p class="admonition-title">Validation</p>
+<div class="line-block">
+<div class="line"><cite>output_radiometric_quantity</cite> maps to an internal <em>enum class</em>.</div>
+<div class="line">Here are the possible values:</div>
+<div class="line"><cite>input_type</cite>: <code class="docutils literal notranslate"><span class="pre">beta</span></code>, <code class="docutils literal notranslate"><span class="pre">sigma</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code></div>
+</div>
+</div>
+<p>The exact same thing can be done from a custom script using SCT as a library:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sct.configuration.sct_configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCTConfiguration</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sct.analyses.radiometric_analysis</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ra</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arepyextras.quality.radiometric_analysis.support</span><span class="w"> </span><span class="kn">import</span> <span class="n">radiometric_profiles_to_netcdf</span>  <span class="c1"># optional, if netCDF saving is needed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arepyextras.quality.radiometric_analysis.graphical_output</span><span class="w"> </span><span class="kn">import</span> <span class="n">radiometric_2D_hist_plot</span>  <span class="c1"># optional, if graphs are needed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arepyextras.quality.core.generic_dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">SARRadiometricQuantity</span>
+
+<span class="c1"># adding a configuration is optional</span>
+<span class="n">config_toml_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">SCTConfiguration</span><span class="o">.</span><span class="n">from_toml</span><span class="p">(</span><span class="n">config_toml_path</span><span class="p">)</span>
+<span class="c1"># specify the input radiometric quantity if different from BETA NOUGHT</span>
+<span class="n">config</span><span class="o">.</span><span class="n">radiometric_analysis</span><span class="o">.</span><span class="n">base_config</span><span class="o">.</span><span class="n">input_quantity</span> <span class="o">=</span> <span class="n">SARRadiometricQuantity</span><span class="o">.</span><span class="n">SIGMA_NOUGHT</span>
+<span class="n">product_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">output_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">output_radiometric_quantity</span> <span class="o">=</span> <span class="n">SARRadiometricQuantity</span><span class="o">.</span><span class="n">GAMMA_NOUGHT</span>
+
+<span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;nesz&quot;</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">ra</span><span class="o">.</span><span class="n">nesz_analysis</span><span class="p">(</span><span class="n">product_path</span><span class="o">=</span><span class="n">product</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">radiometric_analysis</span><span class="p">)</span>
+<span class="c1"># or</span>
+<span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;average_gamma&quot;</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">ra</span><span class="o">.</span><span class="n">average_elevation_profile_analysis</span><span class="p">(</span>
+    <span class="n">product_path</span><span class="o">=</span><span class="n">product</span><span class="p">,</span>
+    <span class="n">output_quantity</span><span class="o">=</span><span class="n">output_radiometric_quantity</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">radiometric_analysis</span>
+<span class="p">)</span>
+<span class="c1"># or</span>
+<span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;scalloping&quot;</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">ra</span><span class="o">.</span><span class="n">scalloping_analysis</span><span class="p">(</span><span class="n">product_path</span><span class="o">=</span><span class="n">product</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">radiometric_analysis</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="n">radiometric_profiles_to_netcdf</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">out_path</span><span class="o">=</span><span class="n">output_directory</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
+
+    <span class="c1"># optional, if graphical output is needed</span>
+    <span class="n">radiometric_2D_hist_plot</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">item</span><span class="p">,</span>
+        <span class="n">out_dir</span><span class="o">=</span><span class="n">output_directory</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2"> Profiles </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">swath</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">polarization</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="interferometric-analysis">
+<h2>Interferometric Analysis<a class="headerlink" href="#interferometric-analysis" title="Link to this heading">#</a></h2>
+<p>To perform an Interferometric Analysis using SCT CLI, run the following command in your shell, adapting the input parameters
+to your needs. Passing the input configuration can be avoided if default values are good enough.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Coherence computation is disabled by default for a single product input (while it’s enabled when two products are provided).
+To enable its computation, provide a config with <code class="docutils literal notranslate"><span class="pre">[interferometric_analysis]</span> <span class="pre">enable_coherence_computation</span> <span class="pre">=</span> <span class="pre">true</span></code>.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sct<span class="w"> </span>--config<span class="w"> </span>path_to_config_toml<span class="w"> </span>interferometric-analysis<span class="w"> </span>-p<span class="w"> </span>path_to_product<span class="w"> </span>-out<span class="w"> </span>path_to_output_folder<span class="w"> </span>-pp<span class="w"> </span>path_to_second_product<span class="w"> </span><span class="o">[</span>-g<span class="o">]</span>
+</pre></div>
+</div>
+<p>Graphical output for interferometric analysis can be enabled using the <cite>–graphs/-g</cite> option for the CLI tool.</p>
+<p>The exact same thing can be done from a custom script using SCT as a library:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arepyextras.quality.interferometric_analysis.graphical_output</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_coherence_graphs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arepyextras.quality.interferometric_analysis.support</span><span class="w"> </span><span class="kn">import</span> <span class="n">coherence_histograms_to_netcdf</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sct.analyses</span><span class="w"> </span><span class="kn">import</span> <span class="n">interferometric_analysis</span> <span class="k">as</span> <span class="n">interf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sct.configuration.sct_configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCTInterferometricAnalysisConfig</span>
+
+<span class="n">product_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">SCTInterferometricAnalysisConfig</span><span class="p">()</span>
+<span class="n">config</span><span class="o">.</span><span class="n">base_config</span><span class="o">.</span><span class="n">enable_coherence_computation</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">interf</span><span class="o">.</span><span class="n">interferometric_coherence_analysis</span><span class="p">(</span><span class="n">product_path</span><span class="o">=</span><span class="n">prod</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+    <span class="n">generate_coherence_graphs</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;magnitude&quot;</span><span class="p">)</span>
+    <span class="n">generate_coherence_graphs</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+    <span class="n">coherence_histograms_to_netcdf</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pta_corrections.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Corrections for Point Target Analysis</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../changelog.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Changelog</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#point-target-analysis">Point Target Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-external-ionospheric-and-tropospheric-maps-to-compute-perturbations">Using external Ionospheric and Tropospheric Maps to compute perturbations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-etad-products-for-sentinel-1-data">Using ETAD products for Sentinel-1 data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#radiometric-analysis">Radiometric Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interferometric-analysis">Interferometric Analysis</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Aresys S.R.L..
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
