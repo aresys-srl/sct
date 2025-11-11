@@ -1,0 +1,24 @@
+name: Deploy Sphinx Docs
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          pip install nbsphinx sphinx sphinx-design sphinx-copybutton pydata-sphinx-theme
+          pip install numpy pandas
+          pip install ghp-import
+      - name: Build Docs HTML
+        run: python -m sphinx -b html docs/source _build
+      - name: Deploy to GitHub Pages
+        run: ghp-import -n -p -f _build
