@@ -1,3 +1,5 @@
+[![Docs](https://img.shields.io/badge/docs-online-blue)](https://aresys-srl.github.io/sct/)
+
 # SAR Calibration Toolbox (SCT)
 
 Sar Calibration Toolbox (SCT) is the official Aresys Python toolbox for SAR quality data processing.
@@ -25,6 +27,11 @@ Supported analyses:
 This project derives from the original [SAR Calibration Tool](https://github.com/aresys-srl/sar-calibration-tool) developed
 by Aresys since 2021 and it's aimed at expanding and refining its codebase and main algorithms, extending the support to
 several other missions and sensors with an architecture that is well suited for new features additions.
+
+## Official Documentation
+
+Check out the [official documentation](https://aresys-srl.github.io/sct/) for more information, such as installation
+instructions, tutorials, user guides, and API reference.
 
 ## Package Installation
 
