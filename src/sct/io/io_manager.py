@@ -24,7 +24,7 @@ def product_loader(
     product_path: Path,
     external_orbit: Path | None = None,
     external_corrections_product: Path | None = None,
-    plugins: list[str] | None = None,
+    additional_plugins: list[str] | None = None,
 ) -> tuple[SCTInputProduct, ALECorrectionFunctionType | None]:
     """Load any supported product
 
@@ -36,7 +36,7 @@ def product_loader(
         Path to external orbit file, if needed, by default None
     external_corrections_product : Path | None, optional
         Path to external ALE corrections product, if needed, by default None
-    plugins: list[str] | None, optional
+    additional_plugins: list[str] | None, optional
         list of plugins as strings: either absolute paths or importable python modules
 
     Returns
@@ -46,8 +46,8 @@ def product_loader(
     ALECorrectionFunctionType | None
         range and azimuth ale corrections function (if available)
     """
-    plugins = plugins or []
-    available_plugins = import_input_product_plugins(plugins)
+    additional_plugins = additional_plugins or []
+    available_plugins = import_input_product_plugins(additional_plugins=additional_plugins)
 
     product: Optional[SCTInputProduct] = None
     for plugin in available_plugins:

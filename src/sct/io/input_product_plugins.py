@@ -12,10 +12,9 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, Protocol, runtime_checkable
 
-from sct import sct_discovered_plugins
 from sct.configuration.point_target_analysis_configuration import SCTPointTargetAnalysisCorrectionsConf
 from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
-from sct.io.plugins_utils import import_plugins
+from sct.io.plugins_framework import import_plugins
 
 Detector = Callable[[str | Path], bool]
 
@@ -65,6 +64,4 @@ class InputProductPluginProtocol(Protocol):
         """Retrieve ALE corrector class for both range and azimuth directions"""
 
 
-import_input_product_plugins = partial(
-    import_plugins, plugin_protocol=InputProductPluginProtocol, built_in_plugins=list(sct_discovered_plugins.values())
-)
+import_input_product_plugins = partial(import_plugins, plugin_protocol=InputProductPluginProtocol, plugin_prefix="sct_")

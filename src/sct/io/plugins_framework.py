@@ -2,12 +2,13 @@
 # SPDX-License-Identifier: MIT
 
 """
-Plugins utilities
+Plugins framework
 -----------------
 """
 
 import importlib
 import importlib.util
+import pkgutil
 from pathlib import Path
 from types import ModuleType
 
@@ -41,7 +42,7 @@ def load_plugin(plugin: str) -> ModuleType | None:
     return None
 
 
-def get_list_of_valid_plugins(plugins: list, plugin_protocol: type) -> list:
+def get_list_of_valid_plugins(plugins: list[ModuleType], plugin_protocol: type) -> list[ModuleType]:
     """Filter out invalid plugins"""
     invalid_plugins = filter(lambda plugin: not isinstance(plugin, plugin_protocol), plugins)
     for plugin in invalid_plugins:
@@ -53,20 +54,31 @@ def get_list_of_valid_plugins(plugins: list, plugin_protocol: type) -> list:
     return list(filter(lambda plugin: isinstance(plugin, plugin_protocol), plugins))
 
 
-def import_plugins(plugins: list[str], plugin_protocol: type, built_in_plugins: list) -> list:
-    """Import plugins in the list, they must be importable and satisfy plugin_protocol interface"""
-    if not plugins:
-        return built_in_plugins
+def import_plugins(*, plugin_protocol: type, plugin_prefix: str, additional_plugins: list[str]) -> list[ModuleType]:
+    """Import plugins that must be importable and satisfy plugin_protocol interface.
+
+    Parameters
+    ----------
+    plugin_protocol : type
+        protocol that plugins must satisfy
+    plugin_prefix : str
+        string prefix to find plugins
+    additional_plugins : list[str]
+        list of additional plugins as strings: either absolute paths or importable python modules
+    """
+    plugins = additional_plugins + [name for _, name, _ in pkgutil.iter_modules() if name.startswith(plugin_prefix)]
 
     sct_logger.info("Plugin discovery started")
-    discovered_plugins: list[ModuleType | None] = [load_plugin(plugin) for plugin in plugins]
-    valid_discovered_plugins = get_list_of_valid_plugins(
-        [plugin for plugin in discovered_plugins if plugin is not None], plugin_protocol
+    load_plugins: list[ModuleType] = [
+        loaded_plugin for loaded_plugin in (load_plugin(plugin) for plugin in plugins) if loaded_plugin is not None
+    ]
+
+    valid_plugins = get_list_of_valid_plugins(
+        [plugin for plugin in load_plugins if plugin is not None], plugin_protocol
     )
 
-    available_plugins = built_in_plugins + valid_discovered_plugins
     sct_logger.info("Plugin discovery completed")
     sct_logger.info("Available plugins:")
-    for plugin in available_plugins:
+    for plugin in valid_plugins:
         sct_logger.info(f" - {plugin.__name__}")
-    return available_plugins
+    return valid_plugins

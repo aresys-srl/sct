@@ -16,9 +16,10 @@ from arepytools.timing.precisedatetime import PreciseDateTime
 from perseo_perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
 from perseo_perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 
-from sct import __version__, sct_discovered_plugins
+from sct import __version__
 from sct.cli import common
 from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
+from sct.io.input_product_plugins import import_input_product_plugins
 from sct.io.point_target_manager import convert_rosamond_file_to_compliant_csv
 from sct.testing.run import run_tests, summary_results
 from sct.web_scraping.cddis_downloader import InvalidCDDISRequest
@@ -255,9 +256,8 @@ def sct_integration_testing_run(registry: Path, output_directory: Path, cli: boo
 
     click.echo("Installed plugins detected:\n")
 
-    for p, pp in sct_discovered_plugins.items():
-        click.echo(p)
-        click.echo(pp)
+    for name in import_input_product_plugins(additional_plugins=[]):
+        click.echo(name)
         click.echo()
 
     if not output_directory.exists():
