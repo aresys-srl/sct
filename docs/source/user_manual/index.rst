@@ -11,4 +11,5 @@ User Manual
    command_line_side_utilities
    analyses
    pta_corrections
+   elevation_notch
    tutorials

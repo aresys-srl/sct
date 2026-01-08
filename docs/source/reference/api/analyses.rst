@@ -10,3 +10,5 @@ Analyses Module
 .. automodule:: sct.analyses.spectral_analysis
 
 .. automodule:: sct.analyses.ambiguity_ratio_analysis
+
+.. automodule:: sct.analyses.elevation_notch

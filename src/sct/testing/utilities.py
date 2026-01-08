@@ -18,6 +18,7 @@ import numpy as np
 import pandas as pd
 from netCDF4 import Dataset
 from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
+from perseo_quality.elevation_notch_analysis.support import elevation_notch_profiles_to_netcdf
 from perseo_quality.interferometric_analysis.support import (
     coherence_histograms_to_netcdf,
 )
@@ -26,6 +27,7 @@ from perseo_quality.radiometric_analysis.block_wise.support import (
     radiometric_statistical_analysis_to_df,
 )
 
+from sct.analyses.elevation_notch import sct_elevation_notch_analysis
 from sct.analyses.interferometric_analysis import interferometric_coherence_analysis
 from sct.analyses.point_target_analysis import point_target_analysis_with_corrections
 from sct.analyses.radiometric_analysis import (
@@ -39,6 +41,7 @@ from sct.configuration.point_target_analysis_configuration import (
 )
 from sct.configuration.sct_configuration import (
     SCTConfiguration,
+    SCTElevationNotchAnalysisConfig,
     SCTInterferometricAnalysisConfig,
     SCTPointTargetAnalysisConfig,
     SCTRadiometricAnalysisConfig,
@@ -93,6 +96,7 @@ class SCTAnalyses(Enum):
     NESZ = "nesz"
     RAIN_FOREST = "rf"
     INTERFEROMETRY = "interf"
+    ELEVATION_NOTCH = "notch"
 
 
 @dataclass
@@ -104,6 +108,7 @@ class TestParams:
     config: Path | None = None
     targets: Path | None = None
     external_orbit: Path | None = None
+    antenna_pattern: Path | None = None
     reference_output: Path | None = None
     external_corrections_product: Path | None = None
     ionospheric_maps: Path | None = None
@@ -301,6 +306,44 @@ def compare_kpi_stats(ref: pd.DataFrame, current: pd.DataFrame) -> None:
         current kpi statistics dataframe
     """
     pd.testing.assert_frame_equal(ref, current, check_exact=False, atol=KPI_TOLERANCE, rtol=0)
+
+
+def compare_elevation_notch_netcdf_with_tolerances(ref: Path, current: Path) -> None:
+    """Compare elevation notch netCDF output results with tolerances.
+
+    Parameters
+    ----------
+    ref : Path
+        Path to the reference netCDF4 file
+    current : Path
+        Path to the current run netCDF4 file
+    """
+
+    reference_ds = Dataset(ref, "r", format="NETCDF4")
+    current_ds = Dataset(current, "r", format="NETCDF4")
+
+    assert reference_ds.groups.keys() == current_ds.groups.keys()
+    for key, group in reference_ds.groups.items():
+        current_group = current_ds.groups[key]
+        assert group.groups.keys() == current_group.groups.keys()
+        for s_key, subgroup in group.groups.items():
+            current_subgroup = current_group.groups[s_key]
+            assert subgroup.azimuth_blocks_num == current_subgroup.azimuth_blocks_num
+            assert subgroup.lines_per_block == current_subgroup.lines_per_block
+            assert subgroup.samples_per_block == current_subgroup.samples_per_block
+            assert subgroup.variables.keys() == current_subgroup.variables.keys()
+            for var_name, var in subgroup.variables.items():
+                current_var = current_subgroup.variables[var_name]
+                try:
+                    assert var.units == current_var.units
+                except AttributeError:
+                    pass
+                np.testing.assert_allclose(
+                    var[:],
+                    current_var[:],
+                    atol=ABSOLUTE_TOLERANCE,
+                    rtol=0,
+                )
 
 
 def validate_ra_results(
@@ -515,6 +558,44 @@ def run_interferometry_api(
     return [output_dir.joinpath(p.name) for p in params.reference_output]
 
 
+def run_elevation_notch_api(
+    params: TestParams, output_dir: Path, config: SCTElevationNotchAnalysisConfig | None, graphs: bool
+) -> Path:
+    """Running SCT Elevation Notch Analysis from API forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : SCTElevationNotchAnalysisConfig | None
+        configuration
+    graphs : bool
+        flag to enable graphs generation
+
+    Returns
+    -------
+    Path
+        path to output netcdf file
+    """
+    results = sct_elevation_notch_analysis(
+        product_path=params.product,
+        antenna_pattern_file=params.antenna_pattern,
+        config=config,
+    )
+    if graphs:
+        try:
+            from perseo_quality.elevation_notch_analysis.graphical_output import plot_elevation_notch_analysis
+
+            plot_elevation_notch_analysis(data=results, output_dir=output_dir)
+        except ImportError:
+            sct_logger.critical(
+                'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'
+            )
+    return elevation_notch_profiles_to_netcdf(data=results, output_dir=output_dir)
+
+
 def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None) -> pd.DataFrame:
     """Running SCT Point Target Analysis using CLI tool forwarding the inputs.
 
@@ -725,6 +806,67 @@ def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | 
         raise RuntimeError("No output NetCDF files found")
 
     return output_files_nc
+
+
+def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None) -> Path:
+    """Running SCT Elevation Notch Analysis using CLI tool forwarding the inputs.
+
+    Parameters
+    ----------
+    params : TestParams
+        test parameters
+    output_dir : Path
+        output directory
+    config : Path | None
+        configuration file
+
+    Returns
+    -------
+    Path
+        path to NetCDF output file
+
+    RuntimeError
+        if missing output configuration file
+    RuntimeError
+        if missing output log file
+    RuntimeError
+        if missing output NetCDF results file
+    """
+    executable_call = ["sct"]
+    if config is not None:
+        executable_call.extend(["--config", config])
+    executable_call.extend(
+        [
+            "notch-analysis",
+            "-p",
+            params.product,
+            "-out",
+            output_dir,
+        ]
+    )
+    if params.antenna_pattern is not None:
+        executable_call.extend(["-ap", params.antenna_pattern])
+    result = subprocess.run(
+        executable_call,
+        capture_output=True,
+        text=True,
+    )
+    print("")
+    print("output: ", result.stdout)
+    print("")
+
+    # checking successful run
+    if result.returncode != 0:
+        print("error: ", result.stderr)
+    if not output_dir.joinpath("analysis_config.toml").exists():
+        raise RuntimeError("Missing analysis_config.toml file")
+    if not output_dir.joinpath("sct_notch_analysis.log").exists():
+        raise RuntimeError("Missing sct_notch_analysis.log file")
+    output_file = list(output_dir.glob("*.nc"))
+    if not len(output_file) == 1:
+        raise RuntimeError("No output NetCDF file found")
+
+    return output_file[0]
 
 
 def dump_sct_config(config: SCTConfiguration | None, out_path: Path) -> None:

@@ -78,6 +78,11 @@ def test_session_api(params: utils.TestParams, sensor: str, test_name: str, outp
             for report in params.reference_output:
                 result = [r for r in results if report.name == r.name]
                 utils.compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
+        elif params.analysis == utils.SCTAnalyses.ELEVATION_NOTCH:
+            config = config.elevation_notch_analysis if config is not None else None
+            results = utils.run_elevation_notch_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
+            sct_logger.info("Validating results...")
+            utils.compare_elevation_notch_netcdf_with_tolerances(ref=params.reference_output, current=results)
         sct_logger.info("")
         sct_logger.success(f"Test {test_name} - SUCCESS")
         sct_logger.info("")
@@ -146,6 +151,10 @@ def test_session_cli(params: utils.TestParams, sensor: str, test_name: str, outp
                 for report in params.reference_output:
                     result = [r for r in nc_results if report.name == r.name]
                     utils.compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
+            case utils.SCTAnalyses.ELEVATION_NOTCH:
+                nc_results = utils.run_notch_cli(params=params, output_dir=out_dir, config=params.config)
+                sct_logger.info("Validating results...")
+                utils.compare_elevation_notch_netcdf_with_tolerances(ref=params.reference_output, current=nc_results)
             case _:
                 raise ValueError(f"Unsupported analysis type: {params.analysis}")
         sct_logger.info("")

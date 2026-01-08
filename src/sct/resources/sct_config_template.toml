@@ -68,3 +68,7 @@ cropping_size = [128, 128]
 [ambiguity_ratio_analysis]
 interpolation_factor = 8
 cropping_size = [128, 128]
+
+[elevation_notch_analysis]
+azimuth_block_size = 5000
+range_pixel_margin = 150

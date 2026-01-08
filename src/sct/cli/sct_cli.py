@@ -12,6 +12,7 @@ import click
 
 from sct.__init__ import __version__ as VERSION
 from sct.cli.int_cli import interf_coherence_analysis
+from sct.cli.notch_cli import pt_notch_analysis
 from sct.cli.pta_cli import target_analysis
 from sct.cli.ra_cli import radiometric_analysis
 from sct.cli.sa_cli import spectral_analysis
@@ -50,3 +51,4 @@ sct_analysis.add_command(radiometric_analysis)
 sct_analysis.add_command(interf_coherence_analysis)
 sct_analysis.add_command(spectral_analysis)
 sct_analysis.add_command(pt_ambiguity_ratio_analysis)
+sct_analysis.add_command(pt_notch_analysis)

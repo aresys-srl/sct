@@ -21,6 +21,7 @@ from perseo_quality.radiometric_analysis.block_wise.config import (
 
 from sct.configuration.sct_configuration import (
     SCTConfiguration,
+    SCTElevationNotchAnalysisConfig,
     SCTInterferometricAnalysisConfig,
     SCTPointTargetAnalysisConfig,
     SCTRadiometricAnalysisConfig,
@@ -114,6 +115,14 @@ ambiguity_ratio_analysis_toml = """
 [ambiguity_ratio_analysis]
 interpolation_factor = 16
 cropping_size = [150, 120]
+
+"""
+
+elevation_notch_analysis_toml = """
+
+[elevation_notch_analysis]
+azimuth_block_size = 2500
+range_pixel_margin = 100
 
 """
 
@@ -252,6 +261,23 @@ def _validate_ambiguity_config(config: SCTTargetAmbiguityRatioConfig) -> None:
     assert config.base_config.cropping_size == (150, 120)
 
 
+def _validate_notch_config(config: SCTElevationNotchAnalysisConfig) -> None:
+    """Validating correct reading of elevation notch analysis configuration from file.
+
+    Parameters
+    ----------
+    config : SCTElevationNotchAnalysisConfig
+        sct elevation notch analysis configuration
+    """
+
+    assert isinstance(config, SCTElevationNotchAnalysisConfig)
+
+    assert isinstance(config.base_config.azimuth_block_size, int)
+    assert config.base_config.azimuth_block_size == 2500
+    assert isinstance(config.base_config.range_pixel_margin, int)
+    assert config.base_config.range_pixel_margin == 100
+
+
 class SCTConfigurationTest(unittest.TestCase):
     """Testing sct_configuration.py functionalities"""
 
@@ -262,6 +288,7 @@ class SCTConfigurationTest(unittest.TestCase):
             + interferometric_analysis_toml
             + spectral_analysis_toml
             + ambiguity_ratio_analysis_toml
+            + elevation_notch_analysis_toml
         )
 
     def test_full_point_target_analysis_reading(self) -> None:
@@ -318,6 +345,17 @@ class SCTConfigurationTest(unittest.TestCase):
 
         self.assertIsInstance(config, SCTConfiguration)
         _validate_ambiguity_config(config.target_ambiguity_ratio_analysis)
+
+    def test_full_elevation_notch_analysis_reading(self) -> None:
+        """Test elevation_notch_analysis full configuration reading"""
+        with TemporaryDirectory() as temp_dir:
+            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+            path_to_file.write_text(elevation_notch_analysis_toml)
+
+            config = SCTConfiguration.from_toml(path_to_file)
+
+        self.assertIsInstance(config, SCTConfiguration)
+        _validate_notch_config(config.elevation_notch_analysis)
 
     def test_full_config_reading(self) -> None:
         """Test full configuration reading"""

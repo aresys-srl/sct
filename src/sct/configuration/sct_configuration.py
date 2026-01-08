@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Literal
 
 import toml
+from perseo_quality.elevation_notch_analysis.config import ElevationNotchConfig
 from perseo_quality.interferometric_analysis.config import InterferometricConfig
 from perseo_quality.radiometric_analysis.block_wise.config import RadiometricProfilesConfig
 from perseo_quality.tar_analysis.config import AmbiguityRatioConfig
@@ -27,6 +28,7 @@ ConfigSupportedAnalyses = Literal[
     "point_target_analysis",
     "spectral_analysis",
     "target_ambiguity_ratio_analysis",
+    "elevation_notch_analysis",
 ]
 
 
@@ -144,6 +146,22 @@ class SCTTargetAmbiguityRatioConfig:
 
 
 @dataclass
+class SCTElevationNotchAnalysisConfig:
+    """SCT Elevation Notch Analysis configuration"""
+
+    base_config: ElevationNotchConfig = field(default_factory=ElevationNotchConfig)
+
+    @classmethod
+    def from_dict(cls, arg: dict) -> SCTElevationNotchAnalysisConfig:
+        """Convert from dict"""
+        return cls(base_config=ElevationNotchConfig.from_dict(arg))
+
+    def to_dict(self):
+        """Convert to dict"""
+        return asdict(self.base_config)
+
+
+@dataclass
 class SCTConfiguration:
     """SCT Tool full Configuration"""
 
@@ -155,6 +173,7 @@ class SCTConfiguration:
     target_ambiguity_ratio_analysis: SCTTargetAmbiguityRatioConfig = field(
         default_factory=SCTTargetAmbiguityRatioConfig
     )
+    elevation_notch_analysis: SCTElevationNotchAnalysisConfig = field(default_factory=SCTElevationNotchAnalysisConfig)
 
     @classmethod
     def from_dict(cls, config) -> SCTConfiguration:
@@ -183,6 +202,11 @@ class SCTConfiguration:
                 arg=config["ambiguity_ratio_analysis"]
             )
 
+        if "elevation_notch_analysis" in config:
+            sct_conf.elevation_notch_analysis = SCTElevationNotchAnalysisConfig.from_dict(
+                arg=config["elevation_notch_analysis"]
+            )
+
         return sct_conf
 
     def to_dict(self) -> dict:
@@ -194,6 +218,7 @@ class SCTConfiguration:
             "interferometric_analysis": self.interferometric_analysis.to_dict(),
             "spectral_analysis": self.spectral_analysis.to_dict(),
             "target_ambiguity_ratio_analysis": self.target_ambiguity_ratio_analysis.to_dict(),
+            "elevation_notch_analysis": self.elevation_notch_analysis.to_dict(),
         }
 
     @classmethod

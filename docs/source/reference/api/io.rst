@@ -12,3 +12,5 @@ Input/Output Module
 .. automodule:: sct.io.plugins_utils
 
 .. automodule:: sct.io.point_target_manager
+
+.. automodule:: sct.io.antenna_pattern_manager

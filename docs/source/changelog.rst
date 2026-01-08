@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.0.5
+------
+
+**Additional Features**
+
+- Adding Elevation Notch Analysis feature
+
 v2.0.4
 ------
 

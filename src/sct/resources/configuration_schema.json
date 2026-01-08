@@ -436,6 +436,20 @@
                     "description": "ROI interpolation factor"
                 }
             }
+        },
+        "elevation_notch_analysis": {
+            "type": "object",
+            "description": "Elevation Notch analysis configuration",
+            "properties": {
+                "azimuth_block_size": {
+                    "type": "integer",
+                    "description": "Number of lines for partitioning the scene along azimuth direction"
+                },
+                "range_pixel_margin": {
+                    "type": "integer",
+                    "description": "Pixel margin to remove near and far range"
+                }
+            }
         }
     }
 }
