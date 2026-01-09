@@ -121,13 +121,13 @@ def test_session_cli(params: utils.TestParams, sensor: str, test_name: str, outp
     try:
         match params.analysis:
             case utils.SCTAnalyses.POINT_TARGET:
-                results = utils.run_pta_cli(params=params, output_dir=out_dir, config=params.config)
+                results = utils.run_pta_cli(params=params, output_dir=out_dir, config=params.config, graphs=graphs)
                 # comparing dataframes differences to specific tolerances
                 sct_logger.info("Validating results...")
                 utils.compare_pta_df_with_tolerances(ref=pd.read_csv(params.reference_output), current=results.copy())
             case utils.SCTAnalyses.NESZ:
                 nc_results, kpi_results = utils.run_ra_cli(
-                    params=params, output_dir=out_dir, config=params.config, analysis="NESZ"
+                    params=params, output_dir=out_dir, config=params.config, analysis="NESZ", graphs=graphs
                 )
                 sct_logger.info("Validating results...")
                 utils.validate_ra_results(
@@ -137,7 +137,7 @@ def test_session_cli(params: utils.TestParams, sensor: str, test_name: str, outp
                 )
             case utils.SCTAnalyses.RAIN_FOREST:
                 nc_results, kpi_results = utils.run_ra_cli(
-                    params=params, output_dir=out_dir, config=params.config, analysis="RF"
+                    params=params, output_dir=out_dir, config=params.config, analysis="RF", graphs=graphs
                 )
                 sct_logger.info("Validating results...")
                 utils.validate_ra_results(
@@ -146,13 +146,15 @@ def test_session_cli(params: utils.TestParams, sensor: str, test_name: str, outp
                     current_kpi_stats=kpi_results,
                 )
             case utils.SCTAnalyses.INTERFEROMETRY:
-                nc_results = utils.run_interferometry_cli(params=params, output_dir=out_dir, config=params.config)
+                nc_results = utils.run_interferometry_cli(
+                    params=params, output_dir=out_dir, config=params.config, graphs=graphs
+                )
                 sct_logger.info("Validating results...")
                 for report in params.reference_output:
                     result = [r for r in nc_results if report.name == r.name]
                     utils.compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
             case utils.SCTAnalyses.ELEVATION_NOTCH:
-                nc_results = utils.run_notch_cli(params=params, output_dir=out_dir, config=params.config)
+                nc_results = utils.run_notch_cli(params=params, output_dir=out_dir, config=params.config, graphs=graphs)
                 sct_logger.info("Validating results...")
                 utils.compare_elevation_notch_netcdf_with_tolerances(ref=params.reference_output, current=nc_results)
             case _:

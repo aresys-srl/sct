@@ -596,7 +596,7 @@ def run_elevation_notch_api(
     return elevation_notch_profiles_to_netcdf(data=results, output_dir=output_dir)
 
 
-def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None) -> pd.DataFrame:
+def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None, graphs: bool) -> pd.DataFrame:
     """Running SCT Point Target Analysis using CLI tool forwarding the inputs.
 
     Parameters
@@ -607,6 +607,8 @@ def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None) -> pd
         output directory
     config : Path | None
         configuration file
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
@@ -638,6 +640,8 @@ def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None) -> pd
         executable_call.extend(["-eo", params.external_orbit])
     if params.external_corrections_product is not None:
         executable_call.extend(["-ec", params.external_corrections_product])
+    if graphs:
+        executable_call.extend(["-g"])
     result = subprocess.run(
         executable_call,
         capture_output=True,
@@ -661,7 +665,9 @@ def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None) -> pd
     return pd.read_csv(output_files[0])
 
 
-def run_ra_cli(params: TestParams, output_dir: Path, config: Path | None, analysis: str) -> tuple[list[Path], Path]:
+def run_ra_cli(
+    params: TestParams, output_dir: Path, config: Path | None, analysis: str, graphs: bool
+) -> tuple[list[Path], Path]:
     """Running SCT Radiometric Analysis using CLI tool forwarding the inputs.
 
     Parameters
@@ -674,6 +680,8 @@ def run_ra_cli(params: TestParams, output_dir: Path, config: Path | None, analys
         configuration file
     analysis : str
         analysis to be performed, [NESZ, RF]
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
@@ -713,6 +721,8 @@ def run_ra_cli(params: TestParams, output_dir: Path, config: Path | None, analys
                 "gamma",
             ]
         )
+    if graphs:
+        executable_call.extend(["-g"])
     result = subprocess.run(
         executable_call,
         capture_output=True,
@@ -739,7 +749,7 @@ def run_ra_cli(params: TestParams, output_dir: Path, config: Path | None, analys
     return output_files_nc, kpi_file
 
 
-def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | None) -> list[Path]:
+def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | None, graphs: bool) -> list[Path]:
     """Running SCT interferometric Analysis using CLI tool forwarding the inputs.
 
     Parameters
@@ -750,6 +760,8 @@ def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | 
         output directory
     config : Path | None
         configuration file
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
@@ -785,6 +797,8 @@ def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | 
             output_dir,
         ]
     )
+    if graphs:
+        executable_call.extend(["-g"])
     result = subprocess.run(
         executable_call,
         capture_output=True,
@@ -808,7 +822,7 @@ def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | 
     return output_files_nc
 
 
-def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None) -> Path:
+def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None, graphs: bool) -> Path:
     """Running SCT Elevation Notch Analysis using CLI tool forwarding the inputs.
 
     Parameters
@@ -819,6 +833,8 @@ def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None) -> 
         output directory
     config : Path | None
         configuration file
+    graphs : bool
+        flag to enable graphs generation
 
     Returns
     -------
@@ -846,6 +862,8 @@ def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None) -> 
     )
     if params.antenna_pattern is not None:
         executable_call.extend(["-ap", params.antenna_pattern])
+    if graphs:
+        executable_call.extend(["-g"])
     result = subprocess.run(
         executable_call,
         capture_output=True,
