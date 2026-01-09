@@ -92,5 +92,15 @@
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/kpi_stats.csv"
             ]
         }
+    },
+    "sentinel1D": {
+        "notch": {
+            "analysis": "notch",
+            "product": "/data/reference_dataset/sentinel1d/products/SLC_EN_25.SAFE",
+            "config": "/data/integration_tests/sct/configurations/test_9ce862bf_config.toml",
+            "targets": "",
+            "antenna_pattern": "/data/reference_dataset/sentinel1d/auxiliaries/antenna_pattern_TW_EN.nc",
+            "reference_output": "/data/integration_tests/sct/reference_results/sentinel1D/notch/elevation_notch_results.nc"
+        }
     }
 }
