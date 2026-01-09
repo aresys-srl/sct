@@ -642,18 +642,10 @@ def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None, graph
         executable_call.extend(["-ec", params.external_corrections_product])
     if graphs:
         executable_call.extend(["-g"])
-    result = subprocess.run(
-        executable_call,
-        capture_output=True,
-        text=True,
-    )
-    print("")
-    print("output: ", result.stdout)
-    print("")
+
+    _launch_cli_interface(executable_call)
 
     # checking successful run
-    if result.returncode != 0:
-        print("error: ", result.stderr)
     if not output_dir.joinpath("analysis_config.toml").exists():
         raise RuntimeError("Missing analysis_config.toml file")
     if not output_dir.joinpath("sct_pta_analysis.log").exists():
@@ -723,18 +715,10 @@ def run_ra_cli(
         )
     if graphs:
         executable_call.extend(["-g"])
-    result = subprocess.run(
-        executable_call,
-        capture_output=True,
-        text=True,
-    )
-    print("")
-    print("output: ", result.stdout)
-    print("")
+
+    _launch_cli_interface(executable_call)
 
     # checking successful run
-    if result.returncode != 0:
-        print("error: ", result.stderr)
     if not output_dir.joinpath("analysis_config.toml").exists():
         raise RuntimeError("Missing analysis_config.toml file")
     if not output_dir.joinpath("sct_ra_analysis.log").exists():
@@ -799,18 +783,10 @@ def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | 
     )
     if graphs:
         executable_call.extend(["-g"])
-    result = subprocess.run(
-        executable_call,
-        capture_output=True,
-        text=True,
-    )
-    print("")
-    print("output: ", result.stdout)
-    print("")
+
+    _launch_cli_interface(executable_call)
 
     # checking successful run
-    if result.returncode != 0:
-        print("error: ", result.stderr)
     if not output_dir.joinpath("analysis_config.toml").exists():
         raise RuntimeError("Missing analysis_config.toml file")
     if not output_dir.joinpath("sct_interf_analysis.log").exists():
@@ -864,18 +840,10 @@ def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None, gra
         executable_call.extend(["-ap", params.antenna_pattern])
     if graphs:
         executable_call.extend(["-g"])
-    result = subprocess.run(
-        executable_call,
-        capture_output=True,
-        text=True,
-    )
-    print("")
-    print("output: ", result.stdout)
-    print("")
+
+    _launch_cli_interface(executable_call)
 
     # checking successful run
-    if result.returncode != 0:
-        print("error: ", result.stderr)
     if not output_dir.joinpath("analysis_config.toml").exists():
         raise RuntimeError("Missing analysis_config.toml file")
     if not output_dir.joinpath("sct_notch_analysis.log").exists():
@@ -900,3 +868,27 @@ def dump_sct_config(config: SCTConfiguration | None, out_path: Path) -> None:
     assert str(out_path).endswith(".json")
     out_config = config or SCTConfiguration()
     out_config.dump_to_toml(out_file=out_path)
+
+
+def _launch_cli_interface(executable_call: list[str]) -> None:
+    """Launching SCT CLI interface with provided commands.
+
+    Parameters
+    ----------
+    executable_call : list[str]
+        executable call
+    """
+    process = subprocess.Popen(
+        executable_call,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+    )
+
+    for line in process.stdout:
+        print(line, end="")
+
+    process.wait()
+    if process.returncode != 0:
+        sct_logger.critical("error: ", process.stderr)
