@@ -83,7 +83,11 @@ def log_elapsed_time(logged_name: str):
             outputs = func(*args, **kwargs)
             stop_time = time.perf_counter()
             elapsed_time = stop_time - start_time
-            sct_logger.info(f"{logged_name} completed in {elapsed_time:.2f} s")
+            if elapsed_time < 60:
+                sct_logger.info(f"{logged_name} completed in {round(elapsed_time)} s")
+            else:
+                minutes, seconds = divmod(int(elapsed_time), 60)
+                sct_logger.info(f"{logged_name} completed in {minutes} min {seconds} s")
             return outputs
 
         return decorated_func
