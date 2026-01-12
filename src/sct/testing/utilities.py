@@ -345,6 +345,9 @@ def compare_elevation_notch_netcdf_with_tolerances(ref: Path, current: Path) -> 
                     rtol=0,
                 )
 
+    reference_ds.close()
+    current_ds.close()
+
 
 def validate_ra_results(
     reference_output: Path | list[Path], current_nc_output: list[Path], current_kpi_stats: Path
