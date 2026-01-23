@@ -196,7 +196,7 @@ def full_interferometric_analysis_implementation(
     output_directory: Path,
     config: SCTConfiguration,
     graphs_func: Callable | None,
-) -> None:
+) -> Path:
     """Full implementation of Interferometric Analysis.
 
     Parameters
@@ -211,15 +211,18 @@ def full_interferometric_analysis_implementation(
         Path to the output directory
     graphs_func : Callable | None
         graph plotting function or None if graphs are not required
+
+    Returns
+    -------
+    Path
+        Path to the NetCDF file containing the results
     """
     coherence_res = interf.interferometric_coherence_analysis(
         product_path=product,
         second_product_path=product_2,
         config=config.interferometric_analysis,
     )
-    # TODO: edit PERSEO QUALITY to save all these in a single NetCDF file an return its path
-    for res in coherence_res:
-        coherence_histograms_to_netcdf(data=res, output_dir=output_directory)
+    netcdf_file = coherence_histograms_to_netcdf(data=coherence_res, output_dir=output_directory)
 
     if graphs_func is not None:
         sct_logger.info("Generating graphs...")
@@ -236,6 +239,7 @@ def full_interferometric_analysis_implementation(
                 mode="phase",
                 config=config.interferometric_analysis.base_config,
             )
+    return netcdf_file
 
 
 def full_elevation_notch_analysis_implementation(

@@ -43,12 +43,7 @@
             ],
             "config": "C:/chopper/integration_tests/sct/configurations/test_dc014546_config.toml",
             "targets": "",
-            "reference_output": [
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VH.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b0_VV.nc",
-                "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms_IW1_b1_VV.nc"
-            ]
+            "reference_output": "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms.nc"
         }
     },
     "sentinel1A": {

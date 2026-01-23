@@ -72,11 +72,9 @@ def api_testing(
                 current_kpi_stats=kpi_results,
             )
         case SCTAnalyses.INTERFEROMETRY:
-            results = run_interferometry_api(params=test_params, output_dir=output_dir, config=config)
+            results = run_interferometry_api(params=test_params, output_dir=output_dir, config=config, graphs=graphs)
             sct_logger.info("Validating results...")
-            for report in test_params.reference_output:
-                result = [r for r in results if report.name == r.name]
-                compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
+            compare_interf_netcdf_with_tolerances(ref=test_params.reference_output, current=results)
         case SCTAnalyses.ELEVATION_NOTCH:
             results = run_elevation_notch_api(params=test_params, output_dir=output_dir, config=config, graphs=graphs)
             sct_logger.info("Validating results...")
@@ -214,7 +212,7 @@ def run_interferometry_api(
     Returns
     -------
     Path
-        path to output netcdf files
+        path to output netcdf file
     """
     generate_coherence_graphs = None
     if graphs:
@@ -224,14 +222,13 @@ def run_interferometry_api(
             sct_logger.critical(
                 'Cannot generate graphical output: install graphs requirements "pip install sct[graphs]"'
             )
-    full_interferometric_analysis_implementation(
+    return full_interferometric_analysis_implementation(
         product=params.product if isinstance(params.product, Path) else params.product[0],
         product_2=params.product[1] if isinstance(params.product, list) else None,
         config=config,
         output_directory=output_dir,
         graphs_func=generate_coherence_graphs,
     )
-    return [output_dir.joinpath(p.name) for p in params.reference_output]
 
 
 def run_elevation_notch_api(

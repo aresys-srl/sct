@@ -56,9 +56,7 @@ def cli_testing(test_params: TestParams, output_dir: Path, graphs: bool = False)
                 params=test_params, output_dir=output_dir, config=test_params.config, graphs=graphs
             )
             sct_logger.info("Validating results...")
-            for report in test_params.reference_output:
-                result = [r for r in nc_results if report.name == r.name]
-                compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
+            compare_interf_netcdf_with_tolerances(ref=test_params.reference_output, current=nc_results)
         case SCTAnalyses.ELEVATION_NOTCH:
             nc_results = run_notch_cli(
                 params=test_params, output_dir=output_dir, config=test_params.config, graphs=graphs
@@ -270,7 +268,7 @@ def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | 
     if not len(output_files_nc) > 0:
         raise RuntimeError("No output NetCDF files found")
 
-    return output_files_nc
+    return output_files_nc[0]
 
 
 def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None, graphs: bool) -> Path:

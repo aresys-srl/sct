@@ -214,29 +214,36 @@ def compare_interf_netcdf_with_tolerances(ref: Path, current: Path) -> None:
     ref_dataset = Dataset(ref, "r", format="NETCDF4")
     current_dataset = Dataset(current, "r", format="NETCDF4")
 
-    assert ref_dataset.swath == current_dataset.swath
-    assert ref_dataset.channel == current_dataset.channel
-    assert ref_dataset.polarization == current_dataset.polarization
-    assert ref_dataset.burst == current_dataset.burst
+    assert ref_dataset.groups.keys() == current_dataset.groups.keys()
+    for key, group in ref_dataset.groups.items():
+        current_group = current_dataset.groups[key]
+        assert group.groups.keys() == current_group.groups.keys()
+        for p_key, subgroup in group.groups.items():
+            current_subgroup = current_group.groups[p_key]
+            assert subgroup.swath == current_subgroup.swath
+            assert subgroup.channel == current_subgroup.channel
+            assert subgroup.polarization == current_subgroup.polarization
+            for burst, burst_group in subgroup.groups.items():
+                current_burst_group = current_subgroup.groups[burst]
 
-    np.testing.assert_allclose(
-        ref_dataset["coherence_bins"][:],
-        current_dataset["coherence_bins"][:],
-        atol=ABSOLUTE_TOLERANCE,
-        rtol=0,
-    )
-    np.testing.assert_allclose(
-        ref_dataset["azimuth_histogram"][:],
-        current_dataset["azimuth_histogram"][:],
-        atol=ABSOLUTE_TOLERANCE_INTERF,
-        rtol=0,
-    )
-    np.testing.assert_allclose(
-        ref_dataset["range_histogram"][:],
-        current_dataset["range_histogram"][:],
-        atol=ABSOLUTE_TOLERANCE_INTERF,
-        rtol=0,
-    )
+                np.testing.assert_allclose(
+                    burst_group["coherence_bins"][:],
+                    current_burst_group["coherence_bins"][:],
+                    atol=ABSOLUTE_TOLERANCE,
+                    rtol=0,
+                )
+                np.testing.assert_allclose(
+                    burst_group["azimuth_histogram"][:],
+                    current_burst_group["azimuth_histogram"][:],
+                    atol=ABSOLUTE_TOLERANCE_INTERF,
+                    rtol=0,
+                )
+                np.testing.assert_allclose(
+                    burst_group["range_histogram"][:],
+                    current_burst_group["range_histogram"][:],
+                    atol=ABSOLUTE_TOLERANCE_INTERF,
+                    rtol=0,
+                )
 
     ref_dataset.close()
     current_dataset.close()

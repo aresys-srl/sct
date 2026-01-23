@@ -23,8 +23,8 @@ if __name__ == "__main__":
     config.base_config.enable_coherence_computation = True
 
     output = interf.interferometric_coherence_analysis(product_path=prod, config=config)
+    coherence_histograms_to_netcdf(output, output_dir=out_dir)
     sct_logger.info("Plotting Graphs...")
     for out in output:
         generate_coherence_graphs(out, output_dir=out_dir, mode="magnitude")
         generate_coherence_graphs(out, output_dir=out_dir, mode="phase")
-        coherence_histograms_to_netcdf(out, output_dir=out_dir)
