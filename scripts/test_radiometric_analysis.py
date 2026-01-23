@@ -3,8 +3,12 @@
 
 """SCT: test radiometric analysis script"""
 
+from pathlib import Path
 from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
-from perseo_quality.radiometric_analysis.block_wise.support import radiometric_profiles_to_netcdf
+from perseo_quality.radiometric_analysis.block_wise.support import (
+    radiometric_profiles_to_netcdf,
+    radiometric_statistical_analysis_to_df
+)
 
 from sct.analyses import radiometric_analysis as ra
 from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
@@ -35,10 +39,9 @@ if __name__ == "__main__":
     # )
     tag = "NESZ"
     mode = "min"
-
+    stats_df = radiometric_statistical_analysis_to_df(data=output)
+    stats_df.to_csv(Path(output_dir).joinpath("kpi_stats.csv"), index=False)
+    radiometric_profiles_to_netcdf(output, output_dir, tag)
     sct_logger.info("Plotting Graphs...")
     for item in output:
         radiometric_2D_hist_plot(item, output_dir, plot_mode=mode)
-        radiometric_profiles_to_netcdf(item, output_dir, tag)
-
-    pass

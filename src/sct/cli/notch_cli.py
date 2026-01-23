@@ -7,15 +7,26 @@ CLI Elevation Notch Analysis commands.
 """
 
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import click
-from perseo_quality.elevation_notch_analysis.support import elevation_notch_profiles_to_netcdf
 
-from sct.analyses.elevation_notch import sct_elevation_notch_analysis
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
+from sct.orchestration import full_elevation_notch_analysis_implementation
+
+
+def import_plot_elevation_notch_analysis() -> Callable:
+    """Import the generate_coherence_graphs plotting function."""
+    try:
+        from perseo_quality.elevation_notch_analysis.graphical_output import plot_elevation_notch_analysis
+    except ImportError:
+        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
+        sys.exit(1)
+
+    return plot_elevation_notch_analysis
 
 
 @click.command(name="notch-analysis")
@@ -67,24 +78,15 @@ def pt_notch_analysis(
 
 
 @common.log_elapsed_time("Elevation Notch Analysis")
-@common.graceful_exit("Elevation Notch Analysis", "target_ambiguity_ratio_analysis")
+@common.graceful_exit("Elevation Notch Analysis", "elevation_notch_analysis")
 def elevation_notch_analysis_implementation(
     product: Path, antenna_pattern: Path | None, output_directory: Path, config: SCTConfiguration, graphs: bool
 ) -> None:
     """Implement the elevation notch analysis command."""
-    try:
-        from perseo_quality.elevation_notch_analysis.graphical_output import plot_elevation_notch_analysis
-    except ImportError:
-        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
-        sys.exit(1)
-
-    output = sct_elevation_notch_analysis(
-        product_path=product, antenna_pattern_file=antenna_pattern, config=config.elevation_notch_analysis
+    full_elevation_notch_analysis_implementation(
+        product=product,
+        antenna_pattern=antenna_pattern,
+        output_directory=output_directory,
+        config=config,
+        graphs_func=import_plot_elevation_notch_analysis() if graphs else None,
     )
-    sct_logger.info("Saving results to NetCDF...")
-    elevation_notch_profiles_to_netcdf(data=output, output_dir=output_directory)
-    if graphs:
-        sct_logger.info("Generating graphs...")
-        output_graphs_dir = output_directory.joinpath("graphs")
-        output_graphs_dir.mkdir(exist_ok=True)
-        plot_elevation_notch_analysis(data=output, output_dir=output_graphs_dir)

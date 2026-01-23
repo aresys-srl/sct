@@ -12,16 +12,15 @@ from pathlib import Path
 
 import click
 from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
-from perseo_quality.radiometric_analysis.block_wise.support import (
-    radiometric_profiles_to_netcdf,
-    radiometric_statistical_analysis_to_df,
-)
-from perseo_quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
 
-import sct.analyses.radiometric_analysis as ra
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
+from sct.orchestration import (
+    full_average_elevation_profiles_implementation,
+    full_nesz_implementation,
+    full_scalloping_implementation,
+)
 
 
 class RadiometricQuantity(click.ParamType):
@@ -35,6 +34,17 @@ class RadiometricQuantity(click.ParamType):
             return SARRadiometricQuantity[value.upper() + "_NOUGHT"]
         except ValueError:
             self.fail(f"{value!r} wrong input format", param, ctx)
+
+
+def import_radiometric_2d_hist_plot() -> Callable:
+    """Import the radiometric 2D histogram plotting function."""
+    try:
+        from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
+    except ImportError:
+        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
+        sys.exit(1)
+
+    return radiometric_2D_hist_plot
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
@@ -150,17 +160,11 @@ def radiometric_analysis_nesz_implementation(
     graphs: bool,
 ) -> None:
     """Implement the NESZ radiometric analysis command."""
-    radiometric_2d_hist_plot = None
-    if graphs:
-        radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
-
-    output = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
-    save_and_plot_results(
-        output=output,
+    full_nesz_implementation(
+        product=product,
         output_directory=output_directory,
-        graphs=graphs,
-        radiometric_2d_hist_plot=radiometric_2d_hist_plot,
-        tag="NESZ",
+        config=config,
+        graphs_func=import_radiometric_2d_hist_plot() if graphs else None,
     )
 
 
@@ -174,21 +178,12 @@ def radiometric_analysis_average_profiles_implementation(
     graphs: bool,
 ) -> None:
     """Implement the average elevation profiles radiometric analysis command."""
-    radiometric_2d_hist_plot = None
-    if graphs:
-        radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
-
-    output = ra.average_elevation_profile_analysis(
-        product_path=product,
-        output_quantity=output_radiometric_quantity,
-        config=config.radiometric_analysis,
-    )
-    save_and_plot_results(
-        output=output,
+    full_average_elevation_profiles_implementation(
+        product=product,
+        output_radiometric_quantity=output_radiometric_quantity,
         output_directory=output_directory,
-        graphs=graphs,
-        radiometric_2d_hist_plot=radiometric_2d_hist_plot,
-        tag=f"AVERAGE_{output_radiometric_quantity.name}",
+        config=config,
+        graphs_func=import_radiometric_2d_hist_plot() if graphs else None,
     )
 
 
@@ -201,54 +196,9 @@ def radiometric_analysis_scalloping_implementation(
     graphs: bool,
 ) -> None:
     """Implement the scalloping profiles radiometric analysis command."""
-    radiometric_2d_hist_plot = None
-    if graphs:
-        radiometric_2d_hist_plot = import_radiometric_2d_hist_plot()
-
-    output = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
-    save_and_plot_results(
-        output=output,
+    full_scalloping_implementation(
+        product=product,
         output_directory=output_directory,
-        graphs=graphs,
-        radiometric_2d_hist_plot=radiometric_2d_hist_plot,
-        tag="SCALLOPING",
+        config=config,
+        graphs_func=import_radiometric_2d_hist_plot() if graphs else None,
     )
-
-
-def save_and_plot_results(
-    output: list[RadiometricProfilesOutput],
-    output_directory: Path,
-    graphs: bool,
-    radiometric_2d_hist_plot: Callable,
-    tag: str,
-) -> None:
-    """Save results to netCDF and plot graphs if required."""
-    if graphs:
-        sct_logger.info("Saving results to netCDF and plotting graphs...")
-    else:
-        sct_logger.info("Saving results to netCDF format...")
-
-    stats_df = radiometric_statistical_analysis_to_df(data=output)
-    stats_df.to_csv(output_directory.joinpath("radiometry_statistics.csv"), index=False)
-
-    for item in output:
-        radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)
-
-        if graphs:
-            assert item.polarization is not None
-            radiometric_2d_hist_plot(
-                data=item,
-                out_dir=output_directory,
-                title=f"{tag.upper()} Profiles {item.general_info.channel}",
-            )
-
-
-def import_radiometric_2d_hist_plot() -> Callable:
-    """Import the radiometric 2D histogram plotting function."""
-    try:
-        from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
-    except ImportError:
-        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
-        sys.exit(1)
-
-    return radiometric_2D_hist_plot

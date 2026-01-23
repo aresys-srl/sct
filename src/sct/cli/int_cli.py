@@ -7,15 +7,26 @@ CLI Interferometric Analysis commands.
 """
 
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import click
-from perseo_quality.interferometric_analysis.support import coherence_histograms_to_netcdf
 
-import sct.analyses.interferometric_analysis as intf
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
+from sct.orchestration import full_interferometric_analysis_implementation
+
+
+def import_generate_coherence_graphs() -> Callable:
+    """Import the generate_coherence_graphs plotting function."""
+    try:
+        from perseo_quality.interferometric_analysis.graphical_output import generate_coherence_graphs
+    except ImportError:
+        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
+        sys.exit(1)
+
+    return generate_coherence_graphs
 
 
 @click.command(name="interferometric-analysis")
@@ -77,6 +88,7 @@ def interf_coherence_analysis(
 
 
 @common.log_elapsed_time("Interferometric Analysis")
+@common.graceful_exit("Interferometric Analysis", "interferometric_analysis")
 def interf_coherence_analysis_implementation(
     product: Path,
     product_2: Path | None,
@@ -85,40 +97,10 @@ def interf_coherence_analysis_implementation(
     graphs: bool,
 ) -> None:
     """Implement of the interferometric analysis command."""
-    if graphs:
-        try:
-            from perseo_quality.interferometric_analysis.graphical_output import generate_coherence_graphs
-
-        except ImportError:
-            sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
-            sys.exit(1)
-
-    coherence_res = intf.interferometric_coherence_analysis(
-        product_path=product,
-        second_product_path=product_2,
-        config=config.interferometric_analysis,
+    full_interferometric_analysis_implementation(
+        product=product,
+        product_2=product_2,
+        config=config,
+        output_directory=output_directory,
+        graphs_func=import_generate_coherence_graphs() if graphs else None,
     )
-
-    if config.general.save_config_copy:
-        config.dump_to_toml(
-            out_file=output_directory.joinpath("analysis_config.toml"), selected="interferometric_analysis"
-        )
-
-    for res in coherence_res:
-        coherence_histograms_to_netcdf(data=res, output_dir=output_directory)
-
-    if graphs:
-        sct_logger.info("Plotting graphs...")
-        for res in coherence_res:
-            generate_coherence_graphs(
-                data=res,
-                output_dir=output_directory,
-                mode="magnitude",
-                config=config.interferometric_analysis.base_config,
-            )
-            generate_coherence_graphs(
-                data=res,
-                output_dir=output_directory,
-                mode="phase",
-                config=config.interferometric_analysis.base_config,
-            )

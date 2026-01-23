@@ -7,14 +7,26 @@ CLI Point Target Analysis commands.
 """
 
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import click
 
-import sct.analyses.point_target_analysis as pta
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
+from sct.orchestration import full_point_target_analysis_implementation
+
+
+def import_pta_graphs_function() -> Callable:
+    """Import the point target analysis plotting function."""
+    try:
+        from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation
+    except ImportError:
+        sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
+        sys.exit(1)
+
+    return point_target_graphs_generation
 
 
 @click.command(name="target-analysis")
@@ -92,24 +104,16 @@ def target_analysis_implementation(
     graphs: bool,
 ) -> None:
     """Implement the point target analysis command."""
+    point_target_graphs_generation = None
     if graphs:
-        try:
-            from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation
-        except ImportError:
-            sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
-            sys.exit(1)
+        point_target_graphs_generation = import_pta_graphs_function()
 
-    results, graphs_data = pta.point_target_analysis_with_corrections(
-        product_path=product,
-        external_orbit_path=external_orbit,
-        external_target_source=point_target_source,
+    full_point_target_analysis_implementation(
+        product=product,
+        external_orbit=external_orbit,
         external_corrections_product=external_corrections_product,
-        config=config.point_target_analysis,
+        point_target_source=point_target_source,
+        output_directory=output_directory,
+        config=config,
+        graphs_func=point_target_graphs_generation,
     )
-
-    results.to_csv(output_directory.joinpath("point_target_analysis_results.csv"), index=False)
-    if graphs:
-        sct_logger.info("Plotting graphs...")
-        graphs_out_dir = output_directory.joinpath("graphs")
-        graphs_out_dir.mkdir(exist_ok=True)
-        point_target_graphs_generation(graphs_data=graphs_data, results_df=results, output_dir=graphs_out_dir)

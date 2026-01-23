@@ -17,15 +17,19 @@ import pandas as pd
 
 from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-from sct.testing import utilities as utils
+from sct.testing.utilities.api_testing import (
+    api_testing,
+)
+from sct.testing.utilities.cli_testing import cli_testing
+from sct.testing.utilities.common import TestParams
 
 
-def test_session_api(params: utils.TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
+def test_session_api(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
     """Executing SCT single test using API interface.
 
     Parameters
     ----------
-    params : utils.TestParams
+    params : TestParams
         sct input params for the current test
     sensor : str
         sensor name
@@ -45,44 +49,7 @@ def test_session_api(params: utils.TestParams, sensor: str, test_name: str, outp
     out_dir.mkdir(exist_ok=True, parents=True)
     config = SCTConfiguration.from_toml(params.config) if params.config is not None else SCTConfiguration()
     try:
-        if params.analysis == utils.SCTAnalyses.POINT_TARGET:
-            config = config.point_target_analysis if config is not None else None
-            results = utils.run_pta_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
-            # comparing dataframes differences to specific tolerances
-            sct_logger.info("Validating results...")
-            utils.compare_pta_df_with_tolerances(ref=pd.read_csv(params.reference_output), current=results.copy())
-        elif params.analysis == utils.SCTAnalyses.NESZ:
-            config = config.radiometric_analysis if config is not None else None
-            nc_results, kpi_results = utils.run_nesz_api(
-                params=params, output_dir=out_dir, config=config, graphs=graphs
-            )
-            # comparing dataframes and netcdf differences to specific tolerances
-            sct_logger.info("Validating results...")
-            utils.validate_ra_results(
-                reference_output=params.reference_output, current_nc_output=nc_results, current_kpi_stats=kpi_results
-            )
-        elif params.analysis == utils.SCTAnalyses.RAIN_FOREST:
-            config = config.radiometric_analysis if config is not None else None
-            nc_results, kpi_results = utils.run_rain_forest_api(
-                params=params, output_dir=out_dir, config=config, graphs=graphs
-            )
-            # comparing dataframes and netcdf differences to specific tolerances
-            sct_logger.info("Validating results...")
-            utils.validate_ra_results(
-                reference_output=params.reference_output, current_nc_output=nc_results, current_kpi_stats=kpi_results
-            )
-        elif params.analysis == utils.SCTAnalyses.INTERFEROMETRY:
-            config = config.interferometric_analysis if config is not None else None
-            results = utils.run_interferometry_api(params=params, output_dir=out_dir, config=config)
-            sct_logger.info("Validating results...")
-            for report in params.reference_output:
-                result = [r for r in results if report.name == r.name]
-                utils.compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
-        elif params.analysis == utils.SCTAnalyses.ELEVATION_NOTCH:
-            config = config.elevation_notch_analysis if config is not None else None
-            results = utils.run_elevation_notch_api(params=params, output_dir=out_dir, config=config, graphs=graphs)
-            sct_logger.info("Validating results...")
-            utils.compare_elevation_notch_netcdf_with_tolerances(ref=params.reference_output, current=results)
+        api_testing(test_params=params, config=config, output_dir=out_dir, graphs=graphs)
         sct_logger.info("")
         sct_logger.success(f"Test {test_name} - SUCCESS")
         sct_logger.info("")
@@ -95,12 +62,12 @@ def test_session_api(params: utils.TestParams, sensor: str, test_name: str, outp
         return False
 
 
-def test_session_cli(params: utils.TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
+def test_session_cli(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
     """Executing SCT single test using CLI interface.
 
     Parameters
     ----------
-    params : utils.TestParams
+    params : TestParams
         sct input params for the current test
     sensor : str
         sensor name
@@ -119,46 +86,7 @@ def test_session_cli(params: utils.TestParams, sensor: str, test_name: str, outp
     out_dir = output_dir.joinpath(sensor, test_name)
     out_dir.mkdir(exist_ok=True, parents=True)
     try:
-        match params.analysis:
-            case utils.SCTAnalyses.POINT_TARGET:
-                results = utils.run_pta_cli(params=params, output_dir=out_dir, config=params.config, graphs=graphs)
-                # comparing dataframes differences to specific tolerances
-                sct_logger.info("Validating results...")
-                utils.compare_pta_df_with_tolerances(ref=pd.read_csv(params.reference_output), current=results.copy())
-            case utils.SCTAnalyses.NESZ:
-                nc_results, kpi_results = utils.run_ra_cli(
-                    params=params, output_dir=out_dir, config=params.config, analysis="NESZ", graphs=graphs
-                )
-                sct_logger.info("Validating results...")
-                utils.validate_ra_results(
-                    reference_output=params.reference_output,
-                    current_nc_output=nc_results,
-                    current_kpi_stats=kpi_results,
-                )
-            case utils.SCTAnalyses.RAIN_FOREST:
-                nc_results, kpi_results = utils.run_ra_cli(
-                    params=params, output_dir=out_dir, config=params.config, analysis="RF", graphs=graphs
-                )
-                sct_logger.info("Validating results...")
-                utils.validate_ra_results(
-                    reference_output=params.reference_output,
-                    current_nc_output=nc_results,
-                    current_kpi_stats=kpi_results,
-                )
-            case utils.SCTAnalyses.INTERFEROMETRY:
-                nc_results = utils.run_interferometry_cli(
-                    params=params, output_dir=out_dir, config=params.config, graphs=graphs
-                )
-                sct_logger.info("Validating results...")
-                for report in params.reference_output:
-                    result = [r for r in nc_results if report.name == r.name]
-                    utils.compare_interf_netcdf_with_tolerances(ref=report, current=result[0])
-            case utils.SCTAnalyses.ELEVATION_NOTCH:
-                nc_results = utils.run_notch_cli(params=params, output_dir=out_dir, config=params.config, graphs=graphs)
-                sct_logger.info("Validating results...")
-                utils.compare_elevation_notch_netcdf_with_tolerances(ref=params.reference_output, current=nc_results)
-            case _:
-                raise ValueError(f"Unsupported analysis type: {params.analysis}")
+        cli_testing(test_params=params, output_dir=out_dir, graphs=graphs)
         sct_logger.info("")
         sct_logger.success(f"Test {test_name} - SUCCESS")
         sct_logger.info("")
@@ -171,7 +99,7 @@ def test_session_cli(params: utils.TestParams, sensor: str, test_name: str, outp
         return False
 
 
-def run_tests(registry_path: str | Path, output_dir: str | Path, cli: bool, graphs: bool) -> dict:
+def run_tests(registry_path: str | Path, output_dir: str | Path, cli: bool = False, graphs: bool = False) -> dict:
     """Running all the SCT Integration Tests from input registry
 
     Parameters
@@ -180,10 +108,10 @@ def run_tests(registry_path: str | Path, output_dir: str | Path, cli: bool, grap
         Path to the integration tests registry .json
     output_dir : str | Path
         Path to the output directory where to save results
-    cli : bool
-        flag to enable cli usage instead of api
-    graphs : bool
-        flag to enable graphs generation
+    cli : bool, optional
+        flag to enable cli usage instead of api, by default False
+    graphs : bool, optional
+        flag to enable graphs generation, by default False
     """
 
     registry_path = Path(registry_path)
@@ -209,7 +137,7 @@ def run_tests(registry_path: str | Path, output_dir: str | Path, cli: bool, grap
             sct_logger.info(f"Test {test_name.upper()}")
             sct_logger.info("")
             start_time = time.perf_counter()
-            params = utils.TestParams.from_dict(test_params)
+            params = TestParams.from_dict(test_params)
             if not cli:
                 results[sensor][test_name] = test_session_api(
                     params=params, sensor=sensor, test_name=test_name, output_dir=output_dir, graphs=graphs
