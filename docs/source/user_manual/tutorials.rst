@@ -108,7 +108,10 @@ The exact same thing can be done from a custom script using SCT as a library:
     from pathlib import Path
     from sct.configuration.sct_configuration import SCTConfiguration
     import sct.analyses.radiometric_analysis as ra
-    from perseo_quality.radiometric_analysis.block_wise.support import radiometric_profiles_to_netcdf  # optional, if netCDF saving is needed
+    from perseo_quality.radiometric_analysis.block_wise.support import (
+        radiometric_profiles_to_netcdf,  # optional, if profiles netCDF saving is needed
+        radiometric_statistical_analysis_to_df  # optional, if KPI saving is needed
+    )
     from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot  # optional, if graphs are needed
     from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
 
@@ -132,10 +135,10 @@ The exact same thing can be done from a custom script using SCT as a library:
     # or
     tag = "scalloping"
     results = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
-
+    stats_df = radiometric_statistical_analysis_to_df(data=profiles)
+    stats_df.to_csv(output_directory.joinpath("kpi_stats.csv"), index=False)
+    radiometric_profiles_to_netcdf(data=results, out_path=output_directory, tag=tag)
     for item in results:
-        radiometric_profiles_to_netcdf(data=item, out_path=output_directory, tag=tag)
-
         # optional, if graphical output is needed
         radiometric_2D_hist_plot(
             data=item,
