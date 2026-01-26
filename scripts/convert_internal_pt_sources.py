@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from arepytools.geometry.conversions import xyz2llh
+from arepytools.geometry.conversions import llh2xyz, xyz2llh
 from arepytools.io import PointSetProduct, read_point_targets_file
 from perseo_quality.core.signal_processing import convert_to_db
 
@@ -170,13 +170,76 @@ def convert_csv_point_target_to_geojson(source: str | Path, output_dir: str | Pa
     return output_file
 
 
+def convert_lat_lon_dataset_to_df(
+    coords: np.ndarray,
+    rcs: np.ndarray,
+    delays: np.ndarray,
+    names: list[str],
+    target_type: str = "CR",
+    plate: str = "EURA",
+) -> pd.DataFrame:
+    """Convert lat lon dataset to SCT compliant internal point target dataframe format."""
+
+    num = coords.shape[0]
+    assert coords.shape[1] == 3
+    assert len(names) == coords.shape[0]
+
+    dummy_data = [None] * len(coords)
+    coords_ = coords.copy()
+    coords_[:, :2] = np.deg2rad(coords[:, :2])
+    xyz_coords = llh2xyz(coords_.T).T
+    point_targets_df = pd.read_csv(csv_template)
+    point_targets_df = point_targets_df.loc[point_targets_df.index.repeat(num)]
+    point_targets_df[["latitude_deg", "longitude_deg", "altitude_m"]] = coords
+    point_targets_df[["x_coord_m", "y_coord_m", "z_coord_m"]] = xyz_coords
+    point_targets_df["target_type"] = target_type
+    point_targets_df["target_name"] = names
+    point_targets_df["plate"] = plate
+    point_targets_df["delay_s"] = delays if delays is not None else np.zeros(num)
+    point_targets_df["measurement_date"] = dummy_data
+    point_targets_df["validity_start_date"] = dummy_data
+    point_targets_df["validity_stop_date"] = dummy_data
+    point_targets_df["rcs_hh_dB"] = convert_to_db(np.abs(rcs[:, 0]))
+    point_targets_df["rcs_hv_dB"] = convert_to_db(np.abs(rcs[:, 1]))
+    point_targets_df["rcs_vh_dB"] = convert_to_db(np.abs(rcs[:, 2]))
+    point_targets_df["rcs_vv_dB"] = convert_to_db(np.abs(rcs[:, 3]))
+
+    return point_targets_df
+
+
 if __name__ == "__main__":
     # pt_path = r"..."
     # output_csv_folder = r"..."
     # df = convert_aresys_point_target_formats(source=pt_path)
     # df.to_csv(Path(output_csv_folder).joinpath("point_targets_dataset.csv"), index=False)
 
-    convert_csv_point_target_to_geojson(
-        source=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets\surat_basin_corner_reflectors_data.csv",
-        output_dir=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets",
+    # convert_csv_point_target_to_geojson(
+    #     source=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets\surat_basin_corner_reflectors_data.csv",
+    #     output_dir=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets",
+    # )
+    target_df = convert_lat_lon_dataset_to_df(
+        coords=np.array(
+            [
+                [48.02993879, 9.81195953, 704.7],
+                [48.06801023, 9.91851521, 667.1],
+                [48.06736819, 10.08008266, 606.1],
+                [48.07005964, 10.43542688, 643.4],
+                [48.04666707, 10.58140924, 649.6],
+                [48.06454864, 10.92642479, 661.3],
+            ]
+        ),
+        rcs=np.array(
+            [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+            ]
+        ),
+        delays=np.zeros(6),
+        names=["D38", "D39", "D40", "D41", "D42", "D43"],
+        target_type="TX",
     )
+    target_df.to_csv("point_targets_dataset.csv", index=False)
