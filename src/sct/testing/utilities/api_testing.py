@@ -104,7 +104,7 @@ def run_pta_api(params: TestParams, output_dir: Path, config: SCTConfiguration |
         config.point_target_analysis.corrections.enable_ionospheric_correction = True
         config.point_target_analysis.corrections.ionosphere = IonosphericCorrectionsConf(
             maps_directory=params.ionospheric_maps,
-            analysis_center=config.corrections.ionosphere.analysis_center,
+            analysis_center=config.point_target_analysis.corrections.ionosphere.analysis_center,
         )
     if params.tropospheric_maps is not None:
         config.point_target_analysis.corrections.enable_tropospheric_correction = True
