@@ -27,32 +27,30 @@ The exact same thing can be done from a custom script using SCT as a library:
 
 .. code-block:: python
 
+    from collections.abc import Callable
+    from pathlib import Path
     from sct.configuration.sct_configuration import SCTConfiguration
-    from sct.analyses.point_target_analysis import point_target_analysis_with_corrections
-    from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation  # optional, for graphs only
+    from sct.orchestration import full_point_target_analysis_implementation
+    from perseo_quality.point_targets_analysis.graphical_output import point_target_graphs_generation
 
-    # adding a configuration is optional
-    config_toml_path = ...
-    config = SCTConfiguration.from_toml(config_toml_path)
-    # adding an external orbit for Sentinel 1 products is optional
-    path_to_external_orbit = ...
-    path_to_external_correction_product = ...  # i.e. ETAD product for Sentinel-1
-    product_path = ...
-    targets_csv_file_path = ...
-    output_results_csv_file = ...
-    graphs_output_directory = ...
+    product_path: str | Path = ...
+    point_target_source_file_path: str | Path = ...  # CSV file containing the point target source
+    output_dir: str | Path = ...
+    config: SCTConfiguration | None = ...
+    graphs_func: Callable | None = point_target_graphs_generation
 
-    results_df, data_for_graphs = pta.point_target_analysis_with_corrections(
-        product_path=prod,
-        external_target_source=targets_csv_file_path,
-        external_orbit_path=path_to_external_orbit,  # optional
-        external_corrections_product=path_to_external_correction_product,  # optional
-        config=config.point_target_analysis,  # optional
+    path_to_external_orbit: str | Path | None = ...  # support for Sentinel 1 products only, optional
+    path_to_external_correction_product: str | Path | None = ...  # i.e. ETAD product for Sentinel-1, optional
+
+    output_csv_path = full_point_target_analysis_implementation(
+        product=product_path,
+        external_orbit=path_to_external_orbit,
+        external_corrections_product=path_to_external_correction_product,
+        point_target_source=point_target_source_file_path,
+        output_directory=output_dir,
+        config=config,
+        graphs_func=graphs_func,
     )
-    results_df.to_csv(output_results_csv_file, index=False)
-
-    # optional, if graphical output is needed
-    point_target_graphs_generation(graphs_data=data_for_graphs, results_df=results_df, output_dir=graphs_output_directory)
 
 .. seealso::
 
@@ -105,46 +103,41 @@ The exact same thing can be done from a custom script using SCT as a library:
 
 .. code-block:: python
 
+    ### NESZ Analysis Example###
+
+    from collections.abc import Callable
     from pathlib import Path
     from sct.configuration.sct_configuration import SCTConfiguration
-    import sct.analyses.radiometric_analysis as ra
-    from perseo_quality.radiometric_analysis.block_wise.support import (
-        radiometric_profiles_to_netcdf,  # optional, if profiles netCDF saving is needed
-        radiometric_statistical_analysis_to_df  # optional, if KPI saving is needed
-    )
-    from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot  # optional, if graphs are needed
-    from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
-
-    # adding a configuration is optional
-    config_toml_path: str | Path = ...
-    config = SCTConfiguration.from_toml(config_toml_path)
+    from sct.orchestration import full_nesz_implementation
+    from perseo_quality.radiometric_analysis.block_wise.graphical_output import radiometric_2D_hist_plot
 
     product_path: str | Path = ...
-    output_directory: str | Path = ...
+    output_dir: str | Path = ...
+    config: SCTConfiguration | None = ...
+    graphs_func: Callable | None = radiometric_2D_hist_plot
+
+    output_netcdf_path, output_kpi_csv_path = full_nesz_implementation(
+        product=product_path,
+        output_directory=output_directory,
+        config=config,
+        graphs_func=graphs_func,
+    )
+
+    ### RAIN FOREST Analysis Example###
+
+    from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
+    from sct.orchestration import full_average_elevation_profiles_implementation
+
     output_radiometric_quantity = SARRadiometricQuantity.GAMMA_NOUGHT
 
-    tag = "nesz"
-    results = ra.nesz_analysis(product_path=product, config=config.radiometric_analysis)
-    # or
-    tag = "average_gamma"
-    results = ra.average_elevation_profile_analysis(
-        product_path=product,
-        output_quantity=output_radiometric_quantity,
-        config=config.radiometric_analysis
+    output_netcdf_path, output_kpi_csv_path = full_average_elevation_profiles_implementation(
+        product=product_path,
+        output_radiometric_quantity=output_radiometric_quantity,
+        output_directory=output_dir,
+        config=config,
+        graphs_func=graphs_func,
     )
-    # or
-    tag = "scalloping"
-    results = ra.scalloping_analysis(product_path=product, config=config.radiometric_analysis)
-    stats_df = radiometric_statistical_analysis_to_df(data=profiles)
-    stats_df.to_csv(output_directory.joinpath("kpi_stats.csv"), index=False)
-    radiometric_profiles_to_netcdf(data=results, out_path=output_directory, tag=tag)
-    for item in results:
-        # optional, if graphical output is needed
-        radiometric_2D_hist_plot(
-            data=item,
-            out_dir=output_directory,
-            title=f"{tag.upper()} Profiles {item.general_info.channel}",
-        )
+
 
 Interferometric Analysis
 ------------------------
@@ -167,20 +160,63 @@ The exact same thing can be done from a custom script using SCT as a library:
 
 .. code-block:: python
 
+    from collections.abc import Callable
     from pathlib import Path
+    from sct.configuration.sct_configuration import SCTConfiguration
+    from sct.orchestration import full_interferometric_analysis_implementation
     from perseo_quality.interferometric_analysis.graphical_output import generate_coherence_graphs
-    from perseo_quality.interferometric_analysis.support import coherence_histograms_to_netcdf
-
-    from sct.analyses import interferometric_analysis as interf
-    from sct.configuration.sct_configuration import SCTInterferometricAnalysisConfig
 
     product_path: str | Path = ...
+    second_product_path: str | Path | None = ...
     output_dir: str | Path = ...
-    config = SCTInterferometricAnalysisConfig()
-    config.base_config.enable_coherence_computation = True
+    config: SCTConfiguration | None = ...
+    graphs_func: Callable | None = generate_coherence_graphs
 
-    output = interf.interferometric_coherence_analysis(product_path=prod, config=config)
-    for out in output:
-        generate_coherence_graphs(out, output_dir=out_dir, mode="magnitude")
-        generate_coherence_graphs(out, output_dir=out_dir, mode="phase")
-        coherence_histograms_to_netcdf(out, output_dir=out_dir)
+    output_netcdf_path = full_interferometric_analysis_implementation(
+        product=product_path,
+        product_2=second_product_path,
+        output_directory=output_dir,
+        config=config,
+        graphs_func=graphs_func,
+    )
+
+
+Elevation Notch Analysis
+------------------------
+
+To perform an Elevation Notch Analysis using SCT CLI, run the following command in your shell, adapting the input parameters
+to your needs. Passing the input configuration can be avoided if default values are good enough.
+
+.. code-block:: bash
+
+    sct --config path_to_config_toml notch-analysis -p path_to_product -out path_to_output_folder [-ap path_to_second_product] [-g]
+
+.. note::
+
+    Elevation Notch computation can be performed with or without passing an antenna pattern NetCDF to the CLI tool.
+    Check the documentation about this analysis for more details.
+
+Graphical output for elevation notch analysis can be enabled using the `--graphs/-g` option for the CLI tool.
+
+The exact same thing can be done from a custom script using SCT as a library:
+
+.. code-block:: python
+
+    from collections.abc import Callable
+    from pathlib import Path
+    from sct.orchestration import full_elevation_notch_analysis_implementation
+    from perseo_quality.elevation_notch_analysis.graphical_output import plot_elevation_notch_analysis
+
+    product_path: str | Path = ...
+    output_directory: str | Path = ...
+    config: SCTConfiguration | None = ...
+    graphs_func: Callable | None = plot_elevation_notch_analysis
+
+    output_netcdf_path = full_elevation_notch_analysis_implementation(
+        product=product_path,
+        antenna_pattern=antenna_pattern_path,
+        output_directory=output_directory,
+        config=config,
+        graphs_func=graphs_func,
+    )
+
