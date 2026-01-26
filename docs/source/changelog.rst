@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.0.6
+------
+
+**Other Changes**
+
+- Improved overall testing module for clarity and consistency
+- Improved full implementation management of available analyses
+
 v2.0.5
 ------
 
