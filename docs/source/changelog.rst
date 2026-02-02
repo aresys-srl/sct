@@ -1,6 +1,17 @@
 Changelog
 =========
 
+v2.0.7
+------
+
+**Bug Fixing**
+
+- Fixed bug in Rosamond Corner Reflector conversion to SCT compliant Point Target .csv dataset format
+
+**Other Changes**
+
+- Dropping support for Python 3.10
+
 v2.0.6
 ------
 
