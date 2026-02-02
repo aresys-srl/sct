@@ -40,11 +40,23 @@ if TYPE_CHECKING:
     from perseo_quality.io.quality_input_protocol import ChannelData
     from perseo_quality.point_targets_analysis.custom_dataclasses import PointTargetGraphicalData
 
-
+# TODO: should this be here?
 AZIMUTH_BORE_CR = np.pi / 4
 ELEV_BORE_CR = np.deg2rad(35.2644)
 
+PTA_SCT_ADDITIONAL_OUTPUT_FIELDS = {
+    "total_doppler": "total_doppler_frequency_[Hz]",
+    "solid_tides": "solid_tides_correction",
+    "plate_tectonics": "plate_tectonics_correction",
+    "total_rng_ale_corr": "total_ale_range_correction_[m]",
+    "total_az_ale_corr": "total_ale_azimuth_correction_[m]",
+    "revised_rng_ale": "revised_ale_range_[m]",
+    "revised_az_ale": "revised_ale_azimuth_[m]",
+    "rcs_theoretical": "rcs_theoretical_[dB]",
+}
 
+
+# TODO: should this be here?
 def _compute_theoretical_rcs_core(
     sensor_position: np.ndarray,
     target_position: np.ndarray,
@@ -213,14 +225,13 @@ def point_target_analysis_with_corrections(
         raise ValueError(msg)
 
     results.reset_index(drop=True, inplace=True)
-    results.rename(columns={"target": "target_name"}, inplace=True)
 
-    results["total_doppler_frequency_[Hz]"] = (
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["total_doppler"]] = (
         results["doppler_frequency_[Hz]"] + results["steering_doppler_frequency_[Hz]"]
     )
 
-    results["solid_tides_correction"] = config.corrections.enable_solid_tides_correction
-    results["plate_tectonics_correction"] = config.corrections.enable_plate_tectonics_correction
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["solid_tides"]] = config.corrections.enable_solid_tides_correction
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["plate_tectonics"]] = config.corrections.enable_plate_tectonics_correction
 
     results = update_df_with_llh(results=results, point_targets_df=point_targets_df)
 
@@ -296,18 +307,18 @@ def update_results_with_derived_quantities(results: pd.DataFrame) -> pd.DataFram
         point target analysis results to be updated
     """
     # sum all corrections along a specific direction
-    results["total_ale_range_correction_[m]"] = results[
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["total_rng_ale_corr"]] = results[
         [c for c in results.columns if "_range_correction_[m]" in c]
     ].sum(axis=1)
-    results["total_ale_azimuth_correction_[m]"] = results[
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["total_az_ale_corr"]] = results[
         [c for c in results.columns if "_azimuth_correction_[m]" in c]
     ].sum(axis=1)
 
     # compute corrected ALE measurement
-    results["revised_ale_range_[m]"] = (
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["revised_rng_ale"]] = (
         results["slant_range_localization_error_[m]"] + results["total_ale_range_correction_[m]"]
     )
-    results["revised_ale_azimuth_[m]"] = (
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["revised_az_ale"]] = (
         results["azimuth_localization_error_[m]"] + results["total_ale_azimuth_correction_[m]"]
     )
 
@@ -388,7 +399,7 @@ def update_results_with_theoretical_rcs(
             trajectory=first_channel.trajectory,
         )
 
-    results["rcs_theoretical_[dB]"] = theoretical_rcs
+    results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["rcs_theoretical"]] = theoretical_rcs
 
 
 def update_results_with_ale_corrections(
