@@ -165,6 +165,8 @@ def convert_rosamond_file_to_compliant_csv(
         SCT compliant Rosamond dataframe
     """
 
+    out_df = pd.read_csv(csv_template)
+
     if not isinstance(df, pd.DataFrame):
         df = pd.read_csv(Path(df))
 
@@ -173,60 +175,43 @@ def convert_rosamond_file_to_compliant_csv(
     df.columns = col_clean
     df.drop(list(df.filter(regex="Epoch")), axis=1, inplace=True)
 
-    # formatting names
-    df.rename(
-        columns={
-            "Corner ID": "target_name",
-            "Latitude (deg)": "latitude_deg",
-            "Longitude (deg)": "longitude_deg",
-            "Height Above Ellipsoid (m)": "altitude_m",
-            "Azimuth (deg)": "corner_azimuth_deg",
-            "Tilt / Elevation angle (deg)": "corner_elevation_deg",
-            "Side Length (m)": "target_size_m",
-        },
-        inplace=True,
-    )
-
+    out_df = out_df.loc[out_df.index.repeat(len(df))]
+    out_df["description"] = "Rosamond Corner Reflector Array (RCRA), Rosamond Dry Lakebed, California, USA"
+    out_df["target_name"] = df["Corner ID"].apply(lambda x: "ROS" + f"{x:02d}" + "CR").to_list()
+    out_df["latitude_deg"] = df["Latitude (deg)"].to_list()
+    out_df["longitude_deg"] = df["Longitude (deg)"].to_list()
+    out_df["altitude_m"] = df["Height Above Ellipsoid (m)"].to_list()
     # correcting corner_azimuth_deg to express it with respect to North and not East
-    df["corner_azimuth_deg"] = (df["corner_azimuth_deg"] + 90) % 360
-
+    out_df["corner_azimuth_deg"] = (df["Azimuth (deg)"].to_numpy() + 90) % 360
     # correcting corner_elevation_deg to express it with respect to the corner max pointing angle and not to the earth
-    # surface
-    df["corner_elevation_deg"] += 35.2644  # for trihedral corner reflectors
-
-    # composing target names
-    df["target_name"] = df["target_name"].apply(lambda x: "ROS" + f"{x:02d}" + "CR")
+    # surface, for trihedral corner reflectors
+    out_df["corner_elevation_deg"] = df["Tilt / Elevation angle (deg)"].to_numpy() + 35.2644
+    out_df["target_size_m"] = df["Side Length (m)"].to_list()
 
     # creating dummy RCS info for the corner reflectors
-    df["target_shape"] = "trihedral"
-    df["rcs_hh_dB"] = 0
-    df["rcs_hv_dB"] = 0
-    df["rcs_vv_dB"] = 0
-    df["rcs_vh_dB"] = 0
-    df["delay_s"] = 0
+    out_df["target_shape"] = "trihedral"
+    out_df["rcs_hh_dB"] = 0
+    out_df["rcs_hv_dB"] = 0
+    out_df["rcs_vv_dB"] = 0
+    out_df["rcs_vh_dB"] = 0
+    out_df["delay_s"] = 0
 
     # computing XYZ ECEF coordinates
-    lat_lon = np.deg2rad(df[["latitude_deg", "longitude_deg"]])
-    lat_lon_h = np.c_[lat_lon, df["altitude_m"]]
+    lat_lon = np.deg2rad(out_df[["latitude_deg", "longitude_deg"]])
+    lat_lon_h = np.c_[lat_lon, out_df["altitude_m"]]
     xyz_coords = llh2xyz(lat_lon_h.T).T
 
     # adding columns
-    df["target_type"] = "CR"
-    df["plate"] = "NOAM"
-    df["x_coord_m"] = xyz_coords[:, 0]
-    df["y_coord_m"] = xyz_coords[:, 1]
-    df["z_coord_m"] = xyz_coords[:, 2]
-    df["drift_velocity_x_my"] = np.nan
-    df["drift_velocity_y_my"] = np.nan
-    df["drift_velocity_z_my"] = np.nan
-    df["measurement_date"] = measurement_date
-    df["validity_start_date"] = measurement_date - 24 * 3600  # a day before
-    df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after
+    out_df["target_type"] = "CR"
+    out_df["plate"] = "NOAM"
+    out_df["x_coord_m"] = xyz_coords[:, 0]
+    out_df["y_coord_m"] = xyz_coords[:, 1]
+    out_df["z_coord_m"] = xyz_coords[:, 2]
+    out_df["drift_velocity_x_my"] = np.nan
+    out_df["drift_velocity_y_my"] = np.nan
+    out_df["drift_velocity_z_my"] = np.nan
+    out_df["measurement_date"] = measurement_date
+    out_df["validity_start_date"] = measurement_date - 24 * 3600  # a day before
+    out_df["validity_stop_date"] = measurement_date + 24 * 3600  # a day after
 
-    return df
-
-
-if __name__ == "__main__":
-    read_geojson_point_targets_file(
-        r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets\surat_basin_corner_reflectors_data.geojson"
-    )
+    return out_df
