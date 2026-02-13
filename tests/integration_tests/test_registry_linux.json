@@ -72,7 +72,7 @@
             "targets": "",
             "reference_output": [
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/kpi_stats.csv",
-                "/data/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles_GRD_24_RF.nc"
+                "/data/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles.nc"
             ]
         },
         "grd-nesz": {
@@ -82,7 +82,7 @@
             "targets": "",
             "reference_output": [
                 "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/kpi_stats.csv",
-                "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles_GRD_23_NESZ.nc"
+                "/data/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles.nc"
             ]
         }
     },
