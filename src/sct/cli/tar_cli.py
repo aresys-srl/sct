@@ -2,16 +2,17 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Target Ambiguity Ratio Analysis commands.
----------------------------------------------
+CLI Target Ambiguity Ratio Analysis commands
+--------------------------------------------
 """
+
+from __future__ import annotations
 
 import sys
 from pathlib import Path
 
 import click
 
-from sct.analyses.ambiguity_ratio_analysis import sct_point_target_ambiguity_ratio_analysis
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
@@ -62,6 +63,8 @@ def pt_ambiguity_ratio_analysis_implementation(
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)
+
+    from sct.analyses.ambiguity_ratio_analysis import sct_point_target_ambiguity_ratio_analysis
 
     output = sct_point_target_ambiguity_ratio_analysis(
         product_path=product,

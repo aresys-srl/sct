@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI common.
------------
+CLI common functions
+--------------------
 """
 
 from __future__ import annotations

@@ -2,6 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 """
-SCT: COMMAND LINE INTERFACE module.
------------------------------------
+SCT: COMMAND LINE INTERFACE module
+----------------------------------
 """

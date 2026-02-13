@@ -2,16 +2,17 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Spectral Analysis commands.
--------------------------------
+CLI Spectral Analysis commands
+------------------------------
 """
+
+from __future__ import annotations
 
 import sys
 from pathlib import Path
 
 import click
 
-from sct.analyses.spectral_analysis import sct_distributed_spectral_analysis, sct_point_target_spectral_analysis
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
@@ -100,6 +101,8 @@ def spectral_pt_analysis_implementation(
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)
 
+    from sct.analyses.spectral_analysis import sct_point_target_spectral_analysis
+
     output = sct_point_target_spectral_analysis(
         product_path=product,
         external_target_source=point_target_source,
@@ -122,6 +125,8 @@ def spectral_distributed_analysis_implementation(
     except ImportError:
         sct_logger.critical('Install graphs requirements "pip install sct[graphs]"')
         sys.exit(1)
+
+    from sct.analyses.spectral_analysis import sct_distributed_spectral_analysis
 
     output = sct_distributed_spectral_analysis(
         product_path=product,

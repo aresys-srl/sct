@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Point Target Analysis commands.
------------------------------------
+CLI Point Target Analysis commands
+----------------------------------
 """
+
+from __future__ import annotations
 
 import sys
 from collections.abc import Callable
@@ -15,7 +17,6 @@ import click
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-from sct.orchestration import full_point_target_analysis_implementation
 
 
 def import_pta_graphs_function() -> Callable:
@@ -107,6 +108,8 @@ def target_analysis_implementation(
     point_target_graphs_generation = None
     if graphs:
         point_target_graphs_generation = import_pta_graphs_function()
+
+    from sct.orchestration import full_point_target_analysis_implementation
 
     full_point_target_analysis_implementation(
         product=product,

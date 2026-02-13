@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Interferometric Analysis commands.
---------------------------------------
+CLI Interferometric Analysis commands
+-------------------------------------
 """
+
+from __future__ import annotations
 
 import sys
 from collections.abc import Callable
@@ -15,7 +17,6 @@ import click
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-from sct.orchestration import full_interferometric_analysis_implementation
 
 
 def import_generate_coherence_graphs() -> Callable:
@@ -97,6 +98,8 @@ def interf_coherence_analysis_implementation(
     graphs: bool,
 ) -> None:
     """Implement of the interferometric analysis command."""
+    from sct.orchestration import full_interferometric_analysis_implementation
+
     full_interferometric_analysis_implementation(
         product=product,
         product_2=product_2,

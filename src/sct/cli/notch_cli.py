@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Elevation Notch Analysis commands.
---------------------------------------
+CLI Elevation Notch Analysis commands
+-------------------------------------
 """
+
+from __future__ import annotations
 
 import sys
 from collections.abc import Callable
@@ -15,7 +17,6 @@ import click
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-from sct.orchestration import full_elevation_notch_analysis_implementation
 
 
 def import_plot_elevation_notch_analysis() -> Callable:
@@ -83,6 +84,8 @@ def elevation_notch_analysis_implementation(
     product: Path, antenna_pattern: Path | None, output_directory: Path, config: SCTConfiguration, graphs: bool
 ) -> None:
     """Implement the elevation notch analysis command."""
+    from sct.orchestration import full_elevation_notch_analysis_implementation
+
     full_elevation_notch_analysis_implementation(
         product=product,
         antenna_pattern=antenna_pattern,

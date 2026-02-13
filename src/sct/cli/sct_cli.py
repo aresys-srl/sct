@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """
-SCT CLI Tool.
--------------
+SCT CLI Tool
+------------
 """
+
+from __future__ import annotations
 
 from pathlib import Path
 

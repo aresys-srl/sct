@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.0.8
+------
+
+**Other Changes**
+
+- Command Line Interface: imports deferred to speed up CLI loading
+
 v2.0.7
 ------
 

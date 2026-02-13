@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 """
-CLI Radiometric Analysis commands.
-----------------------------------
+CLI Radiometric Analysis commands
+---------------------------------
 """
+
+from __future__ import annotations
 
 import sys
 from collections.abc import Callable
@@ -16,11 +18,6 @@ from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
 from sct.cli import common
 from sct.configuration.logger import enable_quality_logger, sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
-from sct.orchestration import (
-    full_average_elevation_profiles_implementation,
-    full_nesz_implementation,
-    full_scalloping_implementation,
-)
 
 
 class RadiometricQuantity(click.ParamType):
@@ -160,6 +157,8 @@ def radiometric_analysis_nesz_implementation(
     graphs: bool,
 ) -> None:
     """Implement the NESZ radiometric analysis command."""
+    from sct.orchestration import full_nesz_implementation
+
     full_nesz_implementation(
         product=product,
         output_directory=output_directory,
@@ -178,6 +177,8 @@ def radiometric_analysis_average_profiles_implementation(
     graphs: bool,
 ) -> None:
     """Implement the average elevation profiles radiometric analysis command."""
+    from sct.orchestration import full_average_elevation_profiles_implementation
+
     full_average_elevation_profiles_implementation(
         product=product,
         output_radiometric_quantity=output_radiometric_quantity,
@@ -196,6 +197,8 @@ def radiometric_analysis_scalloping_implementation(
     graphs: bool,
 ) -> None:
     """Implement the scalloping profiles radiometric analysis command."""
+    from sct.orchestration import full_scalloping_implementation
+
     full_scalloping_implementation(
         product=product,
         output_directory=output_directory,
