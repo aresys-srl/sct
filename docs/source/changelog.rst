@@ -7,6 +7,7 @@ v2.0.8
 **Other Changes**
 
 - Command Line Interface: imports deferred to speed up CLI loading
+- Fixing NetCDF Antenna Pattern reader following latest change in hierarchy structure
 
 v2.0.7
 ------

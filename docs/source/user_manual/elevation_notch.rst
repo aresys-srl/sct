@@ -19,11 +19,17 @@ The NetCDF file structure must be as follows:
 
     <root>
     └── swath
-        └── polarization
-            ├── gain (in dB)
-            ├── phase (optional, in rad)
-            ├── azimuth_angles (in deg)
-            └── elevation_angles (in deg)
+        └── direction (e.g. `TW`)
+            └──polarization (e.g. `HH`, `VV`)
+                ├── gain (in dB)
+                ├── phase (optional, in rad)
+                ├── azimuth_angles (in deg)
+                └── elevation_angles (in deg)
 
 where ``swath`` is the swath name and ``polarization`` is the actual polarization value. There may be more than one
 polarization and/or swath.
+
+.. seealso::
+
+    This analysis can be configured through the configuration file. To better understand the implications of changing
+    specific parameters, refer to the :ref:`documentation about tool configuration <sct_config>`.

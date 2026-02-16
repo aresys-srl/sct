@@ -28,11 +28,15 @@ def read_antenna_pattern_netcdf(path: Path) -> dict[str, dict[str, xr.Dataset]]:
 
         root/
         └── swath
-            └── polarization
-                ├── gain (in dB)
-                ├── phase (optional, in rad)
-                ├── azimuth_angles (in deg)
-                └── elevation_angles (in deg)
+            └── direction (e.g. `TW`)
+                └──polarization (e.g. `HH`, `VV`)
+                    ├── gain (in dB)
+                    ├── phase (optional, in rad)
+                    ├── azimuth_angles (in deg)
+                    └── elevation_angles (in deg)
+
+    .. note::
+        Only Two Way Antenna Patterns are supported, so only one direction group is expected.
 
     Returns
     -------
@@ -41,9 +45,11 @@ def read_antenna_pattern_netcdf(path: Path) -> dict[str, dict[str, xr.Dataset]]:
     """
     am_ds = Dataset(path, mode="r")
     antenna_pattern_datasets = {}
-    for swath, pol_groups in am_ds.groups.items():
+    for swath, direction_groups in am_ds.groups.items():
         antenna_pattern_datasets[swath] = {}
-        for pol, pol_group in pol_groups.groups.items():
+        assert len(direction_groups.groups) == 1
+        dir_group = direction_groups.groups[list(direction_groups.groups.keys())[0]]
+        for pol, pol_group in dir_group.groups.items():
             ds = xr.Dataset(
                 {
                     "gain": (
