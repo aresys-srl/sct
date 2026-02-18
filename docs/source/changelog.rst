@@ -8,6 +8,7 @@ v2.0.8
 
 - Command Line Interface: imports deferred to speed up CLI loading
 - Fixing NetCDF Antenna Pattern reader following latest change in hierarchy structure
+- Fixing RCS Error computation from PERSEO Quality by subtracting the Theoretical RCS
 
 v2.0.7
 ------

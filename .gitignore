@@ -163,7 +163,3 @@ cython_debug/
 #.idea/
 
 .vscode/
-
-tests/integration_tests/config/local.toml
-
-scripts/local_registry.json

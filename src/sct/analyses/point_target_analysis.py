@@ -398,6 +398,7 @@ def update_results_with_theoretical_rcs(
             carrier_frequency_hz=first_channel.carrier_frequency,
             trajectory=first_channel.trajectory,
         )
+        results["rcs_error_[dB]"] = results["rcs_[dB]"] - theoretical_rcs
 
     results[PTA_SCT_ADDITIONAL_OUTPUT_FIELDS["rcs_theoretical"]] = theoretical_rcs
 
