@@ -16,15 +16,11 @@ import numpy as np
 import pandas as pd
 
 from sct.configuration.logger import sct_logger
-from sct.configuration.sct_configuration import SCTConfiguration
-from sct.testing.utilities.api_testing import (
-    api_testing,
-)
-from sct.testing.utilities.cli_testing import cli_testing
 from sct.testing.utilities.common import TestParams
+from sct.testing.utilities.executor import execute_analysis_test
 
 
-def test_session_api(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
+def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool, cli: bool) -> bool:
     """Executing SCT single test using API interface.
 
     Parameters
@@ -39,6 +35,8 @@ def test_session_api(params: TestParams, sensor: str, test_name: str, output_dir
         output directory where to save the results
     graphs : bool
         flag to enable graphs generation
+    cli : bool
+        flag to enable cli usage instead of api
 
     Returns
     -------
@@ -47,9 +45,13 @@ def test_session_api(params: TestParams, sensor: str, test_name: str, output_dir
     """
     out_dir = output_dir.joinpath(sensor, test_name)
     out_dir.mkdir(exist_ok=True, parents=True)
-    config = SCTConfiguration.from_toml(params.config) if params.config is not None else SCTConfiguration()
     try:
-        api_testing(test_params=params, config=config, output_dir=out_dir, graphs=graphs)
+        execute_analysis_test(
+            test_params=params,
+            output_dir=out_dir,
+            graphs=graphs,
+            cli=cli,
+        )
         sct_logger.info("")
         sct_logger.success(f"Test {test_name} - SUCCESS")
         sct_logger.info("")
@@ -62,44 +64,7 @@ def test_session_api(params: TestParams, sensor: str, test_name: str, output_dir
         return False
 
 
-def test_session_cli(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool) -> bool:
-    """Executing SCT single test using CLI interface.
-
-    Parameters
-    ----------
-    params : TestParams
-        sct input params for the current test
-    sensor : str
-        sensor name
-    test_name : str
-        name of the test
-    output_dir : Path
-        output directory where to save the results
-    graphs : bool
-        flag to enable graphs generation
-
-    Returns
-    -------
-    bool
-        True if passed, else False
-    """
-    out_dir = output_dir.joinpath(sensor, test_name)
-    out_dir.mkdir(exist_ok=True, parents=True)
-    try:
-        cli_testing(test_params=params, output_dir=out_dir, graphs=graphs)
-        sct_logger.info("")
-        sct_logger.success(f"Test {test_name} - SUCCESS")
-        sct_logger.info("")
-        return True
-    except Exception as err:
-        sct_logger.info("")
-        sct_logger.fail(f"Test {test_name} - FAIL")
-        sct_logger.info("")
-        sct_logger.error(err)
-        return False
-
-
-def run_tests(registry_path: str | Path, output_dir: str | Path, cli: bool = False, graphs: bool = False) -> dict:
+def run_tests(registry_path: str | Path, output_dir: str | Path, graphs: bool = False, cli: bool = False) -> dict:
     """Running all the SCT Integration Tests from input registry
 
     Parameters
@@ -108,10 +73,10 @@ def run_tests(registry_path: str | Path, output_dir: str | Path, cli: bool = Fal
         Path to the integration tests registry .json
     output_dir : str | Path
         Path to the output directory where to save results
-    cli : bool, optional
-        flag to enable cli usage instead of api, by default False
     graphs : bool, optional
         flag to enable graphs generation, by default False
+    cli : bool, optional
+        flag to enable cli usage instead of api, by default False
     """
 
     registry_path = Path(registry_path)
@@ -138,14 +103,11 @@ def run_tests(registry_path: str | Path, output_dir: str | Path, cli: bool = Fal
             sct_logger.info("")
             start_time = time.perf_counter()
             params = TestParams.from_dict(test_params)
-            if not cli:
-                results[sensor][test_name] = test_session_api(
-                    params=params, sensor=sensor, test_name=test_name, output_dir=output_dir, graphs=graphs
-                )
-            else:
-                results[sensor][test_name] = test_session_cli(
-                    params=params, sensor=sensor, test_name=test_name, output_dir=output_dir, graphs=graphs
-                )
+
+            results[sensor][test_name] = test_session(
+                params=params, sensor=sensor, test_name=test_name, output_dir=output_dir, graphs=graphs, cli=cli
+            )
+
             time_spent = time.perf_counter() - start_time
             if time_spent < 60:
                 sct_logger.info(f"Elapsed: {np.round(time_spent)} seconds")

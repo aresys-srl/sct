@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.0.9
+------
+
+**Other Changes**
+
+- Testing module improved: added registry mechanism to support multiple analyses
+
 v2.0.8
 ------
 

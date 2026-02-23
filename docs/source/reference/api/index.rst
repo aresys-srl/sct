@@ -10,4 +10,5 @@ API Reference
    io
    core
    analyses
+   testing
    web_scraping
