@@ -24,3 +24,5 @@ Supported Analyses
 .. automodule:: sct.testing.utilities.analyses.pool.interf
 
 .. automodule:: sct.testing.utilities.analyses.pool.notch
+
+.. automodule:: sct.testing.utilities.analyses.pool.spectra

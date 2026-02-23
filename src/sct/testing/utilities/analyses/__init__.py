@@ -6,11 +6,6 @@ SCT Testing - Supported Analyses
 --------------------------------
 """
 
-from sct.testing.utilities.analyses.pool import interf, notch, pta, ra
+from sct.testing.utilities.analyses.pool import interf, notch, pta, ra, spectra
 
-__all__ = [
-    "interf",
-    "notch",
-    "pta",
-    "ra",
-]
+__all__ = ["interf", "notch", "pta", "ra", "spectra"]

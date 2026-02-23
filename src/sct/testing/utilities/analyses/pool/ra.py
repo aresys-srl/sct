@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from functools import partial
 from pathlib import Path
 
@@ -25,7 +26,7 @@ ABSOLUTE_TOLERANCE = 1e-5
 KPI_TOLERANCE = 1e-1
 
 
-def _load_ra_graphs_func(graphs: bool) -> None:
+def _load_ra_graphs_func(graphs: bool) -> Callable | None:
     """Loading the radiometric 2D histogram plotting function."""
     radiometric_2D_hist_plot = None
     if graphs:
@@ -137,9 +138,9 @@ def run_ra_cli(params: TestParams, output_dir: Path, config: Path | None, analys
             "radiometric-analysis",
             "elevation-profile" if analysis == "RF" else "nesz",
             "-p",
-            params.product,
+            str(params.product),
             "-out",
-            output_dir,
+            str(output_dir),
         ]
     )
     if analysis == "RF":

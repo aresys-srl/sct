@@ -19,11 +19,13 @@ from perseo_quality.radiometric_analysis.block_wise.support import (
     radiometric_statistical_analysis_to_df,
 )
 from perseo_quality.radiometric_analysis.custom_dataclasses import RadiometricProfilesOutput
+from perseo_quality.spectral_analysis.support import spectral_analysis_profiles_to_netcdf
 
 import sct.analyses.interferometric_analysis as interf
 import sct.analyses.point_target_analysis as pta
 import sct.analyses.radiometric_analysis as ra
 from sct.analyses.elevation_notch import sct_elevation_notch_analysis
+from sct.analyses.spectral_analysis import sct_distributed_spectral_analysis, sct_point_target_spectral_analysis
 from sct.configuration.logger import sct_logger
 from sct.configuration.sct_configuration import SCTConfiguration
 
@@ -274,6 +276,56 @@ def full_elevation_notch_analysis_implementation(
     )
     sct_logger.info("Saving results to NetCDF...")
     netcdf_file = elevation_notch_profiles_to_netcdf(data=output, output_dir=output_directory)
+
+    if graphs_func is not None:
+        sct_logger.info("Generating graphs...")
+        output_graphs_dir = output_directory.joinpath("graphs")
+        output_graphs_dir.mkdir(exist_ok=True)
+        graphs_func(data=output, output_dir=output_graphs_dir)
+
+    return netcdf_file
+
+
+def full_spectral_analysis_implementation(
+    product: Path,
+    point_target_source: Path | None,
+    output_directory: Path,
+    config: SCTConfiguration,
+    graphs_func: Callable | None,
+) -> Path:
+    """Full implementation of Spectral Analysis, both distributed and point target.
+
+    Parameters
+    ----------
+    product : Path
+        Path to the product to be analyzed
+    point_target_source : Path | None
+        Path to the point target source file, if not provided the analysis will be a Distributed Spectral Analysis
+    output_directory : Path
+        Path to the output directory
+    config : SCTConfiguration
+        configuration parameters
+    graphs_func : Callable | None
+        graph plotting function or None if graphs are not required
+
+    Returns
+    -------
+    Path
+        Path to the NetCDF file containing the results
+    """
+    if point_target_source is not None:
+        output = sct_point_target_spectral_analysis(
+            product_path=product,
+            external_target_source=point_target_source,
+            config=config.spectral_analysis,
+        )
+    else:
+        output = sct_distributed_spectral_analysis(
+            product_path=product,
+            config=config.spectral_analysis,
+        )
+    sct_logger.info("Saving results to NetCDF...")
+    netcdf_file = spectral_analysis_profiles_to_netcdf(data=output, out_path=output_directory)
 
     if graphs_func is not None:
         sct_logger.info("Generating graphs...")

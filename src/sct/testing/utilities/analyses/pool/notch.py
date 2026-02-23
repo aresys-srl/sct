@@ -90,13 +90,13 @@ def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None, gra
         [
             "notch-analysis",
             "-p",
-            params.product,
+            str(params.product),
             "-out",
-            output_dir,
+            str(output_dir),
         ]
     )
     if params.antenna_pattern is not None:
-        executable_call.extend(["-ap", params.antenna_pattern])
+        executable_call.extend(["-ap", str(params.antenna_pattern)])
     if graphs:
         executable_call.extend(["-g"])
 

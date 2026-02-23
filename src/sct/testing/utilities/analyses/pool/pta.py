@@ -139,11 +139,11 @@ def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None, graph
         [
             "target-analysis",
             "-p",
-            params.product,
+            str(params.product),
             "-out",
-            output_dir,
+            str(output_dir),
             "-pt",
-            params.targets,
+            str(params.targets),
         ]
     )
     if params.external_orbit is not None:

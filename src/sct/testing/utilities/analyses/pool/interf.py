@@ -97,15 +97,15 @@ def run_interferometry_cli(params: TestParams, output_dir: Path, config: Path | 
         [
             "interferometric-analysis",
             "-p",
-            first_prod,
+            str(first_prod),
         ]
     )
     if second_prod is not None:
-        executable_call.extend(["-pp", second_prod])
+        executable_call.extend(["-pp", str(second_prod)])
     executable_call.extend(
         [
             "-out",
-            output_dir,
+            str(output_dir),
         ]
     )
     if graphs:

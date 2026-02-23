@@ -21,6 +21,7 @@ class SCTAnalyses(Enum):
     RAIN_FOREST = "rf"
     INTERFEROMETRY = "interf"
     ELEVATION_NOTCH = "notch"
+    SPECTRA = "spectra"
 
 
 @dataclass
