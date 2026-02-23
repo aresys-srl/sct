@@ -12,4 +12,4 @@ import sct.resources as res_folder
 
 csv_template = res.files(res_folder).joinpath("calibration_targets_external_source_template.csv")
 
-__version__ = "2.0.8"
+__version__ = "2.0.9"
