@@ -94,6 +94,13 @@
             "targets": "",
             "antenna_pattern": "/data/reference_dataset/sentinel1d/auxiliaries/antenna_pattern_TW_EN.nc",
             "reference_output": "/data/integration_tests/sct/reference_results/sentinel1D/notch/elevation_notch_results.nc"
+        },
+        "pt-spectra": {
+            "analysis": "spectra",
+            "product": "/data/reference_dataset/sentinel1d/products/SLC_PT_SPECTRA.SAFE",
+            "config": "",
+            "targets": "/data/reference_dataset/sentinel1d/auxiliaries/dlr_calibration_site_germany.csv",
+            "reference_output": "/data/integration_tests/sct/reference_results/sentinel1D/pt-spectra/pt_spectral_profiles_SLC_PT_SPECTRA.nc"
         }
     }
 }
