@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "SAR Calibration Toolbox (SCT)"
-copyright = "2024, Aresys S.R.L."
+copyright = "2026, Aresys S.R.L."
 author = "Aresys S.R.L."
 
 import sct
@@ -24,7 +24,7 @@ release = SCT_VERSION
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-needs_sphinx = "7.2"
+needs_sphinx = "9.0"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom

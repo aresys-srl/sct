@@ -9,6 +9,7 @@ API Reference
    configuration
    io
    core
-   analyses
+   cli
+   analyses/index
    testing
    web_scraping

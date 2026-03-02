@@ -91,7 +91,7 @@ Function 3 (VMF3) model [#]_. Four maps are needed to perform the interpolation 
 - the previous file (the one 6 hours before the main one).
 - the two files after the main one (6 hours after and 12 hours after).
 
-.. figure:: ../_static/images/troposphere_data_maps_model.png
+.. figure:: ../../../_static/images/troposphere_data_maps_model.png
    :align: center
    :width: 650
 

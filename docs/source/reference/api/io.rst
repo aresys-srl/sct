@@ -9,7 +9,7 @@ Input/Output Module
 
 .. automodule:: sct.io.io_support
 
-.. automodule:: sct.io.plugins_utils
+.. automodule:: sct.io.plugins_framework
 
 .. automodule:: sct.io.point_target_manager
 

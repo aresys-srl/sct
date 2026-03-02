@@ -1,10 +1,9 @@
-Core Computation Module
-=======================
+Core
+====
 
-.. automodule:: sct.core.atmospheric_corrections_main
+Analysis Registration Mechanism
+-------------------------------
 
-.. automodule:: sct.core.atmospheric_corrections_core
+.. automodule:: sct.core.base
 
-.. automodule:: sct.core.geodynamics_corrections_main
-
-.. automodule:: sct.core.geodynamics_corrections_core
+.. automodule:: sct.core.registry

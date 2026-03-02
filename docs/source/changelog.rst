@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.1.0
+------
+
+**Incompatible Changes**
+
+- Code refactoring to support multiple analyses as self-registering plugins
+- Documentation updated to reflect the new plugin architecture
+
 v2.0.9
 ------
 

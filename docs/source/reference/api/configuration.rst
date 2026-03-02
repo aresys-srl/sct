@@ -1,7 +1,11 @@
 Configuration Module
 ====================
 
-.. automodule:: sct.configuration.sct_configuration
+.. automodule:: sct.configuration.config
+
+.. automodule:: sct.configuration.config_abc
+
+.. automodule:: sct.configuration.common
 
 
 Custom Logger

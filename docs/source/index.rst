@@ -5,13 +5,14 @@ SAR Calibration Toolbox (SCT)
 #############################
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
+    :maxdepth: 2
+    :hidden:
 
-   install  
-   reference/api/index
-   user_manual/index
-   changelog
+    install  
+    reference/api/index
+    documentation/index
+    dev_manual/index
+    changelog
 
 Sar Calibration Toolbox (SCT) is the official Aresys Python toolbox for SAR quality data processing.
 This software provides several features to perform a quality analysis of SAR L1-B products (both SLC and GRD).
@@ -64,7 +65,7 @@ A detailed list of currently supported analyses can be found :ref:`here <sct_ana
 
         +++
 
-        .. button-ref:: user_manual/index
+        .. button-ref:: documentation/index
             :expand:
             :color: secondary
             :click-parent:
@@ -74,16 +75,16 @@ A detailed list of currently supported analyses can be found :ref:`here <sct_ana
     .. grid-item-card::
         :img-top: _static/icons/tutorials_icon.svg
 
-        **Quick Start & Tutorials**
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **Implemented Analyses**
+        ^^^^^^^^^^^^^^^^^^^^^^^^
 
-        Tutorials and quick start to dive into the use of SCT as a
-        Command Line Interface tool or as a Python package.
-        Use cases and code snippets to help the user.
+        Section dedicated to the implemented analyses, with
+        detailed description, usage and tutorials to help
+        the user.
 
         +++
 
-        .. button-ref:: user_manual/tutorials
+        .. button-ref:: documentation/analyses/index
             :expand:
             :color: secondary
             :click-parent:
@@ -103,7 +104,7 @@ A detailed list of currently supported analyses can be found :ref:`here <sct_ana
 
         +++
 
-        .. button-ref:: user_manual/supported_missions
+        .. button-ref:: documentation/supported_missions
             :expand:
             :color: secondary
             :click-parent:
