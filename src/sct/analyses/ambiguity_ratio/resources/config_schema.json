@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "ambiguity_ratio_analysis": {
+            "type": "object",
+            "description": "Ambiguity ratio analysis configuration",
+            "properties": {
+                "cropping_size": {
+                    "type": "array",
+                    "description": "ROI cropping size in pixels",
+                    "items": [
+                        {
+                            "type": "integer",
+                            "description": "number of samples"
+                        },
+                        {
+                            "type": "integer",
+                            "description": "number of lines"
+                        }
+                    ],
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "interpolation_factor": {
+                    "type": "integer",
+                    "description": "ROI interpolation factor"
+                }
+            },
+            "required": [
+                "cropping_size"
+            ]
+        }
+    },
+    "required": [
+        "ambiguity_ratio_analysis"
+    ]
+}

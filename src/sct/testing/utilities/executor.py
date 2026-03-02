@@ -8,9 +8,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from sct.configuration.logger import sct_logger
-from sct.configuration.sct_configuration import SCTConfiguration
-from sct.testing.utilities.analyses.base import AnalysisHandler
-from sct.testing.utilities.analyses.registry import ANALYSIS_REGISTRY
+from sct.core.base import AnalysisHandler, AnalysisTestingHandler
+from sct.core.registry import ANALYSIS_REGISTRY
 from sct.testing.utilities.common import TestParams
 
 
@@ -40,22 +39,27 @@ def execute_analysis_test(
     """
 
     handler: AnalysisHandler | None = ANALYSIS_REGISTRY.get(test_params.analysis)
+    if handler is None:
+        raise ValueError(f"Unsupported analysis type: {test_params.analysis}")
+
+    testing_handler: AnalysisTestingHandler | None = handler.testing
 
     if handler is None:
         raise ValueError(f"Unsupported analysis type: {test_params.analysis}")
 
+    if testing_handler is None:
+        raise ValueError(f"Unsupported testing for analysis type: {test_params.analysis}")
+
     if cli:
-        results = handler.cli_runner(
+        results = testing_handler.cli_runner(
             params=test_params,
             output_dir=output_dir,
             config=test_params.config,
             graphs=graphs,
         )
     else:
-        config = (
-            SCTConfiguration.from_toml(test_params.config) if test_params.config is not None else SCTConfiguration()
-        )
-        results = handler.api_runner(
+        config = handler.config.from_toml(test_params.config) if test_params.config is not None else handler.config()
+        results = testing_handler.api_runner(
             params=test_params,
             output_dir=output_dir,
             config=config,
@@ -63,4 +67,4 @@ def execute_analysis_test(
         )
 
     sct_logger.info("Validating results...")
-    handler.validator(results, test_params.reference_output)
+    testing_handler.validator(results, test_params.reference_output)

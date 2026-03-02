@@ -1,42 +1,42 @@
 {
     "aresys-product-folder": {
         "slc-topsar-pta": {
-            "analysis": "pta",
+            "analysis": "point_target",
             "product": "/data/reference_dataset/aresysPF/products/demo_topsar/SLC",
             "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
             "targets": "/data/reference_dataset/aresysPF/auxiliaries/sct_pt/demo_topsar_pt_dataset.csv",
             "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-topsar-pta/pta_res.csv"
         },
         "slc-real-pta": {
-            "analysis": "pta",
+            "analysis": "point_target",
             "product": "/data/reference_dataset/aresysPF/products/real_slc/SLH_45599_SLC",
             "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
             "targets": "/data/reference_dataset/aresysPF/auxiliaries/sct_pt/real_iceye_pt_dataset.csv",
             "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-real-pta/pta_res.csv"
         },
         "slc-squint20deg-pta": {
-            "analysis": "pta",
+            "analysis": "point_target",
             "product": "/data/reference_dataset/aresysPF/products/squinted_data/20deg/SLC",
             "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
             "targets": "/data/reference_dataset/aresysPF/auxiliaries/sct_pt/squinted_20deg_pt_dataset.csv",
             "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-squint20deg-pta/pta_res.csv"
         },
         "slc-squint40deg-pta": {
-            "analysis": "pta",
+            "analysis": "point_target",
             "product": "/data/reference_dataset/aresysPF/products/squinted_data/40deg/SLC",
             "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
             "targets": "/data/reference_dataset/aresysPF/auxiliaries/sct_pt/squinted_40deg_pt_dataset.csv",
             "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-squint40deg-pta/pta_res.csv"
         },
         "grd-biomass-pta": {
-            "analysis": "pta",
+            "analysis": "point_target",
             "product": "/data/reference_dataset/aresysPF/products/biomass_multichannel/iGRD",
             "config": "/data/integration_tests/sct/configurations/test_906f38dc_config.toml",
             "targets": "/data/reference_dataset/aresysPF/auxiliaries/sct_pt/biomass_multichannel_pt_dataset.csv",
             "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/grd-biomass-pta/pta_res.csv"
         },
         "interf-coregistered": {
-            "analysis": "interf",
+            "analysis": "interferometry",
             "product": [
                 "/data/reference_dataset/aresysPF/products/interferometry/PF",
                 "/data/reference_dataset/aresysPF/products/interferometry/PF_Cor"
@@ -48,7 +48,7 @@
     },
     "sentinel1A": {
         "slc-etad-pta": {
-            "analysis": "pta",
+            "analysis": "point_target",
             "product": "/data/reference_dataset/sentinel1a/products/SLC_23.SAFE",
             "config": "/data/integration_tests/sct/configurations/test_c6359f5a_config.toml",
             "targets": "/data/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
@@ -56,7 +56,7 @@
             "reference_output": "/data/integration_tests/sct/reference_results/sentinel1A/slc-etad-pta/pta_res.csv"
         },
         "slc-perturb-eof-pta": {
-            "analysis": "pta",
+            "analysis": "point_target",
             "product": "/data/reference_dataset/sentinel1a/products/SLC_19.SAFE",
             "config": "/data/integration_tests/sct/configurations/test_ed18cc99_config.toml",
             "targets": "/data/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
@@ -66,7 +66,7 @@
             "reference_output": "/data/integration_tests/sct/reference_results/sentinel1A/slc-perturb-eof-pta/pta_res.csv"
         },
         "grd-rain-forest": {
-            "analysis": "rf",
+            "analysis": "radiometry-rain-forest",
             "product": "/data/reference_dataset/sentinel1a/products/GRD_24_RF.SAFE",
             "config": "",
             "targets": "",
@@ -76,7 +76,7 @@
             ]
         },
         "grd-nesz": {
-            "analysis": "nesz",
+            "analysis": "radiometry-nesz",
             "product": "/data/reference_dataset/sentinel1a/products/GRD_23_NESZ.SAFE",
             "config": "",
             "targets": "",
@@ -88,7 +88,7 @@
     },
     "sentinel1D": {
         "notch": {
-            "analysis": "notch",
+            "analysis": "elevation_notch",
             "product": "/data/reference_dataset/sentinel1d/products/SLC_EN_25.SAFE",
             "config": "/data/integration_tests/sct/configurations/test_9ce862bf_config.toml",
             "targets": "",

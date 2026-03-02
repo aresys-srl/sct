@@ -5,9 +5,9 @@
 
 from perseo_quality.tar_analysis.graphical_output import ambiguities_graphs
 
-from sct.analyses.ambiguity_ratio_analysis import sct_point_target_ambiguity_ratio_analysis
+from sct.analyses.ambiguity_ratio import sct_point_target_ambiguity_ratio_analysis
 from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
-from sct.configuration.sct_configuration import SCTTargetAmbiguityRatioConfig
+from sct.configuration.config import SCTTargetAmbiguityRatioConfig
 
 # setup custom logger
 enable_quality_logger()

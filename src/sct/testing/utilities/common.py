@@ -5,23 +5,10 @@
 
 from __future__ import annotations
 
-import subprocess
 from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
 
-from sct.configuration.logger import sct_logger
-
-
-class SCTAnalyses(Enum):
-    """Supported analyses"""
-
-    POINT_TARGET = "pta"
-    NESZ = "nesz"
-    RAIN_FOREST = "rf"
-    INTERFEROMETRY = "interf"
-    ELEVATION_NOTCH = "notch"
-    SPECTRA = "spectra"
+from click.testing import CliRunner
 
 
 @dataclass
@@ -44,7 +31,7 @@ class ReferenceOutput:
 class TestParams:
     """Tests input parameters setup"""
 
-    analysis: SCTAnalyses | None = None
+    analysis: str | None = None
     product: Path | list[Path] | None = None
     config: Path | None = None
     targets: Path | None = None
@@ -72,7 +59,7 @@ class TestParams:
         out = cls()
         for key, val in arg.items():
             if key == "analysis":
-                setattr(out, key, SCTAnalyses(val))
+                setattr(out, key, val)
             elif key == "reference_output":
                 if not isinstance(val, list):
                     val = [val]
@@ -94,25 +81,11 @@ class TestParams:
         return out
 
 
-def cli_launcher(executable_call: list[str]) -> None:
-    """Launching SCT CLI interface with provided commands.
+def cli_launcher(cli_args: list[str]) -> None:
+    from sct.cli.cli import sct_analysis
 
-    Parameters
-    ----------
-    executable_call : list[str]
-        executable call
-    """
-    process = subprocess.Popen(
-        executable_call,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        bufsize=1,
-    )
+    runner = CliRunner()
 
-    for line in process.stdout:
-        print(line, end="")
+    result = runner.invoke(sct_analysis, cli_args)
 
-    process.wait()
-    if process.returncode != 0:
-        sct_logger.critical("error: ", process.stderr)
+    assert result.exit_code == 0

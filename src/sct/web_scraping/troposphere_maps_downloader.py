@@ -6,10 +6,10 @@ Troposphere products downloader
 -------------------------------
 """
 
+import sys
 from enum import Enum
 from pathlib import Path
 
-import requests
 from arepytools.timing.precisedatetime import PreciseDateTime
 from perseo_perturbations.atmospheric.troposphere import (
     TroposphericGRIDResolution,
@@ -17,6 +17,14 @@ from perseo_perturbations.atmospheric.troposphere import (
     TroposphericMapType,
     generate_tropospheric_map_name_for_vmf_data,
 )
+
+from sct.configuration.logger import sct_logger
+
+try:
+    import requests
+except ImportError:
+    sct_logger.critical('Install web requirements "pip install sct[web]"')
+    sys.exit(1)
 
 
 class TroposphericWebArchives(Enum):

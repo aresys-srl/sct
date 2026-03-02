@@ -13,7 +13,7 @@ from arepytools.geometry.conversions import llh2xyz, xyz2llh
 from arepytools.io import PointSetProduct, read_point_targets_file
 from perseo_quality.core.signal_processing import convert_to_db
 
-from sct import csv_template
+from sct.resources import csv_template
 from sct.io.point_target_manager import extract_point_target_data_from_source
 
 

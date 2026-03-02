@@ -157,7 +157,7 @@ class SCTFileHandler(logging.FileHandler):
         self.setFormatter(FileFormatter())
 
 
-def enable_quality_logger(file_handler: logging.FileHandler | None = None):
+def enable_quality_logger(file_handler: logging.Handler | None = None):
     """Enabling quality logger with the same handler of the sct common logger.
 
     Parameters
@@ -166,8 +166,12 @@ def enable_quality_logger(file_handler: logging.FileHandler | None = None):
         if provided, a file handler is added to the logger, by default None
     """
     log = logging.getLogger("perseo-quality")
-    log.addHandler(ConsoleHandler())
     log.setLevel("INFO")
+
+    # Avoid adding duplicate console handlers
+    if not any(isinstance(h, ConsoleHandler) for h in log.handlers):
+        log.addHandler(ConsoleHandler())
+
     if file_handler is not None:
         log.addHandler(file_handler)
 

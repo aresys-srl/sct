@@ -6,10 +6,8 @@ SCT: the Python SAR Calibration Tool for quality data analysis
 --------------------------------------------------------------
 """
 
-from importlib import resources as res
+from sct.analyses import load_analyses
 
-import sct.resources as res_folder
-
-csv_template = res.files(res_folder).joinpath("calibration_targets_external_source_template.csv")
+load_analyses()
 
 __version__ = "2.1.0"

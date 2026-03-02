@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "general": {
+            "type": "object",
+            "description": "High level configuration",
+            "properties": {
+                "save_log": {
+                    "type": "boolean",
+                    "description": "Enable/disable log saving to output folder"
+                },
+                "save_config_copy": {
+                    "type": "boolean",
+                    "description": "Enable/disable configuration saving to output folder"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "spectral_analysis": {
+            "type": "object",
+            "description": "Spectral analysis configuration",
+            "properties": {
+                "cropping_size": {
+                    "type": "array",
+                    "description": "ROI cropping size in pixels",
+                    "items": {
+                        "type": "integer",
+                        "description": "number of samples/lines"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                }
+            },
+            "required": [
+                "cropping_size"
+            ]
+        }
+    },
+    "required": [
+        "spectral_analysis"
+    ]
+}

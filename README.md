@@ -17,21 +17,22 @@ Supported products:
 Supported analyses:
 
 - Point Target Analysis
-- Radiometric Analysis
+- Radiometric Analysis (NESZ, Average Elevation Profiles, Scalloping)
 - Interferometric Coherence Analysis
-- Point Target Spectral Analysis
+- Point & Distributed Target Spectral Analysis
+- Elevation Notch Analysis
 - Point Target Ambiguity Ratio (PTAR)
 
 SCT package and its dependencies can be installed using ``pip`` tool:
 
 ```bash
-    pip install sct[cli, graphs]
+    pip install sct[graphs]
 ```
 
 To locally install this package as editable with ``pip``:
 
 ```bash
-    pip install -e .[cli, graphs]
+    pip install -e .[graphs]
 ```
 
-> **_NOTE:_**  This package comes with Command Line Interface (CLI) functionalities that can be installed specifying the **[cli]** option. It can also generate graphs for the available analyses by installing the package using the **[graphs]** option.
+> **_NOTE:_**  This package can also generate graphs for the available analyses by installing the package using the **[graphs]** option.

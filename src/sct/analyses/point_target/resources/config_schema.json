@@ -1,0 +1,254 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "point_target_analysis": {
+            "type": "object",
+            "description": "Point Target Analysis configuration",
+            "properties": {
+                "perform_irf": {
+                    "type": "boolean",
+                    "description": "Enable/disable IRF analysis"
+                },
+                "perform_rcs": {
+                    "type": "boolean",
+                    "description": "Enable/disable RCS analysis"
+                },
+                "evaluate_pslr": {
+                    "type": "boolean",
+                    "description": "Enable/disable PSLR calculation as part of IRF analysis"
+                },
+                "evaluate_islr": {
+                    "type": "boolean",
+                    "description": "Enable/disable SSLR calculation as part of IRF analysis"
+                },
+                "evaluate_sslr": {
+                    "type": "boolean",
+                    "description": "Enable/disable SSLR calculation as part of IRF analysis"
+                },
+                "evaluate_localization": {
+                    "type": "boolean",
+                    "description": "Enable/disable localization errors analysis"
+                },
+                "check_targets_in_scene": {
+                    "type": "boolean",
+                    "description": "Enable/disable point targets visibility check"
+                },
+                "ale_validity_limits": {
+                    "type": "array",
+                    "description": "Localization errors limits for point target search in meters [rng, az]",
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "minItems": 2,
+                    "additionalItems": false
+                },
+                "corrections": {
+                    "type": "object",
+                    "properties": {
+                        "enable_solid_tides_correction": {
+                            "type": "boolean",
+                            "description": "Enable/disable solid tides corrections on calibration target coordinates"
+                        },
+                        "enable_plate_tectonics_correction": {
+                            "type": "boolean",
+                            "description": "Enable/disable plate tectonics corrections on calibration target coordinates"
+                        },
+                        "enable_sensor_specific_processing_corrections": {
+                            "type": "boolean",
+                            "description": "Enable/disable sensor specific corrections on SAR measurements"
+                        },
+                        "enable_ionospheric_correction": {
+                            "type": "boolean",
+                            "description": "Enable/disable ionospheric corrections on SAR measurements"
+                        },
+                        "enable_tropospheric_correction": {
+                            "type": "boolean",
+                            "description": "Enable/disable tropospheric corrections on SAR measurements"
+                        },
+                        "ionosphere": {
+                            "type": "object",
+                            "properties": {
+                                "maps_directory": {
+                                    "type": "string",
+                                    "description": "Path to the ionospheric maps folder"
+                                },
+                                "analysis_center": {
+                                    "type": "string",
+                                    "description": "Ionospheric maps analysis center",
+                                    "enum": [
+                                        "cod",
+                                        "cor",
+                                        "esa",
+                                        "esr"
+                                    ]
+                                },
+                                "tec_incidence_angle_method": {
+                                    "type": "string",
+                                    "description": "Compute TEC incidence angle method",
+                                    "enum": [
+                                        "ipp",
+                                        "ground",
+                                        "ground_converted"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "maps_directory",
+                                "analysis_center"
+                            ]
+                        },
+                        "troposphere": {
+                            "type": "object",
+                            "properties": {
+                                "maps_directory": {
+                                    "type": "string",
+                                    "description": "Path to the tropospheric maps"
+                                },
+                                "map_grid_resolution": {
+                                    "type": "string",
+                                    "description": "Tropospheric map resolution",
+                                    "enum": [
+                                        "fine",
+                                        "coarse"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "maps_directory"
+                            ]
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                    "enable_ionospheric_correction": {
+                                        "type": "boolean",
+                                        "enum": [
+                                            true
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "enable_ionospheric_correction"
+                                ]
+                            },
+                            "then": {
+                                "required": [
+                                    "ionosphere"
+                                ]
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "enable_tropospheric_correction": {
+                                        "type": "boolean",
+                                        "enum": [
+                                            true
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "enable_tropospheric_correction"
+                                ]
+                            },
+                            "then": {
+                                "required": [
+                                    "troposphere"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "advanced_configuration": {
+                    "type": "object",
+                    "properties": {
+                        "irf_parameters": {
+                            "type": "object",
+                            "description": "IRF analysis low level parameters",
+                            "properties": {
+                                "peak_finding_roi_size": {
+                                    "type": "array",
+                                    "description": "Target area size along range and azimuth, first crop to identify peak",
+                                    "items": [
+                                        {
+                                            "type": "integer",
+                                            "description": "number of samples"
+                                        },
+                                        {
+                                            "type": "integer",
+                                            "description": "number of lines"
+                                        }
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
+                                },
+                                "analysis_roi_size": {
+                                    "type": "array",
+                                    "description": "Target area size along range and azimuth, second crop to compute values",
+                                    "items": [
+                                        {
+                                            "type": "integer",
+                                            "description": "number of samples"
+                                        },
+                                        {
+                                            "type": "integer",
+                                            "description": "number of lines"
+                                        }
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
+                                },
+                                "masking_method": {
+                                    "type": "string",
+                                    "description": "Masking method for IRF output values computation",
+                                    "enum": [
+                                        "peak",
+                                        "resolution"
+                                    ]
+                                },
+                                "oversampling_factor": {
+                                    "type": "integer",
+                                    "description": "Oversampling factor"
+                                },
+                                "zero_doppler_abs_squint_threshold_deg": {
+                                    "type": "number",
+                                    "description": "squint threshold value (absolute, deg) below which data is assumed to be zero doppler"
+                                }
+                            }
+                        },
+                        "rcs_parameters": {
+                            "type": "object",
+                            "description": "RCS error low level parameters",
+                            "properties": {
+                                "calibration_factor": {
+                                    "type": "number",
+                                    "description": "RCS 'k_lin' calibration factor, 1 means absolutely calibrated"
+                                },
+                                "interpolation_factor": {
+                                    "type": "integer",
+                                    "description": "RCS interpolation factor"
+                                },
+                                "resampling_factor": {
+                                    "type": "number",
+                                    "description": "RCS 's_f' resampling factor, 1 mean not resampled"
+                                },
+                                "roi_dimension": {
+                                    "type": "integer",
+                                    "description": "Square size of target area for RCS analysis"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,99 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "radiometric_analysis": {
+            "type": "object",
+            "description": "Radiometric analysis (NESZ, Average Elevation Profiles and Scalloping) configuration",
+            "properties": {
+                "azimuth_block_size": {
+                    "type": "integer",
+                    "description": "Azimuth block size for whole scene partitioning"
+                },
+                "range_pixel_margin": {
+                    "type": "integer",
+                    "description": "Pixel margin to remove near and far range"
+                },
+                "advanced_configuration": {
+                    "type": "object",
+                    "properties": {
+                        "histogram_parameters": {
+                            "type": "object",
+                            "description": "2D histogram parameters",
+                            "properties": {
+                                "x_bins_step": {
+                                    "type": "integer",
+                                    "description": "Bins step along x axis"
+                                },
+                                "y_bins_num": {
+                                    "type": "integer",
+                                    "description": "Number of bins along y axis"
+                                },
+                                "y_bins_center_margin": {
+                                    "type": "number",
+                                    "description": "Margin (symmetric) defining the extension of the y binning axis around y center value, (+-margin)"
+                                }
+                            }
+                        },
+                        "profile_extraction_parameters": {
+                            "type": "object",
+                            "description": "Profile extraction parameters",
+                            "properties": {
+                                "outlier_removal": {
+                                    "type": "boolean",
+                                    "description": "Enable/disable outlier removal"
+                                },
+                                "smoothening_filter": {
+                                    "type": "boolean",
+                                    "description": "Enable/disable smoothening filter"
+                                },
+                                "filtering_kernel_size": {
+                                    "type": "array",
+                                    "description": "Smoothening kernel size",
+                                    "items": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
+                                },
+                                "outliers_kernel_size": {
+                                    "type": "array",
+                                    "description": "Outlier removal kernel size",
+                                    "items": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
+                                },
+                                "outliers_percentile_boundaries": {
+                                    "type": "array",
+                                    "description": "Outliers removal percentile interval",
+                                    "items": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ],
+                                    "minItems": 2,
+                                    "additionalItems": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

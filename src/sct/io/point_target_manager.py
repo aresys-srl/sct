@@ -17,7 +17,7 @@ from arepytools.geometry.conversions import llh2xyz
 from arepytools.timing.precisedatetime import PreciseDateTime
 from perseo_quality.io.point_targets import PointTarget
 
-from sct import csv_template
+from sct.resources import csv_template
 
 
 class UnsupportedPointTargetSource(RuntimeError):

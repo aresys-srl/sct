@@ -10,13 +10,16 @@ from __future__ import annotations
 
 from functools import partial
 from pathlib import Path
-from typing import Callable, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Callable, Protocol, runtime_checkable
 
-from sct.configuration.point_target_analysis_configuration import SCTPointTargetAnalysisCorrectionsConf
 from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
 from sct.io.plugins_framework import import_plugins
 
 Detector = Callable[[str | Path], bool]
+
+if TYPE_CHECKING:
+    # TODO: this is very strange, it must be fixed
+    from sct.analyses.point_target.config import SCTPointTargetAnalysisCorrectionsConf
 
 
 @runtime_checkable

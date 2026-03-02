@@ -8,8 +8,10 @@ CLI common functions
 
 from __future__ import annotations
 
+import logging
 import sys
 import time
+from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
 from typing import Callable
@@ -17,11 +19,11 @@ from typing import Callable
 import art
 import click
 
-from sct.configuration.logger import SCTFileHandler, sct_logger
-from sct.configuration.sct_configuration import SCTConfiguration
+from sct.configuration.config import GeneralConfiguration
+from sct.configuration.logger import enable_quality_logger, sct_logger
 
-# creating a decorator to pass a SCTConfiguration dataclass object between commands
-share_config = click.make_pass_decorator(SCTConfiguration)
+# creating a decorator to pass a GeneralConfiguration dataclass object between commands
+share_config = click.make_pass_decorator(GeneralConfiguration)
 
 input_product_option = click.option(
     "--product",
@@ -58,11 +60,41 @@ generate_graph_option = click.option(
 )
 
 
-def add_logging_file(log_file: Path) -> SCTFileHandler:
-    """Add a file handler to sct logger"""
-    file_handler = SCTFileHandler(filename=log_file)
-    sct_logger.addHandler(file_handler)
-    return file_handler
+@contextmanager
+def logging_to_file(path: Path | None):
+    """Context manager to safely add a file handler to sct logger.
+
+    Parameters
+    ----------
+    path : Path | None
+        path to log file to be used, if None, no file handler is added
+    """
+
+    if path is None:
+        yield
+        return
+
+    handler = logging.FileHandler(path)
+
+    # Get both loggers
+    sct_log = logging.getLogger("sct")
+    quality_log = logging.getLogger("perseo-quality")
+
+    # Attach
+    sct_log.addHandler(handler)
+    enable_quality_logger(handler)
+
+    try:
+        yield
+
+    finally:
+        # Remove from both loggers
+        for logger in (sct_log, quality_log):
+            if handler in logger.handlers:
+                logger.removeHandler(handler)
+
+        handler.flush()
+        handler.close()
 
 
 def display_title(title: str) -> None:
@@ -95,14 +127,16 @@ def log_elapsed_time(logged_name: str):
     return decorator
 
 
-def graceful_exit(name: str, config_key: str):
+def graceful_exit(name: str):
     """Decorate function to gracefully log and exit in case of errors."""
 
+    # TODO: check this part
     def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
             # Extract config & output_directory if present
-            config: SCTConfiguration | None = kwargs.get("config", None)
+            analysis_config = kwargs.get("config", None)
+            dump_config = kwargs.get("dump_config", False)
             output_directory: Path | None = kwargs.get("output_directory", None)
             try:
                 return func(*args, **kwargs)
@@ -112,10 +146,10 @@ def graceful_exit(name: str, config_key: str):
                 sys.exit(1)
             finally:
                 # Save config copy if applicable
-                if config is not None and output_directory is not None:
-                    if config.general.save_config_copy:
-                        config.dump_to_toml(
-                            out_file=output_directory.joinpath("analysis_config.toml"), selected=config_key
+                if output_directory is not None:
+                    if dump_config:
+                        analysis_config.to_toml(
+                            out_file=output_directory.joinpath("analysis_config.toml"),
                         )
 
         return wrapper

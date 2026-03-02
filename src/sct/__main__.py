@@ -3,8 +3,6 @@
 
 """Main CLI script"""
 
-import sys
-
 from sct.configuration.logger import ConsoleHandler, sct_logger
 
 
@@ -14,14 +12,9 @@ def main():
     sct_logger.addHandler(ConsoleHandler())
     sct_logger.setLevel("INFO")
 
-    try:
-        from sct.cli.sct_cli import sct_analysis
+    from sct.cli.cli import sct_analysis
 
-        sct_analysis(max_content_width=120)
-
-    except ImportError:
-        print('Install cli requirements "pip install sct[cli]"')
-        sys.exit(1)
+    sct_analysis(max_content_width=120)
 
 
 if __name__ == "__main__":

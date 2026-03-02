@@ -67,7 +67,7 @@ def unittest(session: nox.Session):
     """Execute unittest"""
     Path("_build").mkdir(exist_ok=True)
 
-    session.install("-e", ".[cli,test,graph]")
+    session.install("-e", ".[web,test,graph]")
     session.run(
         "python",
         "-m",

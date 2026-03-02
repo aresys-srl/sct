@@ -7,9 +7,9 @@ from pathlib import Path
 
 import perseo_quality.point_targets_analysis.graphical_output as ptgpo
 
-from sct.analyses import point_target_analysis as pta
+from sct.analyses import point_target as pta
 from sct.configuration.logger import ConsoleHandler, SCTFileHandler, enable_quality_logger, sct_logger
-from sct.configuration.sct_configuration import SCTConfiguration
+from sct.configuration.config import SCTConfiguration
 
 out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs")
 

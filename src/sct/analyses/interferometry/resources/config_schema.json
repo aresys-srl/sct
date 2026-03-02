@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "interferometric_analysis": {
+            "type": "object",
+            "description": "Interferometric analysis configuration",
+            "properties": {
+                "enable_coherence_computation": {
+                    "type": "boolean",
+                    "description": "Enable/disable computation of coherence for interferogram products"
+                },
+                "azimuth_blocks_number": {
+                    "type": "integer",
+                    "description": "Number of blocks for partitioning the scene burst along azimuth direction to compute 2D coherence histogram"
+                },
+                "range_blocks_number": {
+                    "type": "integer",
+                    "description": "Number of blocks for partitioning the scene burst along range direction to compute 2D coherence histogram"
+                },
+                "coherence_kernel": {
+                    "type": "array",
+                    "description": "Coherence computation kernel, size along range and azimuth directions",
+                    "items": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "minItems": 2,
+                    "additionalItems": false
+                },
+                "coherence_bins_number": {
+                    "type": "integer",
+                    "description": "Number of coherence intensity histogram bins"
+                }
+            }
+        }
+    }
+}

@@ -10,9 +10,9 @@ from perseo_quality.radiometric_analysis.block_wise.support import (
     radiometric_statistical_analysis_to_df
 )
 
-from sct.analyses import radiometric_analysis as ra
+from sct.analyses import radiometry as ra
 from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
-from sct.configuration.sct_configuration import SCTConfiguration
+from sct.configuration.config import SCTConfiguration
 
 # setup custom logger
 enable_quality_logger()
