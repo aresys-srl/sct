@@ -45,5 +45,62 @@
             "targets": "",
             "reference_output": "C:/chopper/integration_tests/sct/reference_results/aresys_pf/interf-coregistered/coherence_histograms.nc"
         }
+    },
+    "sentinel1A": {
+        "slc-etad-pta": {
+            "analysis": "point_target",
+            "product": "C:/chopper/reference_dataset/sentinel1a/products/SLC_23.SAFE",
+            "config": "C:/chopper/integration_tests/sct/configurations/test_c6359f5a_config.toml",
+            "targets": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
+            "external_corrections_product": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/ETAD_23.SAFE",
+            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1A/slc-etad-pta/pta_res.csv"
+        },
+        "slc-perturb-eof-pta": {
+            "analysis": "point_target",
+            "product": "C:/chopper/reference_dataset/sentinel1a/products/SLC_19.SAFE",
+            "config": "C:/chopper/integration_tests/sct/configurations/test_db5c50fc_config.toml",
+            "targets": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/surat_basin_data.csv",
+            "ionospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/ionosphere_maps",
+            "tropospheric_maps": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/maps/troposphere_maps",
+            "external_orbit": "C:/chopper/reference_dataset/sentinel1a/auxiliaries/RESORB_19.EOF",
+            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1A/slc-perturb-eof-pta/pta_res.csv"
+        },
+        "grd-rain-forest": {
+            "analysis": "radiometry-rain-forest",
+            "product": "C:/chopper/reference_dataset/sentinel1a/products/GRD_24_RF.SAFE",
+            "config": "",
+            "targets": "",
+            "reference_output": [
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/kpi_stats.csv",
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-rain-forest/RAIN_FOREST_profiles.nc"
+            ]
+        },
+        "grd-nesz": {
+            "analysis": "radiometry-nesz",
+            "product": "C:/chopper/reference_dataset/sentinel1a/products/GRD_23_NESZ.SAFE",
+            "config": "",
+            "targets": "",
+            "reference_output": [
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/kpi_stats.csv",
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1A/grd-nesz/NESZ_profiles.nc"
+            ]
+        }
+    },
+    "sentinel1D": {
+        "notch": {
+            "analysis": "elevation_notch",
+            "product": "C:/chopper/reference_dataset/sentinel1d/products/SLC_EN_25.SAFE",
+            "config": "C:/chopper/integration_tests/sct/configurations/test_9ce862bf_config.toml",
+            "targets": "",
+            "antenna_pattern": "C:/chopper/reference_dataset/sentinel1d/auxiliaries/antenna_pattern_TW_EN.nc",
+            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1D/notch/elevation_notch_results.nc"
+        },
+        "pt-spectra": {
+            "analysis": "spectra",
+            "product": "C:/chopper/reference_dataset/sentinel1d/products/SLC_PT_SPECTRA.SAFE",
+            "config": "",
+            "targets": "C:/chopper/reference_dataset/sentinel1d/auxiliaries/dlr_calibration_site_germany.csv",
+            "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1D/pt-spectra/pt_spectral_profiles_SLC_PT_SPECTRA.nc"
+        }
     }
 }
