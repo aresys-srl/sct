@@ -8,6 +8,7 @@ Target Ambiguity Ratio Analysis
     :maxdepth: 2
 
     config
+    usage
 
 This feature let the user compute the ratio between the signal and its left and right ambiguities, if captured by the
 SAR acquisition.
