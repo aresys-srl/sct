@@ -11,6 +11,14 @@ from jsonschema.exceptions import ValidationError
 
 from sct.analyses.ambiguity_ratio.config import SCTTargetAmbiguityRatioConfig
 
+general_config_toml = """
+
+[general]
+save_log = true
+save_config_copy = true
+
+"""
+
 ambiguity_ratio_analysis_toml = """
 
 [ambiguity_ratio_analysis]
@@ -83,6 +91,15 @@ class TARConfigurationTest(unittest.TestCase):
             new_config = SCTTargetAmbiguityRatioConfig.from_toml(path_to_new_file)
 
         assert new_config == config
+
+    def test_empty_config(self) -> None:
+        """Test empty configuration"""
+        with self.assertRaises(ValidationError):
+            with TemporaryDirectory() as temp_dir:
+                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+                path_to_file.write_text(general_config_toml)
+
+                SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ v2.1.1
 - Command Line Interface: switched from Click to Typer
 - Command Line Interface: moved testing CLI command to ``testing`` CLI group
 - Command Line Interface: moved secondary CLI utilities commands to ``auxiliary`` CLI group
+- Analyses Configurations: improved validation, now analysis config validation fails if no analysis-related parameters are provided
 
 v2.1.0
 ------

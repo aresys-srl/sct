@@ -12,6 +12,14 @@ from perseo_quality.interferometric_analysis.config import InterferometricConfig
 
 from sct.analyses.interferometry.config import SCTInterferometricAnalysisConfig
 
+general_config_toml = """
+
+[general]
+save_log = true
+save_config_copy = true
+
+"""
+
 interferometric_analysis_toml = """
 
 [interferometric_analysis]
@@ -110,6 +118,15 @@ class INTERFConfigurationTest(unittest.TestCase):
             new_config = SCTInterferometricAnalysisConfig.from_toml(path_to_new_file)
 
         assert new_config == config
+
+    def test_empty_config(self) -> None:
+        """Test empty configuration"""
+        with self.assertRaises(ValidationError):
+            with TemporaryDirectory() as temp_dir:
+                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+                path_to_file.write_text(general_config_toml)
+
+                SCTInterferometricAnalysisConfig.from_toml(path_to_file)
 
 
 if __name__ == "__main__":

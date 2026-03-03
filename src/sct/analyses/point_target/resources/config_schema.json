@@ -250,5 +250,6 @@
                 }
             }
         }
-    }
+    },
+    "required": ["point_target_analysis"]
 }

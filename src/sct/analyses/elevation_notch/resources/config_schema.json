@@ -16,5 +16,6 @@
                 }
             }
         }
-    }
+    },
+    "required": ["elevation_notch_analysis"]
 }

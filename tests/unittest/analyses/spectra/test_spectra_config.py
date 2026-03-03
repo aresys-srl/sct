@@ -11,6 +11,14 @@ from jsonschema.exceptions import ValidationError
 
 from sct.analyses.spectra.config import SCTSpectralAnalysisConfig
 
+general_config_toml = """
+
+[general]
+save_log = true
+save_config_copy = true
+
+"""
+
 spectral_analysis_toml = """
 
 [spectral_analysis]
@@ -81,6 +89,15 @@ class SPECTRAConfigurationTest(unittest.TestCase):
             new_config = SCTSpectralAnalysisConfig.from_toml(path_to_new_file)
 
         assert new_config == config
+
+    def test_empty_config(self) -> None:
+        """Test empty configuration"""
+        with self.assertRaises(ValidationError):
+            with TemporaryDirectory() as temp_dir:
+                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+                path_to_file.write_text(general_config_toml)
+
+                SCTSpectralAnalysisConfig.from_toml(path_to_file)
 
 
 if __name__ == "__main__":

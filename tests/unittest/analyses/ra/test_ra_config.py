@@ -16,6 +16,14 @@ from perseo_quality.radiometric_analysis.block_wise.config import (
 
 from sct.analyses.radiometry.config import SCTRadiometricAnalysisConfig
 
+general_config_toml = """
+
+[general]
+save_log = true
+save_config_copy = true
+
+"""
+
 radiometric_analysis_toml = """
 
 [radiometric_analysis]
@@ -131,6 +139,15 @@ class RAConfigurationTest(unittest.TestCase):
             new_config = SCTRadiometricAnalysisConfig.from_toml(path_to_new_file)
 
         assert new_config == config
+
+    def test_empty_config(self) -> None:
+        """Test empty configuration"""
+        with self.assertRaises(ValidationError):
+            with TemporaryDirectory() as temp_dir:
+                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
+                path_to_file.write_text(general_config_toml)
+
+                SCTRadiometricAnalysisConfig.from_toml(path_to_file)
 
 
 if __name__ == "__main__":

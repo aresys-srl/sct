@@ -38,5 +38,6 @@
                 }
             }
         }
-    }
+    },
+    "required": ["interferometric_analysis"]
 }
