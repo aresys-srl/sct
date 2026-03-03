@@ -22,7 +22,6 @@ class MainTestCase(unittest.TestCase):
         try:
             main_module.main()
         except SystemExit as system_exit:
-            # from click 8.2 onwards, no args call fails
             self.assertEqual(system_exit.code, 2)
         else:
             raise AssertionError("SystemExit not raised")

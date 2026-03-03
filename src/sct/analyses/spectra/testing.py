@@ -82,8 +82,7 @@ def run_spectral_cli(params: TestParams, output_dir: Path, config: Path | None, 
         cli_args.extend(["--config", str(config)])
     cli_args.extend(
         [
-            "spectral-analysis",
-            "point-target" if params.targets is not None else "distributed",
+            "spectra",
             "-p",
             str(params.product),
             "-out",

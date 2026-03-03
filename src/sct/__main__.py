@@ -3,18 +3,20 @@
 
 """Main CLI script"""
 
-from sct.configuration.logger import ConsoleHandler, sct_logger
+from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
 
 
-def main():
-    """Main function to launch the python SQT CLI program"""
+def main() -> None:
+    """Main function to launch the Python SQT CLI program"""
+
     # setup custom logger
     sct_logger.addHandler(ConsoleHandler())
     sct_logger.setLevel("INFO")
+    enable_quality_logger()
 
-    from sct.cli.cli import sct_analysis
+    from sct.cli.cli import app
 
-    sct_analysis(max_content_width=120)
+    app()
 
 
 if __name__ == "__main__":

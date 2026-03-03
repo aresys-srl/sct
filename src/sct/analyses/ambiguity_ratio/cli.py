@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import click
+import typer
 
 from sct.analyses.ambiguity_ratio.config import SCTTargetAmbiguityRatioConfig
 from sct.cli import common
@@ -18,18 +18,16 @@ from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import sct_logger
 
 
-@click.command(name="ptar-analysis")
-@common.input_product_option
-@common.input_point_target_option
-@common.output_directory_option
-@common.share_config
-def pt_ambiguity_ratio_analysis(
-    config: GeneralConfiguration,
-    product: Path,
-    point_target_source: Path,
-    output_directory: Path,
+def ptar_analysis(
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    point_target_source: common.InputPointTargetSource,
+    output_directory: common.OutputDirectoryOption,
 ) -> None:
     """Point Target Ambiguity Ratio Analysis."""
+
+    config: GeneralConfiguration = ctx.obj
+
     log_path = output_directory / "sct_tar_analysis.log" if config.save_log else None
 
     with common.logging_to_file(log_path):

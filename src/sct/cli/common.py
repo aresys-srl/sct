@@ -14,50 +14,104 @@ import time
 from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
-from typing import Callable
+from typing import Annotated, Callable, Literal
 
 import art
-import click
+import typer
 
-from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import enable_quality_logger, sct_logger
 
-# creating a decorator to pass a GeneralConfiguration dataclass object between commands
-share_config = click.make_pass_decorator(GeneralConfiguration)
+InputProductOption = Annotated[
+    Path,
+    typer.Option(
+        ...,
+        "--product",
+        "-p",
+        exists=True,
+        dir_okay=True,
+        file_okay=True,
+        resolve_path=True,
+        help="Path to the product to be analyzed",
+    ),
+]
 
-input_product_option = click.option(
-    "--product",
-    "-p",
-    required=True,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the product to be analyzed",
-)
+InputPointTargetSource = Annotated[
+    Path | None,
+    typer.Option(
+        "--point-target-source",
+        "-pt",
+        exists=True,
+        dir_okay=False,
+        file_okay=True,
+        resolve_path=True,
+        help="Path to the external point target source",
+    ),
+]
 
-input_point_target_option = click.option(
-    "--point-target-source",
-    "-pt",
-    required=True,
-    type=click.Path(path_type=Path, exists=True, dir_okay=False),
-    help="Path to the external point target source",
-)
+OutputDirectoryOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--output-directory",
+        "-out",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+        help="Path to the folder where to save output data",
+    ),
+]
 
-output_directory_option = click.option(
-    "--output_directory",
-    "-out",
-    required=True,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the folder where to save output data",
-)
+GraphsOption = Annotated[
+    bool,
+    typer.Option(
+        "--generate-graph",
+        "-g",
+        help="Enable graph generation",
+    ),
+]
 
-generate_graph_option = click.option(
-    "--graphs",
-    "-g",
-    default=False,
-    is_flag=True,
-    type=bool,
-    help="Flag to generate graphical output at the end of the analysis",
-)
+
+RadiometricQuantityOption = Annotated[
+    Literal["beta", "gamma", "sigma"],
+    typer.Option(
+        "--output-radiometric-quantity",
+        "-r",
+        help="Output radiometric quantity.",
+    ),
+]
+
+AntennaPatternInputOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--antenna-pattern",
+        "-ap",
+        exists=True,
+        dir_okay=True,
+        help="Path to the antenna pattern NetCDF file",
+    ),
+]
+
+ExternalOrbitInputOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--external-orbit",
+        "-eo",
+        exists=True,
+        dir_okay=True,
+        help="Path to the external orbit file",
+    ),
+]
+
+ExternalCorrectionInputProductOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--external-corrections-product",
+        "-ec",
+        exists=True,
+        dir_okay=True,
+        help="Path to the external ALE corrections product",
+    ),
+]
 
 
 @contextmanager
@@ -99,10 +153,10 @@ def logging_to_file(path: Path | None):
 
 def display_title(title: str) -> None:
     """Display a title in the CLI."""
-    click.echo("\n")
+    typer.echo("\n")
     txt = art.text2art(title, font="doom")
     assert isinstance(txt, str)
-    click.echo(txt + "\n")
+    typer.echo(txt + "\n")
 
 
 def log_elapsed_time(logged_name: str):

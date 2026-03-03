@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
-from click import Command
+from typer import Typer
 
 from sct.testing.utilities.common import ReferenceOutput, TestOutput, TestParams
 
@@ -28,5 +28,6 @@ class AnalysisHandler:
     """Analysis handler definition"""
 
     config: Any
-    cli_command: Command | None
+    cli: Typer | Callable | None
     testing: AnalysisTestingHandler | None
+    cli_group_name: str | None = None

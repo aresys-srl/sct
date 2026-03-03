@@ -22,7 +22,7 @@ register_analysis(
     analysis_type=ANALYSIS_NAME,
     handler=AnalysisHandler(
         config=SCTPointTargetAnalysisConfig,
-        cli_command=target_analysis,
+        cli=target_analysis,
         testing=AnalysisTestingHandler(
             api_runner=run_pta_api,
             cli_runner=run_pta_cli,

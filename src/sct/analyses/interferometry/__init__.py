@@ -26,7 +26,7 @@ register_analysis(
     analysis_type=ANALYSIS_NAME,
     handler=AnalysisHandler(
         config=SCTInterferometricAnalysisConfig,
-        cli_command=interf_coherence_analysis,
+        cli=interf_coherence_analysis,
         testing=AnalysisTestingHandler(
             api_runner=run_interf_api,
             cli_runner=run_interf_cli,

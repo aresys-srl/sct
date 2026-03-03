@@ -13,11 +13,11 @@ dependencies = [
     "toml",
     "shapely",
     "art",
-    "arepytools >= 1.7.2",
+    "arepytools>=1.7.2",
     "perseo-quality>=1.0.9",
     "perseo-perturbations",
     "numba>=0.61",
-    "click"
+    "typer>=0.24.1",
 ]
 dynamic = ["version"]
 classifiers = [
@@ -41,10 +41,7 @@ classifiers = [
 
 [project.scripts]
 sct = "sct.__main__:main"
-sct-rosamond-data-to-csv = "sct.cli.utility_commands_cli:convert_rosamond_csv"
-sct-ionospheric-maps-download = "sct.cli.utility_commands_cli:download_ionex_tec_maps"
-sct-tropospheric-maps-download = "sct.cli.utility_commands_cli:download_tropospheric_vmf3_maps"
-sct-testing = "sct.testing.cli:integration_testing"
+sct-testing = "sct.testing.cli:testing_app"
 
 [build-system]
 requires = ["hatchling"]
@@ -84,6 +81,7 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "A", "B", "I"]
+ignore = ["B008"]
 
 [tool.pylint.master]
 fail-under = 8.5

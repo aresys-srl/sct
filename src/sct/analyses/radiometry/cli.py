@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import click
+import typer
 from perseo_quality.core.generic_dataclasses import SARRadiometricQuantity
 
 from sct.analyses.radiometry.config import SCTRadiometricAnalysisConfig
@@ -18,35 +18,19 @@ from sct.cli import common
 from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import sct_logger
 
-
-class RadiometricQuantity(click.ParamType):
-    """Custom click type to manage radiometric quantities from string."""
-
-    name = "radiometric_quantity"
-
-    def convert(self, value, param, ctx) -> SARRadiometricQuantity:
-        """Convert the input value to SARRadiometricQuantity."""
-        try:
-            return SARRadiometricQuantity[value.upper() + "_NOUGHT"]
-        except ValueError:
-            self.fail(f"{value!r} wrong input format", param, ctx)
+radiometric_app = typer.Typer(help="Block-wise Radiometric Analysis.")
 
 
-@click.group(context_settings={"help_option_names": ["-h", "--help"]})
-@click.pass_context
-def radiometric_analysis(config) -> None:
-    """Block-wise Radiometric Analysis."""
-
-
-@radiometric_analysis.command("nesz")
-@common.input_product_option
-@common.output_directory_option
-@common.generate_graph_option
-@common.share_config
+@radiometric_app.command("nesz")
 def radiometric_analysis_nesz(
-    config: GeneralConfiguration, product: Path, output_directory: Path, graphs: bool
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    output_directory: common.OutputDirectoryOption,
+    graphs: common.GraphsOption = False,
 ) -> None:
     """Noise Equivalent Sigma-Zero radiometric analysis."""
+
+    config: GeneralConfiguration = ctx.obj
 
     log_path = output_directory / "sct_ra_analysis.log" if config.save_log else None
 
@@ -71,27 +55,19 @@ def radiometric_analysis_nesz(
         )
 
 
-@radiometric_analysis.command("elevation-profile")
-@common.input_product_option
-@common.output_directory_option
-@click.option(
-    "--output_radiometric_quantity",
-    "-r",
-    required=True,
-    default=None,
-    type=RadiometricQuantity(),
-    help="Output radiometric quantity. It can be set to: beta, gamma, sigma",
-)
-@common.generate_graph_option
-@common.share_config
+@radiometric_app.command("elevation-profiles")
 def radiometric_analysis_average_profiles(
-    config: GeneralConfiguration,
-    product: Path,
-    output_radiometric_quantity: SARRadiometricQuantity,
-    output_directory: Path,
-    graphs: bool,
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    output_radiometric_quantity: common.RadiometricQuantityOption,
+    output_directory: common.OutputDirectoryOption,
+    graphs: common.GraphsOption = False,
 ) -> None:
     """Average Elevation Profiles radiometric analysis."""
+
+    output_radiometric_quantity = SARRadiometricQuantity[output_radiometric_quantity.upper() + "_NOUGHT"]
+
+    config: GeneralConfiguration = ctx.obj
 
     log_path = output_directory / "sct_ra_analysis.log" if config.save_log else None
 
@@ -118,18 +94,33 @@ def radiometric_analysis_average_profiles(
         )
 
 
-@radiometric_analysis.command("scalloping")
-@common.input_product_option
-@common.output_directory_option
-@common.generate_graph_option
-@common.share_config
+@radiometric_app.command("rain-forest")
+def radiometric_analysis_rain_forest(
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    output_directory: common.OutputDirectoryOption,
+    graphs: common.GraphsOption = False,
+):
+    """Rain Forest radiometric analysis (Gamma Profiles)."""
+    return radiometric_analysis_average_profiles(
+        ctx,
+        product=product,
+        output_radiometric_quantity="gamma",
+        output_directory=output_directory,
+        graphs=graphs,
+    )
+
+
+@radiometric_app.command("scalloping")
 def radiometric_analysis_scalloping(
-    config: GeneralConfiguration,
-    product: Path,
-    output_directory: Path,
-    graphs: bool,
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    output_directory: common.OutputDirectoryOption,
+    graphs: common.GraphsOption = False,
 ) -> None:
     """Scalloping Profiles radiometric analysis."""
+
+    config: GeneralConfiguration = ctx.obj
 
     log_path = output_directory / "sct_ra_analysis.log" if config.save_log else None
 

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import click
+import typer
 
 from sct.analyses.spectra.config import SCTSpectralAnalysisConfig
 from sct.cli import common
@@ -18,34 +18,31 @@ from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import sct_logger
 
 
-@click.command("spectral-analysis")
-@common.input_product_option
-@click.option(
-    "--point-target-source",
-    "-pt",
-    required=False,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=False),
-    help="Path to the external point target source",
-)
-@common.output_directory_option
-@common.generate_graph_option
-@common.share_config
 def spectral_analysis(
-    config: GeneralConfiguration,
-    product: Path,
-    point_target_source: Path | None,
-    output_directory: Path,
-    graphs: bool,
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    output_directory: common.OutputDirectoryOption,
+    point_target_source: common.InputPointTargetSource = None,
+    graphs: common.GraphsOption = False,
 ) -> None:
-    """Point and Distributed Target Spectral Analysis."""
+    """Point and Distributed Target Spectral Analysis.
+
+    \b
+    It can be performed:
+    - at each visible target location providing a point target source file -pt/--point-target-source
+    - on distributed targets by partitioning the data into azimuth blocks/bursts
+    """
+
+    config: GeneralConfiguration = ctx.obj
 
     log_path = output_directory / "sct_spectral_analysis.log" if config.save_log else None
 
     with common.logging_to_file(log_path):
         sct_logger.info(f"Product: {product}")
+
         if point_target_source is not None:
             sct_logger.info(f"Point targets: {point_target_source}")
+
         sct_logger.info(f"Output folder: {output_directory}")
         sct_logger.info(f"Graphs generation {'enabled' if graphs else 'disabled'}")
 

@@ -79,7 +79,7 @@ def run_notch_cli(params: TestParams, output_dir: Path, config: Path | None, gra
         cli_args.extend(["--config", str(config)])
     cli_args.extend(
         [
-            "notch-analysis",
+            "elevation_notch",
             "-p",
             str(params.product),
             "-out",

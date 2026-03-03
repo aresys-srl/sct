@@ -25,7 +25,7 @@ Elevation Notch analysis can be performed using the following command just speci
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] notch-analysis -p <product_path> -out <output_dir> [-ap <antenna_pattern>] [-g]
+    sct [--config <path_to_config>] elevation_notch -p <product_path> -out <output_dir> [-ap <antenna_pattern>] [-g]
 
 where ``-g`` is used to enable graphs generation (if added to the command). The antenna pattern file can be provided in
 NetCDF format using the ``-ap`` flag.
@@ -80,7 +80,7 @@ Then the testing CLI interface can be used as follows:
 
 .. code-block:: bash
 
-    sct-testing -r <path_to_registry_file> -out <output_dir> [-g]
+    sct testing test -r <path_to_registry_file> -out <output_dir> [-g]
 
 When a ``reference_output`` is provided, the testing CLI interface will compare the results with the reference output
 and report any discrepancy.

@@ -84,7 +84,7 @@ def run_interf_cli(params: TestParams, output_dir: Path, config: Path | None, gr
         cli_args.extend(["--config", config])
     cli_args.extend(
         [
-            "interferometric-analysis",
+            "interferometry",
             "-p",
             str(first_prod),
         ]

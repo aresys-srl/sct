@@ -28,7 +28,7 @@ Obviously, an external file containing point targets locations and data must be 
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] target-analysis \
+    sct [--config <path_to_config>] point_target \
         -p <product_path> -out <output_dir> -pt <point_target_file_path> \
         [-eo <path>] [-ec <path>] [-g]
 
@@ -99,7 +99,7 @@ Then the testing CLI interface can be used as follows:
 
 .. code-block:: bash
 
-    sct-testing -r <path_to_registry_file> -out <output_dir> [-g]
+    sct testing test -r <path_to_registry_file> -out <output_dir> [-g]
 
 When a ``reference_output`` is provided, the testing CLI interface will compare the results with the reference output
 and report any discrepancy.

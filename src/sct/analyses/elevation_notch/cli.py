@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import click
+import typer
 
 from sct.analyses.elevation_notch.config import SCTElevationNotchAnalysisConfig
 from sct.cli import common
@@ -18,27 +18,21 @@ from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import sct_logger
 
 
-@click.command(name="notch-analysis")
-@common.input_product_option
-@common.output_directory_option
-@click.option(
-    "--antenna-pattern",
-    "-ap",
-    required=False,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=False),
-    help="Path to the antenna pattern NetCDF file",
-)
-@common.generate_graph_option
-@common.share_config
 def notch_analysis(
-    config: GeneralConfiguration,
-    product: Path,
-    output_directory: Path,
-    antenna_pattern: Path | None,
-    graphs: bool,
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    output_directory: common.OutputDirectoryOption,
+    antenna_pattern: common.AntennaPatternInputOption = None,
+    graphs: common.GraphsOption = False,
 ) -> None:
-    """Elevation Notch Analysis."""
+    """Elevation Notch Analysis.
+
+    \b
+    Antenna pattern NetCDF file can be provided to estimate the elevation pointing offset with Least Square fitting
+    of the elevation profile of the focused data with a three parameters internal model.
+    """
+
+    config: GeneralConfiguration = ctx.obj
 
     log_path = output_directory / "sct_notch_analysis.log" if config.save_log else None
 

@@ -26,7 +26,7 @@ Interferometric analysis can be performed using the following command just speci
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] interferometric-analysis -p <product_path> -out <output_dir> [-g]
+    sct [--config <path_to_config>] interferometry -p <product_path> -out <output_dir> [-g]
 
 where ``-g`` is used to enable graphs generation (if added to the command). The input product must be an interferogram product
 or a coherence map product.
@@ -36,7 +36,7 @@ command:
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] interferometric-analysis -p <product_path_1> -pp <product_path_2> -out <output_dir> [-g]
+    sct [--config <path_to_config>] interferometry -p <product_path_1> -pp <product_path_2> -out <output_dir> [-g]
 
 where ``-p`` and ``-pp`` are the paths to the two co-registered products.
 
@@ -99,7 +99,7 @@ Then the testing CLI interface can be used as follows:
 
 .. code-block:: bash
 
-    sct-testing -r <path_to_registry_file> -out <output_dir> [-g]
+    sct testing test -r <path_to_registry_file> -out <output_dir> [-g]
 
 When a ``reference_output`` is provided, the testing CLI interface will compare the results with the reference output
 and report any discrepancy.

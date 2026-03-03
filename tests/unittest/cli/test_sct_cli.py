@@ -8,10 +8,10 @@ SCT SCT CLI unittest
 
 import unittest
 
-from click.testing import CliRunner
+from typer.testing import CliRunner
 
 from sct import __version__ as VERSION
-from sct.cli.cli import sct_analysis
+from sct.cli.cli import app
 
 
 class SCTCLITestCase(unittest.TestCase):
@@ -22,17 +22,17 @@ class SCTCLITestCase(unittest.TestCase):
 
     def test_error_no_args(self):
         """Display help when no arguments are provided"""
-        result = self.cli_runner.invoke(sct_analysis)
+        result = self.cli_runner.invoke(app)
         self.assertEqual(result.exit_code, 2)
 
     def test_display_help(self):
         """Display help"""
-        result = self.cli_runner.invoke(sct_analysis, ["--help"])
+        result = self.cli_runner.invoke(app, ["--help"])
         self.assertEqual(result.exit_code, 0)
 
     def test_display_version(self):
         """Display version"""
-        result = self.cli_runner.invoke(sct_analysis, ["--version"])
+        result = self.cli_runner.invoke(app, ["--version"])
         self.assertEqual(result.exit_code, 0)
         self.assertTrue(VERSION in result.output)
 

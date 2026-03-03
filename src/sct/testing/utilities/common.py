@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from click.testing import CliRunner
+from typer.testing import CliRunner
 
 
 @dataclass
@@ -81,11 +81,12 @@ class TestParams:
         return out
 
 
+runner = CliRunner()
+
+
 def cli_launcher(cli_args: list[str]) -> None:
-    from sct.cli.cli import sct_analysis
+    from sct.cli.cli import app
 
-    runner = CliRunner()
-
-    result = runner.invoke(sct_analysis, cli_args)
+    result = runner.invoke(app, cli_args)
 
     assert result.exit_code == 0

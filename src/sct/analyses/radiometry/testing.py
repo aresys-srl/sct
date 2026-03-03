@@ -123,21 +123,14 @@ def run_ra_cli(params: TestParams, output_dir: Path, config: Path | None, analys
         cli_args.extend(["--config", config])
     cli_args.extend(
         [
-            "radiometric-analysis",
-            "elevation-profile" if analysis == "RF" else "nesz",
+            "radiometry",
+            "rain-forest" if analysis == "RF" else "nesz",
             "-p",
             str(params.product),
             "-out",
             str(output_dir),
         ]
     )
-    if analysis == "RF":
-        cli_args.extend(
-            [
-                "-r",
-                "gamma",
-            ]
-        )
     if graphs:
         cli_args.extend(["-g"])
 

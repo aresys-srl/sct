@@ -9,10 +9,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Generator
 
-from click.testing import CliRunner
+from typer.testing import CliRunner
 
 from sct.analyses.interferometry.config import SCTInterferometricAnalysisConfig
-from sct.cli.cli import sct_analysis
+from sct.cli.cli import app
 
 
 @contextmanager
@@ -33,17 +33,17 @@ class InterferometricAnalysisCLITestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         self.cli_runner = CliRunner()
-        self.command = "interferometric-analysis"
+        self.command = "interferometry"
         self.test_configuration = SCTInterferometricAnalysisConfig()
 
     def test_error_no_args(self):
         """Error when no arguments are provided"""
-        result = self.cli_runner.invoke(sct_analysis, [self.command])
+        result = self.cli_runner.invoke(app, [self.command])
         self.assertEqual(result.exit_code, 2)
 
     def test_display_help(self):
         """Display help"""
-        result = self.cli_runner.invoke(sct_analysis, [self.command, "--help"])
+        result = self.cli_runner.invoke(app, [self.command, "--help"])
         self.assertEqual(result.exit_code, 0)
 
     def test_invalid_product(self):
@@ -52,7 +52,7 @@ class InterferometricAnalysisCLITestCase(unittest.TestCase):
             self.test_configuration.to_toml(conf_file)
             command_args = f"--config {conf_file} {self.command} -p {product} -out {output_dir}".split()
             result = self.cli_runner.invoke(
-                sct_analysis,
+                app,
                 command_args,
             )
             self.assertEqual(result.exit_code, 1)
@@ -65,7 +65,7 @@ class InterferometricAnalysisCLITestCase(unittest.TestCase):
                 f"--config {conf_file} {self.command} -p {product} -pp {second_product} -out {output_dir}".split()
             )
             result = self.cli_runner.invoke(
-                sct_analysis,
+                app,
                 command_args,
             )
             self.assertEqual(result.exit_code, 1)
@@ -76,7 +76,7 @@ class InterferometricAnalysisCLITestCase(unittest.TestCase):
             self.test_configuration.to_toml(conf_file)
             command_args = f"--config {conf_file} {self.command} -p {product} -out {output_dir} -g".split()
             result = self.cli_runner.invoke(
-                sct_analysis,
+                app,
                 command_args,
             )
             self.assertEqual(result.exit_code, 1)

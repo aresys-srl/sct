@@ -29,7 +29,7 @@ target locations file and the output directory.
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] spectral-analysis -p <product_path> -pt <point_target_file_path> -out <output_dir> [-g]
+    sct [--config <path_to_config>] spectra -p <product_path> -pt <point_target_file_path> -out <output_dir> [-g]
 
 where ``-g`` is used to enable graphs generation (if added to the command). 
 
@@ -46,7 +46,7 @@ If the user wants to compute the Spectral Analysis on distributed products, the 
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] spectral-analysis -p <product_path> -out <output_dir> [-g]
+    sct [--config <path_to_config>] spectra -p <product_path> -out <output_dir> [-g]
 
 ------------------------------------------------------------
 2. Running an Analysis from the Python API
@@ -99,7 +99,7 @@ Then the testing CLI interface can be used as follows:
 
 .. code-block:: bash
 
-    sct-testing -r <path_to_registry_file> -out <output_dir> [-g]
+    sct testing test -r <path_to_registry_file> -out <output_dir> [-g]
 
 When a ``reference_output`` is provided, the testing CLI interface will compare the results with the reference output
 and report any discrepancy.

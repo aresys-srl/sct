@@ -9,10 +9,10 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import Any, Generator
 
-from click.testing import CliRunner
+from typer.testing import CliRunner
 
 from sct.analyses.point_target.config import SCTPointTargetAnalysisConfig
-from sct.cli.cli import sct_analysis
+from sct.cli.cli import app
 
 
 @contextmanager
@@ -33,17 +33,17 @@ class PointTargetAnalysisCLITestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         self.cli_runner = CliRunner()
-        self.command = "target-analysis"
+        self.command = "point_target"
         self.test_configuration = SCTPointTargetAnalysisConfig()
 
     def test_error_no_args(self):
         """Error when no arguments are provided"""
-        result = self.cli_runner.invoke(sct_analysis, [self.command])
+        result = self.cli_runner.invoke(app, [self.command])
         self.assertEqual(result.exit_code, 2)
 
     def test_display_help(self):
         """Display help"""
-        result = self.cli_runner.invoke(sct_analysis, [self.command, "--help"])
+        result = self.cli_runner.invoke(app, [self.command, "--help"])
         self.assertEqual(result.exit_code, 0)
 
     def test_invalid_product(self):
@@ -54,7 +54,7 @@ class PointTargetAnalysisCLITestCase(unittest.TestCase):
                 f"--config {conf_file} {self.command} -p {product} -pt {point_target} -out {output_dir}".split()
             )
             result = self.cli_runner.invoke(
-                sct_analysis,
+                app,
                 command_args,
             )
             self.assertEqual(result.exit_code, 1)
@@ -67,7 +67,7 @@ class PointTargetAnalysisCLITestCase(unittest.TestCase):
                 f"--config {conf_file} {self.command} -p {product} -pt {point_target} -out {output_dir} -g".split()
             )
             result = self.cli_runner.invoke(
-                sct_analysis,
+                app,
                 command_args,
             )
             self.assertEqual(result.exit_code, 1)

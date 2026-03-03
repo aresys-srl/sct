@@ -126,7 +126,7 @@ def run_pta_cli(params: TestParams, output_dir: Path, config: Path | None, graph
         cli_args.extend(["--config", str(config)])
     cli_args.extend(
         [
-            "target-analysis",
+            "point_target",
             "-p",
             str(params.product),
             "-out",

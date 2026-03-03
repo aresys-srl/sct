@@ -24,7 +24,7 @@ Before running any analysis:
 ------------------------------------------------------------
 
 Several radiometric analyses have been implemented with a dedicated command that can be specified to perform the operation of choice.
-They have been grouped under the ``radiometric-analysis`` CLI group.
+They have been grouped under the ``radiometry`` CLI group.
 
 NESZ
 ~~~~
@@ -33,7 +33,7 @@ NESZ analysis can be performed using the following command just specifying the i
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] radiometric-analysis nesz -p <product_path> -out <output_dir> [-g]
+    sct [--config <path_to_config>] radiometry nesz -p <product_path> -out <output_dir> [-g]
 
 where ``-g`` is used to enable graphs generation (if added to the command).
 
@@ -45,10 +45,21 @@ output directory and the desired output radiometric quantity.
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] radiometric-analysis elevation-profile -p <product_path> -out <output_dir> -r <radiometric_quantity> [-g]
+    sct [--config <path_to_config>] radiometry elevation-profiles -p <product_path> -out <output_dir> -r <radiometric_quantity> [-g]
 
 where ``-g`` is used to enable graphs generation (if added to the command) and ``<radiometric_quantity>`` is the desired
 output radiometric quantity (``sigma``, ``gamma`` or ``beta``).
+
+Rain Forest
+~~~~~~~~~~~
+
+Rain Forest analysis can be performed using the following command just specifying the input product and the output directory.
+This analysis is just a shortcut for ``radiometry elevation-profiles -r gamma`` where the output radiometric quantity
+is automatically set to ``gamma``.
+
+.. code-block:: bash
+
+    sct [--config <path_to_config>] radiometry rain-forest -p <product_path> -out <output_dir> [-g]
 
 Scalloping
 ~~~~~~~~~~
@@ -57,7 +68,7 @@ Scalloping analysis can be performed using the following command just specifying
 
 .. code-block:: bash
 
-    sct [--config <path_to_config>] radiometric-analysis scalloping -p <product_path> -out <output_dir> [-g]
+    sct [--config <path_to_config>] radiometry scalloping -p <product_path> -out <output_dir> [-g]
 
 where ``-g`` is used to enable graphs generation (if added to the command).
 
@@ -90,7 +101,7 @@ and executed as follows:
 
     output_netcdf_file, output_kpi_file = full_average_elevation_profiles_analysis(
         product=Path("path/to/product"),
-        output_radiometric_quantity=SARRadiometricQuantity.SIGMA,
+        output_radiometric_quantity=SARRadiometricQuantity.SIGMA,  # GAMMA for Rain Forest
         output_directory=Path("path/to/output_directory"),
         config=config,  # optional, can be None
         graphs=True,  # optional, can be False
@@ -103,7 +114,6 @@ and executed as follows:
         graphs=True,  # optional, can be False
     )
 
-
 ------------------------------------------------------------
 3. Running an Analysis from the Testing Interface
 ------------------------------------------------------------
@@ -114,7 +124,7 @@ CLI interface.
 
 .. note::
 
-    Regarding the Average Elevation Profiles analysis, only the ``RAIN_FOREST`` (gamma profiles) analysis is currently
+    Regarding the Average Elevation Profiles analysis, only the **Rain Forest** (gamma profiles) analysis is currently
     supported via testing interface.
 
 .. code-block:: json

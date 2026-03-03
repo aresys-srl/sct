@@ -26,7 +26,7 @@ register_analysis(
     analysis_type=ANALYSIS_NAME,
     handler=AnalysisHandler(
         config=SCTSpectralAnalysisConfig,
-        cli_command=spectral_analysis,
+        cli=spectral_analysis,
         testing=AnalysisTestingHandler(
             api_runner=run_spectral_api,
             cli_runner=run_spectral_cli,

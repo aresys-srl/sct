@@ -1,6 +1,15 @@
 Changelog
 =========
 
+v2.1.1
+------
+
+**Other Changes**
+
+- Command Line Interface: switched from Click to Typer
+- Command Line Interface: moved testing CLI command to ``testing`` CLI group
+- Command Line Interface: moved secondary CLI utilities commands to ``auxiliary`` CLI group
+
 v2.1.0
 ------
 

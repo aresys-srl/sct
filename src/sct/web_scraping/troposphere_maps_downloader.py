@@ -20,12 +20,6 @@ from perseo_perturbations.atmospheric.troposphere import (
 
 from sct.configuration.logger import sct_logger
 
-try:
-    import requests
-except ImportError:
-    sct_logger.critical('Install web requirements "pip install sct[web]"')
-    sys.exit(1)
-
 
 class TroposphericWebArchives(Enum):
     """Tropospheric web archives where to download data from"""
@@ -90,6 +84,13 @@ def download_tropospheric_products(
     Path
         list of downloaded products Paths
     """
+
+    try:
+        import requests
+    except ImportError:
+        sct_logger.critical('Install web requirements "pip install sct[web]"')
+        sys.exit(1)
+
     output_dir = Path(output_dir)
     map_names, _ = generate_tropospheric_map_name_for_vmf_data(acq_time=acq_date, map_type=map_type)
 

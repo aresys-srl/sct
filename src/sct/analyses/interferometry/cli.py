@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import click
+import typer
 
 from sct.analyses.interferometry.config import SCTInterferometricAnalysisConfig
 from sct.cli import common
@@ -18,38 +18,29 @@ from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import sct_logger
 
 
-@click.command(name="interferometric-analysis")
-@click.option(
-    "--product",
-    "-p",
-    required=True,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the interferogram product or to the co-registered product to be analyzed",
-)
-@common.output_directory_option
-@click.option(
-    "--product_2",
-    "-pp",
-    required=False,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Second co-registered product, must be provided if the first product is not an interferogram",
-)
-@common.generate_graph_option
-@common.share_config
 def interf_coherence_analysis(
-    config: GeneralConfiguration,
-    product: Path,
-    output_directory: Path,
-    product_2: Path | None = None,
-    graphs: bool = False,
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    output_directory: common.OutputDirectoryOption,
+    product_2: Path | None = typer.Option(
+        None,
+        "--product_2",
+        "-pp",
+        exists=True,
+        dir_okay=True,
+        help="Second co-registered product, must be provided if the first product is not an interferogram",
+    ),
+    graphs: common.GraphsOption = False,
 ) -> None:
     """Interferometric Analysis (Coherence and Coherence intensity 2D histograms).
 
     \b
-    It can be performed using a single interferogram product, provided via -p/--product argument or by using two
-    co-registered products, provided respectively with -p/--product and -pp/--product_2
+    It can be performed:
+    - using a single interferogram product, via -p/--product argument
+    - using two co-registered products, respectively with -p/--product and -pp/--product_2
     """
+
+    config: GeneralConfiguration = ctx.obj
 
     log_path = output_directory / "sct_interf_analysis.log" if config.save_log else None
 

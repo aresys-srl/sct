@@ -1,18 +1,24 @@
 .. _sct_cli_utils:
 
-Secondary CLI Utilities
-=======================
+CLI Utilities
+=============
 
-Alongside the main CLI tool, several secondary CLI utilities have been added to perform secondary tasks that can be useful
-to the user.
-
-
-Convert Rosamond point target dataset to SCT compliant .csv
------------------------------------------------------------
+Auxiliary CLI utilities have been added to perform secondary tasks that can be useful to the user. The list of available
+commands can be accessed by calling:
 
 .. code-block:: bash
 
-   sct-rosamond-data-to-csv -s "rosamond_dataset" -d "date" -out "output_dir"
+   sct auxiliary --help/-h
+
+Convert Rosamond Point Target Dataset
+-------------------------------------
+
+This utility let the user convert a Rosamond Point Target dataset as downloaded from their site into a SCT compliant
+Point Target .csv file.
+
+.. code-block:: bash
+
+   sct auxiliary rosamond-pt-converter -s "rosamond_dataset" -d "date" -out "output_dir"
 
 
 Download of Ionospheric TEC Maps
@@ -20,7 +26,7 @@ Download of Ionospheric TEC Maps
 
 .. code-block:: bash
 
-   sct-ionospheric-maps-download -d "date" -c "analysis_center" -e "authentication_cddis_email" -out "output_dir"
+   sct auxiliary iono-downloader -d "date" -c "analysis_center" -e "authentication_cddis_email" -out "output_dir"
 
 
 Download of Tropospheric VMF3 Products
@@ -28,12 +34,4 @@ Download of Tropospheric VMF3 Products
 
 .. code-block:: bash
 
-   sct-tropospheric-maps-download -d "date" -r "grid_resolution" -out "output_dir"
-
-
-Launch integration tests from registry
---------------------------------------
-
-.. code-block:: bash
-
-   sct-testing -r "path_to_test_registry" -out "output_dir"
+   sct auxiliary tropo-downloader -d "date" -r "resolution" -out "output_dir"

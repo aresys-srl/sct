@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import click
+import typer
 
 from sct.analyses.point_target.config import SCTPointTargetAnalysisConfig
 from sct.cli import common
@@ -18,43 +18,24 @@ from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import sct_logger
 
 
-@click.command(name="target-analysis")
-@common.input_product_option
-@common.output_directory_option
-@click.option(
-    "--external-orbit",
-    "-eo",
-    required=False,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the external orbit file",
-)
-@click.option(
-    "--external-corrections-product",
-    "-ec",
-    required=False,
-    default=None,
-    type=click.Path(path_type=Path, exists=True, dir_okay=True),
-    help="Path to the external ALE corrections product",
-)
-@common.input_point_target_option
-@common.generate_graph_option
-@common.share_config
 def target_analysis(
-    config: GeneralConfiguration,
-    product: Path,
-    output_directory: Path,
-    external_orbit: Path,
-    external_corrections_product: Path,
-    point_target_source: Path,
-    graphs: bool,
+    ctx: typer.Context,
+    product: common.InputProductOption,
+    point_target_source: common.InputPointTargetSource,
+    output_directory: common.OutputDirectoryOption,
+    external_orbit: common.ExternalOrbitInputOption = None,
+    external_corrections_product: common.ExternalCorrectionInputProductOption = None,
+    graphs: common.GraphsOption = False,
 ) -> None:
     """Point Target Analysis (IRF, Localization and RCS)."""
+
+    config: GeneralConfiguration = ctx.obj
 
     log_path = output_directory / "sct_pta_analysis.log" if config.save_log else None
 
     with common.logging_to_file(log_path):
         sct_logger.info(f"Product: {product}")
+
         if external_orbit:
             sct_logger.info(f"External orbit: {external_orbit}")
         else:
@@ -74,6 +55,7 @@ def target_analysis(
             if config.toml_path is not None
             else SCTPointTargetAnalysisConfig()
         )
+
         target_analysis_implementation(
             product=product,
             external_orbit=external_orbit,

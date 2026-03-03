@@ -26,7 +26,7 @@ register_analysis(
     analysis_type=ANALYSIS_NAME,
     handler=AnalysisHandler(
         config=SCTElevationNotchAnalysisConfig,
-        cli_command=notch_analysis,
+        cli=notch_analysis,
         testing=AnalysisTestingHandler(
             api_runner=run_notch_api,
             cli_runner=run_notch_cli,

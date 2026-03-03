@@ -13,11 +13,14 @@ import time
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
+from rich.console import Console
+from rich.table import Table
 
 from sct.configuration.logger import sct_logger
 from sct.testing.utilities.common import TestParams
 from sct.testing.utilities.executor import execute_analysis_test
+
+console = Console(soft_wrap=True, force_terminal=True, color_system="truecolor")
 
 
 def test_session(params: TestParams, sensor: str, test_name: str, output_dir: Path, graphs: bool, cli: bool) -> bool:
@@ -142,8 +145,12 @@ def summary_results(results: dict) -> bool:
         sct_logger.critical(f"FAILED: {tests_num - passed_tests}")
         outcome = False
     for sensor_name in results:
-        sct_logger.info("")
-        print(pd.DataFrame({sensor_name: results[sensor_name]}))
+        try:
+            print_dict_as_table(title=sensor_name, data=results[sensor_name])
+        except Exception:
+            print(f"Sensor: {sensor_name}\n")
+            for test_name, test_result in results[sensor_name].items():
+                print(f"{test_name}: {'PASS' if test_result else 'FAIL'}")
 
     if outcome:
         sct_logger.success("INTEGRATION TESTS: PASS")
@@ -151,3 +158,23 @@ def summary_results(results: dict) -> bool:
         sct_logger.fail("INTEGRATION TESTS: FAIL")
 
     return outcome
+
+
+def print_dict_as_table(data: dict, title: str = "Data"):
+    """Printing summary results by sensor as a Rich Table."""
+    table = Table(title=title, header_style="bold #C6A0F6")
+    table.add_column("Test Name", style="bold")
+    table.add_column("Status", style="bold")
+
+    console.print("")
+
+    for key, value in data.items():
+        table.add_row(str(key), status_to_color(value))
+
+    console.print(table)
+
+
+def status_to_color(value: bool) -> str:
+    if value:
+        return "[#40A02B]✔ PASS[/#40A02B]"
+    return "[#E74C3C]✖ FAIL[/#E74C3C]"
