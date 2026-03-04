@@ -25,7 +25,7 @@ from sct.analyses.point_target.core.atmospheric_corrections_main import (
 from sct.analyses.point_target.core.geodynamics_corrections_main import run_compute_geodynamics_corrections
 from sct.configuration.logger import sct_logger
 from sct.io.extended_protocols import SCTInputProduct
-from sct.io.input_product_plugins import AbsoluteLocalizationErrorCorrector
+from sct.plugins.protocols import AbsoluteLocalizationErrorCorrector
 
 if TYPE_CHECKING:
     from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve

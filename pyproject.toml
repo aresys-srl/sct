@@ -18,6 +18,7 @@ dependencies = [
     "perseo-perturbations",
     "numba>=0.61",
     "typer>=0.24.1",
+    "stevedore>=5.7.0",
 ]
 dynamic = ["version"]
 classifiers = [

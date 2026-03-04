@@ -2,18 +2,16 @@
 # SPDX-License-Identifier: MIT
 
 """
-Input product loading plugins
------------------------------
+Input Products plugins protocols
+--------------------------------
 """
 
 from __future__ import annotations
 
-from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Protocol, runtime_checkable
 
 from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
-from sct.io.plugins_framework import import_plugins
 
 Detector = Callable[[str | Path], bool]
 
@@ -32,6 +30,7 @@ class AbsoluteLocalizationErrorCorrector(Protocol):
     def get_ale_corrections_function(self) -> ALECorrectionFunctionType:
         """Getter of the ALE correction function to effectively compute corrections"""
 
+    # TODO: remove this and enforce the behavior in the main code
     def update_corrections_config(
         self, corrections_config: SCTPointTargetAnalysisCorrectionsConf
     ) -> SCTPointTargetAnalysisCorrectionsConf:
@@ -54,6 +53,8 @@ class AbsoluteLocalizationErrorCorrector(Protocol):
 class InputProductPluginProtocol(Protocol):
     """Module/Object protocol"""
 
+    version: str
+
     @classmethod
     def get_manager(cls) -> type[SCTInputProduct]:
         """Retrieve manager"""
@@ -65,6 +66,3 @@ class InputProductPluginProtocol(Protocol):
     @classmethod
     def get_ale_corrector(cls) -> AbsoluteLocalizationErrorCorrector | None:
         """Retrieve ALE corrector class for both range and azimuth directions"""
-
-
-import_input_product_plugins = partial(import_plugins, plugin_protocol=InputProductPluginProtocol, plugin_prefix="sct_")

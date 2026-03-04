@@ -1,41 +1,4 @@
 {
-    "aresys-product-folder": {
-        "slc-topsar-pta": {
-            "analysis": "point_target",
-            "product": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/demo_topsar/SLC",
-            "config": "C:/Users/giorgio.parma/Aresys_DATA/sct_data/configurations/test_906f38dc_config.toml",
-            "targets": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/demo_topsar/demo_topsar_pt_dataset.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-topsar-pta/pta_res.csv"
-        },
-        "slc-real-pta": {
-            "analysis": "point_target",
-            "product": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/real_ICEYE_slc/SLH_45599_SLC",
-            "config": "C:/Users/giorgio.parma/Aresys_DATA/sct_data/configurations/test_906f38dc_config.toml",
-            "targets": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/real_ICEYE_slc/real_iceye_pt_dataset.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-real-pta/pta_res.csv"
-        },
-        "slc-squint20deg-pta": {
-            "analysis": "point_target",
-            "product": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/squinted_data/20deg/SLC",
-            "config": "C:/Users/giorgio.parma/Aresys_DATA/sct_data/configurations/test_906f38dc_config.toml",
-            "targets": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/squinted_data/squinted_20deg_pt_dataset.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-squint20deg-pta/pta_res.csv"
-        },
-        "slc-squint40deg-pta": {
-            "analysis": "point_target",
-            "product": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/squinted_data/40deg/SLC",
-            "config": "C:/Users/giorgio.parma/Aresys_DATA/sct_data/configurations/test_906f38dc_config.toml",
-            "targets": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/squinted_data/squinted_40deg_pt_dataset.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/slc-squint40deg-pta/pta_res.csv"
-        },
-        "grd-biomass-pta": {
-            "analysis": "point_target",
-            "product": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/biomass_multichannel/iGRD",
-            "config": "C:/Users/giorgio.parma/Aresys_DATA/sct_data/configurations/test_906f38dc_config.toml",
-            "targets": "C:/Users/giorgio.parma/Aresys_DATA/quality_data/biomass_multichannel/biomass_multichannel_pt_dataset.csv",
-            "reference_output": "/data/integration_tests/sct/reference_results/aresys_pf/grd-biomass-pta/pta_res.csv"
-        }
-    },
     "sentinel1A": {
         "slc-perturb-eof-pta": {
             "analysis": "point_target",

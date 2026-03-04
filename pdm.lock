@@ -5,7 +5,7 @@
 groups = ["default", "dev", "doc", "graphs", "localtesting", "test", "web"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:018c1a6c5e0d436986cdab3720aec885da607be55c3717dd90394a0c48e226ab"
+content_hash = "sha256:285217914bb762209cc405752e1059ac36c6b6cbcd3d70129090c22b801d94a3"
 
 [[metadata.targets]]
 requires_python = ">=3.11"
@@ -448,7 +448,7 @@ name = "contourpy"
 version = "1.3.3"
 requires_python = ">=3.11"
 summary = "Python library for calculating contours of 2D quadrilateral grids"
-groups = ["graphs", "localtesting"]
+groups = ["default", "graphs", "localtesting"]
 dependencies = [
     "numpy>=1.25",
 ]
@@ -633,7 +633,7 @@ name = "cycler"
 version = "0.12.1"
 requires_python = ">=3.8"
 summary = "Composable style cycles"
-groups = ["graphs", "localtesting"]
+groups = ["default", "graphs", "localtesting"]
 files = [
     {file = "cycler-0.12.1-py3-none-any.whl", hash = "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30"},
     {file = "cycler-0.12.1.tar.gz", hash = "sha256:88bb128f02ba341da8ef447245a9e138fae777f6a23943da4540077d3601eb1c"},
@@ -681,7 +681,7 @@ name = "deprecated"
 version = "1.3.1"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
 summary = "Python @deprecated decorator to deprecate old python classes, functions or methods."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "inspect2; python_version < \"3\"",
     "wrapt<3,>=1.10",
@@ -730,7 +730,7 @@ name = "donfig"
 version = "0.8.1.post1"
 requires_python = ">=3.8"
 summary = "Python package for configuring a python package"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "pyyaml",
 ]
@@ -744,7 +744,7 @@ name = "eo-products"
 version = "1.0.5"
 requires_python = ">=3.10"
 summary = "Collection of SAR Earth Observation L1 Product Formats readers."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "arepytools>1.7.6",
     "h5py",
@@ -798,7 +798,7 @@ name = "fonttools"
 version = "4.61.1"
 requires_python = ">=3.10"
 summary = "Tools to manipulate font files"
-groups = ["graphs", "localtesting"]
+groups = ["default", "graphs", "localtesting"]
 files = [
     {file = "fonttools-4.61.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:c6604b735bb12fef8e0efd5578c9fb5d3d8532d5001ea13a19cddf295673ee09"},
     {file = "fonttools-4.61.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:5ce02f38a754f207f2f06557523cd39a06438ba3aafc0639c477ac409fc64e37"},
@@ -849,7 +849,7 @@ name = "google-crc32c"
 version = "1.8.0"
 requires_python = ">=3.9"
 summary = "A python wrapper of the C library 'Google CRC32C'"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 files = [
     {file = "google_crc32c-1.8.0-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:014a7e68d623e9a4222d663931febc3033c5c7c9730785727de2a81f87d5bab8"},
     {file = "google_crc32c-1.8.0-cp311-cp311-macosx_12_0_x86_64.whl", hash = "sha256:86cfc00fe45a0ac7359e5214a1704e51a99e757d0272554874f419f79838c5f7"},
@@ -931,7 +931,7 @@ name = "imagecodecs"
 version = "2026.1.14"
 requires_python = ">=3.11"
 summary = "Image transformation, compression, and decompression codecs"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "numpy",
 ]
@@ -1121,7 +1121,7 @@ name = "kiwisolver"
 version = "1.4.9"
 requires_python = ">=3.10"
 summary = "A fast implementation of the Cassowary constraint solver"
-groups = ["graphs", "localtesting"]
+groups = ["default", "graphs", "localtesting"]
 files = [
     {file = "kiwisolver-1.4.9-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:eb14a5da6dc7642b0f3a18f13654847cd8b7a2550e2645a5bda677862b03ba16"},
     {file = "kiwisolver-1.4.9-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:39a219e1c81ae3b103643d2aedb90f1ef22650deb266ff12a19e7773f3e5f089"},
@@ -1433,7 +1433,7 @@ name = "matplotlib"
 version = "3.10.8"
 requires_python = ">=3.10"
 summary = "Python plotting package"
-groups = ["graphs", "localtesting"]
+groups = ["default", "graphs", "localtesting"]
 dependencies = [
     "contourpy>=1.0.1",
     "cycler>=0.10",
@@ -1728,7 +1728,7 @@ name = "numcodecs"
 version = "0.16.5"
 requires_python = ">=3.11"
 summary = "A Python package providing buffer compression and transformation codecs for use in data storage and communication applications."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "numpy>=1.24",
     "typing-extensions",
@@ -2032,7 +2032,7 @@ name = "pillow"
 version = "12.1.1"
 requires_python = ">=3.10"
 summary = "Python Imaging Library (fork)"
-groups = ["graphs", "localtesting"]
+groups = ["default", "graphs", "localtesting"]
 files = [
     {file = "pillow-12.1.1-cp311-cp311-macosx_10_10_x86_64.whl", hash = "sha256:e879bb6cd5c73848ef3b2b48b8af9ff08c5b71ecda8048b7dd22d8a33f60be32"},
     {file = "pillow-12.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:365b10bb9417dd4498c0e3b128018c4a624dc11c7b97d8cc54effe3b096f4c38"},
@@ -2342,7 +2342,7 @@ name = "pymap3d"
 version = "3.2.0"
 requires_python = ">=3.9"
 summary = "pure Python (no prereqs) coordinate conversions, following convention of several popular Matlab routines."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 files = [
     {file = "pymap3d-3.2.0-py3-none-any.whl", hash = "sha256:fccd44f2f6021a95adec19771c603b8dac104eab120d863c463d76b9bc298669"},
     {file = "pymap3d-3.2.0.tar.gz", hash = "sha256:355e87c559ac681cba34a7fef5bcec3ad791f95336a0fdaf15e0335f48a309a2"},
@@ -2353,7 +2353,7 @@ name = "pyparsing"
 version = "3.3.2"
 requires_python = ">=3.9"
 summary = "pyparsing - Classes and methods to define and execute parsing grammars"
-groups = ["graphs", "localtesting"]
+groups = ["default", "graphs", "localtesting"]
 files = [
     {file = "pyparsing-3.3.2-py3-none-any.whl", hash = "sha256:850ba148bd908d7e2411587e247a1e4f0327839c40e2e5e6d05a007ecc69911d"},
     {file = "pyparsing-3.3.2.tar.gz", hash = "sha256:c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc"},
@@ -2364,7 +2364,7 @@ name = "pyproj"
 version = "3.7.2"
 requires_python = ">=3.11"
 summary = "Python interface to PROJ (cartographic projections and coordinate transformations library)"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "certifi",
 ]
@@ -2461,7 +2461,7 @@ name = "pyyaml"
 version = "6.0.3"
 requires_python = ">=3.8"
 summary = "YAML parser and emitter for Python"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 files = [
     {file = "pyyaml-6.0.3-cp311-cp311-macosx_10_13_x86_64.whl", hash = "sha256:44edc647873928551a01e7a563d7452ccdebee747728c1080d881d68af7b997e"},
     {file = "pyyaml-6.0.3-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:652cb6edd41e718550aad172851962662ff2681490a8a711af6a4d288dd96824"},
@@ -2774,7 +2774,7 @@ name = "s1etad"
 version = "0.6.1"
 requires_python = ">=3.10"
 summary = "Reader for Sentinel-1 Extended Timing Annotation Dataset"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "lxml",
     "netCDF4",
@@ -2793,7 +2793,7 @@ files = [
 name = "sarpy"
 version = "1.3.64"
 summary = "Python tools for reading, writing, and simple processing of complex SAR data and other associated data."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "deprecated",
     "h5py",
@@ -2884,29 +2884,30 @@ files = [
 
 [[package]]
 name = "sct-aresys-reader"
-version = "1.1.0"
-requires_python = ">=3.10"
+version = "1.1.2"
+requires_python = ">=3.11"
+path = "C:/ARESYS_PROJ/sct-pf-plugins/sct_aresys_reader/dist/sct_aresys_reader-1.1.2-py3-none-any.whl"
 summary = "SCT (SAR Calibration Toolbox) plugin for reading Aresys Level 1 internal product format."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "arepytools>=1.7.6",
     "numpy",
     "perseo-quality",
     "scipy",
-    "sct>=2",
+    "sct>=2.0.6",
     "shapely>=2.1.0",
 ]
 files = [
-    {file = "sct_aresys_reader-1.1.0-py3-none-any.whl", hash = "sha256:c26336a1498f07ee62e84a0cfe2d098e95f34f088a44f040e4afa7613e7c69d0"},
-    {file = "sct_aresys_reader-1.1.0.tar.gz", hash = "sha256:aae2fb8650eebc0fbd04a5482ee0fd41e41e9ef7d9adb5c4977166bbb2394524"},
+    {file = "sct_aresys_reader-1.1.2-py3-none-any.whl", hash = "sha256:a0dc67e2b3982eb6a67467759ef8b49f2e832fb5e3c7e1e8e0ce3bab0a08fa17"},
 ]
 
 [[package]]
 name = "sct-sentinel1-reader"
-version = "1.1.6"
+version = "1.1.7"
 requires_python = ">=3.11"
+path = "C:/ARESYS_PROJ/sct-pf-plugins/sct_sentinel1_reader/dist/sct_sentinel1_reader-1.1.7-py3-none-any.whl"
 summary = "SCT (SAR Calibration Toolbox) plugin for reading Sentinel-1 Level 1 product format."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "arepytools>=1.7.6",
     "eo-products>=1.0.5",
@@ -2916,12 +2917,11 @@ dependencies = [
     "pyproj",
     "s1etad",
     "scipy",
-    "sct>=2.1.0",
+    "sct>=2.1.1",
     "shapely>=2.1.0",
 ]
 files = [
-    {file = "sct_sentinel1_reader-1.1.6-py3-none-any.whl", hash = "sha256:c38b32b3313c4560abe48d791fb02accea9d2a8d1eb90fbac0565227ab868558"},
-    {file = "sct_sentinel1_reader-1.1.6.tar.gz", hash = "sha256:5cdcbd91f49473821ac75da6675cb9868a5ab92822d8620f5d60d8ccbd5a5bf8"},
+    {file = "sct_sentinel1_reader-1.1.7-py3-none-any.whl", hash = "sha256:aae8aae8034ebf429c4fc20d3d5d899316a7a272a1cf65301d9dc557d39aab59"},
 ]
 
 [[package]]
@@ -3169,17 +3169,28 @@ files = [
 ]
 
 [[package]]
+name = "stevedore"
+version = "5.7.0"
+requires_python = ">=3.10"
+summary = "Manage dynamic plugins for Python applications"
+groups = ["default"]
+files = [
+    {file = "stevedore-5.7.0-py3-none-any.whl", hash = "sha256:fd25efbb32f1abb4c9e502f385f0018632baac11f9ee5d1b70f88cc5e22ad4ed"},
+    {file = "stevedore-5.7.0.tar.gz", hash = "sha256:31dd6fe6b3cbe921e21dcefabc9a5f1cf848cf538a1f27543721b8ca09948aa3"},
+]
+
+[[package]]
 name = "tifffile"
-version = "2026.2.24"
+version = "2026.3.3"
 requires_python = ">=3.11"
 summary = "Read and write TIFF files"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "numpy",
 ]
 files = [
-    {file = "tifffile-2026.2.24-py3-none-any.whl", hash = "sha256:38ef6258c2bd8dd3551c7480c6d75a36c041616262e6cd55a50dd16046b71863"},
-    {file = "tifffile-2026.2.24.tar.gz", hash = "sha256:d73cfa6d7a8f5775a1e3c9f3bfca77c992946639fb41a5bbe888878cb6964dc6"},
+    {file = "tifffile-2026.3.3-py3-none-any.whl", hash = "sha256:e8be15c94273113d31ecb7aa3a39822189dd11c4967e3cc88c178f1ad2fd1170"},
+    {file = "tifffile-2026.3.3.tar.gz", hash = "sha256:d9a1266bed6f2ee1dd0abde2018a38b4f8b2935cb843df381d70ac4eac5458b7"},
 ]
 
 [[package]]
@@ -3298,7 +3309,7 @@ version = "2025.3"
 requires_python = ">=2"
 summary = "Provider of IANA time zone data"
 groups = ["default", "graphs", "localtesting"]
-marker = "sys_platform == \"win32\" or sys_platform == \"emscripten\""
+marker = "sys_platform == \"emscripten\" or sys_platform == \"win32\""
 files = [
     {file = "tzdata-2025.3-py2.py3-none-any.whl", hash = "sha256:06a47e5700f3081aab02b2e513160914ff0694bce9947d6b76ebd6bf57cfc5d1"},
     {file = "tzdata-2025.3.tar.gz", hash = "sha256:de39c2ca5dc7b0344f2eba86f49d614019d29f060fc4ebc8a417896a620b56a7"},
@@ -3376,7 +3387,7 @@ name = "wrapt"
 version = "2.1.1"
 requires_python = ">=3.9"
 summary = "Module for decorators, wrappers and monkey patching."
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 files = [
     {file = "wrapt-2.1.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:6c366434a7fb914c7a5de508ed735ef9c133367114e1a7cb91dfb5cd806a1549"},
     {file = "wrapt-2.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:5d6a2068bd2e1e19e5a317c8c0b288267eec4e7347c36bc68a6e378a39f19ee7"},
@@ -3471,7 +3482,7 @@ name = "zarr"
 version = "3.1.5"
 requires_python = ">=3.11"
 summary = "An implementation of chunked, compressed, N-dimensional arrays for Python"
-groups = ["localtesting"]
+groups = ["default", "localtesting"]
 dependencies = [
     "donfig>=0.8",
     "google-crc32c>=1.5",

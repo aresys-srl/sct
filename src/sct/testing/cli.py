@@ -15,7 +15,7 @@ import typer
 
 from sct import __version__
 from sct.cli import common
-from sct.io.input_product_plugins import import_input_product_plugins
+from sct.plugins import available_plugins
 from sct.testing.run import run_tests, summary_results
 
 testing_app = typer.Typer(
@@ -75,7 +75,7 @@ def integration_testing(
 
     typer.echo("Installed plugins detected:\n")
 
-    for name in import_input_product_plugins(additional_plugins=[]):
+    for name in available_plugins:
         typer.echo(name)
         typer.echo()
 

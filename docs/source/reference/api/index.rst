@@ -8,6 +8,7 @@ API Reference
 
    configuration
    io
+   plugins
    core
    cli
    analyses/index

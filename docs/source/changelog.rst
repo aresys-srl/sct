@@ -4,6 +4,10 @@ Changelog
 v2.1.1
 ------
 
+**Incompatible Changes**
+
+- Changed plugin infrastructure using **Stevedore**
+
 **Other Changes**
 
 - Command Line Interface: switched from Click to Typer

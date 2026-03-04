@@ -8,13 +8,12 @@ from pathlib import Path
 import perseo_quality.point_targets_analysis.graphical_output as ptgpo
 
 from sct.analyses import point_target as pta
-from sct.configuration.logger import ConsoleHandler, SCTFileHandler, enable_quality_logger, sct_logger
+from sct.configuration.logger import SCTFileHandler, enable_quality_logger, sct_logger
 from sct.configuration.config import SCTConfiguration
 
 out_fldr = Path(r"C:\Users\giorgio.parma\Desktop\temporary_outputs")
 
 # setup custom logger
-sct_logger.addHandler(ConsoleHandler())
 file_handler = SCTFileHandler(out_fldr.joinpath("sct_pta_analysis.log"))
 sct_logger.addHandler(file_handler)
 enable_quality_logger(file_handler=file_handler)

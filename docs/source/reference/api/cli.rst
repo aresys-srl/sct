@@ -5,4 +5,4 @@ SCT CLI Tool
 
 .. automodule:: sct.cli.common
 
-.. automodule:: sct.cli.utility_commands_cli
+.. automodule:: sct.cli.utilities
