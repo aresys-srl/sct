@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.1.2
+------
+
+**Bug Fixing**
+
+- Fixing testing interface logging issue
+
 v2.1.1
 ------
 

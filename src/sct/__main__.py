@@ -3,7 +3,7 @@
 
 """Main CLI script"""
 
-from sct.configuration.logger import enable_quality_logger, sct_logger
+from sct.configuration.logger import ConsoleHandler, enable_quality_logger, sct_logger
 
 
 def main() -> None:
@@ -11,6 +11,7 @@ def main() -> None:
 
     # setup custom logger
     sct_logger.setLevel("INFO")
+    sct_logger.addHandler(ConsoleHandler())
     enable_quality_logger()
 
     from sct.cli.cli import app
