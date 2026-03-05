@@ -42,7 +42,6 @@ classifiers = [
 
 [project.scripts]
 sct = "sct.__main__:main"
-sct-testing = "sct.testing.cli:testing_app"
 
 [build-system]
 requires = ["hatchling"]
