@@ -7,6 +7,7 @@ v2.1.2
 **Bug Fixing**
 
 - Fixing testing interface logging issue
+- Fixing testing interface return codes
 
 v2.1.1
 ------

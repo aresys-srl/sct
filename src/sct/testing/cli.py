@@ -8,6 +8,7 @@ Testing CLI Utility
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -90,6 +91,6 @@ def integration_testing(
     outcome = summary_results(results=results)
 
     if outcome:
-        typer.Exit(0)
+        sys.exit(0)
     else:
-        typer.Exit(1)
+        sys.exit(1)
