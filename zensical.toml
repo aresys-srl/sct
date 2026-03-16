@@ -1,0 +1,248 @@
+# ============================================================================
+#
+# The configuration produced by default is meant to highlight the features
+# that Zensical provides and to serve as a starting point for your own
+# projects.
+#
+# ============================================================================
+
+[project]
+site_name = "SCT - SAR Calibration Tool"
+site_description = "Documentation for the SAR Calibration Tool (SCT) python project."
+site_author = "Aresys s.r.l."
+repo_url = "https://github.com/aresys-srl/sct"
+repo_name = "aresys/sct"
+site_url = "http://intranet.aresys.it/sardashboard/develop/sct/docs/latest/"
+copyright = """
+Copyright &copy; 2026-present Aresys s.r.l.
+"""
+
+# Zensical supports both implicit navigation and explicitly defined navigation.
+# If you decide not to define a navigation here then Zensical will simply
+# derive the navigation structure from the directory structure of your
+# "docs_dir". The definition below demonstrates how a navigation structure
+# can be defined using TOML syntax.
+#
+# Read more: https://zensical.org/docs/setup/navigation/
+# nav = [
+#   { "Get started" = "index.md" },
+#   { "Markdown in 5min" = "markdown.md" },
+# ]
+
+# Read more: https://zensical.org/docs/customization/#additional-css
+extra_css = ["stylesheets/extra.css"]
+# Read more: https://zensical.org/docs/customization/#additional-javascript
+#extra_javascript = ["javascripts/extra.js"]
+
+# ----------------------------------------------------------------------------
+# Section for configuring theme options
+# ----------------------------------------------------------------------------
+[project.theme]
+custom_dir = "overrides"
+
+# With the "favicon" option you can set your own image to use as the icon
+# browsers will use in the browser title bar or tab bar. The path provided
+# must be relative to the "docs_dir".
+#
+# Read more:
+# - https://zensical.org/docs/setup/logo-and-icons/#favicon
+# - https://developer.mozilla.org/en-US/docs/Glossary/Favicon
+#
+#favicon = "images/favicon.png"
+language = "en"
+
+# Zensical provides a number of feature toggles that change the behavior
+# of the documentation site.
+features = [
+    "announce.dismiss",
+    #"content.action.edit",
+    #"content.action.view",
+    # Code annotations allow you to add an icon with a tooltip to your
+    # code blocks to provide explanations at crucial points.
+    # https://zensical.org/docs/authoring/code-blocks/#code-annotations
+    "content.code.annotate",
+    "content.code.copy",
+    # Code blocks can include a button to allow for the selection of line
+    # ranges by the user.
+    # https://zensical.org/docs/authoring/code-blocks/#code-selection-button
+    "content.code.select",
+    # Zensical can render footnotes as inline tooltips, so the user can read
+    # the footnote without leaving the context of the document.
+    # https://zensical.org/docs/authoring/footnotes/#footnote-tooltips
+    "content.footnote.tooltips",
+    # If you have many content tabs that have the same titles (e.g., "Python",
+    # "JavaScript", "Cobol"), this feature causes all of them to switch to
+    # at the same time when the user chooses their language in one.
+    # https://zensical.org/docs/authoring/content-tabs/#linked-content-tabs
+    "content.tabs.link",
+    # With this feature enabled users can add tooltips to links that will be
+    # displayed when the mouse pointer hovers the link.
+    # https://zensical.org/docs/authoring/tooltips/#improved-tooltips
+    "content.tooltips",
+    # With this feature enabled, Zensical will automatically hide parts
+    # of the header when the user scrolls past a certain point.
+    # https://zensical.org/docs/setup/header/#automatic-hiding
+    # "header.autohide",
+    # Turn on this feature to expand all collapsible sections in the
+    # navigation sidebar by default.
+    # https://zensical.org/docs/setup/navigation/#navigation-expansion
+    # "navigation.expand",
+    # This feature turns on navigation elements in the footer that allow the
+    # user to navigate to a next or previous page.
+    # https://zensical.org/docs/setup/footer/#navigation
+    "navigation.footer",
+    # When section index pages are enabled, documents can be directly attached
+    # to sections, which is particularly useful for providing overview pages.
+    # https://zensical.org/docs/setup/navigation/#section-index-pages
+    "navigation.indexes",
+    # When instant navigation is enabled, clicks on all internal links will be
+    # intercepted and dispatched via XHR without fully reloading the page.
+    # https://zensical.org/docs/setup/navigation/#instant-navigation
+    "navigation.instant",
+    # With instant prefetching, your site will start to fetch a page once the
+    # user hovers over a link. This will reduce the perceived loading time
+    # for the user.
+    # https://zensical.org/docs/setup/navigation/#instant-prefetching
+    "navigation.instant.prefetch",
+    # In order to provide a better user experience on slow connections when
+    # using instant navigation, a progress indicator can be enabled.
+    # https://zensical.org/docs/setup/navigation/#progress-indicator
+    "navigation.instant.progress",
+    # When navigation paths are activated, a breadcrumb navigation is rendered
+    # above the title of each page
+    # https://zensical.org/docs/setup/navigation/#navigation-path
+    "navigation.path",
+    # When pruning is enabled, only the visible navigation items are included
+    # in the rendered HTML, reducing the size of the built site by 33% or more.
+    # https://zensical.org/docs/setup/navigation/#navigation-pruning
+    #"navigation.prune",
+    # When sections are enabled, top-level sections are rendered as groups in
+    # the sidebar for viewports above 1220px, but remain as-is on mobile.
+    # https://zensical.org/docs/setup/navigation/#navigation-sections
+    "navigation.sections",
+    # When tabs are enabled, top-level sections are rendered in a menu layer
+    # below the header for viewports above 1220px, but remain as-is on mobile.
+    # https://zensical.org/docs/setup/navigation/#navigation-tabs
+    # "navigation.tabs",
+    # When sticky tabs are enabled, navigation tabs will lock below the header
+    # and always remain visible when scrolling down.
+    # https://zensical.org/docs/setup/navigation/#sticky-navigation-tabs
+    # "navigation.tabs.sticky",
+    # A back-to-top button can be shown when the user, after scrolling down,
+    # starts to scroll up again.
+    # https://zensical.org/docs/setup/navigation/#back-to-top-button
+    "navigation.top",
+    # When anchor tracking is enabled, the URL in the address bar is
+    # automatically updated with the active anchor as highlighted in the table
+    # of contents.
+    # https://zensical.org/docs/setup/navigation/#anchor-tracking
+    "navigation.tracking",
+    # When search highlighting is enabled and a user clicks on a search result,
+    # Zensical will highlight all occurrences after following the link.
+    # https://zensical.org/docs/setup/search/#search-highlighting
+    "search.highlight",
+    # When anchor following for the table of contents is enabled, the sidebar
+    # is automatically scrolled so that the active anchor is always visible.
+    # https://zensical.org/docs/setup/navigation/#anchor-following
+    # "toc.follow",
+    # When navigation integration for the table of contents is enabled, it is
+    # always rendered as part of the navigation sidebar on the left.
+    # https://zensical.org/docs/setup/navigation/#navigation-integration
+    #"toc.integrate",
+]
+logo = "assets/logo.svg"
+
+# ----------------------------------------------------------------------------
+# In the "font" subsection you can configure the fonts used. By default, fonts
+# are loaded from Google Fonts, giving you a wide range of choices from a set
+# of suitably licensed fonts. There are options for a normal text font and for
+# a monospaced font used in code blocks.
+# ----------------------------------------------------------------------------
+#[project.theme.font]
+#text = "Inter"
+#code = "Jetbrains Mono"
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.footnotes]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+pygments_lang_class = true
+auto_title = true
+linenums_style = "pymdownx-inline"
+line_spans = "__span"
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }
+]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.pymdownx.mark]
+[project.markdown_extensions.pymdownx.blocks]
+[project.markdown_extensions.pymdownx.blocks.caption]
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+options.custom_icons = ["overrides/.icons"]
+
+# ----------------------------------------------------------------------------
+# In the "palette" subsection you can configure options for the color scheme.
+# You can configure different color schemes, e.g., to turn on dark mode,
+# that the user can switch between. Each color scheme can be further
+# customized.
+#
+# Read more:
+# - https://zensical.org/docs/setup/colors/
+# ----------------------------------------------------------------------------
+[[project.theme.palette]]
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+favicon = "assets/favicon.png"
+
+[project.plugins.mkdocstrings.handlers.python]
+inventories = ["https://docs.python.org/3/objects.inv"]
+
+# ----------------------------------------------------------------------------
+# PLUGINS
+# ----------------------------------------------------------------------------
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "numpy"
+show_signature_annotations = true
+inherited_members = true
+show_source = false
+show_root_heading = false
+show_root_toc_entry = false
+show_root_full_path = false
+show_object_full_path = false
+show_category_heading = true
+separate_signature = true
+show_if_no_docstring = true
+unwrap_annotated = true
+members_order = "source"
+
+# ----------------------------------------------------------------------------
+# The "extra" section contains miscellaneous settings.
+# ----------------------------------------------------------------------------
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/aresys-srl"
+[[project.extra.social]]
+icon = "fontawesome/brands/python"
+link = "https://pypi.org/user/aresys/"
+[[project.extra.social]]
+icon = "fontawesome/brands/linkedin"
+link = "https://it.linkedin.com/company/aresys-srl"
+[[project.extra.social]]
+icon = "fontawesome/brands/x-twitter"
+link = "https://x.com/ARESYSSRL"

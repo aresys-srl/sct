@@ -149,19 +149,6 @@ wheel:
     paths:
       - dist/*.whl
 
-# conda_pkg:
-#   stage: build
-#   extends:
-#     - .tags_conda
-#   script:
-#     - pip install nox
-#     - python -m nox -s build_conda_pkg
-#   needs: []
-#   artifacts:
-#     expire_in: 2 weeks
-#     paths:
-#       - dist/*.conda
-
 doc:
   stage: build
   extends:
@@ -174,7 +161,7 @@ doc:
   artifacts:
     expire_in: 2 weeks
     paths:
-      - docs/build/*.zip
+      - ./documentation*.zip
 
 # === deploy =================================================================
 # ============================================================================
@@ -190,12 +177,6 @@ deploy_package:
       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
-    # - for file in dist/*.conda; do
-    #   eo_pgp-signme ${file} > ${file}.asc &&
-    #   ./.gitlab/ci/dashboard-copy.sh ${file} ${INTERNAL_CONDA_CHANNEL_PATH}/noarch &&
-    #   ./.gitlab/ci/dashboard-copy.sh ${file}.asc ${INTERNAL_CONDA_CHANNEL_PATH}/noarch;
-    #   done
-    # - ./.gitlab/ci/conda-forge-update.sh ${INTERNAL_CONDA_CHANNEL_PATH}
 
 deploy_doc:
   stage: deploy
@@ -203,8 +184,6 @@ deploy_doc:
   rules:
     - if: "$CI_COMMIT_TAG"
     - if: '$DEPLOY_DOC == "true"'
-  before_script:
-    - export PACKAGE_VERSION=v$(grep "__version__" src/sct/__init__.py | awk -F '"' '{print $2}')
   script:
     - eval "$(ssh-agent)"
     - cat "$DASHBOARD_PRIVATE_KEY" | base64 -d | ssh-add -
@@ -213,7 +192,7 @@ deploy_doc:
       ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
       ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
       done
-    - unzip docs/build/*.zip
-    - mv *-html-doc ${PACKAGE_VERSION}
-    - rsync --stats -r ${PACKAGE_VERSION} sardashboard@intranet.aresys.it:develop/sct/docs
-    - ssh sardashboard@intranet.aresys.it "cd develop/sct/docs && rm latest && ln -s ${PACKAGE_VERSION} latest"
+    - unzip *.zip
+    - mv site ${CI_COMMIT_TAG}
+    - rsync --stats -r ${CI_COMMIT_TAG} sardashboard@intranet.aresys.it:develop/sct/docs
+    - ssh sardashboard@intranet.aresys.it "cd develop/sct/docs && rm latest && ln -s ${CI_COMMIT_TAG} latest"

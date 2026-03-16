@@ -23,7 +23,7 @@ def toml_schema_validation(content: dict, schema_path: str | Path):
 
     Parameters
     ----------
-    toml_content : dict
+    content : dict
         dictionary containing the parsed toml content
     schema_path : str | Path
         path to the json schema file

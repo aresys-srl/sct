@@ -1,0 +1,28 @@
+/* Increase main content width */
+.md-main__inner, .md-content {
+  max-width: 1500px;   /* default is around 800px */
+}
+
+/* Force wider main content */
+.md-main__inner {
+  max-width: 1500px !important;
+  width: 100% !important;
+}
+
+/* Make the table wrapper expand to the full content width */
+.md-typeset div[data-md-type="table"] {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important; /* allow scrolling if table is too wide */
+}
+
+/* Admonitions full width */
+.md-typeset .admonition {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.mermaid {
+  display: flex;
+  justify-content: center;
+}

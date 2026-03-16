@@ -63,12 +63,8 @@ dev = ["nox", "ruff", "pylint"]
 test = ["unittest-xml-reporting", "coverage"]
 localtesting = ["sct_aresys_reader", "sct_sentinel1_reader"]
 doc = [
-    "ipython",
-    "nbsphinx",
-    "sphinx",
-    "sphinx-design",
-    "sphinx-copybutton",
-    "pydata-sphinx-theme",
+    "zensical",
+    "mkdocstrings-python",
 ]
 
 [tool.ruff]

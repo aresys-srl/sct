@@ -23,7 +23,7 @@ def execute_analysis_test(
 
     Parameters
     ----------
-    params : TestParams
+    test_params : TestParams
         test parameters
     output_dir : Path
         output directory
