@@ -88,6 +88,56 @@
                                     ],
                                     "minItems": 2,
                                     "additionalItems": false
+                                },
+                                "river_masking": {
+                                    "type": "object",
+                                    "description": "River masking algorithm parameters",
+                                    "properties": {
+                                        "river_masking_mode": {
+                                            "type": "string",
+                                            "description": "Masking method to be applied",
+                                            "enum": [
+                                                "DISABLED",
+                                                "FULL",
+                                                "FAST"
+                                            ]
+                                        },
+                                        "local_stats_window": {
+                                            "type": "integer",
+                                            "description": "Window size for local statistics",
+                                            "exclusiveMinimum": 3
+                                        },
+                                        "backscatter_threshold_percentile": {
+                                            "type": "number",
+                                            "description": "Backscatter threshold percentile",
+                                            "exclusiveMinimum": 0
+                                        },
+                                        "cv_lower_threshold_percentile": {
+                                            "type": "number",
+                                            "description": "Coefficient of variation lower threshold percentile"
+                                        },
+                                        "cv_upper_threshold_percentile": {
+                                            "type": "number",
+                                            "description": "Coefficient of variation upper threshold percentile"
+                                        },
+                                        "morph_opening_radius": {
+                                            "type": "integer",
+                                            "description": "Morph opening radius",
+                                            "exclusiveMinimum": 1
+                                        },
+                                        "min_river_area_px_percentile": {
+                                            "type": "number",
+                                            "description": "Minimum river area percentile"
+                                        },
+                                        "region_grow_iterations": {
+                                            "type": "integer",
+                                            "description": "Region growing iterations"
+                                        },
+                                        "relaxed_backscatter_threshold_percentile": {
+                                            "type": "number",
+                                            "description": "Relaxed backscatter threshold percentile"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -96,5 +146,7 @@
             }
         }
     },
-    "required": ["radiometric_analysis"]
+    "required": [
+        "radiometric_analysis"
+    ]
 }

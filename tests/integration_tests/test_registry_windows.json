@@ -101,6 +101,15 @@
             "config": "",
             "targets": "C:/chopper/reference_dataset/sentinel1d/auxiliaries/dlr_calibration_site_germany.csv",
             "reference_output": "C:/chopper/integration_tests/sct/reference_results/sentinel1D/pt-spectra/pt_spectral_profiles_SLC_PT_SPECTRA.nc"
+        },
+        "river-masking": {
+            "analysis": "radiometry-rain-forest",
+            "product": "C:/chopper/reference_dataset/sentinel1d/products/SLC_RF_RIVERS.SAFE",
+            "config": "C:/chopper/integration_tests/sct/configurations/test_e96a4b3e_config.toml",
+            "reference_output": [
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1D/river-masking/kpi_stats.csv",
+                "C:/chopper/integration_tests/sct/reference_results/sentinel1D/river-masking/RAIN_FOREST_profiles.nc"
+            ]
         }
     }
 }

@@ -35,9 +35,13 @@ class SCTRadiometricAnalysisConfig(AnalysisConfigABC):
         """Convert to dict"""
 
         ra_dict = asdict(self.base_config)
+        prof_ext_config = ra_dict.pop("profile_extraction_parameters")
+        prof_ext_config["river_masking"]["river_masking_mode"] = prof_ext_config["river_masking"][
+            "river_masking_mode"
+        ].name
         ra_dict["advanced_configuration"] = {
             "histogram_parameters": ra_dict.pop("histogram_parameters"),
-            "profile_extraction_parameters": ra_dict.pop("profile_extraction_parameters"),
+            "profile_extraction_parameters": prof_ext_config,
         }
 
         return {self.config_group_name: ra_dict}
