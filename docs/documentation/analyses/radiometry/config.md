@@ -72,6 +72,26 @@ outliers_percentile_boundaries = [20, 90]   # outliers percentile boundaries to 
 
 > :lucide-circle-chevron-right: Refer to the [API documentation](api.md) to learn more about these values and their meaning.
 
+#### River Masking Parameters
+
+This is a sub-subsection of the previous one. It can be specified when the the user wants to configure the river masking algorithm
+that can be used to mask out the river pixels and improve the quality of the analysis for example in Rain Forest products.
+
+```toml title="River Masking Parameters subsection"
+[radiometric_analysis.advanced_configuration.profile_extraction_parameters.river_masking]
+river_masking_mode = "FULL"                     # masking mode, it can be FULL or FAST
+local_stats_window = 10                         # side length of the local stats window
+backscatter_threshold_percentile = 25           # signal percentile threshold to remove low level areas
+cv_lower_threshold_percentile = 20              # coefficient of variation lower threshold percentile
+cv_upper_threshold_percentile = 90              # coefficient of variation upper threshold percentile
+morph_opening_radius = 3                        # morphological cleaning radius to remove small objects
+min_river_area_px_percentile = 99               # threshold on blobs area to be removed
+region_grow_iterations = 13                     # mask region growth iterations
+relaxed_backscatter_threshold_percentile = 35   # threshold for mask blobs growth
+```
+
+> :lucide-circle-chevron-right: Refer to the [API documentation](api.md) to learn more about these values and their meaning.
+
 ### 2D Histograms Parameters
 
 This sub-subsection is used when the the user wants to access low level parameters affecting the computation algorithm
