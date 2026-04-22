@@ -107,6 +107,41 @@ def full_average_elevation_profiles_analysis(
     )
 
 
+def full_rain_forest_analysis(
+    product: Path,
+    output_directory: Path,
+    config: SCTRadiometricAnalysisConfig | None,
+    graphs: bool,
+) -> tuple[Path, Path]:
+    """Full implementation of Rain Forest Analysis.
+
+    Parameters
+    ----------
+    product : Path
+        Path to the product to be analyzed
+    output_directory : Path
+        Path to the output directory
+    config : SCTRadiometricAnalysisConfig | None
+        analysis configuration parameters, if needed
+    graphs : bool
+        flag to enable graphs generation
+
+    Returns
+    -------
+    Path
+        Path to the NetCDF file containing the radiometric profiles
+    Path
+        Path to the CSV file containing the radiometric statistics
+    """
+    return full_average_elevation_profiles_analysis(
+        product=product,
+        output_radiometric_quantity=SARRadiometricQuantity.GAMMA_NOUGHT,
+        output_directory=output_directory,
+        config=config,
+        graphs=graphs,
+    )
+
+
 def full_scalloping_analysis(
     product: Path,
     output_directory: Path,
