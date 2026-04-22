@@ -8,6 +8,12 @@ tags:
 
 # Changelog
 
+## v2.1.3
+
+**Bug Fixing**
+
+- Fixing ``plot_mode`` forwarding in radiometric analysis plots
+
 ## v2.1.2
 
 **Bug Fixing**

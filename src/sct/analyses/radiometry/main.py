@@ -59,10 +59,7 @@ def full_nesz_analysis(
         config=config,
     )
     return _ra_save_and_plot_results(
-        output=output,
-        output_directory=output_directory,
-        graphs_func=graphs_func,
-        tag="NESZ",
+        output=output, output_directory=output_directory, graphs_func=graphs_func, tag="NESZ", plot_mode="min"
     )
 
 
@@ -106,6 +103,7 @@ def full_average_elevation_profiles_analysis(
         output_directory=output_directory,
         graphs_func=graphs_func,
         tag=f"AVERAGE_{output_radiometric_quantity.name}",
+        plot_mode="mean",
     )
 
 
@@ -138,10 +136,7 @@ def full_scalloping_analysis(
     graphs_func = _import_ra_graphs_func(graphs)
     output = sct_scalloping_analysis(product_path=product, config=config)
     return _ra_save_and_plot_results(
-        output=output,
-        output_directory=output_directory,
-        graphs_func=graphs_func,
-        tag="SCALLOPING",
+        output=output, output_directory=output_directory, graphs_func=graphs_func, tag="SCALLOPING", plot_mode="mean"
     )
 
 
@@ -164,6 +159,7 @@ def _ra_save_and_plot_results(
     output_directory: Path,
     graphs_func: Callable,
     tag: str,
+    plot_mode: str,
 ) -> tuple[Path, Path]:
     """Save Radiometric Analysis results to netCDF and plot graphs if required.
 
@@ -177,6 +173,8 @@ def _ra_save_and_plot_results(
         radiometric 2D histogram plot function or None if graphs are not required
     tag : str
         tag referring to the kind of radiometric analysis performed
+    plot_mode : str
+        plot mode to be used for the graphs, min or mean
 
     Returns
     -------
@@ -199,5 +197,6 @@ def _ra_save_and_plot_results(
                 data=item,
                 out_dir=output_directory,
                 title=f"{tag.upper()} Profiles {item.general_info.channel}",
+                plot_mode=plot_mode,
             )
     return netcdf_file, kpi_file
