@@ -18,7 +18,7 @@ def read_antenna_pattern_netcdf(path: Path) -> dict[str, dict[str, xr.Dataset]]:
     """Reading Antenna Pattern data from NetCDF file and returning a dictionary containing the content divided by
     swath and polarization.
 
-    Hierarchy::
+    Hierarchy:
 
         root/
         └── swath
@@ -29,7 +29,7 @@ def read_antenna_pattern_netcdf(path: Path) -> dict[str, dict[str, xr.Dataset]]:
                     ├── azimuth_angles (in deg)
                     └── elevation_angles (in deg)
 
-    .. note::
+    !!! note "Supported Products"
 
         Only Two Way Antenna Patterns are supported, so only one direction group is expected.
 
