@@ -56,7 +56,7 @@ unittest_linux:
     - python3.12 -m nox -s unittest -p ${PYTHON}
   parallel:
     matrix:
-      - PYTHON: ["3.11", "3.12", "3.13"]
+      - PYTHON: ["3.11", "3.12", "3.13", "3.14"]
   extends: .tags_manylinux_2_28_std
   needs: []
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
@@ -102,7 +102,7 @@ integration_test_linux:
     - sct testing test -r ./tests/integration_tests/test_registry_linux.json -out ./test_output --cli
   parallel:
     matrix:
-      - PYTHON: ["3.11", "3.12", "3.13"]
+      - PYTHON: ["3.11", "3.12", "3.13", "3.14"]
   extends: .tags_manylinux_2_28
   needs: []
 
