@@ -33,7 +33,7 @@ dependencies = [
     "arepyextras-quality",
     "arepyextras-perturbations",
     "arepyextras-eo_products",
-    "scipy<1.14"
+    "scipy>=1.14,<2"
 ]
 dynamic = ["version"]
 
