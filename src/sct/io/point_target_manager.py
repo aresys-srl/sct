@@ -43,7 +43,7 @@ def extract_point_target_data_from_source(source: str | Path) -> pd.DataFrame:
     if source.name.endswith(".csv"):
         # external format, .csv template compliant
         point_targets_df = read_csv_point_targets_file(source=source)
-    elif source.name.endswith(".geojson"):
+    elif source.name.endswith("json"):
         ...
     else:
         raise UnsupportedPointTargetSource(f"Invalid source file: {source}")
@@ -74,47 +74,60 @@ def read_csv_point_targets_file(source: Path) -> pd.DataFrame:
     return df
 
 
-def read_geojson_point_targets_file(source: Path) -> pd.DataFrame:
+def read_geojson_point_targets_file(surveys: Path, product_date: PreciseDateTime | None = None) -> pd.DataFrame:
     """Reading the input .geojson file containing Point Target locations and info and converting it to Pandas DataFrame.
 
     Parameters
     ----------
-    source : Path
-        path to the .geojson file
+    surveys : Path
+        path to the surveys .json file
+    product_date : PreciseDateTime | None
+        product acquisition date, this date is needed to select the proper survey data in case several surveys are
+        available, if None, the latest survey is selected, by default None
 
     Returns
     -------
     pd.DataFrame
         Point Targets DataFrame
     """
-    with open(source, "r") as f_in:
-        data = json.load(f_in)
-    data = data["features"]
+    with open(surveys, "r") as f_in:
+        survey_data = json.load(f_in)
+    survey_data = survey_data["features"]
     df = pd.read_csv(csv_template)
-    rows = [dict.fromkeys(df.columns) for _ in range(len(data))]
-    for pt_id, pt in enumerate(data):
-        pt = data[pt_id]
-        rows[pt_id]["longitude_deg"] = pt["geometry"]["coordinates"][0]
-        rows[pt_id]["latitude_deg"] = pt["geometry"]["coordinates"][1]
-        try:
-            rows[pt_id]["altitude_m"] = pt["geometry"]["coordinates"][2]
-        except IndexError:
-            rows[pt_id]["altitude_m"] = 0
-        xyz = llh2xyz(
-            coordinates=np.deg2rad(
-                [rows[pt_id]["latitude_deg"], rows[pt_id]["longitude_deg"], rows[pt_id]["altitude_m"]]
-            )
-        ).squeeze()
-        rows[pt_id]["x_coord_m"], rows[pt_id]["y_coord_m"], rows[pt_id]["z_coord_m"] = xyz
+    rows = [dict.fromkeys(df.columns) for _ in range(len(survey_data))]
+    for pt_id, pt in enumerate(survey_data):
+        pt = survey_data[pt_id]
+        date = [int(d) for d in pt["properties"]["survey_date"].split("-")]
+        rows[pt_id]["target_name"] = pt["properties"]["target_id"]
+        rows[pt_id]["longitude_deg"] = pt["properties"]["lat"]
+        rows[pt_id]["latitude_deg"] = pt["properties"]["lon"]
+        rows[pt_id]["altitude_m"] = pt["properties"]["elevation"]
+        rows[pt_id]["target_type"] = "CR"
+        rows[pt_id]["description"] = pt["properties"]["site_name"]
+        rows[pt_id]["corner_azimuth_deg"] = pt["properties"]["azimuth_angle"]
+        rows[pt_id]["corner_elevation_deg"] = pt["properties"]["boresight_angle"]
+        rows[pt_id]["measurement_date"] = PreciseDateTime.from_numeric_datetime(
+            year=date[0], month=date[1], day=date[2]
+        )
+        rows[pt_id]["validity_start_date"] = rows[pt_id]["measurement_date"]
+        rows[pt_id]["validity_stop_date"] = PreciseDateTime.from_numeric_datetime(year=2099, month=12, day=31)
 
-        for prop in pt["properties"]:
-            if prop in df.columns:
-                if "date" in prop:
-                    rows[pt_id][prop] = PreciseDateTime.from_utc_string(pt["properties"][prop])
-                else:
-                    rows[pt_id][prop] = pt["properties"][prop]
+    df = pd.DataFrame(rows)
 
-    return pd.DataFrame(rows)
+    xyz = llh2xyz(coordinates=df[["longitude_deg", "latitude_deg", "altitude_m"]].to_numpy(dtype=float).T).T
+    df["x_coord_m"] = xyz[:, 0]
+    df["y_coord_m"] = xyz[:, 1]
+    df["z_coord_m"] = xyz[:, 2]
+
+    if product_date is not None:
+        # taking the latest measurement date before the product date
+        df = df.loc[df["measurement_date"] <= product_date]
+        df = df.loc[df.groupby("target_name")["measurement_date"].idxmax()]
+    else:
+        # taking the latest measurement date
+        df = df.loc[df.groupby("target_name")["measurement_date"].idxmax()]
+
+    return df.sort_values("target_name").reset_index(drop=True)
 
 
 def convert_df_to_nominal_point_target(data_df: pd.DataFrame) -> list[PointTarget]:
