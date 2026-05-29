@@ -1,4 +1,4 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""Unittest for RA analysis"""
+"""Radiometric analysis unit tests"""

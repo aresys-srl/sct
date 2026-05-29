@@ -3,10 +3,7 @@
 
 """Testing SCT Interferometric Analysis Configuration"""
 
-import unittest
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
+import pytest
 from jsonschema.exceptions import ValidationError
 from perseo_quality.interferometric_analysis.config import InterferometricConfig
 
@@ -52,82 +49,74 @@ def _validate_inter_config(config: SCTInterferometricAnalysisConfig) -> None:
     assert inter_config.coherence_bins_number == 800
 
 
-class INTERFConfigurationTest(unittest.TestCase):
-    """Test interferometric analysis configuration"""
+def test_full_interferometric_analysis_reading(tmp_path) -> None:
+    """Test interferometric_analysis full configuration reading"""
+    path_to_file = tmp_path.joinpath("test.toml")
+    path_to_file.write_text(interferometric_analysis_toml)
 
-    def test_full_interferometric_analysis_reading(self) -> None:
-        """Test interferometric_analysis full configuration reading"""
-        with TemporaryDirectory() as temp_dir:
-            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-            path_to_file.write_text(interferometric_analysis_toml)
+    config = SCTInterferometricAnalysisConfig.from_toml(path_to_file)
 
-            config = SCTInterferometricAnalysisConfig.from_toml(path_to_file)
-
-        self.assertIsInstance(config, SCTInterferometricAnalysisConfig)
-        _validate_inter_config(config)
-
-    def test_reading_errors_0(self) -> None:
-        """Test reading with errors"""
-        partial_toml = """
-
-        [interferometric_analysis]
-        azimuth_blocks_number = "test"
-        range_blocks_number = 100
-        enable_coherence_computation = true
-        coherence_kernel = [28, 15]
-
-        """
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(partial_toml)
-
-                SCTInterferometricAnalysisConfig.from_toml(path_to_file)
-
-    def test_reading_errors_1(self) -> None:
-        """Test reading with errors"""
-        partial_toml = """
-
-        [interferometric_analysis]
-        azimuth_blocks_number = 10
-        range_blocks_number = 100
-        enable_coherence_computation = true
-        coherence_kernel = 24
-
-        """
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(partial_toml)
-
-                SCTInterferometricAnalysisConfig.from_toml(path_to_file)
-
-    def test_dump_read(self) -> None:
-        """Test full configuration dump to toml and reading"""
-        with TemporaryDirectory() as temp_dir:
-            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-            path_to_file.write_text(interferometric_analysis_toml)
-            path_to_new_file = Path(temp_dir).joinpath("dump").with_suffix(".toml")
-
-            # reading config
-            config = SCTInterferometricAnalysisConfig.from_toml(path_to_file)
-            # dumping config
-            config.to_toml(path_to_new_file)
-
-            # compare config
-            new_config = SCTInterferometricAnalysisConfig.from_toml(path_to_new_file)
-
-        assert new_config == config
-
-    def test_empty_config(self) -> None:
-        """Test empty configuration"""
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(general_config_toml)
-
-                SCTInterferometricAnalysisConfig.from_toml(path_to_file)
+    assert isinstance(config, SCTInterferometricAnalysisConfig)
+    _validate_inter_config(config)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_reading_errors_0(tmp_path) -> None:
+    """Test reading with errors"""
+    partial_toml = """
+
+    [interferometric_analysis]
+    azimuth_blocks_number = "test"
+    range_blocks_number = 100
+    enable_coherence_computation = true
+    coherence_kernel = [28, 15]
+
+    """
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(partial_toml)
+
+        SCTInterferometricAnalysisConfig.from_toml(path_to_file)
+
+
+def test_reading_errors_1(tmp_path) -> None:
+    """Test reading with errors"""
+    partial_toml = """
+
+    [interferometric_analysis]
+    azimuth_blocks_number = 10
+    range_blocks_number = 100
+    enable_coherence_computation = true
+    coherence_kernel = 24
+
+    """
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(partial_toml)
+
+        SCTInterferometricAnalysisConfig.from_toml(path_to_file)
+
+
+def test_dump_read(tmp_path) -> None:
+    """Test full configuration dump to toml and reading"""
+    path_to_file = tmp_path.joinpath("test.toml")
+    path_to_file.write_text(interferometric_analysis_toml)
+    path_to_new_file = tmp_path.joinpath("dump.toml")
+
+    # reading config
+    config = SCTInterferometricAnalysisConfig.from_toml(path_to_file)
+    # dumping config
+    config.to_toml(path_to_new_file)
+
+    # compare config
+    new_config = SCTInterferometricAnalysisConfig.from_toml(path_to_new_file)
+
+    assert new_config == config
+
+
+def test_empty_config(tmp_path) -> None:
+    """Test empty configuration"""
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(general_config_toml)
+
+        SCTInterferometricAnalysisConfig.from_toml(path_to_file)

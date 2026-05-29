@@ -23,6 +23,36 @@ WIN32 = sys.platform == "win32"
 PLATFORM = "win" if WIN32 else "linux"
 
 
+def pytest_executor(session: nox.Session, project: str) -> None:
+    """Executor of pytest from nox session.
+
+    Parameters
+    ----------
+    session : nox.Session
+        nox session
+    project : str
+        project name, with "-" as separator for namespace sub-packages
+    """
+    Path("_build").mkdir(exist_ok=True)
+    project = project.replace("-", "_")
+    session.install("-e", ".[test,web,graphs]", silent=True)
+    # run pytest with coverage and JUnit XML output
+    session.run(
+        "python",
+        "-m",
+        "pytest",
+        "./tests/",
+        f"--junitxml=_build/pytest-report-{PLATFORM}-py{session.python}.xml",
+        f"--cov-report=xml:_build/pytest-coverage-{PLATFORM}-py{session.python}.xml",
+    )
+
+
+def _get_only_file_matching_in_dir(directory: Path, pattern: str):
+    matching_dir_content = list(directory.glob(pattern))
+    assert len(matching_dir_content) == 1
+    return matching_dir_content[0]
+
+
 @nox.session()
 def fix_format(session: nox.Session):
     """Reformat code base with ruff"""
@@ -64,32 +94,10 @@ def pylint(session: nox.Session):
 
 
 @nox.session(python=PY_VERSIONS)
-def unittest(session: nox.Session):
-    """Execute unittest"""
-    Path("_build").mkdir(exist_ok=True)
-
-    session.install("-e", ".[web,test,graph]")
-    session.run(
-        "python",
-        "-m",
-        "coverage",
-        "run",
-        "--source=sct",
-        "-m",
-        "xmlrunner",
-        "--output-file",
-        f"_build/unittest-report-{PLATFORM}-py{session.python}.xml",
-        "discover",
-    )
-    session.run("python", "-m", "coverage", "report", "-m")
-    session.run(
-        "python",
-        "-m",
-        "coverage",
-        "xml",
-        "-o",
-        f"_build/unittest-coverage-{PLATFORM}-py{session.python}.xml",
-    )
+def pytest(session: nox.Session):
+    """Module testing with pytest"""
+    cwd = Path.cwd()
+    pytest_executor(session, project=cwd.name)
 
 
 @nox.session()
@@ -104,12 +112,6 @@ def build_wheel(session: nox.Session):
     """Build wheel distribution package"""
     session.install("build")
     session.run("python", "-m", "build", "--wheel", silent=True)
-
-
-def _get_only_file_matching_in_dir(directory: Path, pattern: str):
-    matching_dir_content = list(directory.glob(pattern))
-    assert len(matching_dir_content) == 1
-    return matching_dir_content[0]
 
 
 @nox.session(venv_backend="conda", python="3.11")

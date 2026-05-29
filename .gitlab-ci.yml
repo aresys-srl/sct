@@ -53,7 +53,7 @@ unittest_linux:
   stage: test
   script:
     - python3.12 -m pip install nox
-    - python3.12 -m nox -s unittest -p ${PYTHON}
+    - python3.12 -m nox -s pytest -p ${PYTHON}
   parallel:
     matrix:
       - PYTHON: ["3.11", "3.12", "3.13", "3.14"]
@@ -63,10 +63,10 @@ unittest_linux:
   artifacts:
     reports:
       junit:
-        - _build/unittest-report-*.xml
+        - _build/pytest-report-*.xml
       coverage_report:
         coverage_format: cobertura
-        path: _build/unittest-coverage-*.xml
+        path: _build/pytest-coverage-*.xml
 
 unittest_win:
   stage: test
@@ -75,7 +75,7 @@ unittest_win:
     - conda create -y -n testing python=${PYTHON}
     - conda activate testing
     - python -m pip install nox
-    - python -m nox -s unittest -p ${PYTHON}
+    - python -m nox -s pytest -p ${PYTHON}
   parallel:
     matrix:
       - PYTHON: ["3.11", "3.12", "3.13"]
@@ -85,10 +85,10 @@ unittest_win:
   artifacts:
     reports:
       junit:
-        - _build/unittest-report-*.xml
+        - _build/pytest-report-*.xml
       coverage_report:
         coverage_format: cobertura
-        path: _build/unittest-coverage-*.xml
+        path: _build/pytest-coverage-*.xml
 
 # === test - integration =====================================================
 # ============================================================================
@@ -154,7 +154,6 @@ doc:
   extends:
     - .tags_manylinux_2_28_std
   script:
-    - yum install -y pandoc
     - python3.12 -m pip install nox
     - python3.12 -m nox -s build_doc
   needs: []

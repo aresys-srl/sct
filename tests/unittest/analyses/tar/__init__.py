@@ -1,4 +1,4 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""Unittest for TAR analysis"""
+"""Target ambiguity ratio analysis unit tests"""

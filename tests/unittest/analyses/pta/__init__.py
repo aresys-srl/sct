@@ -1,4 +1,4 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""Unittest for PTA analysis"""
+"""Point Target analysis unit tests"""

@@ -3,10 +3,7 @@
 
 """Testing SCT Target Ambiguity Ratio Analysis Configuration"""
 
-import unittest
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
+import pytest
 from jsonschema.exceptions import ValidationError
 
 from sct.analyses.ambiguity_ratio.config import SCTTargetAmbiguityRatioConfig
@@ -45,62 +42,54 @@ def _validate_ambiguity_config(config: SCTTargetAmbiguityRatioConfig) -> None:
     assert config.base_config.cropping_size == (150, 120)
 
 
-class TARConfigurationTest(unittest.TestCase):
-    """Test target ambiguity ratio analysis configuration"""
+def test_full_ambiguity_ratio_analysis_reading(tmp_path) -> None:
+    """Test ambiguity_ratio_analysis full configuration reading"""
+    path_to_file = tmp_path.joinpath("test.toml")
+    path_to_file.write_text(ambiguity_ratio_analysis_toml)
 
-    def test_full_ambiguity_ratio_analysis_reading(self) -> None:
-        """Test ambiguity_ratio_analysis full configuration reading"""
-        with TemporaryDirectory() as temp_dir:
-            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-            path_to_file.write_text(ambiguity_ratio_analysis_toml)
+    config = SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
 
-            config = SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
-
-        self.assertIsInstance(config, SCTTargetAmbiguityRatioConfig)
-        _validate_ambiguity_config(config)
-
-    def test_reading_errors_0(self) -> None:
-        """Test reading with errors"""
-        partial_toml = """
-
-        [ambiguity_ratio_analysis]
-        interpolation_factor = 16
-        cropping_size = [150, 120, 300]
-
-        """
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(partial_toml)
-
-                SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
-
-    def test_dump_read(self) -> None:
-        """Test full configuration dump to toml and reading"""
-        with TemporaryDirectory() as temp_dir:
-            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-            path_to_file.write_text(ambiguity_ratio_analysis_toml)
-            path_to_new_file = Path(temp_dir).joinpath("dump").with_suffix(".toml")
-
-            # reading config
-            config = SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
-            # dumping config
-            config.to_toml(path_to_new_file)
-
-            # compare config
-            new_config = SCTTargetAmbiguityRatioConfig.from_toml(path_to_new_file)
-
-        assert new_config == config
-
-    def test_empty_config(self) -> None:
-        """Test empty configuration"""
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(general_config_toml)
-
-                SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
+    assert isinstance(config, SCTTargetAmbiguityRatioConfig)
+    _validate_ambiguity_config(config)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_reading_errors_0(tmp_path) -> None:
+    """Test reading with errors"""
+    partial_toml = """
+
+    [ambiguity_ratio_analysis]
+    interpolation_factor = 16
+    cropping_size = [150, 120, 300]
+
+    """
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(partial_toml)
+
+        SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
+
+
+def test_dump_read(tmp_path) -> None:
+    """Test full configuration dump to toml and reading"""
+    path_to_file = tmp_path.joinpath("test.toml")
+    path_to_file.write_text(ambiguity_ratio_analysis_toml)
+    path_to_new_file = tmp_path.joinpath("dump.toml")
+
+    # reading config
+    config = SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)
+    # dumping config
+    config.to_toml(path_to_new_file)
+
+    # compare config
+    new_config = SCTTargetAmbiguityRatioConfig.from_toml(path_to_new_file)
+
+    assert new_config == config
+
+
+def test_empty_config(tmp_path) -> None:
+    """Test empty configuration"""
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(general_config_toml)
+
+        SCTTargetAmbiguityRatioConfig.from_toml(path_to_file)

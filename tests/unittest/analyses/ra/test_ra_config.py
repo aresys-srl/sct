@@ -3,10 +3,7 @@
 
 """Testing SCT Radiometric Analysis Configuration"""
 
-import unittest
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
+import pytest
 from jsonschema.exceptions import ValidationError
 from perseo_quality.radiometric_analysis.block_wise.config import (
     ProfileExtractionParameters,
@@ -76,79 +73,71 @@ def _validate_ra_config(config: SCTRadiometricAnalysisConfig) -> None:
     assert profile_config.outliers_kernel_size == (1, 1)
 
 
-class RAConfigurationTest(unittest.TestCase):
-    """Test radiometric analysis configuration"""
+def test_full_radiometric_analysis_reading(tmp_path) -> None:
+    """Test radiometric_analysis full configuration reading"""
+    path_to_file = tmp_path.joinpath("test.toml")
+    path_to_file.write_text(radiometric_analysis_toml)
 
-    def test_full_radiometric_analysis_reading(self) -> None:
-        """Test radiometric_analysis full configuration reading"""
-        with TemporaryDirectory() as temp_dir:
-            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-            path_to_file.write_text(radiometric_analysis_toml)
+    config = SCTRadiometricAnalysisConfig.from_toml(path_to_file)
 
-            config = SCTRadiometricAnalysisConfig.from_toml(path_to_file)
-
-        self.assertIsInstance(config, SCTRadiometricAnalysisConfig)
-        _validate_ra_config(config)
-
-    def test_reading_errors_0(self) -> None:
-        """Test reading with errors"""
-        partial_toml = """
-
-        [radiometric_analysis]
-        azimuth_block_size = "test"
-        range_pixel_margin = 800
-
-        """
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(partial_toml)
-
-                SCTRadiometricAnalysisConfig.from_toml(path_to_file)
-
-    def test_reading_errors_1(self) -> None:
-        """Test reading with errors"""
-        partial_toml = """
-
-        [radiometric_analysis.advanced_configuration.histogram_parameters]
-        x_bins_step = 10
-        y_bins_num = [10, 10]
-        y_bins_center_margin = 3
-
-        """
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(partial_toml)
-
-                SCTRadiometricAnalysisConfig.from_toml(path_to_file)
-
-    def test_dump_read(self) -> None:
-        """Test full configuration dump to toml and reading"""
-        with TemporaryDirectory() as temp_dir:
-            path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-            path_to_file.write_text(radiometric_analysis_toml)
-            path_to_new_file = Path(temp_dir).joinpath("dump").with_suffix(".toml")
-
-            # reading config
-            config = SCTRadiometricAnalysisConfig.from_toml(path_to_file)
-            # dumping config
-            config.to_toml(path_to_new_file)
-
-            # compare config
-            new_config = SCTRadiometricAnalysisConfig.from_toml(path_to_new_file)
-
-        assert new_config == config
-
-    def test_empty_config(self) -> None:
-        """Test empty configuration"""
-        with self.assertRaises(ValidationError):
-            with TemporaryDirectory() as temp_dir:
-                path_to_file = Path(temp_dir).joinpath("test").with_suffix(".toml")
-                path_to_file.write_text(general_config_toml)
-
-                SCTRadiometricAnalysisConfig.from_toml(path_to_file)
+    assert isinstance(config, SCTRadiometricAnalysisConfig)
+    _validate_ra_config(config)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_reading_errors_0(tmp_path) -> None:
+    """Test reading with errors"""
+    partial_toml = """
+
+    [radiometric_analysis]
+    azimuth_block_size = "test"
+    range_pixel_margin = 800
+
+    """
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(partial_toml)
+
+        SCTRadiometricAnalysisConfig.from_toml(path_to_file)
+
+
+def test_reading_errors_1(tmp_path) -> None:
+    """Test reading with errors"""
+    partial_toml = """
+
+    [radiometric_analysis.advanced_configuration.histogram_parameters]
+    x_bins_step = 10
+    y_bins_num = [10, 10]
+    y_bins_center_margin = 3
+
+    """
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(partial_toml)
+
+        SCTRadiometricAnalysisConfig.from_toml(path_to_file)
+
+
+def test_dump_read(tmp_path) -> None:
+    """Test full configuration dump to toml and reading"""
+    path_to_file = tmp_path.joinpath("test.toml")
+    path_to_file.write_text(radiometric_analysis_toml)
+    path_to_new_file = tmp_path.joinpath("dump.toml")
+
+    # reading config
+    config = SCTRadiometricAnalysisConfig.from_toml(path_to_file)
+    # dumping config
+    config.to_toml(path_to_new_file)
+
+    # compare config
+    new_config = SCTRadiometricAnalysisConfig.from_toml(path_to_new_file)
+
+    assert new_config == config
+
+
+def test_empty_config(tmp_path) -> None:
+    """Test empty configuration"""
+    with pytest.raises(ValidationError):
+        path_to_file = tmp_path.joinpath("test.toml")
+        path_to_file.write_text(general_config_toml)
+
+        SCTRadiometricAnalysisConfig.from_toml(path_to_file)

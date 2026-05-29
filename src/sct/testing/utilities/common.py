@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+__test__ = False
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -15,6 +17,7 @@ from typer.testing import CliRunner
 class TestOutput:
     """Test output definition"""
 
+    __test__ = False
     csv_results: Path | None = None
     netcdf_results: Path | None = None
 
@@ -23,12 +26,14 @@ class TestOutput:
 class ReferenceOutput:
     """Reference output definition"""
 
+    __test__ = False
     csv_reference: Path | None = None
     netcdf_reference: Path | None = None
 
 
 @dataclass
 class TestParams:
+    __test__ = False
     """Tests input parameters setup"""
 
     analysis: str | None = None
