@@ -134,6 +134,27 @@ def test_dump_read(tmp_path) -> None:
     assert new_config == config
 
 
+def test_from_dict():
+    config = SCTRadiometricAnalysisConfig.from_dict({"azimuth_block_size": 23, "range_pixel_margin": 800})
+    assert isinstance(config, SCTRadiometricAnalysisConfig)
+    assert config.base_config.azimuth_block_size == 23
+
+
+def test_to_dict():
+    config = SCTRadiometricAnalysisConfig()
+    d = config.to_dict()
+    assert "radiometric_analysis" in d
+    assert "advanced_configuration" in d["radiometric_analysis"]
+
+
+def test_to_dict_with_advanced_configuration():
+    config = SCTRadiometricAnalysisConfig()
+    d = config.to_dict()
+    adv = d["radiometric_analysis"]["advanced_configuration"]
+    assert "histogram_parameters" in adv
+    assert "profile_extraction_parameters" in adv
+
+
 def test_empty_config(tmp_path) -> None:
     """Test empty configuration"""
     with pytest.raises(ValidationError):

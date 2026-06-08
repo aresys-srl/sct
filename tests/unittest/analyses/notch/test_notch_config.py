@@ -87,6 +87,18 @@ def test_dump_read(tmp_path) -> None:
     assert new_config == config
 
 
+def test_from_dict():
+    config = SCTElevationNotchAnalysisConfig.from_dict({"azimuth_block_size": 2500, "range_pixel_margin": 100})
+    assert isinstance(config, SCTElevationNotchAnalysisConfig)
+    assert config.base_config.azimuth_block_size == 2500
+
+
+def test_to_dict():
+    config = SCTElevationNotchAnalysisConfig()
+    d = config.to_dict()
+    assert "elevation_notch_analysis" in d
+
+
 def test_empty_config(tmp_path) -> None:
     """Test empty configuration"""
     with pytest.raises(ValidationError):

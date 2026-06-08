@@ -18,6 +18,11 @@ tags:
 
 - Radiometric Analysis: adding configuration for `River Masking` in Rain Forest analysis
 - Radiometric Analysis: adding Rain Forest full implementation function
+- Added support for SARCalNet calibration sites survey json files
+
+**Other Changes**
+
+- Unit testing framework changed to pytest
 
 ## v2.1.2
 

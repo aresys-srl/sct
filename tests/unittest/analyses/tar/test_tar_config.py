@@ -86,6 +86,21 @@ def test_dump_read(tmp_path) -> None:
     assert new_config == config
 
 
+def test_from_dict():
+    config = SCTTargetAmbiguityRatioConfig.from_dict({"interpolation_factor": 16, "cropping_size": [150, 120]})
+    assert isinstance(config, SCTTargetAmbiguityRatioConfig)
+    assert config.base_config.interpolation_factor == 16
+    assert config.base_config.cropping_size == (150, 120)
+
+
+def test_to_dict():
+    config = SCTTargetAmbiguityRatioConfig()
+    d = config.to_dict()
+    assert "ambiguity_ratio_analysis" in d
+    assert "interpolation_factor" in d["ambiguity_ratio_analysis"]
+    assert "cropping_size" in d["ambiguity_ratio_analysis"]
+
+
 def test_empty_config(tmp_path) -> None:
     """Test empty configuration"""
     with pytest.raises(ValidationError):

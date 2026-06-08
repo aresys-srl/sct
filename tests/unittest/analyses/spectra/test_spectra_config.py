@@ -7,6 +7,7 @@ import pytest
 from jsonschema.exceptions import ValidationError
 
 from sct.analyses.spectra.config import SCTSpectralAnalysisConfig
+from sct.configuration.common import InvalidConfigurationFile
 
 general_config_toml = """
 
@@ -82,6 +83,24 @@ def test_dump_read(tmp_path) -> None:
     new_config = SCTSpectralAnalysisConfig.from_toml(path_to_new_file)
 
     assert new_config == config
+
+
+def test_from_dict():
+    config = SCTSpectralAnalysisConfig.from_dict({"cropping_size": [200, 120], "azimuth_block_size": 1500})
+    assert isinstance(config, SCTSpectralAnalysisConfig)
+    assert config.cropping_size == (200, 120)
+    assert config.azimuth_block_size == 1500
+
+
+def test_from_dict_invalid_key():
+    with pytest.raises(InvalidConfigurationFile, match="not supported"):
+        SCTSpectralAnalysisConfig.from_dict({"invalid_key": True})
+
+
+def test_to_dict():
+    config = SCTSpectralAnalysisConfig()
+    d = config.to_dict()
+    assert "spectral_analysis" in d
 
 
 def test_empty_config(tmp_path) -> None:

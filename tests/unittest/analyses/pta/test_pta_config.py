@@ -12,7 +12,13 @@ from perseo_perturbations.atmospheric.troposphere import TroposphericGRIDResolut
 from perseo_quality.core.generic_dataclasses import MaskingMethod
 from perseo_quality.point_targets_analysis.config import IRFParameters, PointTargetAnalysisConfig, RCSParameters
 
-from sct.analyses.point_target.config import SCTPointTargetAnalysisConfig
+from sct.analyses.point_target.config import (
+    IonosphericCorrectionsConf,
+    SCTPointTargetAnalysisConfig,
+    SCTPointTargetAnalysisCorrectionsConf,
+    TroposphericCorrectionsConf,
+)
+from sct.configuration.common import InvalidConfigurationFile
 
 general_config_toml = """
 
@@ -171,6 +177,139 @@ def test_dump_read(tmp_path) -> None:
     new_config = SCTPointTargetAnalysisConfig.from_toml(path_to_new_file)
 
     assert new_config == config
+
+
+def test_from_dict():
+    config = SCTPointTargetAnalysisConfig.from_dict(
+        {
+            "perform_irf": False,
+            "perform_rcs": True,
+            "evaluate_pslr": False,
+            "evaluate_islr": True,
+            "evaluate_sslr": False,
+            "evaluate_localization": True,
+            "ale_validity_limits": [99, 99],
+        }
+    )
+    assert isinstance(config, SCTPointTargetAnalysisConfig)
+    assert config.base_config.perform_irf is False
+    assert config.base_config.perform_rcs is True
+    assert config.base_config.ale_limits == (99, 99)
+
+
+def test_from_dict_invalid_key():
+    with pytest.raises(InvalidConfigurationFile, match="not supported"):
+        SCTPointTargetAnalysisConfig.from_dict({"invalid_key": True})
+
+
+def test_to_dict():
+    config = SCTPointTargetAnalysisConfig()
+    d = config.to_dict()
+    assert "point_target_analysis" in d
+
+
+def test_ionospheric_corrections_conf_from_dict():
+    config = IonosphericCorrectionsConf.from_dict({"maps_directory": "test_dir", "analysis_center": "jpl"})
+    assert config.maps_directory == Path("test_dir")
+    assert config.analysis_center == IonosphericAnalysisCenters.JPL
+
+
+def test_ionospheric_corrections_conf_from_dict_missing_required():
+    with pytest.raises(InvalidConfigurationFile, match="required"):
+        IonosphericCorrectionsConf.from_dict({"analysis_center": "jpl"})
+
+
+def test_ionospheric_corrections_conf_from_dict_unrecognized():
+    with pytest.raises(InvalidConfigurationFile, match="not supported"):
+        IonosphericCorrectionsConf.from_dict({"maps_directory": "test", "bad_key": True})
+
+
+def test_ionospheric_corrections_conf_to_dict():
+    config = IonosphericCorrectionsConf(maps_directory=Path("test"), analysis_center=IonosphericAnalysisCenters.JPL)
+    d = config.to_dict()
+    assert d["maps_directory"] == "test"
+    assert d["analysis_center"] == "jpl"
+
+
+def test_tropospheric_corrections_conf_from_dict():
+    config = TroposphericCorrectionsConf.from_dict({"maps_directory": "test_dir", "map_grid_resolution": "fine"})
+    assert config.maps_directory == Path("test_dir")
+    assert config.map_grid_resolution == TroposphericGRIDResolution.FINE
+
+
+def test_tropospheric_corrections_conf_from_dict_missing_required():
+    with pytest.raises(InvalidConfigurationFile, match="required"):
+        TroposphericCorrectionsConf.from_dict({"map_grid_resolution": "fine"})
+
+
+def test_tropospheric_corrections_conf_from_dict_unrecognized():
+    with pytest.raises(InvalidConfigurationFile, match="not supported"):
+        TroposphericCorrectionsConf.from_dict({"maps_directory": "test", "bad_key": True})
+
+
+def test_tropospheric_corrections_conf_to_dict():
+    config = TroposphericCorrectionsConf(
+        maps_directory=Path("test"), map_grid_resolution=TroposphericGRIDResolution.FINE
+    )
+    d = config.to_dict()
+    assert d["maps_directory"] == "test"
+    assert d["map_grid_resolution"] == "fine"
+
+
+def test_pta_corrections_conf_from_dict():
+    config = SCTPointTargetAnalysisCorrectionsConf.from_dict(
+        {
+            "enable_solid_tides_correction": False,
+            "enable_ionospheric_correction": True,
+            "ionosphere": {"maps_directory": "iono_dir", "analysis_center": "jpl"},
+            "troposphere": {"maps_directory": "tropo_dir"},
+        }
+    )
+    assert config.enable_solid_tides_correction is False
+    assert config.ionosphere.maps_directory == Path("iono_dir")
+    assert config.troposphere.maps_directory == Path("tropo_dir")
+
+
+def test_pta_corrections_conf_from_dict_invalid_key():
+    with pytest.raises(InvalidConfigurationFile, match="not supported"):
+        SCTPointTargetAnalysisCorrectionsConf.from_dict({"bad_key": True})
+
+
+def test_pta_corrections_conf_to_dict():
+    config = SCTPointTargetAnalysisCorrectionsConf(
+        enable_ionospheric_correction=True,
+        ionosphere=IonosphericCorrectionsConf(
+            maps_directory=Path("iono"), analysis_center=IonosphericAnalysisCenters.JPL
+        ),
+    )
+    d = config.to_dict()
+    assert d["enable_ionospheric_correction"] is True
+    assert d["ionosphere"]["maps_directory"] == "iono"
+    assert d["ionosphere"]["analysis_center"] == "jpl"
+
+
+def test_base_config_to_dict():
+    config = SCTPointTargetAnalysisConfig()
+    d = SCTPointTargetAnalysisConfig.base_config_to_dict(config.base_config)
+    assert "advanced_configuration" in d
+    assert "irf_parameters" in d["advanced_configuration"]
+    assert "rcs_parameters" in d["advanced_configuration"]
+
+
+def test_base_config_from_dict():
+    arg = {
+        "perform_irf": True,
+        "perform_rcs": False,
+        "ale_validity_limits": [50, 50],
+        "advanced_configuration": {
+            "irf_parameters": {"peak_finding_roi_size": [1, 1], "analysis_roi_size": [2, 2]},
+            "rcs_parameters": {"interpolation_factor": 8, "roi_dimension": 128},
+        },
+    }
+    pta_config = SCTPointTargetAnalysisConfig.base_config_from_dict(arg)
+    assert pta_config.perform_irf is True
+    assert pta_config.perform_rcs is False
+    assert pta_config.ale_limits == (50, 50)
 
 
 def test_empty_config(tmp_path) -> None:

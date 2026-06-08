@@ -113,6 +113,33 @@ def test_dump_read(tmp_path) -> None:
     assert new_config == config
 
 
+def test_from_dict():
+    config = SCTInterferometricAnalysisConfig.from_dict(
+        {
+            "azimuth_blocks_number": 1000,
+            "range_blocks_number": 100,
+            "enable_coherence_computation": True,
+            "coherence_kernel": [28, 15],
+            "coherence_bins_number": 800,
+        }
+    )
+    assert isinstance(config, SCTInterferometricAnalysisConfig)
+    assert config.base_config.azimuth_blocks_number == 1000
+
+
+def test_to_dict():
+    config = SCTInterferometricAnalysisConfig()
+    d = config.to_dict()
+    assert "interferometric_analysis" in d
+
+
+def test_to_dict_scalar_coherence_kernel():
+    config = SCTInterferometricAnalysisConfig()
+    config.base_config.coherence_kernel = 16
+    d = config.to_dict()
+    assert d["interferometric_analysis"]["coherence_kernel"] == (16, 16)
+
+
 def test_empty_config(tmp_path) -> None:
     """Test empty configuration"""
     with pytest.raises(ValidationError):
