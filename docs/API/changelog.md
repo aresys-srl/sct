@@ -23,6 +23,8 @@ tags:
 **Other Changes**
 
 - Unit testing framework changed to pytest
+- Increasing unit test code coverage
+- Adapting to latest implementation of Ambiguity Ratio Analysis in `perseo-quality>=1.0.16`
 
 ## v2.1.2
 
