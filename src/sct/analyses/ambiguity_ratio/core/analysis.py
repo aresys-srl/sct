@@ -8,7 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from perseo_quality.tar_analysis.analysis import point_target_ambiguity_ratio_analysis
-from perseo_quality.tar_analysis.custom_dataclasses import AmbiguityRatioOutput
+from perseo_quality.tar_analysis.custom_dataclasses import PointTargetAmbiguityRatioDataOutput
 
 from sct.analyses.ambiguity_ratio.config import SCTTargetAmbiguityRatioConfig
 from sct.configuration.logger import sct_logger
@@ -18,7 +18,7 @@ from sct.io.point_target_manager import convert_df_to_nominal_point_target, extr
 
 def sct_point_target_ambiguity_ratio_analysis(
     product_path: str | Path, external_target_source: str | Path, config: SCTTargetAmbiguityRatioConfig | None = None
-) -> list[AmbiguityRatioOutput]:
+) -> list[PointTargetAmbiguityRatioDataOutput]:
     """Point Target Ambiguity Ratio Analysis performed on the input product.
 
     Parameters
@@ -32,8 +32,8 @@ def sct_point_target_ambiguity_ratio_analysis(
 
     Returns
     -------
-    list[AmbiguityRatioOutput]
-        list of AmbiguityRatioOutput analysis output, one for each product channel and each Point Target
+    list[PointTargetAmbiguityRatioDataOutput]
+        list of PointTargetAmbiguityRatioDataOutput analysis output, one for each product channel and each Point Target
     """
     # Input parameters analysis
     product_path = Path(product_path)

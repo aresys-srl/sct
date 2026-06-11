@@ -14,7 +14,7 @@ dependencies = [
     "shapely",
     "art",
     "arepytools>=1.7.2",
-    "perseo-quality>=1.0.12",
+    "perseo-quality>=1.0.16",
     "perseo-perturbations",
     "numba>=0.61",
     "typer>=0.24.1",
