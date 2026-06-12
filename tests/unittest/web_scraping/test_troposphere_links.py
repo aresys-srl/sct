@@ -1,6 +1,6 @@
 """Testing troposphere downloader helper functions"""
 
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime
 from perseo_perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 
 from sct.web_scraping.troposphere_maps_downloader import _generate_download_link_vmf

@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from perseo_core.geometry.navigation import Trajectory
 from perseo_quality.core.signal_processing import convert_to_db
 from perseo_quality.point_targets_analysis.rcs_geometric_computation import (
     compute_elevation_azimuth_wrt_enu,
@@ -28,7 +29,6 @@ from sct.io.extended_protocols import SCTInputProduct
 from sct.plugins.protocols import AbsoluteLocalizationErrorCorrector
 
 if TYPE_CHECKING:
-    from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
     from perseo_quality.io.quality_input_protocol import ChannelData
 
 # TODO: should this be here? move to PERSEO maybe?
@@ -88,7 +88,7 @@ def _compute_theoretical_rcs(
     data_df: pd.DataFrame,
     point_targets_df: pd.DataFrame,
     carrier_frequency_hz: float,
-    trajectory: TwiceDifferentiable3DCurve,
+    trajectory: Trajectory,
 ) -> list:
     """Compute theoretical RCS for each point target in the data frame.
 
@@ -103,7 +103,7 @@ def _compute_theoretical_rcs(
         Database with information on each target
     carrier_frequency_hz : float
         Carrier frequency of the radar signal impinging on the target
-    trajectory : TwiceDifferentiable3DCurve
+    trajectory : Trajectory
         Trajectory of the satellite observing the target
 
     Returns
@@ -122,7 +122,7 @@ def _compute_theoretical_rcs(
         azimuth_bore_enu = np.deg2rad(curr_point_target["corner_azimuth_deg"].iloc[0])
 
         try:
-            sensor_position_at_zd = trajectory.evaluate(row["peak_azimuth_time_[UTC]"])
+            sensor_position_at_zd = trajectory.position(row["peak_azimuth_time_[UTC]"])
             cr_position = curr_point_target[["x_coord_m", "y_coord_m", "z_coord_m"]].to_numpy().squeeze()
 
             cr_rcs_m2 = _compute_theoretical_rcs_core(

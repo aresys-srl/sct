@@ -5,7 +5,7 @@
 
 import numpy as np
 import pandas as pd
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime
 from scipy.constants import speed_of_light
 
 from sct.analyses.point_target.core.utilities import _compute_theoretical_rcs
@@ -20,7 +20,7 @@ def test_compute_theoretical_rcs(mocker):
     carrier_frequency_hz = speed_of_light / 0.055
 
     class _TestTrajectory:
-        def evaluate(self, _):
+        def position(self, _):
             return None
 
     columns_pt = [

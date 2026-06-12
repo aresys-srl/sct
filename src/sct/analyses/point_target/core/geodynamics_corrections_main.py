@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime
 
 from sct.analyses.point_target.core.geodynamics_corrections_core import (
     PlateTectonicsInput,

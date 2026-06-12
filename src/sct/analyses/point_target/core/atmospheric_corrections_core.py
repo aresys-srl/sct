@@ -9,9 +9,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
-from arepytools.geometry.inverse_geocoding_core import inverse_geocoding_monostatic_core
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.geometry.geocoding import inverse_geocoding_monostatic
+from perseo_core.geometry.navigation import Trajectory
+from perseo_core.timing import PreciseDateTime
 from perseo_perturbations.atmospheric import ionosphere, troposphere
 
 
@@ -42,7 +42,7 @@ class TroposphereInput:
 
 def compute_atmospheric_delays(
     target_coords: np.ndarray,
-    trajectory: TwiceDifferentiable3DCurve,
+    trajectory: Trajectory,
     az_time: PreciseDateTime,
     fc_hz: float,
     ionosphere_input: IonosphericInput | None,
@@ -55,7 +55,7 @@ def compute_atmospheric_delays(
     ----------
     target_coords : np.ndarray
         input coordinates xyz, in the form (3,) or (N, 3)
-    trajectory : TwiceDifferentiable3DCurve
+    trajectory : Trajectory
         sensor trajectory
     az_time : PreciseDateTime
         azimuth time corresponding to the product acquisition time
@@ -78,14 +78,14 @@ def compute_atmospheric_delays(
     assert ionosphere_input or troposphere_input
 
     # computing sensor position at which the ground point targets are seen
-    az_times, _ = inverse_geocoding_monostatic_core(
+    az_times, _ = inverse_geocoding_monostatic(
         trajectory=trajectory,
         ground_points=target_coords,
-        initial_guesses=az_time,
-        frequencies_doppler_centroid=0,
+        doppler_frequencies=0,
         wavelength=1,
+        az_initial_time_guesses=az_time,
     )
-    sat_pos = trajectory.evaluate(az_times)
+    sat_pos = trajectory.position(az_times)
 
     ionospheric_delay: np.ndarray | None = None
     if ionosphere_input:

@@ -78,7 +78,7 @@ def test_update_results_with_theoretical_rcs(monkeypatch):
     )
 
     class MockTrajectory:
-        def evaluate(self, _):
+        def position(self, _):
             return np.array([0, 0, 0])
 
     class MockChannelData:

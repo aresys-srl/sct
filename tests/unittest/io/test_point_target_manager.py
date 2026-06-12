@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime
 
 from sct.io.point_target_manager import (
     UnsupportedPointTargetSource,

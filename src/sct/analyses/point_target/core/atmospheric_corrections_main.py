@@ -9,8 +9,8 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
-from arepytools.geometry.curve_protocols import TwiceDifferentiable3DCurve
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.geometry.navigation import Trajectory
+from perseo_core.timing import PreciseDateTime
 
 from sct.analyses.point_target.config import SCTPointTargetAnalysisCorrectionsConf
 from sct.analyses.point_target.core.atmospheric_corrections_core import (
@@ -25,7 +25,7 @@ from sct.configuration.logger import sct_logger
 class AtmosphericDelaysAcquisitionInfo:
     """Acquisition information required for computing atmospheric delays"""
 
-    trajectory: TwiceDifferentiable3DCurve
+    trajectory: Trajectory
     azimuth_time: PreciseDateTime
     carrier_frequency: float
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime
 from perseo_perturbations.geodynamics import plate_tectonics, solid_tides
 
 from sct.configuration.logger import sct_logger

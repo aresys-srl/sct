@@ -7,7 +7,7 @@ import sys
 from enum import Enum
 from pathlib import Path
 
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime
 from perseo_perturbations.atmospheric.troposphere import (
     TroposphericGRIDResolution,
     TroposphericMapModel,

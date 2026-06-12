@@ -1,5 +1,5 @@
 {% set name = "sct" %}
-{% set version = "2.0.0" %}
+{% set version = "2.2.0" %}
 
 package:
   name: {{ name|lower }}
@@ -26,15 +26,19 @@ requirements:
   run:
     - python >=3.11
     - numpy >2
-    - scipy
-    - pandas
+    - scipy >1.13
+    - pandas >=1.4.0
+    - xarray
+    - numba >=0.61
+    - shapely
     - jsonschema
     - toml
-    - shapely
-    - ascii-art
-    - arepytools >=1.7.2
-    - perseo-quality
-    - perseo-perturbations
+    - stevedore >=5.7.0
+    - typer >=0.24.1
+    - art
+    - perseo-quality >=1.1.0
+    - perseo-perturbations >=1.1.0
+    - perseo-core >=1.0.0
 
 test:
   imports:

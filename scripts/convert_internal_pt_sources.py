@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+#NOTE: do not change these, this must be a reference to the Arepytools package
 from arepytools.geometry.conversions import llh2xyz, xyz2llh
 from arepytools.io import PointSetProduct, read_point_targets_file
 from perseo_quality.core.signal_processing import convert_to_db

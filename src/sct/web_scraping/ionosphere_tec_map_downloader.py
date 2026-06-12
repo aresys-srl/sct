@@ -5,8 +5,7 @@
 
 from pathlib import Path
 
-from arepytools.timing.conversions import date_to_gps_week
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime, date_to_gps_week
 from perseo_perturbations.atmospheric import GPS_WEEK_REFERENCE
 from perseo_perturbations.atmospheric.ionosphere import (
     IonosphericAnalysisCenters,

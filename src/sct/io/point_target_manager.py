@@ -10,8 +10,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from arepytools.geometry.conversions import llh2xyz
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.geometry.coordinates import llh2xyz
+from perseo_core.timing import PreciseDateTime
 from perseo_quality.io.point_targets import PointTarget
 
 from sct.resources import csv_template
@@ -111,7 +111,7 @@ def read_geojson_point_targets_file(surveys: Path, product_date: PreciseDateTime
 
     df = pd.DataFrame(rows)
 
-    xyz = llh2xyz(coordinates=df[["longitude_deg", "latitude_deg", "altitude_m"]].to_numpy(dtype=float).T).T
+    xyz = llh2xyz(coordinates=df[["longitude_deg", "latitude_deg", "altitude_m"]].to_numpy(dtype=float))
     df["x_coord_m"] = xyz[:, 0]
     df["y_coord_m"] = xyz[:, 1]
     df["z_coord_m"] = xyz[:, 2]
@@ -209,7 +209,7 @@ def convert_rosamond_file_to_compliant_csv(
     # computing XYZ ECEF coordinates
     lat_lon = np.deg2rad(out_df[["latitude_deg", "longitude_deg"]])
     lat_lon_h = np.c_[lat_lon, out_df["altitude_m"]]
-    xyz_coords = llh2xyz(lat_lon_h.T).T
+    xyz_coords = llh2xyz(lat_lon_h)
 
     # adding columns
     out_df["target_type"] = "CR"

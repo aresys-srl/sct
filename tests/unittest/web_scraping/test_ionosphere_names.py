@@ -1,6 +1,6 @@
 """Testing ionosphere TEC map downloader helper functions"""
 
-from arepytools.timing.precisedatetime import PreciseDateTime
+from perseo_core.timing import PreciseDateTime
 from perseo_perturbations.atmospheric.ionosphere import IonosphericAnalysisCenters
 
 from sct.web_scraping.ionosphere_tec_map_downloader import (
