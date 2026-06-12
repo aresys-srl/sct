@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Command Line Interface
-----------------------
-"""
+"""Command Line Interface for Target Ambiguity Ratio Analysis."""
 
 from __future__ import annotations
 

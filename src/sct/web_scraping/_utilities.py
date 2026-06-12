@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Web Scraping Base Utilities
----------------------------
-"""
+"""Web scraping and downloading base utilities."""
 
 from __future__ import annotations
 

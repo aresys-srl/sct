@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Testing CLI Utility
--------------------
-"""
+"""Command Line Interface for SCT Testing feature."""
 
 from __future__ import annotations
 

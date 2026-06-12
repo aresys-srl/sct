@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT - Target Ambiguity Ratio Analysis
--------------------------------------
-"""
+"""Target Ambiguity Ratio Analysis feature."""
 
 from __future__ import annotations
 

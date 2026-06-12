@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Analysis Configuration
-----------------------
-"""
+"""Point Target Analysis Configuration."""
 
 from __future__ import annotations
 

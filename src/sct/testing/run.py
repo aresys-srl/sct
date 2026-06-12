@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT Integration Tests - Main
-----------------------------
-"""
+"""Testing framework main functionalities."""
 
 from __future__ import annotations
 

@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT: resources
---------------
-"""
+"""Resources for the SCT package."""
 
 from importlib import resources
 

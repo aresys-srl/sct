@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Point Target and Calibration Sites utilities
---------------------------------------------
-"""
+"""Point Target and Calibration Sites utilities."""
 
 from __future__ import annotations
 

@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-CDDIS Archive Data Downloader Utility
--------------------------------------
-"""
+"""CDDIS Archive Data downloader utilities."""
 
 from ftplib import FTP_TLS, error_perm
 from pathlib import Path

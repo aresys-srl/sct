@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT CLI Tool
-------------
-"""
+"""Command line interface tool for SCT."""
 
 from __future__ import annotations
 

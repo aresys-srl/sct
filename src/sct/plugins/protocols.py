@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Input Products plugins protocols
---------------------------------
-"""
+"""Input Products plugins protocols."""
 
 from __future__ import annotations
 

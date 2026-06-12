@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Analysis Configuration
-----------------------
-"""
+"""Ambiguity Ratio Analysis configuration."""
 
 from __future__ import annotations
 

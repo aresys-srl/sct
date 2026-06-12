@@ -1,7 +1,4 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT: CORE module
-----------------
-"""
+"""Core implementations of plugins system."""

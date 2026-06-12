@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Command Line Interface
-----------------------
-"""
+"""Command Line Interface for Spectral Analysis."""
 
 from __future__ import annotations
 

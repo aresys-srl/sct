@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-CLI Utility Commands
---------------------
-"""
+"""Command Line Interface auxiliary utilities."""
 
 from __future__ import annotations
 

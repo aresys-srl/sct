@@ -1,7 +1,4 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT: COMMAND LINE INTERFACE module
-----------------------------------
-"""
+"""Command Line Interface for the whole SCT package."""

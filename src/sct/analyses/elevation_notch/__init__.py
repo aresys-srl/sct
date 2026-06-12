@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT - Elevation Notch Analysis
-------------------------------
-"""
+"""Elevation Notch Analysis feature."""
 
 from __future__ import annotations
 

@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Troposphere products downloader
--------------------------------
-"""
+"""Troposphere products downloader utilities."""
 
 import sys
 from enum import Enum

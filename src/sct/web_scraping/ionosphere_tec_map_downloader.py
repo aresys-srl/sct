@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Ionosphere TEC maps downloader
-------------------------------
-"""
+"""Ionosphere TEC maps downloader utilities."""
 
 from pathlib import Path
 

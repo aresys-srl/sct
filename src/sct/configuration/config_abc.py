@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT Abstract Base Class for Analyses Configurations
----------------------------------------------------
-"""
+"""SCT Abstract Base Class for Analyses Configurations."""
 
 from __future__ import annotations
 

@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-Antenna Pattern Data reader
----------------------------
-"""
+"""Antenna Pattern Data reader for the supported antenna pattern data model."""
 
 from __future__ import annotations
 

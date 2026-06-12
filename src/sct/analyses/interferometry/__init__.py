@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT - Interferometric Analysis
-------------------------------
-"""
+"""Interferometric Analysis feature."""
 
 from __future__ import annotations
 

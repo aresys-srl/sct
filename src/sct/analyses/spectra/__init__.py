@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-SCT - Point Target and Distributed Spectral Analysis
-----------------------------------------------------
-"""
+"""Point Target and Distributed Spectral Analysis features."""
 
 from __future__ import annotations
 

@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-CLI common functions
---------------------
-"""
+"""Common utilities for command line implementations."""
 
 from __future__ import annotations
 

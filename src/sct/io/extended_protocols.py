@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""
-I/O Extended Protocols
-----------------------
-"""
+"""Input product extended protocol."""
 
 from collections.abc import Callable
 from typing import Protocol, runtime_checkable
