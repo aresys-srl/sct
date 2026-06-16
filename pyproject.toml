@@ -64,7 +64,7 @@ web = ["requests"]
 graphs = ["matplotlib>=3.5", "perseo-quality[graphs]"]
 dev = ["nox", "ruff", "pylint"]
 test = ["pytest>8.0.0", "pytest-cov>7.0.0", "pytest-mock>3.15.0"]
-localtesting = ["sct_aresys_reader", "sct_sentinel1_reader"]
+localtesting = ["sct_aresys_reader>=1.2.0", "sct_sentinel1_reader>=1.2.0"]
 doc = ["zensical", "mkdocstrings-python"]
 
 [tool.pytest.ini_options]
