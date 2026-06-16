@@ -49,7 +49,7 @@ The following parameters can be configured directly under the `point_target_anal
 
 ```toml title="Corrections subsection"
 [point_target_analysis.corrections]
-enable_solid_tides_correction = true                 # on/off Solid Earth Tides corr.
+enable_solid_tides_correction = false                # on/off Solid Earth Tides corr.
 enable_plate_tectonics_correction = true             # on/off Plate Tectonics corr.
 enable_sensor_specific_processing_corrections = true # on/off Sensor specific corr.
 enable_ionospheric_correction = false                # on/off Ionospheric corr.

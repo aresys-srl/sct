@@ -12,7 +12,7 @@ evaluate_localization = true
 ale_validity_limits = [99, 99]
 
 [point_target_analysis.corrections]
-enable_solid_tides_correction = true
+enable_solid_tides_correction = false
 enable_plate_tectonics_correction = true
 enable_sensor_specific_processing_corrections = true
 enable_ionospheric_correction = false

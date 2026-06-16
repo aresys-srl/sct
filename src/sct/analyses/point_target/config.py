@@ -102,7 +102,7 @@ class TroposphericCorrectionsConf:
 class SCTPointTargetAnalysisCorrectionsConf:
     """SCT Point Target Analysis corrections configuration"""
 
-    enable_solid_tides_correction: bool = True
+    enable_solid_tides_correction: bool = False
     enable_plate_tectonics_correction: bool = True
     enable_sensor_specific_processing_corrections: bool = True
     enable_ionospheric_correction: bool = False
