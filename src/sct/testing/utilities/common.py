@@ -7,6 +7,7 @@ from __future__ import annotations
 
 __test__ = False
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -63,6 +64,10 @@ class TestParams:
         """
         out = cls()
         for key, val in arg.items():
+            if isinstance(val, str):
+                val = os.path.expandvars(val)
+            elif isinstance(val, list):
+                val = [os.path.expandvars(v) if isinstance(v, str) else v for v in val]
             if key == "analysis":
                 setattr(out, key, val)
             elif key == "reference_output":
