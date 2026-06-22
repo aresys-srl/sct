@@ -92,23 +92,23 @@ unittest_win:
 
 # === test - integration =====================================================
 # ============================================================================
-# integration_test_linux:
-#   stage: test
-#   variables:
-#     SCT_TEST_DATA_ROOT: "$SCT_TEST_DATA_ROOT_LINUX"
-#     SCT_INTEGRATION_TESTS_REF: "$SCT_INTEGRATION_TESTS_REF_LINUX"
-#     SCT_PERTURB_EOF_CONFIG: "test_ed18cc99_config.toml"
-#   script:
-#     - python${PYTHON} -m venv ./ci_test
-#     - source ./ci_test/bin/activate
-#     - python -m pip install .[test,cli,graphs]
-#     - python -m pip install sct_aresys_reader sct_sentinel1_reader
-#     - sct testing test -r ./tests/integration_tests/test_registry.json -out ./test_output --cli
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.11", "3.12", "3.13", "3.14"]
-#   extends: .tags_manylinux_2_28
-#   needs: []
+integration_test_linux:
+  stage: test
+  variables:
+    SCT_TEST_DATA_ROOT: "$SCT_TEST_DATA_ROOT_LINUX"
+    SCT_INTEGRATION_TESTS_REF: "$SCT_INTEGRATION_TESTS_REF_LINUX"
+    SCT_PERTURB_EOF_CONFIG: "test_ed18cc99_config.toml"
+  script:
+    - python${PYTHON} -m venv ./ci_test
+    - source ./ci_test/bin/activate
+    - python -m pip install .[test,cli,graphs]
+    - python -m pip install sct_aresys_reader sct_sentinel1_reader
+    - sct testing test -r ./tests/integration_tests/test_registry.json -out ./test_output --cli
+  parallel:
+    matrix:
+      - PYTHON: ["3.11", "3.12", "3.13", "3.14"]
+  extends: .tags_manylinux_2_28
+  needs: []
 
 # integration_test_windows:
 #   stage: test
