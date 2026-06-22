@@ -17,9 +17,9 @@ dependencies = [
     "stevedore>=5.7.0",
     "typer>=0.24.1",
     "art",
-    "perseo-quality>=1.0.0",
-    "perseo-perturbations>=1.0.0",
-    "perseo-core>=1.0.0",
+    "perseo-quality==1.0.0",
+    "perseo-perturbations==1.0.0",
+    "perseo-core==1.0.0",
 ]
 dynamic = ["version"]
 classifiers = [
