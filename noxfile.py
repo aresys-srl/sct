@@ -163,7 +163,7 @@ def build_doc(session: nox.Session):
     if Path("site").exists():
         shutil.rmtree("site")
 
-    tag = os.getenv("CI_COMMIT_TAG", "dev")
+    tag = os.getenv("CI_COMMIT_TAG") or os.getenv("GITHUB_REF_NAME", "dev")
     sha = os.getenv("CI_COMMIT_SHORT_SHA")
     date = datetime.now().strftime("%Y-%m-%d")
 
