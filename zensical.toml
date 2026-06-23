@@ -12,7 +12,7 @@ site_description = "Documentation for the SAR Calibration Tool (SCT) python proj
 site_author = "Aresys s.r.l."
 repo_url = "https://github.com/aresys-srl/sct"
 repo_name = "aresys/sct"
-site_url = "http://intranet.aresys.it/sardashboard/develop/sct/docs/latest/"
+site_url = "https://aresys-srl.github.io/sct/"
 copyright = """
 Copyright &copy; 2026-present Aresys s.r.l.
 """
