@@ -42,6 +42,19 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.urls]
+Homepage = "https://github.com/aresys-srl/sct"
+Repository = "https://github.com/aresys-srl/sct"
+Documentation = "https://aresys-srl.github.io/sct"
+
+[project.optional-dependencies]
+web = ["requests"]
+graphs = ["matplotlib>=3.5", "perseo-quality[graphs]==1.0.0"]
+dev = ["nox", "ruff", "pylint"]
+test = ["pytest>8.0.0", "pytest-cov>7.0.0", "pytest-mock>3.15.0"]
+# localtesting = ["sct_aresys_reader>=1.2.0", "sct_sentinel1_reader>=1.2.0"]
+doc = ["zensical", "mkdocstrings-python"]
+
 [project.scripts]
 sct = "sct.__main__:main"
 
@@ -57,14 +70,6 @@ only-include = ["src", "tests", "docs"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
-
-[project.optional-dependencies]
-web = ["requests"]
-graphs = ["matplotlib>=3.5", "perseo-quality[graphs]"]
-dev = ["nox", "ruff", "pylint"]
-test = ["pytest>8.0.0", "pytest-cov>7.0.0", "pytest-mock>3.15.0"]
-localtesting = ["sct_aresys_reader>=1.2.0", "sct_sentinel1_reader>=1.2.0"]
-doc = ["zensical", "mkdocstrings-python"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
