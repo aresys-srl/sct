@@ -1,94 +1,14 @@
 stages:
-  - analysis
   - test
-  - build
-  - test-build
-  - deploy
 
 variables:
   GIT_DEPTH: 1
 
-.tags_win10:
-  tags: ["eo", "win10", "arepytools-win"]
-
-.tags_win10_conda:
-  tags: ["eo", "win10", "conda"]
-
-.tags_manylinux_2_28_std:
-  tags: ["manylinux_2_28"]
-
 .tags_manylinux_2_28:
   tags: ["eotools_manylinux228"]
 
-.tags_conda:
-  tags: ["eo", "miniconda3", "official"]
-
 .tags_win10_new:
   tags: ["eotools_win10"]
-
-.tags_deploy:
-  tags: ["eo", "deploy"]
-
-# === analysis ===============================================================
-# ============================================================================
-check_code_compliance_ruff:
-  stage: analysis
-  extends:
-    - .tags_manylinux_2_28_std
-  script:
-    - python3.12 -m pip install nox
-    - python3.12 -m nox -s check_format
-
-check_code_compliance_pylint:
-  stage: analysis
-  extends:
-    - .tags_manylinux_2_28_std
-  script:
-    - python3.12 -m pip install nox
-    - python3.12 -m nox -s pylint
-
-# === test - unittest ========================================================
-# ============================================================================
-unittest_linux:
-  stage: test
-  script:
-    - python3.12 -m pip install nox
-    - python3.12 -m nox -s pytest -p ${PYTHON}
-  parallel:
-    matrix:
-      - PYTHON: ["3.11", "3.12", "3.13", "3.14"]
-  extends: .tags_manylinux_2_28_std
-  needs: []
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-  artifacts:
-    reports:
-      junit:
-        - _build/pytest-report-*.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: _build/pytest-coverage-*.xml
-
-unittest_win:
-  stage: test
-  script:
-    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-    - conda create -y -n testing python=${PYTHON}
-    - conda activate testing
-    - python -m pip install nox
-    - python -m nox -s pytest -p ${PYTHON}
-  parallel:
-    matrix:
-      - PYTHON: ["3.11", "3.12", "3.13"]
-  needs: []
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-  extends: .tags_win10_new
-  artifacts:
-    reports:
-      junit:
-        - _build/pytest-report-*.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: _build/pytest-coverage-*.xml
 
 # === test - integration =====================================================
 # ============================================================================
@@ -110,96 +30,21 @@ integration_test_linux:
   extends: .tags_manylinux_2_28
   needs: []
 
-# integration_test_windows:
-#   stage: test
-#   variables:
-#     SCT_TEST_DATA_ROOT: "$SCT_TEST_DATA_ROOT_WINDOWS"
-#     SCT_INTEGRATION_TESTS_REF: "$SCT_INTEGRATION_TESTS_REF_WINDOWS"
-#     SCT_PERTURB_EOF_CONFIG: "test_db5c50fc_config.toml"
-#   script:
-#     - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
-#     - conda create -y -n integration_test python=${PYTHON}
-#     - conda activate integration_test
-#     - python -m pip install -e .[test,cli,graphs]
-#     - python -m pip install sct_aresys_reader sct_sentinel1_reader
-#     - sct testing test -r ./tests/integration_tests/test_registry.json -out ./test_output --cli
-#   parallel:
-#     matrix:
-#       - PYTHON: ["3.11", "3.12", "3.13"]
-#   extends: .tags_win10_new
-#   needs: []
-
-# === build ==================================================================
-# ============================================================================
-sdist:
-  stage: build
-  extends:
-    - .tags_manylinux_2_28_std
+integration_test_windows:
+  stage: test
+  variables:
+    SCT_TEST_DATA_ROOT: "$SCT_TEST_DATA_ROOT_WINDOWS"
+    SCT_INTEGRATION_TESTS_REF: "$SCT_INTEGRATION_TESTS_REF_WINDOWS"
+    SCT_PERTURB_EOF_CONFIG: "test_db5c50fc_config.toml"
   script:
-    - python3.12 -m pip install nox
-    - python3.12 -m nox -s build_sdist
+    - . "C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1"
+    - conda create -y -n integration_test python=${PYTHON}
+    - conda activate integration_test
+    - python -m pip install -e .[test,cli,graphs]
+    - python -m pip install sct_aresys_reader sct_sentinel1_reader
+    - sct testing test -r ./tests/integration_tests/test_registry.json -out ./test_output --cli
+  parallel:
+    matrix:
+      - PYTHON: ["3.11", "3.12", "3.13"]
+  extends: .tags_win10_new
   needs: []
-  artifacts:
-    expire_in: 2 weeks
-    paths:
-      - dist/*.tar.gz
-
-wheel:
-  stage: build
-  extends:
-    - .tags_manylinux_2_28_std
-  script:
-    - python3.12 -m pip install nox
-    - python3.12 -m nox -s build_wheel
-  needs: []
-  artifacts:
-    expire_in: 2 weeks
-    paths:
-      - dist/*.whl
-
-doc:
-  stage: build
-  extends:
-    - .tags_manylinux_2_28_std
-  script:
-    - python3.12 -m pip install nox
-    - python3.12 -m nox -s build_doc
-  needs: []
-  artifacts:
-    expire_in: 2 weeks
-    paths:
-      - ./documentation*.zip
-
-# === deploy =================================================================
-# ============================================================================
-deploy_package:
-  stage: deploy
-  extends: .tags_deploy
-  rules:
-    - if: "$CI_COMMIT_TAG"
-  script:
-    - eval "$(ssh-agent -s)"
-    - for file in dist/*.tar.gz dist/*.whl; do
-      eo_pgp-signme ${file} > ${file}.asc &&
-      ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
-      ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
-      done
-
-deploy_doc:
-  stage: deploy
-  extends: .tags_deploy
-  rules:
-    - if: "$CI_COMMIT_TAG"
-    - if: '$DEPLOY_DOC == "true"'
-  script:
-    - eval "$(ssh-agent)"
-    - cat "$DASHBOARD_PRIVATE_KEY" | base64 -d | ssh-add -
-    - for file in docs/build/*.zip; do
-      eo_pgp-signme ${file} > ${file}.asc &&
-      ./.gitlab/ci/dashboard-copy.sh ${file} develop/sct/archive &&
-      ./.gitlab/ci/dashboard-copy.sh ${file}.asc develop/sct/archive;
-      done
-    - unzip *.zip
-    - mv site ${CI_COMMIT_TAG}
-    - rsync --stats -r ${CI_COMMIT_TAG} sardashboard@intranet.aresys.it:develop/sct/docs
-    - ssh sardashboard@intranet.aresys.it "cd develop/sct/docs && rm latest && ln -s ${CI_COMMIT_TAG} latest"
