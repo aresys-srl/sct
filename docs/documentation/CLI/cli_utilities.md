@@ -27,6 +27,18 @@ Point Target .csv file.
 sct auxiliary rosamond-pt-converter -s <rosamond_dataset> -d <date> -out <output_dir>
 ```
 
+## Convert SARCalNet Calibration Site Survey .json
+
+This utility let the user convert a Calibration Site .json survey dataset downloaded from SARCalNet into a SCT compliant
+Point Target .csv file.
+
+```bash title="SARCalNet survey .json Converter"
+sct auxiliary sarcalnet-survey-converter -s <survey.json> [-d <product_acq_date>] -out <output_dir>
+```
+
+The product acquisition date can be provided to select the closest survey available, otherwise the latest survey is
+selected.
+
 ## Download of Ionospheric TEC Maps
 
 This utility let the user download the Ionospheric TEC maps from the CDDIS repository using credentials.

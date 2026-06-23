@@ -15,7 +15,7 @@ from perseo_perturbations.atmospheric.ionosphere import IonosphericAnalysisCente
 from perseo_perturbations.atmospheric.troposphere import TroposphericGRIDResolution
 
 from sct.cli import common
-from sct.io.point_target_manager import convert_rosamond_file_to_compliant_csv
+from sct.io.point_target_manager import convert_rosamond_file_to_compliant_csv, read_geojson_point_targets_file
 from sct.web_scraping.cddis_downloader import InvalidCDDISRequest
 from sct.web_scraping.ionosphere_tec_map_downloader import download_ionospheric_tec_maps
 from sct.web_scraping.troposphere_maps_downloader import download_tropospheric_products
@@ -32,7 +32,16 @@ DateOption = Annotated[
     ),
 ]
 
-SourceOption = Annotated[
+ProductDateOption = Annotated[
+    datetime | None,
+    typer.Option(
+        "--date",
+        "-d",
+        help='Product acquisition date in "%Y-%m-%d %H:%M:%S" format',
+    ),
+]
+
+RosamondSourceOption = Annotated[
     Path,
     typer.Option(
         ...,
@@ -43,6 +52,20 @@ SourceOption = Annotated[
         file_okay=True,
         resolve_path=True,
         help="Path to the downloaded Rosamond dataset .csv",
+    ),
+]
+
+SARCalNetSourceOption = Annotated[
+    Path,
+    typer.Option(
+        ...,
+        "--source",
+        "-s",
+        exists=True,
+        dir_okay=False,
+        file_okay=True,
+        resolve_path=True,
+        help="Path to the downloaded SARCalNet survey .json",
     ),
 ]
 
@@ -79,7 +102,7 @@ ResolutionOption = Annotated[
 
 @utilities_app.command("rosamond-pt-converter")
 def convert_rosamond_csv(
-    source: SourceOption,
+    source: RosamondSourceOption,
     date: DateOption,
     output_directory: common.OutputDirectoryOption = None,
 ) -> None:
@@ -96,7 +119,7 @@ def convert_rosamond_csv(
         date.second,
     )
 
-    typer.echo("Converting original Rosamond dataset to SCT .csv compliant template...")
+    typer.echo("Converting original Rosamond dataset to SCT .csv compliant format...")
     rosamond_data = convert_rosamond_file_to_compliant_csv(df=source, measurement_date=acq_date)
     outfile = output_directory.joinpath("rosamond_point_target.csv")
     rosamond_data.to_csv(outfile, index=False)
@@ -171,3 +194,32 @@ def download_tropospheric_vmf3_maps(
     typer.echo("Output files can be found here:")
     for file in outfiles:
         typer.echo(str(file))
+
+
+@utilities_app.command("sarcalnet-survey-converter")
+def convert_sarcalnet_json_to_csv(
+    source: SARCalNetSourceOption,
+    product_date: ProductDateOption = None,
+    output_directory: common.OutputDirectoryOption = None,
+) -> None:
+    """Convert downloaded SARCalNet survey .json file to SCT compliant .csv file. Product date can be provided to select
+    the closest survey available, otherwise the latest survey is selected."""
+    if output_directory is None:
+        output_directory = source.parent
+
+    acq_date = None
+    if product_date is not None:
+        acq_date = PreciseDateTime.from_numeric_datetime(
+            product_date.year,
+            product_date.month,
+            product_date.day,
+            product_date.hour,
+            product_date.minute,
+            product_date.second,
+        )
+
+    typer.echo("Converting SARCalNet survey target locations dataset to SCT .csv compliant format...")
+    survey_data = read_geojson_point_targets_file(surveys=source, product_date=acq_date)
+    outfile = output_directory.joinpath("survey_point_target.csv")
+    survey_data.to_csv(outfile, index=False)
+    typer.echo(f"Output file can be found here {outfile}.")
