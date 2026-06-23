@@ -21,4 +21,4 @@ An SCT input product plugin is a **separate Python package** that:
 
 Once installed, SCT will detect the plugin at runtime and make it available to the analysis pipeline.
 
-> :lucide-circle-chevron-right: Refer to the [official plugins documentation](http://intranet.aresys.it/sardashboard/develop/sct-plugins/docs/docs/latest/architecture/arch/) for further information on how plugins are structured and how to create new ones.
+> :lucide-circle-chevron-right: Refer to the [official plugins documentation](https://aresys-srl.github.io/sct_plugins/architecture/arch/) for further information on how plugins are structured and how to create new ones.

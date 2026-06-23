@@ -93,4 +93,4 @@ the installed plugins.
 A dedicated documentation site for SCT Input Product Plugins has been created to gather all plugin python packages developed
 and all the supported sensors and formats.
 
-> :lucide-circle-chevron-right: Refer to the [official plugins documentation](http://intranet.aresys.it/sardashboard/develop/sct-plugins/docs/docs/latest/) for further information.
+> :lucide-circle-chevron-right: Refer to the [official plugins documentation](https://aresys-srl.github.io/sct_plugins/) for further information.

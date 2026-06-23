@@ -18,7 +18,7 @@ This analysis can be configured through the configuration file.
 Refer to the [configuration documentation](config.md) for a detailed description of the available parameters.
 
 > :lucide-circle-chevron-right: An in-depth description of the core algorithms used for this analysis can be found in
-[PERSEO-Quality documentation](http://intranet.aresys.it/sardashboard/develop/perseo/quality/docs/latest/documentation/elevation_notch_doc.html).
+[PERSEO-Quality documentation](https://aresys-srl.github.io/perseo/documentation/quality/analyses/notch/).
 
 ## Antenna Pattern Data
 

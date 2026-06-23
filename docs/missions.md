@@ -44,4 +44,4 @@ all the functionalities required by the protocol are implemented.
 A dedicated documentation site has been created to explain the implementation of the protocol and the plugins and to list
 all the supported sensors and formats.
 
-> :lucide-circle-chevron-right: Refer to the [official plugins documentation](http://intranet.aresys.it/sardashboard/develop/sct-plugins/docs/docs/latest/) for further information.
+> :lucide-circle-chevron-right: Refer to the [official plugins documentation](https://aresys-srl.github.io/sct_plugins/) for further information.

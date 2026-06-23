@@ -30,4 +30,4 @@ pip install sct
 SCT is designed to be extensible and several plugins to support different input products formats have been developed
 and distributed as separate packages.
 
-> :lucide-circle-chevron-right: Refer to the [official plugins documentation](http://intranet.aresys.it/sardashboard/develop/sct-plugins/docs/docs/latest/install/) for further information on how to install plugins.
+> :lucide-circle-chevron-right: Refer to the [official plugins documentation](https://aresys-srl.github.io/sct_plugins/install/) for further information on how to install plugins.

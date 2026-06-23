@@ -27,7 +27,7 @@ SCT is an open source tool developed in the framework of **EDAP** (Earthnet Data
 This analysis tool is designed to be input product agnostic, and can be used to perform a quality analysis on any
 SAR L1-A/B product (among those supported) in a standardized way.
 To check if the mission or product type to be analyzed is currently supported by this tool, please refer
-to the [SCT Product Format Plugins documentation](http://intranet.aresys.it/sardashboard/develop/sct-plugins/docs/docs/latest/).
+to the [SCT Product Format Plugins documentation](https://aresys-srl.github.io/sct_plugins/).
 
 <div style="height: 2rem;"></div>
 
