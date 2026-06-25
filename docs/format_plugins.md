@@ -29,6 +29,11 @@ Several plugins for some of the most common SAR products and sensors are already
 
 ## Architecture
 
+<figure markdown="span">
+    ![Plugin Architecture](./assets/images/plugin_architecture.png){ width="850" }
+    <figcaption>Schematics of the plugin architecture.</figcaption>
+</figure>
+
 The plugin system has been implemented with the following architecture:
 
 1. **Protocol Layer** (``sct.plugins.input_products_protocols``)
@@ -55,6 +60,11 @@ The plugin system has been implemented with the following architecture:
     - Implements the ``InputProductPluginProtocol`` protocol.
 
 ## Plugin Discovery with Stevedore
+
+<figure markdown="span">
+    ![Plugin Mechanism](./assets/images/plugin_mechanism.png){ width="850" }
+    <figcaption>Automatic plugin discovery mechanism.</figcaption>
+</figure>
 
 Plugins are discovered dynamically using Stevedore:
 

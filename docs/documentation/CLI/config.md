@@ -17,7 +17,7 @@ to perform the operation of choice. Refer to the [available analyses](../analyse
 
 This commands have been developed to be run with a minimal setup and only the essential parameters to be specified, such
 as input and output folders.
-For an in-depth documentation on how to use the command line tool, please refer [to this page](cli.md).
+For an in-depth documentation on how to use the command line tool, please refer [to this page](index.md).
 
 Nevertheless, a configuration file (TOML format) can be provided as input to tweak and tune several options and parameters
 in order to fully customize each analysis.

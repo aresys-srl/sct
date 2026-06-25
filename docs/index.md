@@ -22,6 +22,24 @@ SCT is an open source tool developed in the framework of **EDAP** (Earthnet Data
     <figcaption>Projects that sponsored the development of SCT.</figcaption>
 </figure>
 
+## Software Architecture
+
+Here is a brief overview of the software architecture of SCT:
+
+<figure markdown="span">
+    ![Software Architecture](./assets/images/software_architecture_1.png){ width="850" }
+    <figcaption>Schematics of the software architecture.</figcaption>
+</figure>
+
+The SCT framework is designed to be **analysis-agnostic** with respect to input product formats. Product format plugins
+are used to decouple the analysis code from the input data type, allowing new input product formats to be added without
+modifying the core analysis code.
+
+<figure markdown="span">
+    ![Software Architecture](./assets/images/software_architecture_2.png){ width="850" }
+    <figcaption>Product format plugins.</figcaption>
+</figure>
+
 ## Supported Missions and Products
 
 This analysis tool is designed to be input product agnostic, and can be used to perform a quality analysis on any

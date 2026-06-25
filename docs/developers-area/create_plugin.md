@@ -13,6 +13,11 @@ SCT supports multiple satellite product formats through a **plugin-based archite
 Instead of embedding format-specific logic directly in the core library, input products are handled by **external plugin packages**
 that implement a common interface.
 
+<figure markdown="span">
+    ![Plugin Architecture](../assets/images/plugin_architecture.png){ width="850" }
+    <figcaption>Schematics of the plugin architecture.</figcaption>
+</figure>
+
 An SCT input product plugin is a **separate Python package** that:
 
 1. Implements the ``sct.plugins.protocols.InputProductPluginProtocol``.
