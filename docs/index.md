@@ -45,7 +45,7 @@ modifying the core analysis code.
 This analysis tool is designed to be input product agnostic, and can be used to perform a quality analysis on any
 SAR L1-A/B product (among those supported) in a standardized way.
 To check if the mission or product type to be analyzed is currently supported by this tool, please refer
-to the [SCT Product Format Plugins documentation](https://aresys-srl.github.io/sct_plugins/).
+to the [SCT Product Format Plugins documentation](https://opensource.aresys.it/sct_plugins/).
 
 <div style="height: 2rem;"></div>
 

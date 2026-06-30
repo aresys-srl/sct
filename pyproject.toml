@@ -45,7 +45,7 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/aresys-srl/sct"
 Repository = "https://github.com/aresys-srl/sct"
-Documentation = "https://aresys-srl.github.io/sct"
+Documentation = "https://opensource.aresys.it/sct"
 
 [project.optional-dependencies]
 web = ["requests"]

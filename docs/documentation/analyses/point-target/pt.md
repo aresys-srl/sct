@@ -24,7 +24,7 @@ This analysis can be heavily configured through the configuration file and deepl
 Refer to the [configuration documentation](config.md) for a detailed description of the available parameters.
 
 > :lucide-circle-chevron-right: An in-depth description of the core algorithms used for this analysis can be found in
-[PERSEO-Quality documentation](https://aresys-srl.github.io/perseo/documentation/quality/analyses/point-target/).
+[PERSEO-Quality documentation](https://opensource.aresys.it/perseo/documentation/quality/analyses/point-target/).
 
 ## Geolocation Corrections
 
