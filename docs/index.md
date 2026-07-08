@@ -57,7 +57,7 @@ to the [SCT Product Format Plugins documentation](https://opensource.aresys.it/s
 
     Install SCT via ``pip`` and get started quickly.
 
-    [:octicons-arrow-right-24: Install](#)
+    [:octicons-arrow-right-24: Install](install.md)
 
 -   :fontawesome-brands-python:{ .lg .middle } __API Documentation__
 
@@ -66,7 +66,7 @@ to the [SCT Product Format Plugins documentation](https://opensource.aresys.it/s
     Full documentation of modules, functions and objects
     available in SCT, generated from docstrings.
 
-    [:octicons-arrow-right-24: API Documentation](#)
+    [:octicons-arrow-right-24: API Documentation](API/reference/index.md)
 
 -   :lucide-flask-conical:{ .lg .middle } __Analyses__
 
@@ -75,7 +75,7 @@ to the [SCT Product Format Plugins documentation](https://opensource.aresys.it/s
     In-depth documentation on the key concepts of SCT, with useful explanations
     of implemented analyses.
 
-    [:octicons-arrow-right-24: Analyses](#)
+    [:octicons-arrow-right-24: Analyses](documentation/analyses/index.md)
 
 -   :lucide-unplug:{ .lg .middle } __Product Format Plugins__
 
@@ -84,6 +84,6 @@ to the [SCT Product Format Plugins documentation](https://opensource.aresys.it/s
     Supported input product formats plugins, with detailed documentation on
     how to install and use them.
 
-    [:octicons-arrow-right-24: Plugins](#)
+    [:octicons-arrow-right-24: Plugins](format_plugins.md)
 
 </div>
