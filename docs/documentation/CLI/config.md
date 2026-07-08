@@ -44,8 +44,7 @@ The available sections of this configuration file are:
 
 > :lucide-circle-chevron-right: Refer to the [analyses documentation](../analyses/index.md) for more details on each analysis and its configuration section.
 
-General Configuration
-^^^^^^^^^^^^^^^^^^^^^
+### General Configuration
 
 The following parameters can be configured directly under the `general` section.
 
