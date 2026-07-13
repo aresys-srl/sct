@@ -50,6 +50,17 @@ filtering_kernel_size = [11, 11]
 outliers_percentile_boundaries = [20, 90]
 outliers_kernel_size = [5, 5]
 
+[radiometric_analysis.advanced_configuration.profile_extraction_parameters.river_masking]
+river_masking_mode = "FULL"
+local_stats_window = 10
+backscatter_threshold_percentile = 25
+cv_lower_threshold_percentile = 20
+cv_upper_threshold_percentile = 90
+morph_opening_radius = 3
+min_river_area_px_percentile = 99
+region_grow_iterations = 13
+relaxed_backscatter_threshold_percentile = 35
+
 [radiometric_analysis.advanced_configuration.histogram_parameters]
 x_bins_step = 10
 y_bins_num = 101
