@@ -29,16 +29,9 @@ of the available parameters that can be set.
 
 ```toml title="Radiometric Analysis section"
 [radiometric_analysis]
-input_type = "beta_nought"              # input radiometric quantity
 azimuth_block_size = 2000               # scene partitioning block size in pixel along azimuth
 range_pixel_margin = 150                # margin in pixel to exclude near and far range from profile
 ```
-
-??? danger "Validation"
-
-    ``input_type`` maps to an internal *enum class* and is validated by the schema to match the valid values.
-    Here are the possible values:  
-    ==input_type==: __``beta_nought``__, __``sigma_nought``__, __``gamma_nought``__  
 
 > :lucide-circle-chevron-right: Refer to the [API documentation](api.md) to learn more about these values and their meaning.
 
