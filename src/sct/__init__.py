@@ -7,4 +7,4 @@ from sct.analyses import load_analyses
 
 load_analyses()
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
