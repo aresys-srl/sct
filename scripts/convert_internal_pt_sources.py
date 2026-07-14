@@ -209,15 +209,6 @@ def convert_lat_lon_dataset_to_df(
 
 
 if __name__ == "__main__":
-    # pt_path = r"..."
-    # output_csv_folder = r"..."
-    # df = convert_aresys_point_target_formats(source=pt_path)
-    # df.to_csv(Path(output_csv_folder).joinpath("point_targets_dataset.csv"), index=False)
-
-    # convert_csv_point_target_to_geojson(
-    #     source=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets\surat_basin_corner_reflectors_data.csv",
-    #     output_dir=r"C:\ARESYS_PROJ\sct\corner_reflectors_datasets",
-    # )
     target_df = convert_lat_lon_dataset_to_df(
         coords=np.array(
             [

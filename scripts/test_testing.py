@@ -12,7 +12,7 @@ if __name__ == "__main__":
     import matplotlib
     matplotlib.use("Agg")
     run_tests(
-        registry_path=r"scripts\local_registry.json",
+        registry_path=r"scripts\registry.json",
         output_dir=r"scripts\out",
         graphs=True,
         cli=True,

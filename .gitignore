@@ -164,3 +164,6 @@ cython_debug/
 #.idea/
 
 .vscode/
+
+scripts/out/
+scripts/*.json
