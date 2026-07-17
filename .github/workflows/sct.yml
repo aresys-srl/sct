@@ -224,8 +224,12 @@ jobs:
           packages-dir: dist
 
   publish_docs:
-    if: startsWith(github.ref_name, 'sct-v') || startsWith(github.ref_name, 'docs-v')
-    needs: doc_build
+    if: >
+      ${{
+        (startsWith(github.ref_name, 'sct-v') || startsWith(github.ref_name, 'docs-v')) &&
+        (needs.publish.result == 'success' || needs.publish.result == 'skipped')
+      }}
+    needs: [doc_build, publish]
 
     runs-on: ubuntu-latest
 
