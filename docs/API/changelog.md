@@ -8,6 +8,10 @@ tags:
 
 # Changelog
 
+## v3.0.1
+
+- Relaxing `perseo` dependencies version constraints.
+
 ## v3.0.0
 
 First official public release on PyPI.
