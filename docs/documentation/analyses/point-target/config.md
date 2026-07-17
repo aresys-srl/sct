@@ -147,6 +147,7 @@ This sub-subsection is used when the the user wants to access low level paramete
 
 ```toml title="RCS subsection"
 [point_target_analysis.advanced_configuration.rcs_parameters]
+method = "boxes"                   # RCS masking computation method, can be `boxes` or `cross`
 interpolation_factor = 8           # processing interpolation factor 
 roi_dimension = 128                # roi (squared) in pixel for processing image
 calibration_factor = 1.0           # rcs calibration factor

@@ -8,6 +8,16 @@ tags:
 
 # Changelog
 
+## v3.1.0
+
+**Additional Features**
+
+- Adding configuration setting to select the RCS masking computation method in `Point Target Analysis`
+
+**Other Changes**
+
+- Updating `perseo-quality` dependency minimum version constraint to `1.1.0`.
+
 ## v3.0.1
 
 - Relaxing `perseo` dependencies version constraints.

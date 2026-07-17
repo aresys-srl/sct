@@ -183,6 +183,8 @@ class SCTPointTargetAnalysisConfig(AnalysisConfigABC):
         if pta_irf["masking_method"] is not None:
             pta_irf["masking_method"] = pta_irf["masking_method"].name.lower()
         pta_rcs = config.pop("rcs_parameters")
+        if pta_rcs["method"] is not None:
+            pta_rcs["method"] = pta_rcs["method"].name.lower()
         config: dict[str, Any] = dict(
             (k, config[k])
             for k in (
