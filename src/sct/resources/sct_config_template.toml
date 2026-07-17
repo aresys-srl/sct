@@ -34,6 +34,7 @@ zero_doppler_abs_squint_threshold_deg = 1.0
 masking_method = "peak"
 
 [point_target_analysis.advanced_configuration.rcs_parameters]
+method = "boxes"
 interpolation_factor = 8
 roi_dimension = 128
 calibration_factor = 1.0

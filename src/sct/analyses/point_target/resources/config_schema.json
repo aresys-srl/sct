@@ -228,6 +228,14 @@
                             "type": "object",
                             "description": "RCS error low level parameters",
                             "properties": {
+                                "method": {
+                                    "type": "string",
+                                    "description": "RCS masking computation method",
+                                    "enum": [
+                                        "boxes",
+                                        "cross"
+                                    ]
+                                },
                                 "calibration_factor": {
                                     "type": "number",
                                     "description": "RCS 'k_lin' calibration factor, 1 means absolutely calibrated"

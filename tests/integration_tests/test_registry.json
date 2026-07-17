@@ -47,6 +47,13 @@
         }
     },
     "sentinel1A": {
+        "slc-cross-rcs-pta": {
+            "analysis": "point_target",
+            "product": "${SCT_TEST_DATA_ROOT}/sentinel1a/products/SLC_19.SAFE",
+            "config": "${SCT_INTEGRATION_TESTS_REF}/configurations/test_734ca7a6_config.toml",
+            "targets": "${SCT_TEST_DATA_ROOT}/sentinel1a/auxiliaries/surat_basin_data.csv",
+            "reference_output": "${SCT_INTEGRATION_TESTS_REF}/reference_results/sentinel1A/slc-cross-rcs-pta/pta_res.csv"
+        },
         "slc-etad-pta": {
             "analysis": "point_target",
             "product": "${SCT_TEST_DATA_ROOT}/sentinel1a/products/SLC_23.SAFE",
