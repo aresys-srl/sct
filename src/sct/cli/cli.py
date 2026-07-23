@@ -10,6 +10,7 @@ from pathlib import Path
 import typer
 
 from sct.__init__ import __version__ as VERSION
+from sct.cli.info import info_app
 from sct.cli.utilities import utilities_app
 from sct.configuration.config import GeneralConfiguration
 from sct.configuration.logger import sct_logger
@@ -41,6 +42,9 @@ def main(
         help="Show CLI version and exit",
     ),
 ):
+    if ctx.invoked_subcommand == "info":
+        return
+
     typer.echo("Starting application...\n")
 
     if config is None:
@@ -60,6 +64,7 @@ def raise_exit():
 registered_typer_apps = set()
 app.add_typer(utilities_app, name="auxiliary")
 app.add_typer(testing_app, name="testing")
+app.add_typer(info_app, name="info")
 for name, item in ANALYSIS_REGISTRY.items():
     if item.cli is not None:
         if isinstance(item.cli, typer.Typer):

@@ -32,6 +32,15 @@ To select the operation of choice, use the available commands that can be listed
     > :lucide-circle-chevron-right: Refer to the [analyses documentation](../analyses/index.md) for more details
     on each analysis and its command.
 
+## SCT Info
+
+The ``info`` command can be used to display information about the installed SCT version, core dependencies, and
+list all the available plugins on PyPI.
+
+```bash title="SCT Info"
+sct info [--available-plugins]
+```
+
 ## Testing Interface
 
 A Testing Interface is also available under the ``testing`` CLI group. This feature can be used to run analyses as Test
