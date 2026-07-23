@@ -28,3 +28,12 @@ def test_display_version():
     result = cli_runner.invoke(app, ["--version"])
     assert result.exit_code == 0
     assert VERSION in result.output
+
+
+def test_info_command():
+    """Display info"""
+    result = cli_runner.invoke(app, ["info"])
+    assert result.exit_code == 0
+    assert "SCT version:" in result.output
+    assert "Core Dependencies" in result.output
+    assert "Installed Plugins" in result.output

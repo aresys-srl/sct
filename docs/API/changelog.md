@@ -17,6 +17,7 @@ tags:
 **Other Changes**
 
 - Updating `perseo-quality` dependency minimum version constraint to `1.1.0`.
+- Adding `info` CLI command to get the SCT status and installed dependencies versions. It can also show the list of available plugins on PyPI.
 
 ## v3.0.1
 
