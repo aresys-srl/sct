@@ -21,6 +21,7 @@ dependencies = [
     "perseo-quality>=1.1.0",
     "perseo-perturbations>=1.0.0",
     "perseo-core>=1.0.0",
+    "rich-click>=1.9.8",
 ]
 dynamic = ["version"]
 classifiers = [
@@ -57,6 +58,17 @@ doc = ["zensical", "mkdocstrings-python"]
 
 [project.scripts]
 sct = "sct.__main__:main"
+
+# Default analyses shipped with SCT, discovered as plugins via the `sct.analyses`
+# namespace. These will be split into dedicated packages; the entry points will then
+# move to those packages' pyproject files.
+[project.entry-points."sct.analyses"]
+point_target = "sct.analyses.point_target.plugin:PointTargetAnalysisPlugin"
+radiometry = "sct.analyses.radiometry.plugin:RadiometricAnalysisPlugin"
+spectra = "sct.analyses.spectra.plugin:SpectralAnalysisPlugin"
+interferometry = "sct.analyses.interferometry.plugin:InterferometricAnalysisPlugin"
+ambiguity_ratio = "sct.analyses.ambiguity_ratio.plugin:TargetAmbiguityRatioAnalysisPlugin"
+elevation_notch = "sct.analyses.elevation_notch.plugin:ElevationNotchAnalysisPlugin"
 
 [build-system]
 requires = ["hatchling"]
