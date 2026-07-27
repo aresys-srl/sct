@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
+# SPDX-License-Identifier: MIT
+
 """Testing testing/run.py"""
 
 from pathlib import Path

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
+# SPDX-License-Identifier: MIT
+
 """Testing ionosphere TEC map downloader helper functions"""
 
 from perseo_core.timing import PreciseDateTime

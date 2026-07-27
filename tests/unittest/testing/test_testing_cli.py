@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
+# SPDX-License-Identifier: MIT
+
 """Testing testing/cli.py"""
 
 from unittest import mock
