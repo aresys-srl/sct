@@ -64,7 +64,6 @@ sct = "sct.__main__:main"
 # move to those packages' pyproject files.
 [project.entry-points."sct.analyses"]
 interferometry = "sct.analyses.interferometry.plugin:InterferometricAnalysisPlugin"
-elevation_notch = "sct.analyses.elevation_notch.plugin:ElevationNotchAnalysisPlugin"
 
 [build-system]
 requires = ["hatchling"]
