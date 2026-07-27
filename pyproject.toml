@@ -59,12 +59,6 @@ doc = ["zensical", "mkdocstrings-python"]
 [project.scripts]
 sct = "sct.__main__:main"
 
-# Default analyses shipped with SCT, discovered as plugins via the `sct.analyses`
-# namespace. These will be split into dedicated packages; the entry points will then
-# move to those packages' pyproject files.
-[project.entry-points."sct.analyses"]
-interferometry = "sct.analyses.interferometry.plugin:InterferometricAnalysisPlugin"
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
