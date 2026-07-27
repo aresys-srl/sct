@@ -63,7 +63,6 @@ sct = "sct.__main__:main"
 # namespace. These will be split into dedicated packages; the entry points will then
 # move to those packages' pyproject files.
 [project.entry-points."sct.analyses"]
-point_target = "sct.analyses.point_target.plugin:PointTargetAnalysisPlugin"
 radiometry = "sct.analyses.radiometry.plugin:RadiometricAnalysisPlugin"
 spectra = "sct.analyses.spectra.plugin:SpectralAnalysisPlugin"
 interferometry = "sct.analyses.interferometry.plugin:InterferometricAnalysisPlugin"
