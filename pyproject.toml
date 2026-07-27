@@ -64,7 +64,6 @@ sct = "sct.__main__:main"
 # move to those packages' pyproject files.
 [project.entry-points."sct.analyses"]
 radiometry = "sct.analyses.radiometry.plugin:RadiometricAnalysisPlugin"
-spectra = "sct.analyses.spectra.plugin:SpectralAnalysisPlugin"
 interferometry = "sct.analyses.interferometry.plugin:InterferometricAnalysisPlugin"
 ambiguity_ratio = "sct.analyses.ambiguity_ratio.plugin:TargetAmbiguityRatioAnalysisPlugin"
 elevation_notch = "sct.analyses.elevation_notch.plugin:ElevationNotchAnalysisPlugin"
