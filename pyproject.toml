@@ -25,7 +25,6 @@ dependencies = [
 dynamic = ["version"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Education",
     "Intended Audience :: Developers",
