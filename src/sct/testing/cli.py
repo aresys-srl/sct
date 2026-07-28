@@ -13,7 +13,7 @@ import typer
 
 from sct import __version__
 from sct.cli import common
-from sct.plugins import available_plugins
+from sct.plugins import get_available_plugins
 from sct.testing.run import run_tests, summary_results
 
 testing_app = typer.Typer(
@@ -73,8 +73,8 @@ def integration_testing(
 
     typer.echo("Installed plugins detected:\n")
 
-    for name in available_plugins:
-        typer.echo(name)
+    for plugin in get_available_plugins():
+        typer.echo(plugin.__name__)
         typer.echo()
 
     if not output_directory.exists():

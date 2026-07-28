@@ -11,7 +11,7 @@ from typing import Type
 from stevedore import ExtensionManager
 
 from sct.configuration.logger import sct_logger
-from sct.plugins.protocols import InputProductPluginProtocol
+from sct.plugins.protocols import AnalysisPluginProtocol, InputProductPluginProtocol
 
 
 def import_plugins(
@@ -55,9 +55,9 @@ def import_plugins(
             sct_logger.warning(f"{extension.name} rejected: does not satisfy protocol {plugin_protocol.__name__}")
 
     sct_logger.debug("Plugin discovery completed")
-    sct_logger.info("Available plugins:")
+    sct_logger.debug("Available plugins:")
     for plugin in valid_plugins:
-        sct_logger.info(f" - {plugin.__name__} v {plugin.version}")
+        sct_logger.debug(f" - {plugin.__name__} v {plugin.version}")
 
     return valid_plugins
 
@@ -70,4 +70,10 @@ import_input_product_plugins = partial(
     import_plugins,
     plugin_protocol=InputProductPluginProtocol,
     namespace="sct.input_products",
+)
+
+import_analysis_plugins = partial(
+    import_plugins,
+    plugin_protocol=AnalysisPluginProtocol,
+    namespace="sct.analyses",
 )

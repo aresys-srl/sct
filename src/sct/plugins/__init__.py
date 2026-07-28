@@ -1,8 +1,20 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""Input product plugins manager."""
+"""SCT plugins manager (input products and analyses).
 
-from sct.plugins.loader import import_input_product_plugins
+Plugin discovery is performed lazily and memoized on first use, so importing this
+package (and ``import sct``) does not trigger loading of any plugin implementation.
+"""
 
-available_plugins = import_input_product_plugins()
+from __future__ import annotations
+
+from functools import lru_cache
+
+
+@lru_cache(maxsize=1)
+def get_available_plugins() -> list:
+    """Return the list of installed input-product plugins (discovered once, cached)."""
+    from sct.plugins.loader import import_input_product_plugins
+
+    return import_input_product_plugins()

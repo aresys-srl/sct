@@ -3,7 +3,7 @@
 
 """Testing SCT Radiometric Analysis CLI"""
 
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from sct.analyses.radiometry.config import SCTRadiometricAnalysisConfig
 from sct.cli.cli import app
