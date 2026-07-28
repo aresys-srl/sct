@@ -3,8 +3,4 @@
 
 """SCT: the Python SAR Calibration Tool for quality data analysis."""
 
-from sct.analyses import load_analyses
-
-load_analyses()
-
 __version__ = "3.2.0"

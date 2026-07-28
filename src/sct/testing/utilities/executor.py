@@ -9,7 +9,7 @@ from pathlib import Path
 
 from sct.configuration.logger import sct_logger
 from sct.core.base import AnalysisHandler, AnalysisTestingHandler
-from sct.core.registry import ANALYSIS_REGISTRY
+from sct.core.registry import get_analysis_registry
 from sct.testing.utilities.common import TestParams
 
 
@@ -38,7 +38,7 @@ def execute_analysis_test(
         unsupported analysis type
     """
 
-    handler: AnalysisHandler | None = ANALYSIS_REGISTRY.get(test_params.analysis)
+    handler: AnalysisHandler | None = get_analysis_registry().get(test_params.analysis)
     if handler is None:
         raise ValueError(f"Unsupported analysis type: {test_params.analysis}")
 

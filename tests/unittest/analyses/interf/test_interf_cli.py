@@ -3,7 +3,7 @@
 
 """Testing SCT Interferometric Analysis CLI"""
 
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from sct.analyses.interferometry.config import SCTInterferometricAnalysisConfig
 from sct.cli.cli import app

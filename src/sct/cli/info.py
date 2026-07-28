@@ -16,7 +16,7 @@ from rich.console import Console
 from rich.table import Table
 
 from sct import __version__
-from sct.plugins import available_plugins
+from sct.plugins import get_available_plugins
 
 CORE_DEPENDENCIES = [
     "perseo-quality",
@@ -79,8 +79,9 @@ def info(
     table = Table(title="Installed Plugins", title_style="bold")
     table.add_column("Plugin", style="cyan")
     table.add_column("Version")
-    if available_plugins:
-        for plugin in available_plugins:
+    installed_plugins = get_available_plugins()
+    if installed_plugins:
+        for plugin in installed_plugins:
             table.add_row(plugin.__name__, plugin.version)
     else:
         table.add_row("(none installed)", "")

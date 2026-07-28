@@ -3,7 +3,7 @@
 
 """SCT Command Line Interface unit tests"""
 
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from sct import __version__ as VERSION
 from sct.cli.cli import app

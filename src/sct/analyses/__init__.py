@@ -1,19 +1,10 @@
 # SPDX-FileCopyrightText: Aresys S.r.l. <info@aresys.it>
 # SPDX-License-Identifier: MIT
 
-"""Default implemented analyses."""
+"""Default analyses bundled with SCT.
 
-from __future__ import annotations
-
-
-def load_analyses() -> None:
-    """Loading all analyses defined in this package module"""
-    import importlib
-    import pkgutil
-    from pathlib import Path
-
-    package_path = Path(__file__).parent
-
-    for module_info in pkgutil.iter_modules([str(package_path)]):
-        if module_info.ispkg:
-            importlib.import_module(f"{__name__}.{module_info.name}")
+Each analysis is exposed as an SCT analysis plugin through the ``sct.analyses``
+entry-point namespace and discovered lazily at runtime (see
+:mod:`sct.core.registry`). Nothing is imported at package import time so that
+``import sct`` stays lightweight.
+"""

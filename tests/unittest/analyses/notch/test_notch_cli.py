@@ -3,7 +3,7 @@
 
 """Testing SCT Elevation Notch Analysis CLI"""
 
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from sct.analyses.elevation_notch.config import SCTElevationNotchAnalysisConfig
 from sct.cli.cli import app

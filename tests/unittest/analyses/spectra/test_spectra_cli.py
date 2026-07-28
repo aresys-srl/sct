@@ -3,7 +3,7 @@
 
 """Testing SCT Spectral Analysis CLI"""
 
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from sct.analyses.spectra.config import SCTSpectralAnalysisConfig
 from sct.cli.cli import app
