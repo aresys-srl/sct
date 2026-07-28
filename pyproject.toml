@@ -7,10 +7,8 @@ readme = "README.md"
 license = { file = "LICENSE.txt" }
 dependencies = [
     "numpy>2",
-    "scipy>1.13",
     "pandas>=1.4.0",
     "xarray",
-    "numba>=0.61",
     "shapely",
     "jsonschema",
     "toml",
@@ -49,12 +47,21 @@ Repository = "https://github.com/aresys-srl/sct"
 Documentation = "https://opensource.aresys.it/sct"
 
 [project.optional-dependencies]
+analyses = [
+    "sct_point_target_analysis",
+    "sct_radiometric_analysis",
+    "sct_spectral_analysis",
+    "sct_interferometric_analysis",
+    "sct_ambiguities_analysis",
+    "sct_notch_analysis",
+]
 web = ["requests"]
 graphs = ["matplotlib>=3.5", "perseo-quality[graphs]>=1.0.0"]
 dev = ["ruff", "pylint"]
 test = ["pytest>8.0.0", "pytest-cov>7.0.0", "pytest-mock>3.15.0"]
 localtesting = ["sct_aresys_reader>=1.0.1", "sct_sentinel1_reader>=1.0.1"]
 doc = ["zensical", "mkdocstrings-python"]
+recommended = ["sct[analyses,web,graphs]"]
 
 [project.scripts]
 sct = "sct.__main__:main"
