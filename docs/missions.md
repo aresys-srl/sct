@@ -37,7 +37,7 @@ each dedicated to a particular sensor or format. These packages, **managed as pl
 responsible for assembling the information read from the product in its specific format, processing it, and ensuring that
 all the functionalities required by the protocol are implemented.
 
-> :lucide-circle-chevron-right: Refer to the [plugins implementation documentation](format_plugins.md) for further information.
+> :lucide-circle-chevron-right: Refer to the [plugins implementation documentation](plugins/format_plugins.md) for further information.
 
 ## Product Format Plugins Documentation
 

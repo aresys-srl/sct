@@ -30,13 +30,13 @@ Several plugins for some of the most common SAR products and sensors are already
 ## Architecture
 
 <figure markdown="span">
-    ![Plugin Architecture](./assets/images/plugin_architecture.png){ width="850" }
-    <figcaption>Schematics of the plugin architecture.</figcaption>
+    ![Product Plugins](../assets/images/products_plugins.png){ width="850" }
+    <figcaption>Schematics of the product format plugin architecture.</figcaption>
 </figure>
 
 The plugin system has been implemented with the following architecture:
 
-1. **Protocol Layer** (``sct.plugins.input_products_protocols``)
+1. **Protocol Layer** (``sct.plugins.protocols``)
 
     - Defines the **protocols** (interfaces) that all input product plugins must implement.
     - Contains **core abstractions** such as ``InputProductPluginProtocol`` and ``AbsoluteLocalizationErrorCorrector``.
@@ -62,7 +62,7 @@ The plugin system has been implemented with the following architecture:
 ## Plugin Discovery with Stevedore
 
 <figure markdown="span">
-    ![Plugin Mechanism](./assets/images/plugin_mechanism.png){ width="850" }
+    ![Plugin Mechanism](../assets/images/plugin_mechanism.png){ width="850" }
     <figcaption>Automatic plugin discovery mechanism.</figcaption>
 </figure>
 
@@ -100,7 +100,7 @@ the installed plugins.
 
 ## Product Format Plugins Documentation
 
-A dedicated documentation site for SCT Input Product Plugins has been created to gather all plugin python packages developed
-and all the supported sensors and formats.
+> :lucide-circle-chevron-right: For an overview of the full plugin architecture, including both input product and analysis plugins, refer to the [plugins overview](index.md).  
+> :lucide-circle-chevron-right: For analysis plugins documentation, refer to [analysis plugins](analysis_plugins.md).  
+> :lucide-circle-chevron-right: Visit the [official plugins documentation site](https://opensource.aresys.it/sct_plugins/) for the complete list of available plugins.
 
-> :lucide-circle-chevron-right: Refer to the [official plugins documentation](https://opensource.aresys.it/sct_plugins/) for further information.

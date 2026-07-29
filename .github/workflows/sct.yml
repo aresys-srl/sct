@@ -184,11 +184,6 @@ jobs:
           name: documentation-site
           path: site/
           retention-days: 14
-      - uses: actions/upload-artifact@v7
-        with:
-          name: documentation-archive
-          path: documentation*.zip
-          retention-days: 14
 
   publish:
     needs: [ruff, pylint, unittest_linux, unittest_windows, build]

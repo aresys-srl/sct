@@ -22,15 +22,15 @@ sct [--version] [--config/-cfg] [--help/-h]
 ```
 
 This is the entry point for the console script. The configuration needed to perform the analysis must be provided
-using the ``--config/-cfg`` argument. The available analysis have been implemented as commands of this parent CLI but the
-above command alone won't perform any kind of operation.
+using the ``--config/-cfg`` argument. Each installed analysis plugin registers its command automatically under the
+``sct`` CLI but the above command alone won't perform any kind of operation.
 To select the operation of choice, use the available commands that can be listed using the `--help/-h` option.
 
 !!! tip "Available Analyses"
 
-    Each implemented analysis has a dedicated command that can be specified to perform the operation of choice.  
-    > :lucide-circle-chevron-right: Refer to the [analyses documentation](../analyses/index.md) for more details
-    on each analysis and its command.
+    Each installed analysis plugin exposes its own dedicated command.  
+    > :lucide-circle-chevron-right: Refer to the [analyses plugins documentation site](https://opensource.aresys.it/sct_plugins/)
+    for more details on each analysis and its command.
 
 ## SCT Info
 
@@ -52,7 +52,7 @@ sct testing test -r <path_to_registry_file> -out <output_dir> [--cli/-c] [--grap
 
 where ``--graphs/-g`` is used to enable graphs generation and ``--cli/-c`` is used to enable CLI testing instead of API.
 
-> :lucide-circle-chevron-right: Refer to the [analyses documentation](../analyses/index.md) for more details on each analysis and its testing interface, if any.
+> :lucide-circle-chevron-right: Refer to the [analyses plugins documentation site](https://opensource.aresys.it/sct_plugins/) for more details on each analysis and its testing interface, if any.
 
 ## Auxiliary utilities
 

@@ -1,6 +1,6 @@
 ---
 icon: lucide/plug-zap
-title: "New plugin"
+title: "New Product"
 tags:
     - development
     - plugins
@@ -14,8 +14,8 @@ Instead of embedding format-specific logic directly in the core library, input p
 that implement a common interface.
 
 <figure markdown="span">
-    ![Plugin Architecture](../assets/images/plugin_architecture.png){ width="850" }
-    <figcaption>Schematics of the plugin architecture.</figcaption>
+    ![Product Plugins](../assets/images/products_plugins.png){ width="850" }
+    <figcaption>Schematics of the product format plugin architecture.</figcaption>
 </figure>
 
 An SCT input product plugin is a **separate Python package** that:

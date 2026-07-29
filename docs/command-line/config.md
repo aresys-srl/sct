@@ -12,8 +12,8 @@ tags:
 # Configuration file setup for CLI tool
 
 The SCT Command Line Interface (CLI) tool let the user perform quality analyses on input products using the SCT Python
-package as a command line executable software. All the registered analyses have a dedicated command that can be specified
-to perform the operation of choice. Refer to the [available analyses](../analyses/index.md) for further information.
+package as a command line executable software. Each installed analysis plugin registers its own command automatically.
+Refer to the [analyses plugins documentation site](https://opensource.aresys.it/sct_plugins/) for further information.
 
 This commands have been developed to be run with a minimal setup and only the essential parameters to be specified, such
 as input and output folders.
@@ -42,7 +42,7 @@ The available sections of this configuration file are:
 
 - **analyses_sections**: sections that can be used to access specific analysis configurations and parameters. Each analysis implements its own configuration section.
 
-> :lucide-circle-chevron-right: Refer to the [analyses documentation](../analyses/index.md) for more details on each analysis and its configuration section.
+> :lucide-circle-chevron-right: Refer to the [analyses plugins documentation site](https://opensource.aresys.it/sct_plugins/) for more details on each analysis and its configuration section.
 
 ### General Configuration
 
