@@ -37,9 +37,9 @@ def load_analyses(*, force: bool = False) -> None:
 
     # Imported lazily: the loader pulls in the plugin protocols (and their heavy
     # dependencies), which must not be imported at ``import sct`` time.
-    from sct.plugins.loader import import_analysis_plugins
+    from sct.plugins import get_available_analyses_plugins
 
-    for plugin in import_analysis_plugins():
+    for plugin in get_available_analyses_plugins():
         for analysis_type, handler in plugin.get_handlers().items():
             register_analysis(analysis_type, handler)
 

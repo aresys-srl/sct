@@ -10,7 +10,7 @@ from typing import Optional
 
 from sct.configuration.logger import sct_logger
 from sct.io.extended_protocols import ALECorrectionFunctionType, SCTInputProduct
-from sct.plugins import get_available_plugins
+from sct.plugins import get_available_product_format_plugins
 
 
 class InvalidProductType(RuntimeError):
@@ -42,7 +42,7 @@ def product_loader(
     """
 
     product: Optional[SCTInputProduct] = None
-    for plugin in get_available_plugins():
+    for plugin in get_available_product_format_plugins():
         if plugin.get_detector()(product_path):
             manager = plugin.get_manager()
             ale_corrector = plugin.get_ale_corrector()
