@@ -37,27 +37,27 @@ and more through a [plugin-based architecture](https://opensource.aresys.it/sct_
 
 This package is available on [PyPI](https://pypi.org/project/sct/) and can be installed with `pip`:
 
-```bash
-pip install sct[graphs]
+``` bash
+pip install sct[recommended]
 ```
 
-The `[graphs]` extra enables graphical output (`matplotlib`).
-
 > [!IMPORTANT]
-> After installing SCT, install the plugin corresponding to the product format you want to process. The base SCT package does not include any plugins by default.
+> After installing SCT, install the plugin corresponding to the product format you want to process. The base SCT package does not include any format reader plugins by default.
 
 ## Documentation
 
 - **SCT documentation**: [https://opensource.aresys.it/sct](https://opensource.aresys.it/sct)
-- **SCT Plugins documentation**: [https://opensource.aresys.it/sct_plugins](https://opensource.aresys.it/sct_plugins)
+- **SCT Product Format Plugins documentation**: [https://opensource.aresys.it/sct_plugins](https://opensource.aresys.it/sct_plugins)
+- **SCT Analyses Plugins documentation**: [https://opensource.aresys.it/sct_plugins_analyses](https://opensource.aresys.it/sct_plugins_analyses)
 - **PERSEO documentation**: [https://opensource.aresys.it/perseo](https://opensource.aresys.it/perseo)
 
 ## Related Repositories
 
-| Repository | Description | Documentation |
-|---|---|---|
-| [aresys-srl/sct_plugins](https://github.com/aresys-srl/sct_plugins) | SCT input product format plugins | [docs](https://opensource.aresys.it/sct_plugins/) |
-| [aresys-srl/perseo](https://github.com/aresys-srl/perseo) | Python Ecosystem for Remote Sensing & Earth Observation | [docs](https://opensource.aresys.it/perseo/) |
+| Repository                                                                            | Description                                             | Documentation                                              |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+| [aresys-srl/sct_plugins](https://github.com/aresys-srl/sct_plugins)                   | SCT input product format plugins                        | [docs](https://opensource.aresys.it/sct_plugins/)          |
+| [aresys-srl/sct_plugins_analyses](https://github.com/aresys-srl/sct_plugins_analyses) | SCT analyses plugins                                    | [docs](https://opensource.aresys.it/sct_plugins_analyses/) |
+| [aresys-srl/perseo](https://github.com/aresys-srl/perseo)                             | Python Ecosystem for Remote Sensing & Earth Observation | [docs](https://opensource.aresys.it/perseo/)               |
 
 ## Contributing
 

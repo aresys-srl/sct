@@ -8,6 +8,20 @@ tags:
 
 # Changelog
 
+## v3.2.0
+
+**Additional Features**
+
+- Analysis plugins extracted to external packages, discovered via ``sct.analyses`` entry point namespace.
+- Added ``AnalysisPluginProtocol`` for external analysis plugins.
+- CLI lazy loading for instant startup regardless of plugin count.
+- ``LazyGroup`` for deferred import of analysis CLI commands.
+
+**Other Changes**
+
+- Documentation updated to reflect the new analysis plugin architecture.
+- Moved analysis implementations to standalone packages (`sct-point-target-analysis`, `sct-radiometric-analysis`, etc.).
+
 ## v3.1.0
 
 **Additional Features**

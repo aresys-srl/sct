@@ -27,7 +27,7 @@ SCT is an open source tool developed in the framework of **EDAP** (Earthnet Data
 Here is a brief overview of the software architecture of SCT:
 
 <figure markdown="span">
-    ![Software Architecture](./assets/images/software_architecture_1.png){ width="850" }
+    ![Software Architecture](./assets/images/software_architecture_1.png){ width="800" }
     <figcaption>Schematics of the software architecture.</figcaption>
 </figure>
 
@@ -36,16 +36,30 @@ are used to decouple the analysis code from the input data type, allowing new in
 modifying the core analysis code.
 
 <figure markdown="span">
-    ![Software Architecture](./assets/images/software_architecture_2.png){ width="850" }
+    ![Product Format Plugins](./assets/images/software_architecture_2.png){ width="800" }
     <figcaption>Product format plugins.</figcaption>
+</figure>
+
+Same goes for the **product-agnostic** quality analyses. Analyses plugins are used to decouple the analysis code from
+the orchestration and product format I/O, allowing new analyses to be added without modifying the core software.
+
+<figure markdown="span">
+    ![Analyses Plugins](./assets/images/software_architecture_3.png){ width="800" }
+    <figcaption>Quality analyses plugins.</figcaption>
 </figure>
 
 ## Supported Missions and Products
 
-This analysis tool is designed to be input product agnostic, and can be used to perform a quality analysis on any
+This tool is designed to be input product agnostic, and can be used to perform a quality analysis on any
 SAR L1-A/B product (among those supported) in a standardized way.
 To check if the mission or product type to be analyzed is currently supported by this tool, please refer
 to the [SCT Product Format Plugins documentation](https://opensource.aresys.it/sct_plugins/).
+
+## Available Quality Analyses
+
+Several analyses to assess quality of SAR L1A/B products have been developed and are available as SCT plugins. They can
+be installed separately or bundled together with the main software using the ``[recommended]`` [optional dependency group
+installation](install.md).
 
 <div style="height: 2rem;"></div>
 
@@ -68,22 +82,22 @@ to the [SCT Product Format Plugins documentation](https://opensource.aresys.it/s
 
     [:octicons-arrow-right-24: API Documentation](API/reference/index.md)
 
--   :lucide-flask-conical:{ .lg .middle } __Analyses__
+-   :lucide-flask-conical:{ .lg .middle } __Analyses Plugins__
 
     ---
 
-    In-depth documentation on the key concepts of SCT, with useful explanations
-    of implemented analyses.
+    Available quality analyses plugins, with detailed documentation on
+    how to install and use them.
 
-    [:octicons-arrow-right-24: Analyses](documentation/analyses/index.md)
+    [:octicons-arrow-right-24: Plugins](plugins/analysis_plugins.md)
 
 -   :lucide-unplug:{ .lg .middle } __Product Format Plugins__
 
     ---
 
-    Supported input product formats plugins, with detailed documentation on
+    Supported input product plugins, with detailed documentation on
     how to install and use them.
 
-    [:octicons-arrow-right-24: Plugins](format_plugins.md)
+    [:octicons-arrow-right-24: Plugins](plugins/format_plugins.md)
 
 </div>

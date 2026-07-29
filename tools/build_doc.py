@@ -32,7 +32,6 @@ def main() -> int:
         except subprocess.CalledProcessError:
             sha = ""
     date = datetime.now().strftime("%Y-%m-%d")
-    doc_name = f"{date}-{tag}-{sha}-html-doc"
 
     build_info_template = root / "docs" / "about" / "build.template.md"
     build_info = build_info_template.read_text(encoding="utf-8")
@@ -41,9 +40,6 @@ def main() -> int:
     build_info_template.unlink()
 
     subprocess.run(["zensical", "build", "-f", str(root / "zensical.toml")], check=True)
-
-    if os.getenv("CI") == "true":
-        shutil.make_archive(f"documentation-{doc_name}", "zip", root_dir=root, base_dir="site")
 
     return 0
 
