@@ -10,6 +10,7 @@ if __name__ == "__main__":
     enable_quality_logger()
     sct_logger.addHandler(ConsoleHandler())
     import matplotlib
+
     matplotlib.use("Agg")
     run_tests(
         registry_path=r"scripts\registry.json",
