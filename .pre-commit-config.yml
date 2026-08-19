@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.3
+    hooks:
+      - id: ruff-check
+        files: '^(src|tests|tools)/.*\.py$'
+        args: [ --fix ]
+      - id: ruff-format
+        files: '^(src|tests|tools)/.*\.py$'
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
