@@ -1,0 +1,15 @@
+include = ["src/**/*.py", "tests/**/*.py", "pyproject.toml", "ruff.toml"]
+required-version = ">=0.16.3"
+
+line-length = 120
+output-format = "grouped"
+
+[lint]
+select = ["E", "W", "F", "A", "B", "I", "CPY"]
+ignore = ["B008"]
+
+[lint.flake8-copyright]
+notice-rgx = '(?i)# SPDX-FileCopyrightText: Aresys S\.r\.l\. <info@aresys\.it>\s*\n\s*# SPDX-License-Identifier: MIT'
+
+[format]
+docstring-code-format = true
