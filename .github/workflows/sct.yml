@@ -37,7 +37,7 @@ jobs:
       image: quay.io/pypa/manylinux_2_28_x86_64
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -53,7 +53,7 @@ jobs:
       image: quay.io/pypa/manylinux_2_28_x86_64
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -77,7 +77,7 @@ jobs:
           - "3.14"
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -101,7 +101,7 @@ jobs:
             --junitxml=_build/pytest-report-linux-py${{ matrix.python }}.xml \
             --cov-report=xml:_build/pytest-coverage-linux-py${{ matrix.python }}.xml
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: linux-results-${{ matrix.python }}
           path: |
@@ -122,11 +122,11 @@ jobs:
           - "3.14"
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
 
@@ -139,7 +139,7 @@ jobs:
           if (-not (Test-Path _build)) { New-Item -ItemType Directory -Path _build | Out-Null }
           python -m pytest ./tests/ --junitxml=_build/pytest-report-win-py${{ matrix.python }}.xml --cov-report=xml:_build/pytest-coverage-win-py${{ matrix.python }}.xml
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: windows-results-${{ matrix.python }}
           path: |
@@ -153,13 +153,13 @@ jobs:
       image: quay.io/pypa/manylinux_2_28_x86_64
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - run: echo "/opt/python/cp312-cp312/bin" >> $GITHUB_PATH
       - run: uv build --sdist --wheel .
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -169,22 +169,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
       - run: python -m pip install ".[doc]"
       - run: python tools/build_doc.py
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: documentation-site
           path: site/
           retention-days: 14
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: documentation-archive
           path: documentation*.zip
@@ -203,7 +203,7 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
@@ -237,7 +237,7 @@ jobs:
 
     steps:
       - name: Download docs site
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: documentation-site
           path: site
@@ -246,7 +246,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
