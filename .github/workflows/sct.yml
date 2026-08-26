@@ -15,7 +15,6 @@ on:
       - "tests/**"
       - "docs/**"
       - "overrides/**"
-      - "noxfile.py"
       - "pyproject.toml"
       - "zensical.toml"
 
@@ -28,22 +27,14 @@ on:
       - "tests/**"
       - "docs/**"
       - "overrides/**"
-      - "noxfile.py"
       - "pyproject.toml"
       - "zensical.toml"
 
 jobs:
-  analysis:
+  ruff:
     runs-on: ubuntu-latest
     container:
       image: quay.io/pypa/manylinux_2_28_x86_64
-
-    strategy:
-      fail-fast: false
-      matrix:
-        task:
-          - check_format
-          - pylint
 
     steps:
       - uses: actions/checkout@v5
@@ -51,9 +42,25 @@ jobs:
           fetch-depth: 1
 
       - run: echo "/opt/python/cp312-cp312/bin" >> $GITHUB_PATH
-      - run: python --version
-      - run: python -m pip install nox
-      - run: python -m nox -s ${{ matrix.task }}
+      - run: python -m pip install ruff
+      - run: python -m ruff --version
+      - run: python -m ruff format --check .
+      - run: python -m ruff check .
+
+  pylint:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/pypa/manylinux_2_28_x86_64
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - run: echo "/opt/python/cp312-cp312/bin" >> $GITHUB_PATH
+      - run: python -m pip install pylint
+      - run: python -m pylint --version
+      - run: python -m pylint src/sct
 
   unittest_linux:
     runs-on: ubuntu-latest
@@ -84,12 +91,22 @@ jobs:
           esac
 
       - run: python --version
-      - run: python -m pip install nox
-      - run: python -m nox -s pytest -p ${{ matrix.python }}
+      - name: Install package
+        run: python -m pip install -e ".[test,web,graphs]"
+
+      - name: Run unit tests with coverage
+        run: |
+          mkdir -p _build
+          python -m pytest ./tests/ \
+            --junitxml=_build/pytest-report-linux-py${{ matrix.python }}.xml \
+            --cov-report=xml:_build/pytest-coverage-linux-py${{ matrix.python }}.xml
+
       - uses: actions/upload-artifact@v5
         with:
-          name: linux-test-${{ matrix.python }}
-          path: _build/pytest-report-*.xml
+          name: linux-results-${{ matrix.python }}
+          path: |
+            _build/pytest-report-*.xml
+            _build/pytest-coverage-*.xml
           retention-days: 14
 
   unittest_windows:
@@ -114,15 +131,23 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - run: python --version
-      - run: python -m pip install nox
-      - run: python -m nox -s pytest -p ${{ matrix.python }}
+      - name: Install package
+        run: python -m pip install -e ".[test,web,graphs]"
+
+      - name: Run unit tests with coverage
+        run: |
+          if (-not (Test-Path _build)) { New-Item -ItemType Directory -Path _build | Out-Null }
+          python -m pytest ./tests/ --junitxml=_build/pytest-report-win-py${{ matrix.python }}.xml --cov-report=xml:_build/pytest-coverage-win-py${{ matrix.python }}.xml
+
       - uses: actions/upload-artifact@v5
         with:
-          name: windows-test-${{ matrix.python }}
-          path: _build/pytest-report-*.xml
+          name: windows-results-${{ matrix.python }}
+          path: |
+            _build/pytest-report-*.xml
+            _build/pytest-coverage-*.xml
           retention-days: 14
 
-  sdist:
+  build:
     runs-on: ubuntu-latest
     container:
       image: quay.io/pypa/manylinux_2_28_x86_64
@@ -133,33 +158,11 @@ jobs:
           fetch-depth: 1
 
       - run: echo "/opt/python/cp312-cp312/bin" >> $GITHUB_PATH
-      - run: python --version
-      - run: python -m pip install nox
-      - run: python -m nox -s build_sdist
+      - run: uv build --sdist --wheel .
       - uses: actions/upload-artifact@v5
         with:
-          name: sdist
-          path: dist/*.tar.gz
-          retention-days: 14
-
-  wheel:
-    runs-on: ubuntu-latest
-    container:
-      image: quay.io/pypa/manylinux_2_28_x86_64
-
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
-
-      - run: echo "/opt/python/cp312-cp312/bin" >> $GITHUB_PATH
-      - run: python --version
-      - run: python -m pip install nox
-      - run: python -m nox -s build_wheel
-      - uses: actions/upload-artifact@v5
-        with:
-          name: wheel
-          path: dist/*.whl
+          name: dist
+          path: dist/
           retention-days: 14
 
   doc_build:
@@ -174,8 +177,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: python -m pip install nox
-      - run: python -m nox -s build_doc
+      - run: python -m pip install ".[doc]"
+      - run: python tools/build_doc.py
       - uses: actions/upload-artifact@v5
         with:
           name: documentation-site
@@ -188,7 +191,7 @@ jobs:
           retention-days: 14
 
   publish:
-    needs: [analysis, unittest_linux, unittest_windows, sdist, wheel]
+    needs: [ruff, pylint, unittest_linux, unittest_windows, build]
     if: startsWith(github.ref_name, 'sct-v')
 
     runs-on: ubuntu-latest
@@ -202,12 +205,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: wheel
-          path: dist
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: sdist
+          name: dist
           path: dist
 
       - name: Clean dist
