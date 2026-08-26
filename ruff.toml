@@ -1,4 +1,4 @@
-include = ["src/**/*.py", "tests/**/*.py", "pyproject.toml", "ruff.toml"]
+include = ["src/**/*.py", "tests/**/*.py", "tools/**/*.py", "pyproject.toml", "ruff.toml"]
 required-version = ">=0.16.3"
 
 line-length = 120
