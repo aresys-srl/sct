@@ -13,6 +13,8 @@ tags:
 
 ::: sct.testing.cli
 
+::: sct.testing.utils
+
 ::: sct.testing.utilities.executor
 
 ::: sct.testing.utilities.common

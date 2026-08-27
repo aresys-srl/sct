@@ -15,8 +15,11 @@ from typing import Annotated, Callable, Literal
 
 import art
 import typer
+from rich.console import Console
 
 from sct.configuration.logger import enable_quality_logger, sct_logger
+
+console = Console()
 
 InputProductOption = Annotated[
     Path,
@@ -206,3 +209,12 @@ def graceful_exit(name: str):
         return wrapper
 
     return decorator
+
+
+def supports_unicode() -> bool:
+    """Return whether the console encoding supports our CLI symbols."""
+    try:
+        "📊✔✖".encode(console.encoding or "utf-8")
+        return True
+    except (UnicodeEncodeError, LookupError):
+        return False
