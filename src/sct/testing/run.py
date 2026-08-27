@@ -11,7 +11,6 @@ from pathlib import Path
 
 import numpy as np
 from rich.console import Console
-from rich.table import Table
 
 from sct.configuration.logger import sct_logger
 from sct.testing.utilities.common import TestParams
@@ -116,62 +115,3 @@ def run_tests(registry_path: str | Path, output_dir: str | Path, graphs: bool = 
             sct_logger.info("")
 
     return results
-
-
-def summary_results(results: dict) -> bool:
-    """Summary of tests results.
-
-    Parameters
-    ----------
-    results : dict
-        results coming from run_test function
-
-    Returns
-    -------
-    bool
-        True if all tests are passed, else False
-    """
-
-    tests_num = sum([len(c.keys()) for c in results.values()])
-    passed_tests = sum([sum(c.values()) for c in results.values()])
-    sct_logger.info(f"PASSED: {passed_tests}/{tests_num} tests")
-    if passed_tests == tests_num:
-        sct_logger.info("No FAILED tests")
-        outcome = True
-    else:
-        sct_logger.critical(f"FAILED: {tests_num - passed_tests}")
-        outcome = False
-    for sensor_name in results:
-        try:
-            print_dict_as_table(title=sensor_name, data=results[sensor_name])
-        except Exception:
-            print(f"Sensor: {sensor_name}\n")
-            for test_name, test_result in results[sensor_name].items():
-                print(f"{test_name}: {'PASS' if test_result else 'FAIL'}")
-
-    if outcome:
-        sct_logger.success("INTEGRATION TESTS: PASS")
-    else:
-        sct_logger.fail("INTEGRATION TESTS: FAIL")
-
-    return outcome
-
-
-def print_dict_as_table(data: dict, title: str = "Data"):
-    """Printing summary results by sensor as a Rich Table."""
-    table = Table(title=title, header_style="bold #C6A0F6")
-    table.add_column("Test Name", style="bold")
-    table.add_column("Status", style="bold")
-
-    console.print("")
-
-    for key, value in data.items():
-        table.add_row(str(key), status_to_color(value))
-
-    console.print(table)
-
-
-def status_to_color(value: bool) -> str:
-    if value:
-        return "[#40A02B]✔ PASS[/#40A02B]"
-    return "[#E74C3C]✖ FAIL[/#E74C3C]"

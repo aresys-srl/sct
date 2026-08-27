@@ -10,11 +10,15 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
+from rich.console import Console
 
 from sct import __version__
 from sct.cli import common
 from sct.plugins import get_available_analyses_plugins, get_available_product_format_plugins
-from sct.testing.run import run_tests, summary_results
+from sct.testing.run import run_tests
+from sct.testing.utils import safe_rule_printing, summary_results
+
+console = Console()
 
 testing_app = typer.Typer(
     help="SCT Testing Interface.",
@@ -69,27 +73,30 @@ def integration_testing(
     """Run SCT integration tests procedure from registry."""
     common.display_title("SCT Integration Tests")
 
-    typer.echo(f"SCT Version: {__version__}\n")
+    safe_rule_printing("[bold blue]⚙️ Environment Details[/bold blue]", "[bold blue]Environment Details[/bold blue]")
 
-    typer.echo("Installed plugins detected:\n")
+    console.print(f"[bold]SCT Version:[/bold] [bold green]{__version__}[/bold green]\n")
+
+    console.print("[bold]Installed plugins detected:\n[/bold]")
 
     for plugin in get_available_product_format_plugins():
-        typer.echo(plugin.__name__)
-        typer.echo()
+        console.print(f"[italic]{plugin.__name__}[/italic] - [bold]v{plugin.version}[/bold]")
 
-    typer.echo("Installed analysis plugins detected:\n")
+    typer.echo()
+    console.print("[bold]Installed analysis plugins detected:\n[/bold]")
 
     for plugin in get_available_analyses_plugins():
-        typer.echo(f"{plugin.__name__} — {plugin.short_help}")
+        console.print(f"[italic]{plugin.__name__}[/italic] - [bold]v{plugin.version}[/bold]")
         typer.echo()
+    typer.echo()
 
     if not output_directory.exists():
         typer.echo("Output directory not found: creating the output folder.")
         output_directory.mkdir(parents=True)
 
-    results = run_tests(registry_path=registry, output_dir=output_directory, cli=cli, graphs=graphs)
+    safe_rule_printing("[bold cyan]🧪 Running Tests[/bold cyan]", "[bold cyan]Running Tests[/bold cyan]")
 
-    common.display_title("Summary")
+    results = run_tests(registry_path=registry, output_dir=output_directory, cli=cli, graphs=graphs)
 
     outcome = summary_results(results=results)
 

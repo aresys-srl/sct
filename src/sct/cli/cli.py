@@ -246,7 +246,7 @@ def _version_callback(ctx: click.Context, param: click.Parameter, value: bool) -
 )
 @click.pass_context
 def app(ctx: click.Context, config: Path | None) -> None:
-    if ctx.invoked_subcommand == "info":
+    if ctx.invoked_subcommand == "info" or ctx.invoked_subcommand == "testing" or ctx.invoked_subcommand == "auxiliary":
         return
 
     from sct.configuration.config import GeneralConfiguration
