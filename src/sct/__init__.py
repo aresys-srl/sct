@@ -3,4 +3,4 @@
 
 """SCT: the Python SAR Calibration Tool for quality data analysis."""
 
-__version__ = "3.2.0"
+__version__ = "3.2.1"
