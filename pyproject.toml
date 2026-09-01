@@ -13,7 +13,7 @@ dependencies = [
     "jsonschema",
     "toml",
     "stevedore>=5.7.0",
-    "typer>=0.24.1",
+    "typer>=0.27.2",
     "art",
     "rich>=13.0.0",
     "perseo-quality>=1.1.0",

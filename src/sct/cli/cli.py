@@ -189,23 +189,18 @@ class LazyGroup(RichGroup):
         corresponding click types so that ``Command.main()`` handles them correctly
         in both CLI and test usage.
         """
+        from typer._click.exceptions import (
+            ClickException as TyperClickException,
+        )
+        from typer.exceptions import Exit as TyperExit
+
         try:
             return super().invoke(ctx)
-        except Exception as e:
-            if type(e).__module__ == "typer._click.exceptions":
-                from typer._click.exceptions import (
-                    ClickException as TyperClickException,
-                )
-                from typer._click.exceptions import (
-                    Exit as TyperExit,
-                )
-
-                if isinstance(e, TyperExit):
-                    raise click.exceptions.Exit(e.exit_code) from e
-                if isinstance(e, TyperClickException):
-                    e.show()
-                    raise SystemExit(e.exit_code) from e
-            raise
+        except TyperExit as exc:
+            raise click.exceptions.Exit(exc.exit_code) from exc
+        except TyperClickException as exc:
+            exc.show()
+            raise SystemExit(exc.exit_code) from exc
 
     def list_commands(self, ctx: click.Context) -> list[str]:
         return sorted(set(super().list_commands(ctx)) | set(self.lazy_subcommands))
