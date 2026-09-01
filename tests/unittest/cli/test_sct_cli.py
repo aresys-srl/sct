@@ -30,6 +30,12 @@ def test_display_version():
     assert VERSION in result.output
 
 
+def test_lazy_subcommand_help():
+    """A lazy-loaded typer subcommand must exit cleanly on --help."""
+    result = cli_runner.invoke(app, ["auxiliary", "--help"])
+    assert result.exit_code == 0
+
+
 def test_info_command():
     """Display info"""
     result = cli_runner.invoke(app, ["info"])
