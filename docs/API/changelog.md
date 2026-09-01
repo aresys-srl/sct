@@ -10,6 +10,12 @@ tags:
 
 ## v3.2.0
 
+**Bug Fixing**
+
+- Fixing CLI bug due to `Typer` changes.
+
+## v3.2.0
+
 **Additional Features**
 
 - Analysis plugins extracted to external packages, discovered via ``sct.analyses`` entry point namespace.
