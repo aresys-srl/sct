@@ -8,6 +8,18 @@ tags:
 
 # Changelog
 
+## v3.2.2
+
+**Other Changes**
+
+- Restrict perseo dependencies to versions below the next major release to prevent incompatible changes
+
+## v3.2.1
+
+**Other Changes**
+
+- Fixing issue with latest typer release
+
 ## v3.2.0
 
 **Bug Fixing**
