@@ -16,9 +16,9 @@ dependencies = [
     "typer>=0.27.2",
     "art",
     "rich>=13.0.0",
-    "perseo-quality>=1.1.0",
-    "perseo-perturbations>=1.0.0",
-    "perseo-core>=1.0.0",
+    "perseo-quality>=1.1.0,<2",
+    "perseo-perturbations>=1.0.0,<2",
+    "perseo-core>=1.0.0,<2",
     "rich-click>=1.9.8",
 ]
 dynamic = ["version"]
