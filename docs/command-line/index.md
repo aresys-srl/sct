@@ -29,7 +29,7 @@ To select the operation of choice, use the available commands that can be listed
 !!! tip "Available Analyses"
 
     Each installed analysis plugin exposes its own dedicated command.  
-    > :lucide-circle-chevron-right: Refer to the [analyses plugins documentation site](https://opensource.aresys.it/sct_plugins/)
+    > :lucide-circle-chevron-right: Refer to the [analyses plugins documentation site](https://opensource.aresys.it/sct_plugins_analyses/)
     for more details on each analysis and its command.
 
 ## SCT Info
