@@ -63,7 +63,7 @@ jobs:
       - run: python -m pylint src/sct
 
   unittest_linux:
-    runs-on: self-hosted
+    runs-on: k8s-runners
     container:
       image: quay.io/pypa/manylinux_2_28_x86_64
 
