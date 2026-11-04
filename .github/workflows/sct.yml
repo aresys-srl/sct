@@ -147,6 +147,52 @@ jobs:
             _build/pytest-coverage-*.xml
           retention-days: 14
 
+  integration_test_linux:
+    if: >-
+      !startsWith(github.ref, 'refs/tags/') ||
+      startsWith(github.ref_name, 'sct-v')
+
+    runs-on: k8s-runners
+    container:
+      image: quay.io/pypa/manylinux_2_28_x86_64
+
+    env:
+      SCT_TEST_DATA_ROOT: /data/reference_dataset
+      SCT_INTEGRATION_TESTS_REF: /data/integration_tests/sct
+      SCT_PERTURB_EOF_CONFIG: test_ed18cc99_config.toml
+
+    timeout-minutes: 120
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python:
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Select Python ${{ matrix.python }}
+        run: |
+          case "${{ matrix.python }}" in
+            3.11) echo "/opt/python/cp311-cp311/bin" >> $GITHUB_PATH ;;
+            3.12) echo "/opt/python/cp312-cp312/bin" >> $GITHUB_PATH ;;
+            3.13) echo "/opt/python/cp313-cp313/bin" >> $GITHUB_PATH ;;
+            3.14) echo "/opt/python/cp314-cp314/bin" >> $GITHUB_PATH ;;
+          esac
+
+      - name: Install package and readers
+        run: python -m pip install ".[recommended]" sct_aresys_reader sct_sentinel1_reader
+
+      - name: Run integration tests
+        run: sct testing -r ./tests/integration_tests/test_registry.json -out ./test_output --cli
+
+
   build:
     runs-on: ubuntu-latest
     container:
@@ -186,7 +232,7 @@ jobs:
           retention-days: 14
 
   publish:
-    needs: [ruff, pylint, unittest_linux, unittest_windows, build]
+    needs: [ruff, pylint, unittest_linux, unittest_windows, integration_test_linux, build]
     if: startsWith(github.ref_name, 'sct-v')
 
     runs-on: ubuntu-latest
