@@ -237,7 +237,7 @@ members_order = "source"
 [project.extra]
 # Link back to the Aresys Open Source landing page, shown in the header.
 open_source_url = "https://opensource.aresys.it/"
-open_source_label = "Aresys Open Source Portal"
+open_source_label = "Aresys Open Source"
 
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
