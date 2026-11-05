@@ -2,6 +2,7 @@
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://python.org)
+[![PyPI - Version](https://img.shields.io/pypi/v/sct)](https://pypi.org/project/sct/)
 [![SCT CI](https://github.com/aresys-srl/sct/actions/workflows/sct.yml/badge.svg)](https://github.com/aresys-srl/sct/actions/workflows/sct.yml)
 
 **SAR Calibration Toolbox (SCT)** is the official Aresys Python toolbox for SAR quality assessment and data processing.
