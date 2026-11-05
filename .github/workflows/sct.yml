@@ -265,7 +265,9 @@ jobs:
   publish_docs:
     if: >
       ${{
+        always() &&
         (startsWith(github.ref_name, 'sct-v') || startsWith(github.ref_name, 'docs-v')) &&
+        needs.doc_build.result == 'success' &&
         (needs.publish.result == 'success' || needs.publish.result == 'skipped')
       }}
     needs: [doc_build, publish]
