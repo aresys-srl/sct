@@ -31,6 +31,8 @@ Supported input products include:
 - COSMO SkyMed
 - EOS-04
 - STRIX
+- TerrasSAR-X
+- Biomass
 
 and more through a [plugin-based architecture](https://opensource.aresys.it/sct_plugins/).
 
