@@ -111,7 +111,7 @@ def read_geojson_point_targets_file(surveys: Path, product_date: PreciseDateTime
 
     df = pd.DataFrame(rows)
 
-    xyz = llh2xyz(coordinates=df[["longitude_deg", "latitude_deg", "altitude_m"]].to_numpy(dtype=float))
+    xyz = llh2xyz(coordinates=df[["longitude_deg", "latitude_deg", "altitude_m"]].to_numpy(dtype=float), radians=False)
     df["x_coord_m"] = xyz[:, 0]
     df["y_coord_m"] = xyz[:, 1]
     df["z_coord_m"] = xyz[:, 2]

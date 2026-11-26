@@ -10,6 +10,10 @@ tags:
 
 ## v3.2.2
 
+**Bug Fixing**
+
+- Fixing bug in calibration sites utilities
+
 **Other Changes**
 
 - Restrict perseo dependencies to versions below the next major release to prevent incompatible changes
